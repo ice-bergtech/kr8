@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -77,7 +76,7 @@ func JsonnetVM(cmd *cobra.Command) (*jsonnet.VM, error) {
 		if len(kv) != 2 {
 			log.Fatal().Str("ext-str-file", extvar).Msg("Failed to parse. Missing '=' in parameter`")
 		}
-		v, err := ioutil.ReadFile(kv[1])
+		v, err := os.ReadFile(kv[1])
 		if err != nil {
 			panic(err)
 		}
@@ -253,7 +252,7 @@ var jsonnetCmd = &cobra.Command{
 	Long:  `Utility commands to process jsonnet`,
 }
 
-var jsonnetrenderCmd = &cobra.Command{
+var jsonnetRenderCmd = &cobra.Command{
 	Use:   "render file [file ...]",
 	Short: "Render a jsonnet file",
 	Long:  `Render a jsonnet file to JSON or YAML`,
@@ -320,12 +319,12 @@ var jsonnetrenderCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(jsonnetCmd)
-	jsonnetCmd.AddCommand(jsonnetrenderCmd)
-	jsonnetrenderCmd.PersistentFlags().BoolVarP(&pruneFlag, "prune", "", true, "Prune null and empty objects from rendered json")
-	jsonnetrenderCmd.PersistentFlags().StringVarP(&clusterParams, "clusterparams", "", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
-	jsonnetrenderCmd.PersistentFlags().StringVarP(&componentName, "component", "C", "", "component to render params for")
-	jsonnetrenderCmd.PersistentFlags().StringVarP(&outputFormat, "format", "F", "json", "Output forma: json, yaml, stream")
+	jsonnetCmd.AddCommand(jsonnetRenderCmd)
+	jsonnetRenderCmd.PersistentFlags().BoolVarP(&pruneFlag, "prune", "", true, "Prune null and empty objects from rendered json")
+	jsonnetRenderCmd.PersistentFlags().StringVarP(&clusterParams, "clusterparams", "", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
+	jsonnetRenderCmd.PersistentFlags().StringVarP(&componentName, "component", "C", "", "component to render params for")
+	jsonnetRenderCmd.PersistentFlags().StringVarP(&outputFormat, "format", "F", "json", "Output format: json, yaml, stream")
 
-	jsonnetrenderCmd.PersistentFlags().StringP("cluster", "c", "", "cluster to render params for")
-	viper.BindPFlag("cluster", jsonnetrenderCmd.PersistentFlags().Lookup("cluster"))
+	jsonnetRenderCmd.PersistentFlags().StringP("cluster", "c", "", "cluster to render params for")
+	viper.BindPFlag("cluster", jsonnetRenderCmd.PersistentFlags().Lookup("cluster"))
 }

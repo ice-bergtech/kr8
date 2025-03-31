@@ -23,13 +23,14 @@ package cmd
 import (
 	"bufio"
 	"fmt"
+	"io"
+	"os"
+
 	gyaml "github.com/ghodss/yaml"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"io"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/util/yaml"
-	"os"
 )
 
 var yamlCmd = &cobra.Command{
@@ -38,7 +39,7 @@ var yamlCmd = &cobra.Command{
 	Long:  `Utility commands to process YAML`,
 }
 
-var yamlhelmcleanCmd = &cobra.Command{
+var yamlHelmCleanCmd = &cobra.Command{
 	Use:   "helmclean",
 	Short: "Clean YAML stream from Helm Template output - Reads from Stdin",
 	Long:  `Removes Null YAML objects from a YAML stream`,
@@ -55,19 +56,19 @@ var yamlhelmcleanCmd = &cobra.Command{
 			if len(bytes) == 0 {
 				continue
 			}
-			jsondata, err := yaml.ToJSON(bytes)
+			jsonData, err := yaml.ToJSON(bytes)
 			if err != nil {
 				log.Fatal().Err(err).Msg("Error encoding yaml to JSON")
 			}
-			if string(jsondata) == "null" {
+			if string(jsonData) == "null" {
 				// skip empty json
 				continue
 			}
-			_, _, err = unstructured.UnstructuredJSONScheme.Decode(jsondata, nil, nil)
+			_, _, err = unstructured.UnstructuredJSONScheme.Decode(jsonData, nil, nil)
 			if err != nil {
 				log.Fatal().Err(err).Msg("Error handling unstructured JSON")
 			}
-			jsa = append(jsa, jsondata)
+			jsa = append(jsa, jsonData)
 		}
 		for _, j := range jsa {
 			out, err := gyaml.JSONToYAML(j)
@@ -82,6 +83,6 @@ var yamlhelmcleanCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(yamlCmd)
-	yamlCmd.AddCommand(yamlhelmcleanCmd)
+	yamlCmd.AddCommand(yamlHelmCleanCmd)
 
 }

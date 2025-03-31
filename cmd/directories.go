@@ -3,13 +3,13 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog/log"
-	"github.com/spf13/cobra"
-	"github.com/tidwall/gjson"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/rs/zerolog/log"
+	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
 )
 
 type componentDef struct {
@@ -91,7 +91,7 @@ func getClusterParams(basePath string, targetPath string) []string {
 	// remove the cluster.jsonnet
 	splitFile := strings.Split(targetPath, "/")
 
-	// gets the targetdir without the cluster.jsonnet
+	// gets the targetDir without the cluster.jsonnet
 	targetDir := strings.Join(splitFile[:len(splitFile)-1], "/")
 
 	// walk through the directory hierachy
@@ -167,11 +167,11 @@ func renderClusterParams(cmd *cobra.Command, clusterName string, componentNames 
 		for _, key := range componentNames {
 			if value, ok := componentMap[key]; ok {
 				path := baseDir + "/" + value.Path + "/params.jsonnet"
-				filec, err := ioutil.ReadFile(path)
+				fileC, err := os.ReadFile(path)
 				if err != nil {
 					log.Fatal().Err(err).Msg("Error reading " + path)
 				}
-				componentDefaultsMerged = componentDefaultsMerged + fmt.Sprintf("'%s': %s,", key, string(filec))
+				componentDefaultsMerged = componentDefaultsMerged + fmt.Sprintf("'%s': %s,", key, string(fileC))
 			}
 		}
 	} else {
@@ -181,11 +181,11 @@ func renderClusterParams(cmd *cobra.Command, clusterName string, componentNames 
 				continue
 			}
 			path := baseDir + "/" + value.Path + "/params.jsonnet"
-			filec, err := ioutil.ReadFile(path)
+			fileC, err := os.ReadFile(path)
 			if err != nil {
 				log.Fatal().Err(err).Msg("Error reading " + path)
 			}
-			componentDefaultsMerged = componentDefaultsMerged + fmt.Sprintf("'%s': %s,", key, string(filec))
+			componentDefaultsMerged = componentDefaultsMerged + fmt.Sprintf("'%s': %s,", key, string(fileC))
 		}
 	}
 	componentDefaultsMerged = componentDefaultsMerged + "}"

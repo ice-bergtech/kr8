@@ -32,7 +32,7 @@ var getCmd = &cobra.Command{
 	Long:  `Displays information about kr8 resources such as clusters and components`,
 }
 
-var getclustersCmd = &cobra.Command{
+var getClustersCmd = &cobra.Command{
 	Use:   "clusters",
 	Short: "Get all clusters",
 	Long:  "Get all clusters defined in kr8 config hierarchy",
@@ -59,7 +59,7 @@ var getclustersCmd = &cobra.Command{
 	},
 }
 
-var getcomponentsCmd = &cobra.Command{
+var getComponentsCmd = &cobra.Command{
 	Use:   "components",
 	Short: "Get all components",
 	Long:  "Get all available components defined in the kr8 config hierarchy",
@@ -96,7 +96,7 @@ var getcomponentsCmd = &cobra.Command{
 	},
 }
 
-var getparamsCmd = &cobra.Command{
+var getParamsCmd = &cobra.Command{
 	Use:   "params",
 	Short: "Get parameter for components and clusters",
 	Long:  "Get parameters assigned to clusters and components in the kr8 config hierarchy",
@@ -114,8 +114,8 @@ var getparamsCmd = &cobra.Command{
 
 		if paramPath != "" {
 			value := gjson.Get(j, paramPath)
-			notunset, _ := cmd.Flags().GetBool("notunset")
-			if notunset && value.String() == "" {
+			notUnset, _ := cmd.Flags().GetBool("notunset")
+			if notUnset && value.String() == "" {
 				log.Fatal().Msg("Error getting param: " + paramPath)
 			} else {
 				fmt.Println(value) // no formatting because this isn't always json, this is just the value of a field
@@ -131,14 +131,14 @@ var getparamsCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(getCmd)
 	// clusters
-	getCmd.AddCommand(getclustersCmd)
+	getCmd.AddCommand(getClustersCmd)
 	// components
-	getCmd.AddCommand(getcomponentsCmd)
-	getcomponentsCmd.PersistentFlags().StringVarP(&cluster, "cluster", "c", "", "get components for cluster")
+	getCmd.AddCommand(getComponentsCmd)
+	getComponentsCmd.PersistentFlags().StringVarP(&cluster, "cluster", "c", "", "get components for cluster")
 	// params
-	getCmd.AddCommand(getparamsCmd)
-	getparamsCmd.PersistentFlags().StringVarP(&cluster, "cluster", "c", "", "get components for cluster")
-	getparamsCmd.PersistentFlags().StringVarP(&componentName, "component", "C", "", "component to render params for")
-	getparamsCmd.Flags().StringVarP(&paramPath, "param", "P", "", "return value of json param from supplied path")
+	getCmd.AddCommand(getParamsCmd)
+	getParamsCmd.PersistentFlags().StringVarP(&cluster, "cluster", "c", "", "get components for cluster")
+	getParamsCmd.PersistentFlags().StringVarP(&componentName, "component", "C", "", "component to render params for")
+	getParamsCmd.Flags().StringVarP(&paramPath, "param", "P", "", "return value of json param from supplied path")
 
 }
