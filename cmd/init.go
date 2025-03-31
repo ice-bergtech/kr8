@@ -92,6 +92,6 @@ func init() {
 	RootCmd.AddCommand(initCmd)
 	initCmd.AddCommand(repoCmd)
 
-	repoCmd.PersistentFlags().StringVar(&dl_url, "url", "git::https://github.com/apptio/kr8-config-skel", "Source of skeleton directory to create repo from")
+	repoCmd.PersistentFlags().StringVar(&dl_url, "url", "", "Source of skeleton directory to create repo from")
 
 }
