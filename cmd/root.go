@@ -23,6 +23,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -120,7 +121,13 @@ func initConfig() {
 		log.Debug().Msg("Using config file:" + viper.ConfigFileUsed())
 	}
 	colorOutput = viper.GetBool("color")
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, NoColor: !colorOutput})
+	log.Logger = log.Output(
+		zerolog.ConsoleWriter{
+			Out:     os.Stderr,
+			NoColor: !colorOutput,
+			FormatErrFieldValue: func(err interface{}) string {
+				return strings.ReplaceAll(strings.Join(strings.Split(fmt.Sprintf("%v", err), "\\n"), " | "), "\\t", "")
+			}})
 
 	baseDir = viper.GetString("base")
 	log.Debug().Msg("Using base directory: " + baseDir)
