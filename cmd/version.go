@@ -33,6 +33,8 @@ var versionCmd = &cobra.Command{
 	Long:  `return the current version of kr8`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(RootCmd.Use + " " + Version)
+		fmt.Println("github.com/google/go-jsonnet v0.20.0")
+		fmt.Println("github.com/ghodss/yaml v1.0.0")
 	},
 }
 
