@@ -1,8 +1,9 @@
 package cmd
 
 import (
+	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"errors"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -11,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"text/template"
 
 	goyaml "github.com/ghodss/yaml"
 	jsonnet "github.com/google/go-jsonnet"
@@ -34,6 +36,31 @@ var (
 	clExcludes       string
 	allClusterParams map[string]string
 )
+
+func fatalErrorCheck(err error, message string) {
+	if err != nil {
+		log.Fatal().Err(err).Msg(message)
+	}
+}
+
+func processJsonnet(vm *jsonnet.VM, input string, include string) (string, error) {
+	vm.ExtCode("input", input)
+	j, err := vm.EvaluateAnonymousSnippet(include, "std.extVar('process')(std.extVar('input'))")
+	if err != nil {
+		return "Error evaluating jsonnet snippet", err
+	}
+
+	// create output file contents in a string first, as a yaml stream
+	var o []interface{}
+	var outStr string
+	fatalErrorCheck(json.Unmarshal([]byte(j), &o), "Error unmarshalling jsonnet output to go slice")
+	for _, jObj := range o {
+		buf, err := goyaml.Marshal(jObj)
+		fatalErrorCheck(err, "Error marshalling jsonnet object to yaml")
+		outStr = outStr + string(buf) + "\n---\n"
+	}
+	return outStr, nil
+}
 
 func genProcessCluster(cmd *cobra.Command, clusterName string, p *ants.Pool) {
 	log.Debug().Str("cluster", clusterName).Msg("Process cluster")
