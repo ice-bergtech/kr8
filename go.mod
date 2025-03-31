@@ -2,12 +2,14 @@ module github.com/apptio/kr8
 
 go 1.22.0
 
+toolchain go1.24.1
+
 require (
 	github.com/fatih/color v1.17.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/google/go-jsonnet v0.20.0
 	github.com/grafana/tanka v0.27.1
-	github.com/hashicorp/go-getter v1.7.4
+	github.com/hashicorp/go-getter v1.7.5
 	github.com/hokaccha/go-prettyjson v0.0.0-20211117102719-0474bc63780f
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/panjf2000/ants/v2 v2.10.0
