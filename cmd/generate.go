@@ -221,18 +221,18 @@ func genProcessComponent(cmd *cobra.Command, clusterName string, componentName s
 	// add kr8_allparams extcode with all component params in the cluster
 	if spec["enable_kr8_allparams"].Bool() {
 		// include full render of all component params
-		allconfig.mu.Lock()
-		if allconfig.config == "" {
+		allConfig.mu.Lock()
+		if allConfig.config == "" {
 			// only do this if we have not already cached it and don't already have it stored
 			if components == "" {
 				// all component params are in config
-				allconfig.config = config
+				allConfig.config = config
 			} else {
-				allconfig.config = renderClusterParams(cmd, clusterName, []string{}, clusterParams, false)
+				allConfig.config = renderClusterParams(cmd, clusterName, []string{}, clusterParams, false)
 			}
 		}
-		vm.ExtCode("kr8_allparams", allconfig.config)
-		allconfig.mu.Unlock()
+		vm.ExtCode("kr8_allparams", allConfig.config)
+		allConfig.mu.Unlock()
 	}
 
 	// add kr8_allclusters extcode with every cluster's cluster level params
@@ -248,13 +248,13 @@ func genProcessComponent(cmd *cobra.Command, clusterName string, componentName s
 		vm.ExtCode("kr8_allclusters", allClusterParamsObject)
 	}
 
-	// jpath always includes base lib. Add jpaths from spec if set
-	jpath := []string{baseDir + "/lib"}
+	// jPath always includes base lib. Add jpaths from spec if set
+	jPath := []string{baseDir + "/lib"}
 	for _, j := range spec["jpaths"].Array() {
-		jpath = append(jpath, baseDir+"/"+compPath+"/"+j.String())
+		jPath = append(jPath, baseDir+"/"+compPath+"/"+j.String())
 	}
 	vm.Importer(&jsonnet.FileImporter{
-		JPaths: jpath,
+		JPaths: jPath,
 	})
 
 	// file imports
@@ -280,22 +280,23 @@ func genProcessComponent(cmd *cobra.Command, clusterName string, componentName s
 	for _, include := range spec["includes"].Array() {
 		var filename string
 		var outputDir string
-		var sfile string
+		var sFile string
+		sFileExtension := "yaml"
 
-		itype := include.Type.String()
+		iType := include.Type.String()
 		outputDir = componentDir
-		if itype == "String" {
+		if iType == "String" {
 			// include is just a string for the filename
 			filename = include.String()
-		} else if itype == "JSON" {
+		} else if iType == "JSON" {
 			// include is a map with multiple fields
 			inc_spec := include.Map()
 			filename = inc_spec["file"].String()
 			if inc_spec["dest_dir"].Exists() {
 				// handle alternate output directory for file
-				altdir := inc_spec["dest_dir"].String()
+				altDir := inc_spec["dest_dir"].String()
 				// dir is always relative to generate dir
-				outputDir = clGenerateDir + "/" + altdir
+				outputDir = clGenerateDir + "/" + altDir
 				// ensure this directory exists
 				if _, err := os.Stat(outputDir); os.IsNotExist(err) {
 					err = os.MkdirAll(outputDir, os.ModePerm)
@@ -304,63 +305,49 @@ func genProcessComponent(cmd *cobra.Command, clusterName string, componentName s
 			}
 			if inc_spec["dest_name"].Exists() {
 				// override destination file name
-				sfile = inc_spec["dest_name"].String()
+				sFile = inc_spec["dest_name"].String()
 			}
 		}
 		file_extension := filepath.Ext(filename)
-		if sfile == "" {
+		if sFile == "" {
 			if generateShortNames {
-				sbase := filepath.Base(filename)
-				sfile = sbase[0 : len(sbase)-len(file_extension)]
+				sBase := filepath.Base(filename)
+				sFile = sBase[0 : len(sBase)-len(file_extension)]
 			} else {
 				// replaces slashes with _ in multi-dir paths and replace extension with yaml
-				sfile = strings.ReplaceAll(filename[0:len(filename)-len(file_extension)], "/", "_")
+				sFile = strings.ReplaceAll(filename[0:len(filename)-len(file_extension)], "/", "_")
 			}
 		}
-		outputFile := outputDir + "/" + sfile + ".yaml"
+		outputFile := outputDir + "/" + sFile + "." + sFileExtension
 		// remember output filename for purging files
-		outputFileMap[sfile+".yaml"] = true
+		outputFileMap[sFile+"."+sFileExtension] = true
 
 		log.Debug().Str("cluster", clusterName).
 			Str("component", componentName).
 			Msg("Process file: " + filename + " -> " + outputFile)
 
 		var input string
+		var outStr string
+		var err error
 		switch file_extension {
 		case ".jsonnet":
 			// file is processed as an ExtCode input, so that we can postprocess it
 			// in the snippet
 			input = "( import '" + baseDir + "/" + compPath + "/" + filename + "')"
+			outStr, err = processJsonnet(vm, input, include.String())
+		case ".yml":
 		case ".yaml":
 			input = "std.native('parseYaml')(importstr '" + baseDir + "/" + compPath + "/" + filename + "')"
+			outStr, err = processJsonnet(vm, input, include.String())
 		default:
-			log.Fatal().Str("cluster", clusterName).
-				Str("component", componentName).
-				Str("file", filename).
-				Msg("Unsupported file extension")
+			outStr, err = "", errors.New("unsupported file extension")
 		}
-
-		vm.ExtCode("input", input)
-		j, err := vm.EvaluateAnonymousSnippet(include.String(), "std.extVar('process')(std.extVar('input'))")
 		if err != nil {
 			log.Fatal().Str("cluster", clusterName).
 				Str("component", componentName).
-				Str("file", filename).Err(err).Msg("Error evaluating jsonnet snippet")
-		}
-
-		// create output file contents in a string first, as a yaml stream
-		var o []interface{}
-		var outStr string
-		if err := json.Unmarshal([]byte(j), &o); err != nil {
-			log.Fatal().Err(err).Msg("")
-		}
-		for _, jobj := range o {
-			outStr = outStr + "---\n"
-			buf, err := goyaml.Marshal(jobj)
-			if err != nil {
-				log.Fatal().Err(err).Msg("")
-			}
-			outStr = outStr + string(buf) + "\n"
+				Str("file", filename).
+				Err(err).
+				Msg(outStr)
 		}
 
 		// only write file if it does not exist, or the generated contents does not match what is on disk
@@ -433,9 +420,9 @@ var generateCmd = &cobra.Command{
 			allClusterParams[c.Name] = renderClusterParamsOnly(cmd, c.Name, "", false)
 		}
 
-		for c, _ := range allClusterParams {
+		for c := range allClusterParams {
 			if clIncludes != "" || clExcludes != "" {
-				gjresult := gjson.Parse(allClusterParams[c])
+				gjResult := gjson.Parse(allClusterParams[c])
 				// includes
 				if clIncludes != "" {
 					// filter on cluster parameters, passed in gjson path notation with either
@@ -446,14 +433,14 @@ var generateCmd = &cobra.Command{
 						// equality match
 						kv := strings.SplitN(b, "=", 2)
 						if len(kv) == 2 {
-							if gjresult.Get(kv[0]).String() == kv[1] {
+							if gjResult.Get(kv[0]).String() == kv[1] {
 								include = true
 							}
 						} else {
 							// regex match
 							kv := strings.SplitN(b, "~", 2)
 							if len(kv) == 2 {
-								matched, _ := regexp.MatchString(kv[1], gjresult.Get(kv[0]).String())
+								matched, _ := regexp.MatchString(kv[1], gjResult.Get(kv[0]).String())
 								if matched {
 									include = true
 								}
@@ -477,14 +464,14 @@ var generateCmd = &cobra.Command{
 						// equality match
 						kv := strings.SplitN(b, "=", 2)
 						if len(kv) == 2 {
-							if gjresult.Get(kv[0]).String() == kv[1] {
+							if gjResult.Get(kv[0]).String() == kv[1] {
 								exclude = true
 							}
 						} else {
 							// regex match
 							kv := strings.SplitN(b, "~", 2)
 							if len(kv) == 2 {
-								matched, _ := regexp.MatchString(kv[1], gjresult.Get(kv[0]).String())
+								matched, _ := regexp.MatchString(kv[1], gjResult.Get(kv[0]).String())
 								if matched {
 									exclude = true
 								}
