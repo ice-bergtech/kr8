@@ -18,7 +18,7 @@ As mentioned before, kr8 is coded in [Golang](https://golang.org/) so after foll
 
 On the project root:
 
-`go build`
+`task build`
 
 Go will start downloading the dependencies to create the executable, then you will end up with the following file:
 
