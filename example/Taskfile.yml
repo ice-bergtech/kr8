@@ -1,0 +1,13 @@
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - task: build
+
+  build:
+    desc: Generate cluster configurations with kr8
+    aliases:
+      - b
+    cmds:
+      - kr8 generate
