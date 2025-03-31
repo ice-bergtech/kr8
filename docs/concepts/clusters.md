@@ -1,6 +1,11 @@
 # Clusters
 
-A cluster is a manageable cluster in kr8. Clusters are defined in a hierarchical system which is loosely inspired by [Hiera](https://puppet.com/docs/hiera/3.3/index.html) from the Puppet ecosystem.
+A cluster is a deployment environment, organized as a tree of configuration.
+Clusters are unique and singular.
+
+They have a name which is specified via the directory structure under  `./clusters` by default, or the directory specified by the `--clusterdir`, `-D` flags.
+
+Cluster configurations are defined in a hierarchical system which is loosely inspired by [Hiera](https://puppet.com/docs/hiera/3.3/index.html) from the Puppet ecosystem.
 
 An example definition for clusters might look like this:
 
@@ -107,4 +112,36 @@ clusters
 
 kr8 will look for the smallest unit of configuration, so if you want one cluster to be slightly different inside a hierarchy unit, you can continue to override components and parameters inside a clusters' `cluster.jsonnet` file.
 
+---
 
+A cluster cluster configuration file will include:
+
+|key|description|example|
+|---|---|---|
+|`_kr8_spec`| Configuration parameters for kr8 | \
+```
+_kr8_spec: {
+  generate_dir: 'generated',
+  generate_short_names: true,
+}
+```|
+| `_cluster` | Cluster configuration, which can be used as part of the Jsonnet configuration later. This consists of things like the cluster name, type, region, and other cluster specific configuration etc. |```json
+_cluster: {
+    cluster_name: 'ue1-prod',
+    cluster_type: 'k8',
+    region_name: 'us-east-1',
+    tier: 'prod',
+}
+``` |
+| `_components` | An object with a field for each component you wish into install in a cluster. |```
+_components: {
+  prometheus: { path: 'components/monitoring/prometheus' }
+  argocd: { path: 'components/ci/argocd'}
+  argo_apps: { path: 'components/ci/argo-apps'},
+}
+```|
+| `<component_name>` | Component configuration, which is modifications to a component which are specific to a cluster. An example of this might be the filename of an SSL certificate for the nginx-ingress controller, which may be different across cloud providers |```
+prometheus+: {
+  chart_version: '1.4.1',
+}
+``` |

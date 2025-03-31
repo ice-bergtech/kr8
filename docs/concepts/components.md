@@ -1,6 +1,9 @@
 # Components
 
 A component is a deployable unit that you wish to install in one or more clusters.
+Components can be declared multiple times within a cluster, as long as they are named distinctly.
+
+In a kr8 project, components are defined in `./components` by default, or the directory specified by the `--componentdir`, `-X` flags.
 
 Your component might begin life before kr8 in one of a few ways:
 

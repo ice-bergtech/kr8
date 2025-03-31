@@ -44,60 +44,21 @@ A typical repo that uses kr8 will have the following parts:
 A cluster is a Kubernetes cluster running in a cloud provider, datacenter or elsewhere.
 You will more than likely have multiple clusters across multiple environments and regions.
 
-A cluster cluster configuration file will include:
-
-|key|description|example|
-|---|---|---|
-|`_kr8_spec`| Configuration parameters for kr8 | \
-```
-_kr8_spec: {
-  generate_dir: 'generated',
-  generate_short_names: true,
-}
-```|
-| `_cluster` | Cluster configuration, which can be used as part of the Jsonnet configuration later. This consists of things like the cluster name, type, region, and other cluster specific configuration etc. |```json
-_cluster: {
-    cluster_name: 'ue1-prod',
-    cluster_type: 'k8',
-    region_name: 'us-east-1',
-    tier: 'prod',
-}
-``` |
-| `_components` | An object with a field for each component you wish into install in a cluster. |```
-_components: {
-  prometheus: { path: 'components/monitoring/prometheus' }
-  argocd: { path: 'components/ci/argocd'}
-  argo_apps: { path: 'components/ci/argo-apps'},
-}
-```|
-| `<component_name>` | Component configuration, which is modifications to a component which are specific to a cluster. An example of this might be the filename of an SSL certificate for the nginx-ingress controller, which may be different across cloud providers |```
-prometheus+: {
-  chart_version: '1.4.1',
-}
-``` |
-
+See the [Clusters](docs/concepts/clusters.md) documentation.
 
 ### Component
 
-A component is something you install in your cluster to make it function and work as you expect. Some examples of components might be:
+A component is something you install in your cluster to make it function and work as you expect.
+Some examples of components might be:
 
- - [cert-manager](https://github.com/jetstack/cert-manager)
- - [nginx-ingress](https://github.com/kubernetes/ingress-nginx)
- - [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets)
+- cluster core resources: [cert-manager](https://github.com/jetstack/cert-manager) or [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets)
+- argo applications: generate argo cd applications for manageing applying cluster configuration to live nodes
+- application: a single application that you want to run in your cluster. This is usually a web application, but it can also be a database, cron job, or documentation.
 
-Components are _not_ the applications you want to run in your cluster.
+Components are applications you want to run in your cluster.
 Components are generally applications you'd run in your cluster to make those applications function and work as expected.
-Individual applications are usually configured and added separately, through automation such as argo.
 
-| Field | Description | Example |
-|---|---|---|
-| `kr8_spec` | | ```
-kr8_spec: {
-  includes: ['some-file.jsonnet', 'some-file.yml']
-}
-``` |
-| `release_name` |
-| `namespace` | 
+See the [Components](docs/concepts/components.md) documentation.
 
 ### Jsonnet
 
