@@ -20,7 +20,7 @@
 
 package main
 
-import "github.com/apptio/kr8/cmd"
+import "github.com/ice-bergtech/kr8/cmd"
 
 var version = "snapshot"
 
