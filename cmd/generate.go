@@ -62,6 +62,25 @@ func processJsonnet(vm *jsonnet.VM, input string, include string) (string, error
 	return outStr, nil
 }
 
+func processTemplate(filename string, data map[string]gjson.Result) (string, error) {
+	var tInput []byte
+	var tmpl *template.Template
+	var buffer bytes.Buffer
+	var err error
+	tInput, err = os.ReadFile(filename)
+	if err != nil {
+		return "Error loading template", err
+	}
+	tmpl, err = template.New("file").Parse(string(tInput))
+	if err != nil {
+		return "Error parsing template", err
+	}
+	if err = tmpl.Execute(&buffer, data); err != nil {
+		return "Error executing templating", err
+	}
+	return buffer.String(), nil
+}
+
 func genProcessCluster(cmd *cobra.Command, clusterName string, p *ants.Pool) {
 	log.Debug().Str("cluster", clusterName).Msg("Process cluster")
 
@@ -281,6 +300,10 @@ func genProcessComponent(cmd *cobra.Command, clusterName string, componentName s
 				// override destination file name
 				sFile = inc_spec["dest_name"].String()
 			}
+			if inc_spec["dest_ext"].Exists() {
+				// override destination file name
+				sFileExtension = inc_spec["dest_ext"].String()
+			}
 		}
 		file_extension := filepath.Ext(filename)
 		if sFile == "" {
@@ -313,6 +336,10 @@ func genProcessComponent(cmd *cobra.Command, clusterName string, componentName s
 		case ".yaml":
 			input = "std.native('parseYaml')(importstr '" + baseDir + "/" + compPath + "/" + filename + "')"
 			outStr, err = processJsonnet(vm, input, include.String())
+		case ".tmpl":
+		case ".tpl":
+			// Pass component config as data for the template
+			outStr, err = processTemplate(baseDir+"/"+compPath+"/"+filename, gjson.Get(config, componentName).Map())
 		default:
 			outStr, err = "", errors.New("unsupported file extension")
 		}
