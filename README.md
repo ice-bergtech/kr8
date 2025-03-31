@@ -106,6 +106,12 @@ Jsonnet was chosen because it allows us to use code for configuration, while sta
 
 ## Building
 
+```sh
+go build
+# or
+task build-snapshot
+```
+
 See the [Building](docs/building.md) documentation.
 
 ## Contributing
