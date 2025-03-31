@@ -170,13 +170,9 @@ func genProcessComponent(cmd *cobra.Command, clusterName string, componentName s
 	spec := gjson.Get(config, componentName+".kr8_spec").Map()
 	compPath := gjson.Get(config, "_components."+componentName+".path").String()
 
-	// spec is missing?
-	if len(spec) == 0 {
-		log.Fatal().Str("cluster", clusterName).
-			Str("component", componentName).
-			Msg("Component has no kr8_spec")
-		return
-	}
+	//specd := gjson.Get(config, componentName+".kr8_spec")
+	//compSpec, err := CreateClusterSpec(specd)
+	//fatalErrorCheck(err, "Issues parsing cluster spec")
 
 	// it's faster to create this VM for each component, rather than re-use
 	vm, _ := JsonnetVM(cmd)
