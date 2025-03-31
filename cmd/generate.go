@@ -70,37 +70,9 @@ func genProcessCluster(cmd *cobra.Command, clusterName string, p *ants.Pool) {
 	clusterComponents := gjson.Parse(renderJsonnet(cmd, params, "._components", true, "", "clustercomponents")).Map()
 
 	// get kr8 settings for cluster
-	kr8Spec := gjson.Parse(renderJsonnet(cmd, params, "._kr8_spec", false, "", "kr8_spec"))
-	postProcessorFunction := kr8Spec.Get("postprocessor").String()
+	kr8Spec, err := CreateClusterSpec(cmd, clusterName, gjson.Parse(renderJsonnet(cmd, params, "._kr8_spec", false, "", "kr8_spec")))
+	fatalErrorCheck(err, "Error creating kr8Spec")
 
-	var clGenerateDir string
-	if generateDir == "" {
-		clGenerateDir = kr8Spec.Get("generate_dir").String()
-		if clGenerateDir == "" {
-			log.Fatal().Msg("_kr8_spec.generate_dir must be set in parameters or passed as generate-dir flag")
-		}
-	} else {
-		clGenerateDir = generateDir
-	}
-	if !strings.HasPrefix(clGenerateDir, "/") {
-		// if generateDir does not start with /, then it goes in baseDir
-		clGenerateDir = baseDir + "/" + clGenerateDir
-	}
-	clusterDir := clGenerateDir + "/" + clusterName
-
-	// if this is true, we don't use the full file path to generate output file names
-	generateShortNames := kr8Spec.Get("generate_short_names").Bool()
-
-	// if this is true, we prune component parameters
-	pruneParams := kr8Spec.Get("prune_params").Bool()
-
-	// create generateDir
-	if _, err := os.Stat(clGenerateDir); os.IsNotExist(err) {
-		err = os.MkdirAll(clGenerateDir, os.ModePerm)
-		if err != nil {
-			log.Fatal().Err(err).Msg("")
-		}
-	}
 	// create cluster dir
 	if _, err := os.Stat(kr8Spec.ClusterDir); os.IsNotExist(err) {
 		err = os.MkdirAll(kr8Spec.ClusterDir, os.ModePerm)
@@ -116,48 +88,7 @@ func genProcessCluster(cmd *cobra.Command, clusterName string, p *ants.Pool) {
 	fatalErrorCheck(err, "Error reading directories")
 
 	// determine list of components to process
-	var compList []string
-	var currentCompList []string
-
-	if components != "" {
-		// only process specified component if it's defined in the cluster
-		for _, b := range strings.Split(components, ",") {
-			for _, c := range generatedCompList {
-				matched, _ := regexp.MatchString("^"+b+"$", c)
-				if matched {
-					currentCompList = append(currentCompList, c)
-				}
-			}
-			for c, _ := range clusterComponents {
-				matched, _ := regexp.MatchString("^"+b+"$", c)
-				if matched {
-					compList = append(compList, c)
-				}
-			}
-		}
-	} else {
-		for c, _ := range clusterComponents {
-			compList = append(compList, c)
-		}
-		currentCompList = generatedCompList
-	}
-	sort.Strings(compList) // process components in sorted order
-
-	// Sort out orphaned generated components directories
-	tmpMap := make(map[string]struct{}, len(clusterComponents))
-	for e, _ := range clusterComponents {
-		tmpMap[e] = struct{}{}
-	}
-
-	for _, e := range currentCompList {
-		if _, found := tmpMap[e]; !found {
-			delcomp := filepath.Join(clusterDir, e)
-			os.RemoveAll(delcomp)
-			log.Info().Str("cluster", clusterName).
-				Str("component", e).
-				Msg("Deleting generated for component")
-		}
-	}
+	compList := buildComponentList(generatedCompList, clusterComponents, kr8Spec.ClusterDir, clusterName)
 
 	if len(compList) == 0 { // this needs to be moved so purging above works first
 		return
@@ -175,14 +106,61 @@ func genProcessCluster(cmd *cobra.Command, clusterName string, p *ants.Pool) {
 		cName := componentName
 		_ = p.Submit(func() {
 			defer wg.Done()
-			genProcessComponent(cmd, clusterName, cName, clusterDir, clGenerateDir, config, &allconfig, postProcessorFunction, pruneParams, generateShortNames)
+			genProcessComponent(cmd, clusterName, cName, kr8Spec.ClusterDir, kr8Spec.GenerateDir, config, &allconfig, kr8Spec.PostProcessor, kr8Spec.PruneParams, kr8Spec.GenerateShortNames)
 		})
 	}
 	wg.Wait()
 
 }
 
-func genProcessComponent(cmd *cobra.Command, clusterName string, componentName string, clusterDir string, clGenerateDir string, config string, allconfig *safeString, postProcessorFunction string, pruneParams bool, generateShortNames bool) {
+// Only processes specified component if it's defined in the cluster
+// Processes components in string sorted order
+// Sorts out orphaned, generated components directories
+func buildComponentList(generatedCompList []string, clusterComponents map[string]gjson.Result, clusterDir string, clusterName string) []string {
+	var compList []string
+	var currentCompList []string
+
+	if components != "" {
+		for _, b := range strings.Split(components, ",") {
+			for _, c := range generatedCompList {
+				matched, _ := regexp.MatchString("^"+b+"$", c)
+				if matched {
+					currentCompList = append(currentCompList, c)
+				}
+			}
+			for c := range clusterComponents {
+				matched, _ := regexp.MatchString("^"+b+"$", c)
+				if matched {
+					compList = append(compList, c)
+				}
+			}
+		}
+	} else {
+		for c := range clusterComponents {
+			compList = append(compList, c)
+		}
+		currentCompList = generatedCompList
+	}
+	sort.Strings(compList)
+
+	tmpMap := make(map[string]struct{}, len(clusterComponents))
+	for e := range clusterComponents {
+		tmpMap[e] = struct{}{}
+	}
+
+	for _, e := range currentCompList {
+		if _, found := tmpMap[e]; !found {
+			delComp := filepath.Join(clusterDir, e)
+			os.RemoveAll(delComp)
+			log.Info().Str("cluster", clusterName).
+				Str("component", e).
+				Msg("Deleting generated for component")
+		}
+	}
+	return compList
+}
+
+func genProcessComponent(cmd *cobra.Command, clusterName string, componentName string, clusterDir string, clGenerateDir string, config string, allConfig *safeString, postProcessorFunction string, pruneParams bool, generateShortNames bool) {
 
 	log.Info().Str("cluster", clusterName).
 		Str("component", componentName).
