@@ -112,10 +112,9 @@ Each directory string will be passed to the jsonnet vm during processing.
 
 ## Taskfile
 
-A taskfile within the component directory can be extermely useful for managing the lifecycle of components, especially when dealing with dependencies and version management with more involved updates.
-
-  - fetch - a manually run task which downloads all the components' dependencies (for example, helm chart or static manifest)
-
+A taskfile within the component directory can help manage the lifecycle of components, especially when dealing with dependencies and version management for more complex updates.
+A common practice is to create a `fetch` task that downloads all dependencies (e.g., Helm charts or static manifests).
+It can also perform other preparation steps like removing files or resources that are not required.
 
 These tasks will be highly dependent on the particular component - for example, a component using a helm chart will generally have a different set of fetch and generate tasks to a component using a static manifest.
 
