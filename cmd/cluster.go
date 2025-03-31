@@ -78,16 +78,16 @@ var paramsCmd = &cobra.Command{
 			log.Fatal().Msg("Please specify a --cluster name and/or --clusterparams")
 		}
 
-		var clist []string
+		var cList []string
 		if componentName != "" {
-			clist = append(clist, componentName)
+			cList = append(cList, componentName)
 		}
-		j := renderClusterParams(cmd, clusterName, clist, clusterParams, false)
+		j := renderClusterParams(cmd, clusterName, cList, clusterParams, false)
 
 		if paramPath != "" {
 			value := gjson.Get(j, paramPath)
-			notunset, _ := cmd.Flags().GetBool("notunset")
-			if notunset && value.String() == "" {
+			notUnset, _ := cmd.Flags().GetBool("notunset")
+			if notUnset && value.String() == "" {
 				log.Fatal().Msg("Error getting param: " + paramPath)
 			} else {
 				fmt.Println(value) // no formatting because this isn't always json, this is just the value of a field

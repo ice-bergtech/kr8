@@ -24,9 +24,8 @@ import (
 	"os"
 
 	"github.com/hashicorp/go-getter"
-	"github.com/spf13/cobra"
-	//"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -48,7 +47,7 @@ var repoCmd = &cobra.Command{
 	Use:   "repo dir",
 	Args:  cobra.MinimumNArgs(1),
 	Short: "Initialize a new kr8 config repo",
-	Long: `Initialize a new kr8 config repo by downloading the kr8 config skeletion repo
+	Long: `Initialize a new kr8 config repo by downloading the kr8 config skeleton repo
 and initialize a git repo so you can get started`,
 	Run: func(cmd *cobra.Command, args []string) {
 
