@@ -30,7 +30,7 @@ dockers:
     image_templates: 
       - 'ghcr.io/apptio/kr8:{{ .Tag }}'
       - 'ghcr.io/apptio/kr8:latest'
-    dockerfile: Dockerfile-goreleaser
+    dockerfile: docker/Dockerfile-goreleaser
     build_flag_templates:
       - "--label=org.label-schema.schema-version=1.0"
       - "--label=org.label-schema.version={{.Version}}"
