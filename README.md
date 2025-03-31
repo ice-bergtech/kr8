@@ -1,30 +1,33 @@
-# kr8
+# kr8+
 
-kr8 is a very opinionated tool used for rendering [jsonnet](http://jsonnet.org) manifests for multiple Kubernetes clusters.
+kr8+ is a fork of [kr8](https://github.com/apptio/kr8) with some additional features and improvements.
+kr8 was used in production to great success at Apptio for managing components of multiple Kubernetes clusters.
+
+kr8+ is a very opinionated tool used for rendering [jsonnet](http://jsonnet.org) manifests for multiple Kubernetes clusters.
 
 It has been designed to work as a simple configuration management framework, allowing operators to specify configurations at different cluster context levels to generate component manifests across multiple clusters.
-
-kr8 is a work in progress (currently in Alpha), but is in use at Apptio for managing components of multiple Kubernetes clusters.
 
 ## Features
 
  - Generate and customize component configuration for Kubernetes clusters across environments, regions and platforms
- - Opinionated config, flexible deployment. kr8 simply generates manifests for you, you decide how to deploy them
+ - Opinionated config, flexible deployment. kr8+ simply generates manifests for you, you decide how to deploy them
  - Render and override component config from multiple sources, such as Helm, Kustomize and static manifests
  - CI/CD friendly
 
-For more information about the inspiration and the problem kr8 solves, check out this [blog post](https://leebriggs.co.uk/blog/2018/05/08/kubernetes-config-mgmt.html).
+For more information about the inspiration and the problem kr8+ solves, check out this [blog post](https://leebriggs.co.uk/blog/2018/05/08/kubernetes-config-mgmt.html).
 
-kr8 consists of:
+kr8+ consists of:
 
- - kr8 - a Go binary for rendering manifests
+ - kr8+ - a Go binary for rendering manifests
  - jsonnet - [go-jsonnet](https://pkg.go.dev/github.com/google/go-jsonnet) `v0.20.0`
  - template - [text/template](https://pkg.go.dev/text/template#hdr-Text_and_spaces)
 
-kr8 is not designed to be a tool to help you install and deploy applications. It's specifically designed to manage and maintain configuration for the cluster level services. For more information, see the [components](docs/components) section.
+kr8+ is not designed to be a tool to help you install and deploy applications.
+It's specifically designed to manage and maintain configuration for the cluster level services.
+For more information, see the [components](docs/components) section.
 
 In order to use kr8, you'll need a configuration repository to go with this binary. 
-See the [example](https://github.com/apptio/kr8-configs) repo for more information.
+See the [example](./example/) directory for more information.
 
 ## Concepts & Tools
 
