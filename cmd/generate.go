@@ -102,24 +102,18 @@ func genProcessCluster(cmd *cobra.Command, clusterName string, p *ants.Pool) {
 		}
 	}
 	// create cluster dir
-	if _, err := os.Stat(clusterDir); os.IsNotExist(err) {
-		err = os.MkdirAll(clusterDir, os.ModePerm)
-		if err != nil {
-			log.Fatal().Err(err).Msg("")
-		}
+	if _, err := os.Stat(kr8Spec.ClusterDir); os.IsNotExist(err) {
+		err = os.MkdirAll(kr8Spec.ClusterDir, os.ModePerm)
+		fatalErrorCheck(err, "Error creating cluster generateDir")
 	}
 
 	// list of current generated components directories
-	d, err := os.Open(clusterDir)
-	if err != nil {
-		log.Fatal().Err(err).Msg("")
-	}
+	d, err := os.Open(kr8Spec.ClusterDir)
+	fatalErrorCheck(err, "Error opening clusterDir")
 	defer d.Close()
 	read_all_dirs := -1
 	generatedCompList, err := d.Readdirnames(read_all_dirs)
-	if err != nil {
-		log.Fatal().Err(err).Msg("")
-	}
+	fatalErrorCheck(err, "Error reading directories")
 
 	// determine list of components to process
 	var compList []string
@@ -265,24 +259,20 @@ func genProcessComponent(cmd *cobra.Command, clusterName string, componentName s
 
 	// file imports
 	for k, v := range spec["extfiles"].Map() {
-		vpath := baseDir + "/" + compPath + "/" + v.String() // use full path for file
-		extfile, err := ioutil.ReadFile(vpath)
-		if err != nil {
-			log.Fatal().Err(err).Msg("Error importing extfile")
-		}
+		vPath := baseDir + "/" + compPath + "/" + v.String() // use full path for file
+		extFile, err := os.ReadFile(vPath)
+		fatalErrorCheck(err, "Error importing extfiles item")
 		log.Debug().Str("cluster", clusterName).
 			Str("component", componentName).
 			Msg("Extfile: " + k + "=" + v.String())
-		vm.ExtVar(k, string(extfile))
+		vm.ExtVar(k, string(extFile))
 	}
 
 	componentDir := clusterDir + "/" + componentName
 	// create component dir if needed
 	if _, err := os.Stat(componentDir); os.IsNotExist(err) {
 		err := os.MkdirAll(componentDir, os.ModePerm)
-		if err != nil {
-			log.Fatal().Err(err).Msg("")
-		}
+		fatalErrorCheck(err, "Error creating component directory")
 	}
 
 	outputFileMap := make(map[string]bool)
@@ -309,9 +299,7 @@ func genProcessComponent(cmd *cobra.Command, clusterName string, componentName s
 				// ensure this directory exists
 				if _, err := os.Stat(outputDir); os.IsNotExist(err) {
 					err = os.MkdirAll(outputDir, os.ModePerm)
-					if err != nil {
-						log.Fatal().Err(err).Msg("")
-					}
+					fatalErrorCheck(err, "Error creating alternate directory")
 				}
 			}
 			if inc_spec["dest_name"].Exists() {
@@ -383,10 +371,8 @@ func genProcessComponent(cmd *cobra.Command, clusterName string, componentName s
 				Msg("Creating " + outputFile)
 			updateNeeded = true
 		} else {
-			currentContents, err := ioutil.ReadFile(outputFile)
-			if err != nil {
-				log.Fatal().Err(err).Msg("Error reading file")
-			}
+			currentContents, err := os.ReadFile(outputFile)
+			fatalErrorCheck(err, "Error reading file")
 			if string(currentContents) != outStr {
 				updateNeeded = true
 				log.Debug().Str("cluster", clusterName).
@@ -396,44 +382,33 @@ func genProcessComponent(cmd *cobra.Command, clusterName string, componentName s
 		}
 		if updateNeeded {
 			f, err := os.Create(outputFile)
-			if err != nil {
-				log.Fatal().Err(err).Msg("")
-			}
-			defer f.Close()
+			fatalErrorCheck(err, "Error creating file")
+			//defer f.Close()
 			_, err = f.WriteString(outStr)
-			if err != nil {
-				log.Fatal().Err(err).Msg("")
-			}
-
 			f.Close()
+			fatalErrorCheck(err, "Error writing to file")
 		}
 	}
 	// purge any yaml files in the output dir that were not generated
 	if !spec["disable_output_clean"].Bool() {
 		// clean component dir
 		d, err := os.Open(componentDir)
-		if err != nil {
-			log.Fatal().Err(err).Msg("")
-		}
+		fatalErrorCheck(err, "")
 		defer d.Close()
 		names, err := d.Readdirnames(-1)
-		if err != nil {
-			log.Fatal().Err(err).Msg("")
-		}
+		fatalErrorCheck(err, "")
 		for _, name := range names {
 			if _, ok := outputFileMap[name]; ok {
 				// file is managed
 				continue
 			}
 			if filepath.Ext(name) == ".yaml" {
-				delfile := filepath.Join(componentDir, name)
-				err = os.RemoveAll(delfile)
-				if err != nil {
-					log.Fatal().Err(err).Msg("")
-				}
+				delFile := filepath.Join(componentDir, name)
+				err = os.RemoveAll(delFile)
+				fatalErrorCheck(err, "")
 				log.Debug().Str("cluster", clusterName).
 					Str("component", componentName).
-					Msg("Deleted: " + delfile)
+					Msg("Deleted: " + delFile)
 			}
 		}
 		d.Close()
@@ -453,9 +428,7 @@ var generateCmd = &cobra.Command{
 		// get list of all clusters, render cluster level params for all of them
 		allClusterParams = make(map[string]string)
 		allClusters, err := getClusters(clusterDir)
-		if err != nil {
-			log.Fatal().Err(err).Msg("Error getting list of clusters")
-		}
+		fatalErrorCheck(err, "Error getting list of clusters")
 		for _, c := range allClusters.Cluster {
 			allClusterParams[c.Name] = renderClusterParamsOnly(cmd, c.Name, "", false)
 		}
@@ -546,14 +519,12 @@ var generateCmd = &cobra.Command{
 
 		var wg sync.WaitGroup
 		parallel, err := cmd.Flags().GetInt("parallel")
-		if err != nil {
-			log.Fatal().Err(err).Msg("")
-		}
+		fatalErrorCheck(err, "Failed to get parallel flag")
 		log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
-
 		ants_cp, _ := ants.NewPool(parallel)
 		ants_cl, _ := ants.NewPool(parallel)
 
+		// Generate config for each cluster in parallel
 		for _, clusterName := range clusterList {
 			wg.Add(1)
 			cl := clusterName
