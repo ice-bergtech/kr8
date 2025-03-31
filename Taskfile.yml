@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 tasks:
   default:
@@ -7,11 +7,15 @@ tasks:
 
   build:
     desc: Build kr8 for your local system
+    aliases:
+      - b
     cmds:
       - go build
 
   build-snapshot:
     desc: Build a snapshot for all platforms using goreleaser
+    aliases:
+      - bs
     cmds:
       - goreleaser release --snapshot --clean --skip=homebrew,docker
 
