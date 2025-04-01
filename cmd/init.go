@@ -23,14 +23,21 @@ package cmd
 import (
 	"os"
 
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/hashicorp/go-getter"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
 var (
-	dl_url   string
-	real_url string
+	dl_url          string
+	real_url        string
+	initClName      string
+	initClPath      string
+	initCoName      string
+	initCoPath      string
+	initCoType      string
+	initInteractive bool
 )
 
 // initCmd represents the init command
@@ -41,6 +48,96 @@ var initCmd = &cobra.Command{
 This init command helps in creating directory structure for repos, clusters and 
 components`,
 	//Run: func(cmd *cobra.Command, args []string) {},
+}
+
+var initCluster = &cobra.Command{
+	Use:   "cluster",
+	Short: "Init a cluster config file",
+	Long:  "Initialize a new cluster configuration file",
+	Run: func(cmd *cobra.Command, args []string) {
+		cSpec := ClusterSpec{
+			Name:               initClName,
+			ClusterDir:         initClPath,
+			PostProcessor:      "function(input) input",
+			GenerateDir:        "generated",
+			GenerateShortNames: false,
+			PruneParams:        false,
+		}
+		// Get cluster name, path from user if not set
+		if initInteractive {
+			prompt := &survey.Input{
+				Message: "Set the cluster name",
+				Default: initClName,
+			}
+			survey.AskOne(prompt, &cSpec.Name)
+
+			prompt = &survey.Input{
+				Message: "Set the cluster path",
+				Default: initClPath,
+			}
+			survey.AskOne(prompt, &cSpec.ClusterDir)
+
+			promptB := &survey.Confirm{
+				Message: "Generate short names for output file names?",
+				Default: cSpec.GenerateShortNames,
+			}
+			survey.AskOne(promptB, &cSpec.GenerateShortNames)
+
+			promptB = &survey.Confirm{
+				Message: "Prune component parameters?",
+				Default: cSpec.PruneParams,
+			}
+			survey.AskOne(promptB, &cSpec.PruneParams)
+
+			prompt = &survey.Input{
+				Message: "Set the cluster spec post-processor",
+				Default: cSpec.PostProcessor,
+			}
+			survey.AskOne(prompt, &cSpec.PostProcessor)
+		}
+		// place final cluster.jsonnet file in output path
+	},
+}
+
+var initComponent = &cobra.Command{
+	Use:   "component",
+	Short: "Init a component config file",
+	Long:  "Initialize a new component configuration file",
+	Run: func(cmd *cobra.Command, args []string) {
+		compSpec := ComponentSpec{
+			Kr8_allparams:         false,
+			Kr8_allclusters:       false,
+			DisableOutputDirClean: false,
+			Includes:              []interface{}{},
+			ExtFiles:              map[string]string{},
+			JPaths:                []string{},
+		}
+		// Get component name, path and type from user if not set
+		if initInteractive {
+			prompt := &survey.Input{
+				Message: "Enter component name",
+				Default: initCoName,
+			}
+			survey.AskOne(prompt, &initCoName)
+
+			prompt = &survey.Input{
+				Message: "Enter component path",
+				Default: initCoPath,
+			}
+			survey.AskOne(prompt, &initCoPath)
+
+			promptS := &survey.Select{
+				Message: "Select component type",
+				Options: []string{"jsonnet", "yml", "chart"},
+			}
+			survey.AskOne(promptS, &initCoType)
+		}
+		// Generate default component kr8_spec values and store in params.jsonnet
+		// Based on the type:
+		// jsonnet: create a component.jsonnet file and reference it from the params.jsonnet file
+		// yml: leave a note in the params.jsonnet file about where and how the yml files can be referenced
+		// chart: generate a simple taskfile that handles vendoring the chart data
+	},
 }
 
 var repoCmd = &cobra.Command{
@@ -91,7 +188,18 @@ and initialize a git repo so you can get started`,
 func init() {
 	RootCmd.AddCommand(initCmd)
 	initCmd.AddCommand(repoCmd)
+	initCmd.AddCommand(initCluster)
+	initCmd.AddCommand(initComponent)
+
+	initCmd.Flags().Bool(&initInteractive, "interactive", "i", false)
 
 	repoCmd.PersistentFlags().StringVar(&dl_url, "url", "", "Source of skeleton directory to create repo from")
+
+	initCluster.Flags().StringVarP(&initClName, "name", "", "cluster-tpl", "Cluster name")
+	initCluster.Flags().StringVarP(&initClPath, "path", "", "clusters", "Cluster path")
+
+	initComponent.Flags().StringVarP(&initCoName, "name", "", "component-tpl", "Component name")
+	initComponent.Flags().StringVarP(&initCoPath, "path", "", "components", "Component path")
+	initComponent.Flags().StringVarP(&initCoType, "type", "", "jsonnet", "Component type, one of: [`jsonnet`, `yml`, `chart`]")
 
 }
