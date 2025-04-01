@@ -21,7 +21,9 @@
 package cmd
 
 import (
+	"encoding/json"
 	"os"
+	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/hashicorp/go-getter"
@@ -138,14 +140,6 @@ var initComponent = &cobra.Command{
 	Short: "Init a component config file",
 	Long:  "Initialize a new component configuration file",
 	Run: func(cmd *cobra.Command, args []string) {
-		compSpec := ComponentSpec{
-			Kr8_allparams:         false,
-			Kr8_allclusters:       false,
-			DisableOutputDirClean: false,
-			Includes:              []interface{}{},
-			ExtFiles:              map[string]string{},
-			JPaths:                []string{},
-		}
 		// Get component name, path and type from user if not set
 		if initInteractive {
 			prompt := &survey.Input{
@@ -162,16 +156,54 @@ var initComponent = &cobra.Command{
 
 			promptS := &survey.Select{
 				Message: "Select component type",
-				Options: []string{"jsonnet", "yml", "chart"},
+				Options: []string{"jsonnet", "yml", "tpl", "chart"},
 			}
 			survey.AskOne(promptS, &initCoType)
 		}
-		// Generate default component kr8_spec values and store in params.jsonnet
-		// Based on the type:
-		// jsonnet: create a component.jsonnet file and reference it from the params.jsonnet file
-		// yml: leave a note in the params.jsonnet file about where and how the yml files can be referenced
-		// chart: generate a simple taskfile that handles vendoring the chart data
+		generateComponentJsonnet()
 	},
+}
+
+// Generate default component kr8_spec values and store in params.jsonnet
+// Based on the type:
+// jsonnet: create a component.jsonnet file and reference it from the params.jsonnet file
+// yml: leave a note in the params.jsonnet file about where and how the yml files can be referenced
+// chart: generate a simple taskfile that handles vendoring the chart data
+func generateComponentJsonnet() error {
+
+	compJson := ComponentJsonnet{
+		Kr8Spec: ComponentSpec{
+			Kr8_allparams:         false,
+			Kr8_allclusters:       false,
+			DisableOutputDirClean: false,
+			Includes:              []interface{}{},
+			ExtFiles:              map[string]string{},
+			JPaths:                []string{},
+		},
+		ReleaseName: strings.ReplaceAll(initCoName, "_", "-"),
+		Namespace:   "Default",
+		Version:     "1.0.0",
+	}
+	switch initCoType {
+	case "jsonnet":
+		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, "component.jsonnet")
+	case "yml":
+		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, IncludeFileEntryStruct{File: "input.yml", DestName: "glhf"})
+	case "tpl":
+		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, IncludeFileEntryStruct{File: "README.tpl", DestDir: "docs", DestExt: "md"})
+	case "chart":
+		break
+	default:
+		break
+	}
+
+	filename := "params.jsonnet"
+	componentDir := clusterDir + "/" + initCoName
+	if initCoPath != "" {
+		componentDir = initCoPath
+	}
+
+	return writeInitializedStruct(filename, componentDir, compJson)
 }
 
 var repoCmd = &cobra.Command{
