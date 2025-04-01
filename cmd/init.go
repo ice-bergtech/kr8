@@ -40,7 +40,7 @@ components`,
 
 var initCluster = &cobra.Command{
 	Use:   "cluster",
-	Short: "Init a cluster config file",
+	Short: "Init a new cluster config file",
 	Long:  "Initialize a new cluster configuration file",
 	Run: func(cmd *cobra.Command, args []string) {
 		cSpec := ClusterSpec{
@@ -117,7 +117,7 @@ func generateClusterJsonnet(cSpec ClusterSpec) error {
 
 var initComponent = &cobra.Command{
 	Use:   "component",
-	Short: "Init a component config file",
+	Short: "Init a new component config file",
 	Long:  "Initialize a new component configuration file",
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get component name, path and type from user if not set
