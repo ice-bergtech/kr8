@@ -24,6 +24,15 @@ tasks:
       KR8: '../kr8'
     cmds:
       - ./TEST_ALL.sh
+  
+  setup-tests:
+    aliases:
+      - st
+    dir: ./bats-test
+    env:
+      KR8: '../kr8'
+    cmds:
+      - ./GEN_ALL.sh
 
   build:
     desc: Build kr8 for your local system
