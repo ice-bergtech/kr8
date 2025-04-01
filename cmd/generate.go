@@ -246,10 +246,13 @@ func processJsonnet(vm *jsonnet.VM, input string, include string) (string, error
 	var o []interface{}
 	var outStr string
 	fatalErrorCheck(json.Unmarshal([]byte(j), &o), "Error unmarshalling jsonnet output to go slice")
-	for _, jObj := range o {
+	for i, jObj := range o {
 		buf, err := goyaml.Marshal(jObj)
 		fatalErrorCheck(err, "Error marshalling jsonnet object to yaml")
-		outStr = outStr + string(buf) + "\n---\n"
+		if i > 0 {
+			outStr = outStr + "\n---\n"
+		}
+		outStr = outStr + string(buf)
 	}
 	return outStr, nil
 }
