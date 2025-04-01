@@ -95,7 +95,7 @@ CLUSTER=bats
 # FIXME: stacktrace if we call a component that doesn't exist in the --clusterparams file
 #        even if that component exists and has its own params
 #        Only the clusterprams file gets used, even blanking other params
-@test "Check jsonnet parsing with --clusterparams" {
+@test "Check jsonnet parsing with --clusterparams FAIL" {
   #expected=$(<expected/jsonnet_comp2_with_file_stream)
   run $KR8 $KR8_ARGS jsonnet render -c comp1 -F stream data/components/comp2/comp1_list.jsonnet \
     --clusterparams data/misc/cluster_params.jsonnet
