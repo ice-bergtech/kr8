@@ -1,4 +1,4 @@
-// Copyright © 2019 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2019 kubecfg Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,6 +36,24 @@ var getCmd = &cobra.Command{
 var (
 	printRaw bool
 )
+
+func init() {
+	RootCmd.AddCommand(getCmd)
+	getCmd.PersistentFlags().StringVarP(&clusterParams, "clusterparams", "", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
+
+	// clusters
+	getCmd.AddCommand(getClustersCmd)
+	getClustersCmd.PersistentFlags().BoolVarP(&printRaw, "raw", "r", false, "If true, just prints result instead of placing in table.")
+	// components
+	getCmd.AddCommand(getComponentsCmd)
+	getComponentsCmd.PersistentFlags().StringVarP(&cluster, "cluster", "C", "", "get components for cluster")
+	// params
+	getCmd.AddCommand(getParamsCmd)
+	getParamsCmd.PersistentFlags().StringVarP(&cluster, "cluster", "C", "", "get components for cluster")
+	getParamsCmd.PersistentFlags().StringVarP(&componentName, "component", "c", "", "component to render params for")
+	getParamsCmd.Flags().StringVarP(&paramPath, "param", "P", "", "return value of json param from supplied path")
+
+}
 
 var getClustersCmd = &cobra.Command{
 	Use:   "clusters",
@@ -77,7 +95,7 @@ var getComponentsCmd = &cobra.Command{
 	Long:  "Get all available components defined in the kr8 config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		viper.BindPFlag("cluster", clusterCmd.PersistentFlags().Lookup("cluster"))
+		viper.BindPFlag("cluster", getCmd.PersistentFlags().Lookup("cluster"))
 		clusterName := viper.GetString("cluster")
 
 		if clusterName == "" && clusterParams == "" {
@@ -142,22 +160,4 @@ var getParamsCmd = &cobra.Command{
 		}
 
 	},
-}
-
-func init() {
-	RootCmd.AddCommand(getCmd)
-
-	// clusters
-	getCmd.AddCommand(getClustersCmd)
-	getClustersCmd.PersistentFlags().BoolVarP(&printRaw, "raw", "r", false, "If true, just prints result instead of placing in table.")
-	getClustersCmd.PersistentFlags().StringVarP(&clusterParams, "clusterparams", "", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
-	// components
-	getCmd.AddCommand(getComponentsCmd)
-	getComponentsCmd.PersistentFlags().StringVarP(&cluster, "cluster", "C", "", "get components for cluster")
-	// params
-	getCmd.AddCommand(getParamsCmd)
-	getParamsCmd.PersistentFlags().StringVarP(&cluster, "cluster", "C", "", "get components for cluster")
-	getParamsCmd.PersistentFlags().StringVarP(&componentName, "component", "c", "", "component to render params for")
-	getParamsCmd.Flags().StringVarP(&paramPath, "param", "P", "", "return value of json param from supplied path")
-
 }
