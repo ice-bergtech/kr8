@@ -2,7 +2,7 @@
 
 set -e
 
-for i in cluster get jsonnet yaml; do
+for i in cluster get jsonnet; do
   echo "Generating expected output for '$i' command"
-  ${i}_generate.sh
+  ./${i}_generate.sh
 done

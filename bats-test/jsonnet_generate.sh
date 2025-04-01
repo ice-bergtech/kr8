@@ -5,7 +5,7 @@ if [ -z "$KR8" ]; then
 fi
 
 CLUSTER=bats
-KR8_ARGS="-D data -C $CLUSTER"
+KR8_ARGS="-B ./data -D ./data/clusters -d ./data/components -C $CLUSTER"
 
 # Basic tests, no cluster imports
 $KR8 $KR8_ARGS jsonnet render data/misc/basic.json > expected/jsonnet_basic_json

@@ -4,7 +4,7 @@ if [ -z "$KR8" ]; then
   KR8=kr8
 fi
 
-KR8_ARGS="-D data"
+KR8_ARGS="-B data"
 CLUSTER=bats
 
 # "get" are different, from "cluster", in a debug line that probably shouldn't exist
