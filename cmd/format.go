@@ -115,11 +115,13 @@ var formatCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(formatCmd)
-	formatCmd.Flags().StringVarP(&formatDir, "dir", "", "./", "Root directory to walk and format")
+	formatCmd.Flags().StringVarP(&formatDir, "base", "B", "./", "Root directory to walk and format")
 
-	formatCmd.Flags().StringVarP(&pIncludes, "pincludes", "", "", "filter included paths by including paths - filepath.Match format - https://pkg.go.dev/path/filepath#Match")
-	formatCmd.Flags().StringVarP(&pExcludes, "pexcludes", "", "", "filter included paths by excluding paths - filepath.Match format - https://pkg.go.dev/path/filepath#Match")
+	formatCmd.Flags().StringVarP(&pIncludes, "pincludes", "i", "", "filter included paths by including paths - filepath.Match format - https://pkg.go.dev/path/filepath#Match")
+	formatCmd.Flags().StringVarP(&pExcludes, "pexcludes", "x", "", "filter included paths by excluding paths - filepath.Match format - https://pkg.go.dev/path/filepath#Match")
 	formatCmd.Flags().IntP("parallel", "", runtime.GOMAXPROCS(0), "parallelism - defaults to GOMAXPROCS")
+
+	viper.BindPFlag("base", RootCmd.PersistentFlags().Lookup("base"))
 	viper.BindPFlag("pIncludes", formatCmd.PersistentFlags().Lookup("pIncludes"))
 	viper.BindPFlag("pExcludes", formatCmd.PersistentFlags().Lookup("pExcludes"))
 }
