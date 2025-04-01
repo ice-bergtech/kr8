@@ -46,10 +46,7 @@ var listCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		clusters, err := getClusters(clusterDir)
-
-		if err != nil {
-			log.Fatal().Err(err).Msg("Error getting cluster")
-		}
+		fatalErrorCheck(err, "Error getting clusters")
 
 		var entry []string
 		table := tablewriter.NewWriter(os.Stdout)

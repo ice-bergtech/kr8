@@ -27,7 +27,6 @@ import (
 	"os"
 
 	gyaml "github.com/ghodss/yaml"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/util/yaml"
@@ -51,30 +50,24 @@ var yamlHelmCleanCmd = &cobra.Command{
 			if err == io.EOF {
 				break
 			} else if err != nil {
-				log.Fatal().Err(err).Msg("Error decoding decoding yaml stream")
+				fatalErrorCheck(err, "Error decoding decoding yaml stream")
 			}
 			if len(bytes) == 0 {
 				continue
 			}
 			jsonData, err := yaml.ToJSON(bytes)
-			if err != nil {
-				log.Fatal().Err(err).Msg("Error encoding yaml to JSON")
-			}
+			fatalErrorCheck(err, "Error encoding yaml to json")
 			if string(jsonData) == "null" {
 				// skip empty json
 				continue
 			}
 			_, _, err = unstructured.UnstructuredJSONScheme.Decode(jsonData, nil, nil)
-			if err != nil {
-				log.Fatal().Err(err).Msg("Error handling unstructured JSON")
-			}
+			fatalErrorCheck(err, "Error handling unstructured JSON")
 			jsa = append(jsa, jsonData)
 		}
 		for _, j := range jsa {
 			out, err := gyaml.JSONToYAML(j)
-			if err != nil {
-				log.Fatal().Err(err).Msg("Error encoding JSON to YAML")
-			}
+			fatalErrorCheck(err, "Error converting JSON to YAML")
 			fmt.Println("---")
 			fmt.Println(string(out))
 		}

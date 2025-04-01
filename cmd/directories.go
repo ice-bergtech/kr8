@@ -25,15 +25,13 @@ func getClusters(searchDir string) (Clusters, error) {
 
 	fileList := make([]string, 0)
 
-	e := filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {
-		fileList = append(fileList, path)
-		return err
-	})
-
-	if e != nil {
-		log.Fatal().Err(e).Msg("Error building cluster list: ")
-
-	}
+	fatalErrorCheck(
+		filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {
+			fileList = append(fileList, path)
+			return err
+		}),
+		"Error building cluster list",
+	)
 
 	ClusterData := []Cluster{}
 	c := Clusters{ClusterData}
@@ -59,20 +57,18 @@ func getCluster(searchDir string, clusterName string) string {
 
 	var clusterPath string
 
-	e := filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {
-		dir, file := filepath.Split(path)
-		if filepath.Base(dir) == clusterName && file == "cluster.jsonnet" {
-			clusterPath = path
-			return nil
-		} else {
-			return err
-		}
-	})
-
-	if e != nil {
-		log.Fatal().Err(e).Msg("Error building cluster list: ")
-
-	}
+	fatalErrorCheck(
+		filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {
+			dir, file := filepath.Split(path)
+			if filepath.Base(dir) == clusterName && file == "cluster.jsonnet" {
+				clusterPath = path
+				return nil
+			} else {
+				return err
+			}
+		}),
+		"Error building cluster list",
+	)
 
 	if clusterPath == "" {
 		log.Fatal().Msg("Could not find cluster: " + clusterName)
@@ -158,9 +154,7 @@ func renderClusterParams(cmd *cobra.Command, clusterName string, componentNames 
 
 	compString := gjson.Get(compParams, "_components")
 	err := json.Unmarshal([]byte(compString.String()), &componentMap)
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to parse component map")
-	}
+	fatalErrorCheck(err, "failed to parse component map")
 	componentDefaultsMerged := "{"
 	if len(componentNames) > 0 {
 		// we are passed a list of components
@@ -168,9 +162,7 @@ func renderClusterParams(cmd *cobra.Command, clusterName string, componentNames 
 			if value, ok := componentMap[key]; ok {
 				path := baseDir + "/" + value.Path + "/params.jsonnet"
 				fileC, err := os.ReadFile(path)
-				if err != nil {
-					log.Fatal().Err(err).Msg("Error reading " + path)
-				}
+				fatalErrorCheck(err, "Error reading file "+path)
 				componentDefaultsMerged = componentDefaultsMerged + fmt.Sprintf("'%s': %s,", key, string(fileC))
 			}
 		}
@@ -182,9 +174,7 @@ func renderClusterParams(cmd *cobra.Command, clusterName string, componentNames 
 			}
 			path := baseDir + "/" + value.Path + "/params.jsonnet"
 			fileC, err := os.ReadFile(path)
-			if err != nil {
-				log.Fatal().Err(err).Msg("Error reading " + path)
-			}
+			fatalErrorCheck(err, "Error reading file"+path)
 			componentDefaultsMerged = componentDefaultsMerged + fmt.Sprintf("'%s': %s,", key, string(fileC))
 		}
 	}

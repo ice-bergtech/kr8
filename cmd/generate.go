@@ -37,12 +37,6 @@ var (
 	allClusterParams map[string]string
 )
 
-func fatalErrorCheck(err error, message string) {
-	if err != nil {
-		log.Fatal().Err(err).Msg(message)
-	}
-}
-
 func processJsonnet(vm *jsonnet.VM, input string, include string) (string, error) {
 	vm.ExtCode("input", input)
 	j, err := vm.EvaluateAnonymousSnippet(include, "std.extVar('process')(std.extVar('input'))")
