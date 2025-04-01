@@ -320,7 +320,7 @@ func genProcessCluster(cmd *cobra.Command, clusterName string, p *ants.Pool) {
 		cName := componentName
 		_ = p.Submit(func() {
 			defer wg.Done()
-			genProcessComponent(cmd, clusterName, cName, kr8Spec.ClusterDir, kr8Spec.GenerateDir, config, &allconfig, kr8Spec.PostProcessor, kr8Spec.PruneParams, kr8Spec.GenerateShortNames)
+			genProcessComponent(cmd, cName, kr8Spec, config, &allconfig)
 		})
 	}
 	wg.Wait()
@@ -414,6 +414,9 @@ func genProcessComponent(cmd *cobra.Command, componentName string, kr8Spec Clust
 
 	outputFileMap := make(map[string]bool)
 	// generate each included file
+	for _, include := range compSpec.Includes {
+		processIncludesFile(componentDir, include, kr8Spec, outputFileMap, componentName, compPath, vm, config)
+	}
 
 	// purge any yaml files in the output dir that were not generated
 	if !compSpec.DisableOutputDirClean {
