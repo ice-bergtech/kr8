@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -65,7 +66,7 @@ type ComponentSpec struct {
 	// additional jsonnet libs to include, component scoped
 	JPaths []string `json:"jpaths"`
 	// list of filenames to include and output as files 1-1
-	Includes []string `json:"includes"`
+	Includes []interface{} `json:"includes"`
 }
 
 func CreateComponentSpec(spec gjson.Result) (ComponentSpec, error) {
@@ -76,14 +77,27 @@ func CreateComponentSpec(spec gjson.Result) (ComponentSpec, error) {
 			Msg("Component has no `kr8_spec` object")
 	}
 
-	return ComponentSpec{
+	componentSpec := ComponentSpec{
 		Kr8_allparams:         spec.Get("enable_kr8_allparams").Bool(),
 		Kr8_allclusters:       spec.Get("enable_kr8_allclusters").Bool(),
 		DisableOutputDirClean: spec.Get("disable_output_clean").Bool(),
-		// ExtFiles:              spec.Get("extfiles").Array().StringSlice(),
-		// JPaths:                spec.Get("jpaths").Array().StringSlice(),
-		// Includes:              spec.Get("includes").Array().StringSlice(),
-	}, nil
+	}
+	incl := spec.Get("includes")
+	componentSpec.Includes = make([]interface{}, len(incl.Array()))
+	for i, item := range incl.Array() {
+		if item.Type == gjson.JSON {
+			var include IncludeFileEntryStruct
+			err := json.Unmarshal([]byte(item.String()), &include)
+			if err != nil {
+				return componentSpec, fmt.Errorf("error unmarshalling includes: %w", err)
+			}
+			componentSpec.Includes[i] = include
+		} else if item.Type == gjson.String {
+			componentSpec.Includes[i] = item.String()
+		}
+	}
+
+	return componentSpec, nil
 }
 
 // file to load as a string into the jsonnet vm
@@ -97,15 +111,17 @@ type ExtFileVar struct {
 // A struct describing an included file
 type IncludeFileSpec interface {
 	string
-	struct {
-		// an input file to process
-		// accepted filetypes: .jsonnet .yml .yaml .tmpl .tpl
-		File string `json:"file"`
-		// handle alternate output directory for file
-		DestDir string `json:"dest_dir"`
-		// override destination file name
-		DestName string `json:"dest_name"`
-		// override destination file extension
-		DestExt string `json:"dest_ext"`
-	}
+	IncludeFileEntryStruct
+}
+
+type IncludeFileEntryStruct struct {
+	// an input file to process
+	// accepted filetypes: .jsonnet .yml .yaml .tmpl .tpl
+	File string `json:"file"`
+	// handle alternate output directory for file
+	DestDir string `json:"dest_dir,omitempty"`
+	// override destination file name
+	DestName string `json:"dest_name,omitempty"`
+	// override destination file extension
+	DestExt string `json:"dest_ext,omitempty"`
 }

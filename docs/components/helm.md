@@ -7,7 +7,7 @@ kr8 can render helm charts locally and inject parameters as helm values. This pr
 An example taskfile for a helm chart might look like this:
 
 ```yaml
-version: 2
+version: 3
 
 vars:
   CHART_VER:  v0.8.1
@@ -21,15 +21,6 @@ tasks:
       # add the helm repo and fetch it locally into the charts directly
       - helm fetch --repo https://charts.jetstack.io --untar --untardir ./charts --version "{{.CHART_VER}}" "{{.CHART_NAME}}"
       - wget --quiet -N https://raw.githubusercontent.com/jetstack/cert-manager/release-0.8/deploy/manifests/00-crds.yaml -O - | grep -v ^# > vendored/00cert-manager-crd.yaml
-
-
-  generate:
-    desc: "generate"
-    cmds:
-      - kr8-helpers clean-output
-      - kr8-helpers yaml-install vendored/00cert-manager-crd.yaml
-      - kr8-helpers jsonnet-render 00namespace.jsonnet
-      - kr8-helpers helm-render "{{.CHART_NAME}}"
 ```
 
 ## Params

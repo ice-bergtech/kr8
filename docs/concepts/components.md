@@ -1,71 +1,68 @@
 # Components
 
-A component is a deployable unit that you wish to install to multiple clusters.
+A component is a deployable unit that you wish to install in one or more clusters.
+Components can be declared multiple times within a cluster, as long as they are named distinctly.
+
+In a kr8 project, components are defined in `./components` by default, or the directory specified by the `--componentdir`, `-X` flags.
 
 Your component might begin life before kr8 in one of a few ways:
 
   - a [Helm Chart](https://github.com/helm/charts/tree/master/stable)
-  - a static [YAML manifest](https://github.com/kubernetes/examples/blob/master/guestbook/all-in-one/guestbook-all-in-one.yaml)
-  - some [Jsonnet](https://github.com/coreos/prometheus-operator/tree/master/jsonnet/prometheus-operator)
+  - a static [Kubernetes YAML/Json manifest](https://github.com/kubernetes/examples/blob/master/guestbook/all-in-one/guestbook-all-in-one.yaml)
+  - [Jsonnet](https://github.com/coreos/prometheus-operator/tree/master/jsonnet/prometheus-operator) describing a deployable unit
+  - template files, to generate arbitrary files from a golang-style template.
+  - a docker image or script to deploy
 
-but they all have something in common - you need to deploy it to multiple clusters with slight differences in configuration.
-
-
-## Taskfile
-
-This task file lives inside the component directory. It should contain two tasks:
-
-  - fetch - a manually run task which downloads all the components' dependencies (for example, helm chart or static manifest)
-  - generate - this is the task that's run when kr8 generates the manifest for the cluster
-
-
-These tasks will be highly dependent on the particular component - for example, a component using a helm chart will generally have a different set of fetch and generate tasks to a component using a static manifest.
-
-An example Taskfile might look like this:
-
-```yaml
-version: 2
-
-vars:
-  KR8_COMPONENT: kubemonkey
-
-tasks:
-  fetch:
-    desc: "fetch component kubemonkey"
-    cmds:
-      - curl -L https://github.com/asobti/kube-monkey/tarball/master > kubemonkey.tar.gz # download the local helm chart from the git repo
-      - tar --strip-components=2 -xzvf kubemonkey.tar.gz asobti-kube-monkey-{{.GIT_COMMIT}}/helm # extract it
-      - mv kubemonkey charts # place it in a charts directory
-      - rm -fr *.tar.gz # remove the tar.gz from the repo
-    vars:
-      GIT_COMMIT:
-        sh: curl -s https://api.github.com/repos/asobti/kube-monkey/commits/master | jq .sha -r | xargs git rev-parse --short
-
-  generate:
-    desc: "generate"
-    cmds:
-      - KR8_COMPONENT={{.KR8_COMPONENT}} kr8-helpers clean-output # clean the tmp directories each time we generate
-      - KR8_COMPONENT={{.KR8_COMPONENT}} kr8-helpers helm-render-with-patch "{{.KR8_COMPONENT}}" patches.jsonnet # our generate command, which in this case is a helm-render with some patches in a jsonnet file
-```
+The root directory of your component will contain a file named `params.jsonnet`, containing configuration parameters consumed by kr8 and passed to your Jsonnet code.
+Additional files can be stored alongside or in folders.
+This is often done to deploy multiple versions of a component at once.
 
 ## Params
 
-kr8's most useful feature is the ability to configure _parameters_ for a specific cluster.
-It does that by specifying a `params.jsonnet` in each component.
+kr8's most useful feature is the ability to easily layer _parameters_ to generate a resource.
+The `params.jsonnet` file in each component can be updated at the cluster level, making it simple to customize the behavior of your component across different environments.
 
-Kr8 extracts core configuration parameters from the `kr8_spec` key.
+kr8 extracts core configuration parameters from the `kr8_spec` key.
 
-Fields:
+| Field                    | Description                                                                                                                                                        | Example                                                                                                               |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `namespace`              | String. Required. The primary namespace the component should be installed in                                                                                       | `'default'`, `'argocd'`                                                                                               |
+| `release_name`           | String. Required. Analogous to a helm release - what the component should be called when installed into a cluster                                                  | `$._cluster.name+'-argocd'`                                                                                           |
+| `enable_kr8_allparams`   | Bool. Optional, default `False`. Includes a full render of all component params during generate.  Used for components that reflect properties of other components. | `False`, `True`                                                                                                       |
+| `enable_kr8_allclusters` | Bool. Optional, default `False`. Includes a full render of all cluster params during generate.  Used for components that reflect properties of other clusters.     | `False`, `True`                                                                                                       |
+| `disable_output_clean`   | Bool. Optional, default `False`. If true, stops kr8 from removing all yaml files in the output dir that were not generated                                         | `False`, `True`                                                                                                       |
+| `includes`               | List[string or obj]. Optional, default `[]`. Include and process additional files.  Described more below.                                                          | `["kube.jsonnet", {file: "resource.yaml", dest_name: "asdf"}, {file: "docs.tpl", dest_dir: "docs", dest_ext: ".md"}]` |
+| `extfiles`               | {fields}. Optional, default `{}`.  Add additional files to load as jsonnet `ExtVar`s.  The field key is used as the variable name, and the value is the file path. | `{identifier: "filename.txt", otherfile: "filename2.json" }`                                                          |
+| `jpaths`                 | List[string]. Optional, default `[]`. Add additional libjsonnet paths with base dir `/baseDir/componentPath/`. The path `baseDir + "/lib"` is always included.     | `["vendor/argo-libsonnet/"]`                                                                                          |
 
-  - `namespace`: String. Required. The namespace the component should be installed in
-  - `release_name`: String. Required. Analogous to a helm release - what the component should be called when it's installed into a cluster
-  - `enable_kr8_allparams`: Bool. Optional. Includes a full render of all component params.  Used for components that reflect properties of other components.
-  - `enable_kr8_allclusters`: Bool. Optional. Includes a full render of all cluster params.  Used for components that reflect properties of other clusters.
-  - `jpaths`: List[filename]. Optional. Add additional jsonnet lib paths.
-  - `disable_output_clean`: Bool. Optional. Purge any yaml files in the output dir that were not generated
-  - `extfiles`: List[obj]. Optional.  Add additional files to load as jsonnet `ExtVar`s.  Example: `extfiles: [identifier: "filename.jsonnet", otherfile: "filename2.jsonnet" ]`
-  - `includes`: List[string or obj]. Optional. Include and process additional files.  The `file` value must be a `jsonnet`, `yaml`, or `tpl` filename.
-  Example:
+
+## Referencing files and data
+
+When generating a component, multiple types of files can be combined to generate the final component output.
+
+* If the input is meant to have an output file generated, use `includes`
+* If the input is data consumed by the component, use `extfiles`, 
+* If it's additional jsonnet libs, use `jpaths`
+
+
+### includes
+
+The `includes` field allows you to include and process additional files. Each item in the list can be either a string (filename) or an object with specific properties.
+
+When the item is a string, it's treated as a filename to include. The output will be placed in the `generate_dir` with the same name and `.yaml` extension.
+
+When the item is an object, it allows for more customization.
+There are the following fields:
+
+* `file`: The filename to include. Required. Allowed extensions: [`jsonnet`, `yaml`, `yml`, `tmpl`, `tpl`]
+* `dest_dir`: The directory where the output should be placed. Optional.
+* `dest_name`: The name of the output file (without extension). Optional.
+* `dest_ext`: The extension of the output file. Optional.
+
+The `file` value must be a `jsonnet`, `yaml`, or `tpl` filename.
+
+<detail>
+<summary>Examples of `includes` entries</summary>
   ```jsonnet
   includes: [
     "filename.jsonnet",
@@ -95,35 +92,52 @@ Fields:
     altDir:
       altname1.txt
   ``` 
+</detail>
 
----
+### extfiles
 
-Without these parameters, components will not install a function. A barebones `params.jsonnet` would look like this:
+`kr8_spec.extfiles: [var_name:"filename.jsonnet"]`
 
-```jsonnet
-{
-  kr8_spec: {
-    namespace: 'kubemonkey',
-    release_name: 'kubemonkey',
-  },
-}
+This will load the specified file into the jsonnet vm external vars.
+These files can then be referenced in your jsonnet code using the function `std.extVar("var_name")` variable.
+
+It will be availble to be used in component jsonnet as a string, but functions like 
+
+### jpaths
+
+`kr8_spec.jpaths: ["path/to/dir/"]`
+
+The `jpaths` parameter allows you to specify additional paths that kr8 should search for components.
+This is useful for component-specific jsonnet libraries.
+In most cases, it is better to have a shared library that all components can use, but sometimes it is necessary to have a custom library for a specific component.
+
+Each directory string will be passed to the jsonnet vm during processing.
+
+## Taskfile
+
+A taskfile within the component directory can help manage the lifecycle of components, especially when dealing with dependencies and version management for more complex updates.
+A common practice is to create a `fetch` task that downloads all dependencies (e.g., Helm charts or static manifests).
+It can also perform other preparation steps like removing files or resources that are not required.
+
+These tasks will be highly dependent on the particular component - for example, a component using a helm chart will generally have a different set of fetch and generate tasks to a component using a static manifest.
+
+An example Taskfile might look like this:
+
+```yaml
+version: 3
+
+vars:
+  KR8_COMPONENT: kubemonkey
+
+tasks:
+  fetch:
+    desc: "fetch component kubemonkey"
+    cmds:
+      - curl -L https://github.com/asobti/kube-monkey/tarball/master > kubemonkey.tar.gz # download the local helm chart from the git repo
+      - tar --strip-components=2 -xzvf kubemonkey.tar.gz asobti-kube-monkey-{{.GIT_COMMIT}}/helm # extract it
+      - mv kubemonkey charts # place it in a charts directory
+      - rm -fr *.tar.gz # remove the tar.gz from the repo
+    vars:
+      GIT_COMMIT:
+        sh: curl -s https://api.github.com/repos/asobti/kube-monkey/commits/master | jq .sha -r | xargs git rev-parse --short
 ```
-
-### Cluster specific parameters
-
-Once you start to install components into clusters, you'll want to specify parameters of your own.
-
-These are done in the `params.jsonnet` and you can either specify a default, or make it mandatory using jsonnet's `error`.
-
-Here's an more detailed example:
-
-```jsonnet
-{
-  namespace: 'kubemonkey',
-  release_name: 'kubemonkey',
-  kubecfg_gc_enable: true,
-  dry_run: false,
-  run_hour: error 'Must specify a time for kubemonkey to run'
-}
-```
-
