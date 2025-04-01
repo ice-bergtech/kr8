@@ -18,10 +18,33 @@ import (
 )
 
 var (
-	formatDir string
-	pIncludes string
-	pExcludes string
+	formatDir     string
+	pIncludes     string
+	pExcludes     string
+	formatOptions formatter.Options
 )
+
+func setDefaultFormatOptions() formatter.Options {
+	formatOptions = formatter.Options{
+		Indent:           2,
+		MaxBlankLines:    2,
+		StringStyle:      formatter.StringStyleLeave,
+		CommentStyle:     formatter.CommentStyleLeave,
+		UseImplicitPlus:  false,
+		PrettyFieldNames: true,
+		PadArrays:        false,
+		PadObjects:       true,
+		SortImports:      true,
+		StripEverything:  false,
+		StripComments:    false,
+	}
+	return formatOptions
+}
+
+func formatJsonnetString(input string) (string, error) {
+	setDefaultFormatOptions()
+	return formatter.Format("", input, formatOptions)
+}
 
 var formatCmd = &cobra.Command{
 	Use:   "format",
@@ -66,18 +89,15 @@ var formatCmd = &cobra.Command{
 			log.Fatal().Err(err).Msg("")
 		}
 		log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
-
+		setDefaultFormatOptions()
 		ants_file, _ := ants.NewPool(parallel)
-
-		options := formatter.DefaultOptions()
-		options.StringStyle = formatter.StringStyleLeave
 		for _, filename := range fileList {
 			wg.Add(1)
 			_ = ants_file.Submit(func() {
 				defer wg.Done()
 				var bytes []byte
 				bytes, err = os.ReadFile(filename)
-				output, err := formatter.Format(filename, string(bytes), options)
+				output, err := formatter.Format(filename, string(bytes), formatOptions)
 				if err != nil {
 					fmt.Fprintln(os.Stderr, err.Error())
 					return
