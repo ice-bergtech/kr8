@@ -333,12 +333,9 @@ func genProcessComponent(cmd *cobra.Command, componentName string, kr8Spec Clust
 		Msg("Process component")
 
 	// get kr8_spec from component's params
-	spec := gjson.Get(config, componentName+".kr8_spec").Map()
+	//spec := gjson.Get(config, componentName+".kr8_spec").Map()
 	compPath := gjson.Get(config, "_components."+componentName+".path").String()
-
-	//specd := gjson.Get(config, componentName+".kr8_spec")
-	//compSpec, err := CreateClusterSpec(specd)
-	//fatalErrorCheck(err, "Issues parsing cluster spec")
+	compSpec, _ := CreateComponentSpec(gjson.Get(config, componentName+".kr8_spec"))
 
 	// it's faster to create this VM for each component, rather than re-use
 	vm, _ := JsonnetVM(cmd)
@@ -359,7 +356,7 @@ func genProcessComponent(cmd *cobra.Command, componentName string, kr8Spec Clust
 	}
 
 	// add kr8_allparams extcode with all component params in the cluster
-	if spec["enable_kr8_allparams"].Bool() {
+	if compSpec.Kr8_allparams {
 		// include full render of all component params
 		allConfig.mu.Lock()
 		if allConfig.config == "" {
@@ -376,7 +373,7 @@ func genProcessComponent(cmd *cobra.Command, componentName string, kr8Spec Clust
 	}
 
 	// add kr8_allclusters extcode with every cluster's cluster level params
-	if spec["enable_kr8_allclusters"].Bool() {
+	if compSpec.Kr8_allclusters {
 		// combine all the cluster params into a single object indexed by cluster name
 		var allClusterParamsObject string
 		allClusterParamsObject = "{ "
@@ -390,21 +387,21 @@ func genProcessComponent(cmd *cobra.Command, componentName string, kr8Spec Clust
 
 	// jPath always includes base lib. Add jpaths from spec if set
 	jPath := []string{baseDir + "/lib"}
-	for _, j := range spec["jpaths"].Array() {
-		jPath = append(jPath, baseDir+"/"+compPath+"/"+j.String())
+	for _, j := range compSpec.JPaths {
+		jPath = append(jPath, baseDir+"/"+compPath+"/"+j)
 	}
 	vm.Importer(&jsonnet.FileImporter{
 		JPaths: jPath,
 	})
 
 	// file imports
-	for k, v := range spec["extfiles"].Map() {
-		vPath := baseDir + "/" + compPath + "/" + v.String() // use full path for file
+	for k, v := range compSpec.ExtFiles {
+		vPath := baseDir + "/" + compPath + "/" + v // use full path for file
 		extFile, err := os.ReadFile(vPath)
 		fatalErrorCheck(err, "Error importing extfiles item")
 		log.Debug().Str("cluster", kr8Spec.Name).
 			Str("component", componentName).
-			Msg("Extfile: " + k + "=" + v.String())
+			Msg("Extfile: " + k + "=" + v)
 		vm.ExtVar(k, string(extFile))
 	}
 
@@ -417,115 +414,9 @@ func genProcessComponent(cmd *cobra.Command, componentName string, kr8Spec Clust
 
 	outputFileMap := make(map[string]bool)
 	// generate each included file
-	for _, include := range spec["includes"].Array() {
-		var filename string
-		var outputDir string
-		var sFile string
-		sFileExtension := "yaml"
 
-		iType := include.Type.String()
-		outputDir = componentDir
-		if iType == "String" {
-			// include is just a string for the filename
-			filename = include.String()
-		} else if iType == "JSON" {
-			// include is a map with multiple fields
-			inc_spec := include.Map()
-			filename = inc_spec["file"].String()
-			if inc_spec["dest_dir"].Exists() {
-				// handle alternate output directory for file
-				altDir := inc_spec["dest_dir"].String()
-				// dir is always relative to generate dir
-				outputDir = clGenerateDir + "/" + altDir
-				// ensure this directory exists
-				if _, err := os.Stat(outputDir); os.IsNotExist(err) {
-					err = os.MkdirAll(outputDir, os.ModePerm)
-					fatalErrorCheck(err, "Error creating alternate directory")
-				}
-			}
-			if inc_spec["dest_name"].Exists() {
-				// override destination file name
-				sFile = inc_spec["dest_name"].String()
-			}
-			if inc_spec["dest_ext"].Exists() {
-				// override destination file name
-				sFileExtension = inc_spec["dest_ext"].String()
-			}
-		}
-		file_extension := filepath.Ext(filename)
-		if sFile == "" {
-			if generateShortNames {
-				sBase := filepath.Base(filename)
-				sFile = sBase[0 : len(sBase)-len(file_extension)]
-			} else {
-				// replaces slashes with _ in multi-dir paths and replace extension with yaml
-				sFile = strings.ReplaceAll(filename[0:len(filename)-len(file_extension)], "/", "_")
-			}
-		}
-		outputFile := outputDir + "/" + sFile + "." + sFileExtension
-		// remember output filename for purging files
-		outputFileMap[sFile+"."+sFileExtension] = true
-
-	log.Debug().Str("cluster", kr8Spec.Name).
-		Str("component", componentName).
-		Msg("Process file: " + filename + " -> " + outputFile)
-
-		var input string
-		var outStr string
-		var err error
-		switch file_extension {
-		case ".jsonnet":
-			// file is processed as an ExtCode input, so that we can postprocess it
-			// in the snippet
-			input = "( import '" + baseDir + "/" + compPath + "/" + filename + "')"
-			outStr, err = processJsonnet(vm, input, include.String())
-		case ".yml":
-		case ".yaml":
-			input = "std.native('parseYaml')(importstr '" + baseDir + "/" + compPath + "/" + filename + "')"
-			outStr, err = processJsonnet(vm, input, include.String())
-		case ".tmpl":
-		case ".tpl":
-			// Pass component config as data for the template
-			outStr, err = processTemplate(baseDir+"/"+compPath+"/"+filename, gjson.Get(config, componentName).Map())
-		default:
-			outStr, err = "", errors.New("unsupported file extension")
-		}
-		if err != nil {
-			log.Fatal().Str("cluster", clusterName).
-				Str("component", componentName).
-				Str("file", filename).
-				Err(err).
-				Msg(outStr)
-		}
-
-		// only write file if it does not exist, or the generated contents does not match what is on disk
-		var updateNeeded bool
-		if _, err := os.Stat(outputFile); os.IsNotExist(err) {
-			log.Debug().Str("cluster", clusterName).
-				Str("component", componentName).
-				Msg("Creating " + outputFile)
-			updateNeeded = true
-		} else {
-			currentContents, err := os.ReadFile(outputFile)
-			fatalErrorCheck(err, "Error reading file")
-			if string(currentContents) != outStr {
-				updateNeeded = true
-				log.Debug().Str("cluster", clusterName).
-					Str("component", componentName).
-					Msg("Updating: " + outputFile)
-			}
-		}
-		if updateNeeded {
-			f, err := os.Create(outputFile)
-			fatalErrorCheck(err, "Error creating file")
-			//defer f.Close()
-			_, err = f.WriteString(outStr)
-			f.Close()
-			fatalErrorCheck(err, "Error writing to file")
-		}
-	}
 	// purge any yaml files in the output dir that were not generated
-	if !spec["disable_output_clean"].Bool() {
+	if !compSpec.DisableOutputDirClean {
 		// clean component dir
 		d, err := os.Open(componentDir)
 		fatalErrorCheck(err, "")
@@ -541,11 +432,119 @@ func genProcessComponent(cmd *cobra.Command, componentName string, kr8Spec Clust
 				delFile := filepath.Join(componentDir, name)
 				err = os.RemoveAll(delFile)
 				fatalErrorCheck(err, "")
-				log.Debug().Str("cluster", clusterName).
+				log.Debug().Str("cluster", kr8Spec.Name).
 					Str("component", componentName).
 					Msg("Deleted: " + delFile)
 			}
 		}
 		d.Close()
+	}
+}
+
+func processIncludesFile(componentDir string, include interface{}, kr8Spec ClusterSpec, outputFileMap map[string]bool, componentName string, compPath string, vm *jsonnet.VM, config string) {
+	var filename string
+	var sFile string
+	outputDir := componentDir
+	sFileExtension := "yaml"
+
+	switch include.(type) {
+	case string:
+		filename = include.(string)
+	case IncludeFileEntryStruct:
+		// include is a map with multiple fields
+		incSpec := include.(IncludeFileEntryStruct)
+		filename = incSpec.File
+
+		if incSpec.DestDir != "" {
+			// dir is always relative to generate dir
+			outputDir = kr8Spec.GenerateDir + "/" + incSpec.DestDir
+			// ensure this directory exists
+			if _, err := os.Stat(outputDir); os.IsNotExist(err) {
+				err = os.MkdirAll(outputDir, os.ModePerm)
+				fatalErrorCheck(err, "Error creating alternate directory")
+			}
+		}
+		if incSpec.DestName != "" {
+			// override destination file name
+			sFile = incSpec.DestName
+		}
+		if incSpec.DestExt != "" {
+			// override destination file name
+			sFileExtension = incSpec.DestExt
+		}
+	default:
+		log.Fatal().Msg("Invalid include type")
+	}
+
+	file_extension := filepath.Ext(filename)
+	if sFile == "" {
+		if kr8Spec.ShortNames {
+			sBase := filepath.Base(filename)
+			sFile = sBase[0 : len(sBase)-len(file_extension)]
+		} else {
+			// replaces slashes with _ in multi-dir paths and replace extension with yaml
+			sFile = strings.ReplaceAll(filename[0:len(filename)-len(file_extension)], "/", "_")
+		}
+	}
+	outputFile := outputDir + "/" + sFile + "." + sFileExtension
+	// remember output filename for purging files
+	outputFileMap[sFile+"."+sFileExtension] = true
+
+	log.Debug().Str("cluster", kr8Spec.Name).
+		Str("component", componentName).
+		Msg("Process file: " + filename + " -> " + outputFile)
+
+	var input string
+	var outStr string
+	var err error
+	switch file_extension {
+	case ".jsonnet":
+		// file is processed as an ExtCode input, so that we can postprocess it
+		// in the snippet
+		input = "( import '" + baseDir + "/" + compPath + "/" + filename + "')"
+		outStr, err = processJsonnet(vm, input, include.String())
+	case ".yml":
+	case ".yaml":
+		input = "std.native('parseYaml')(importstr '" + baseDir + "/" + compPath + "/" + filename + "')"
+		outStr, err = processJsonnet(vm, input, include.String())
+	case ".tmpl":
+	case ".tpl":
+		// Pass component config as data for the template
+		outStr, err = processTemplate(baseDir+"/"+compPath+"/"+filename, gjson.Get(config, componentName).Map())
+	default:
+		outStr, err = "", errors.New("unsupported file extension")
+	}
+	if err != nil {
+		log.Fatal().Str("cluster", kr8Spec.Name).
+			Str("component", componentName).
+			Str("file", filename).
+			Err(err).
+			Msg(outStr)
+	}
+
+	// only write file if it does not exist, or the generated contents does not match what is on disk
+	var updateNeeded bool
+	if _, err := os.Stat(outputFile); os.IsNotExist(err) {
+		log.Debug().Str("cluster", kr8Spec.Name).
+			Str("component", componentName).
+			Msg("Creating " + outputFile)
+		updateNeeded = true
+	} else {
+		currentContents, err := os.ReadFile(outputFile)
+		fatalErrorCheck(err, "Error reading file")
+		if string(currentContents) != outStr {
+			updateNeeded = true
+			log.Debug().Str("cluster", kr8Spec.Name).
+				Str("component", componentName).
+				Msg("Updating: " + outputFile)
+		}
+	}
+	if updateNeeded {
+		f, err := os.Create(outputFile)
+		fatalErrorCheck(err, "Error creating file")
+		//defer f.Close()
+		_, err = f.WriteString(outStr)
+		f.Close()
+		fatalErrorCheck(err, "Error writing to file")
 	}
 }
