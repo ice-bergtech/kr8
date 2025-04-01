@@ -16,20 +16,12 @@ import (
 	"github.com/grafana/tanka/pkg/helm"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-)
-
-var (
-	flagPrune           bool
-	flagOutputFormat    string
-	flagExtVarFile      []string
-	flagJsonnetIncludes []string
 )
 
 // Create Jsonnet VM. Configure with env vars and command line flags
 /*
 
-This code is copied almost verbatim from the kubecfg project: https://github.com/ksonnet/kubecfg
+This code was originally copied almost verbatim from the kubecfg project: https://github.com/ksonnet/kubecfg
 
 Copyright 2018 ksonnet
 
@@ -53,23 +45,22 @@ type VMConfig struct {
 	ExtVars []string `json:"ext_str_file" yaml:"ext_str_files"`
 }
 
-func JsonnetVM(flags VMConfig) (*jsonnet.VM, error) {
+func JsonnetVM(vmconfig VMConfig) (*jsonnet.VM, error) {
 	vm := jsonnet.MakeVM()
 	RegisterNativeFuncs(vm)
 
 	// always add lib directory in base directory to path
-	jpath := []string{flagBaseDir + "/lib"}
+	jpath := []string{rootFlagBaseDir + "/lib"}
 
 	jpath = append(jpath, filepath.SplitList(os.Getenv("KR8_JPATH"))...)
-	jpathArgs := flags.Jpaths
+	jpathArgs := vmconfig.Jpaths
 	jpath = append(jpath, jpathArgs...)
 
 	vm.Importer(&jsonnet.FileImporter{
 		JPaths: jpath,
 	})
 
-	// add external variables from flags.ext-str-files to VM
-	for _, extvar := range flags.ExtVars {
+	for _, extvar := range vmconfig.ExtVars {
 		kv := strings.SplitN(extvar, "=", 2)
 		if len(kv) != 2 {
 			log.Fatal().Str("ext-str-file", extvar).Msg("Failed to parse. Missing '=' in parameter`")
@@ -84,7 +75,7 @@ func JsonnetVM(flags VMConfig) (*jsonnet.VM, error) {
 }
 
 // Takes a list of jsonnet files and imports each one and mixes them with "+"
-func renderJsonnet(flags VMConfig, files []string, param string, prune bool, prepend string, source string) string {
+func renderJsonnet(vmconfig VMConfig, files []string, param string, prune bool, prepend string, source string) string {
 
 	// copy the slice so that we don't unitentionally modify the original
 	jsonnetPaths := make([]string, len(files[:0]))
@@ -96,7 +87,7 @@ func renderJsonnet(flags VMConfig, files []string, param string, prune bool, pre
 	}
 
 	// Create a JSonnet VM
-	vm, err := JsonnetVM(flags)
+	vm, err := JsonnetVM(vmconfig)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error creating jsonnet VM")
 	}
@@ -217,13 +208,13 @@ var jsonnetCmd = &cobra.Command{
 	Long:  `Utility commands to process jsonnet`,
 }
 
-func jsonnetRender(clusterName string, filename string, vmConfig VMConfig) {
+func jsonnetRender(cmdFlagsJsonnet CmdJsonnetOptions, filename string, vmConfig VMConfig) {
 
-	if clusterName == "" && flagClusterParams == "" {
+	if cmdFlagsJsonnet.Cluster == "" && cmdFlagsJsonnet.ClusterParams == "" {
 		log.Fatal().Msg("Please specify a --cluster name and/or --clusterparams")
 	}
 
-	config := renderClusterParams(vmConfig, clusterName, []string{flagComponentName}, flagClusterParams, false)
+	config := renderClusterParams(vmConfig, cmdFlagsJsonnet.Cluster, []string{cmdFlagsJsonnet.Component}, cmdFlagsJsonnet.ClusterParams, false)
 
 	// VM
 	vm, _ := JsonnetVM(vmConfig)
@@ -233,10 +224,10 @@ func jsonnetRender(clusterName string, filename string, vmConfig VMConfig) {
 
 	vm.ExtCode("kr8_cluster", "std.prune("+config+"._cluster)")
 	vm.ExtCode("kr8_components", "std.prune("+config+"._components)")
-	vm.ExtCode("kr8", "std.prune("+config+"."+flagComponentName+")")
-	vm.ExtCode("kr8_unpruned", config+"."+flagComponentName)
+	vm.ExtCode("kr8", "std.prune("+config+"."+cmdFlagsJsonnet.Component+")")
+	vm.ExtCode("kr8_unpruned", config+"."+cmdFlagsJsonnet.Component)
 
-	if flagPrune {
+	if cmdFlagsJsonnet.Prune {
 		input = "std.prune(import '" + filename + "')"
 	} else {
 		input = "( import '" + filename + "')"
@@ -246,7 +237,7 @@ func jsonnetRender(clusterName string, filename string, vmConfig VMConfig) {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error evaluating jsonnet snippet")
 	}
-	switch flagOutputFormat {
+	switch cmdFlagsJsonnet.Format {
 	case "yaml":
 		yaml, err := goyaml.JSONToYAML([]byte(j))
 		if err != nil {
@@ -267,7 +258,7 @@ func jsonnetRender(clusterName string, filename string, vmConfig VMConfig) {
 			fmt.Println(string(buf))
 		}
 	case "json":
-		formatted := Pretty(j, flagColorOutput)
+		formatted := Pretty(j, rootFlagColorOutput)
 		fmt.Println(formatted)
 	default:
 		log.Fatal().Msg("Output format must be json, yaml or stream")
@@ -281,18 +272,27 @@ var jsonnetRenderCmd = &cobra.Command{
 
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		clusterName := viper.GetString("cluster")
-		jsonnetRender(clusterName, args[0], flagVMConfig)
+		jsonnetRender(cmdFlagsJsonnet, args[0], rootFlagVMConfig)
 	},
 }
+
+type CmdJsonnetOptions struct {
+	Prune         bool
+	Cluster       string
+	ClusterParams string
+	Component     string
+	Format        string
+}
+
+var cmdFlagsJsonnet CmdJsonnetOptions
 
 func init() {
 	RootCmd.AddCommand(jsonnetCmd)
 	jsonnetCmd.AddCommand(jsonnetRenderCmd)
-	jsonnetRenderCmd.PersistentFlags().BoolVarP(&flagPrune, "prune", "", true, "Prune null and empty objects from rendered json")
-	jsonnetRenderCmd.PersistentFlags().StringVarP(&flagClusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
-	jsonnetRenderCmd.PersistentFlags().StringVarP(&flagComponentName, "component", "c", "", "component to render params for")
-	jsonnetRenderCmd.PersistentFlags().StringVarP(&flagOutputFormat, "format", "F", "json", "Output format: json, yaml, stream")
+	jsonnetRenderCmd.PersistentFlags().BoolVarP(&cmdFlagsJsonnet.Prune, "prune", "", true, "Prune null and empty objects from rendered json")
+	jsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.ClusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
+	jsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.Component, "component", "c", "", "component to render params for")
+	jsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.Format, "format", "F", "json", "Output format: json, yaml, stream")
+	jsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.Cluster, "cluster", "C", "", "cluster to render params for")
 
-	jsonnetRenderCmd.PersistentFlags().StringVarP(&flagCluster, "cluster", "C", "", "cluster to render params for")
 }
