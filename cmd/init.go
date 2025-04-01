@@ -98,7 +98,7 @@ func writeInitializedStruct(filename string, path string, objStruct interface{})
 	jsonStrFormatted, errF := formatJsonnetString(string(jsonStr))
 	fatalErrorCheck(errF, "error formatting component jsonnet to json")
 
-	return (os.WriteFile(filename, []byte(jsonStrFormatted), 0644))
+	return (os.WriteFile(path+"/"+filename, []byte(jsonStrFormatted), 0644))
 }
 
 func generateClusterJsonnet(cSpec ClusterSpec) error {
@@ -238,7 +238,6 @@ func init() {
 	initCmd.AddCommand(initComponent)
 
 	initCmd.PersistentFlags().BoolVarP(&initInteractive, "interactive", "i", false, "Initialize a resource interactivly")
-	//initCmd.PersistentFlags().BoolVarP(&initSkipDocs, "skip-docs", "s", false, "Skip config doc lines")
 
 	repoCmd.PersistentFlags().StringVar(&dl_url, "url", "", "Source of skeleton directory to create repo from")
 
