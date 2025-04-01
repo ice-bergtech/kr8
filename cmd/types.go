@@ -60,7 +60,7 @@ func CreateClusterSpec(clusterName string, spec gjson.Result, genDirOverride str
 	}
 	// if generateDir does not start with /, then it goes in baseDir
 	if !strings.HasPrefix(clGenerateDir, "/") {
-		clGenerateDir = flagBaseDir + "/" + clGenerateDir
+		clGenerateDir = rootFlagBaseDir + "/" + clGenerateDir
 	}
 	clusterDir := clGenerateDir + "/" + clusterName
 	return ClusterSpec{

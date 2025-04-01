@@ -108,17 +108,17 @@ var getComponentsCmd = &cobra.Command{
 			params = append(params, flagClusterParams)
 		}
 
-		j := renderJsonnet(flagVMConfig, params, "._components", true, "", "components")
+		j := renderJsonnet(rootFlagVMConfig, params, "._components", true, "", "components")
 		if paramPath != "" {
 			value := gjson.Get(j, paramPath)
 			if value.String() == "" {
 				log.Fatal().Msg("Error getting param: " + paramPath)
 			} else {
-				formatted := Pretty(j, flagColorOutput)
+				formatted := Pretty(j, rootFlagColorOutput)
 				fmt.Println(formatted)
 			}
 		} else {
-			formatted := Pretty(j, flagColorOutput)
+			formatted := Pretty(j, rootFlagColorOutput)
 			fmt.Println(formatted)
 		}
 	},
@@ -141,7 +141,7 @@ var getParamsCmd = &cobra.Command{
 			cList = append(cList, flagComponentName)
 		}
 
-		j := renderClusterParams(flagVMConfig, clusterName, cList, flagClusterParams, true)
+		j := renderClusterParams(rootFlagVMConfig, clusterName, cList, flagClusterParams, true)
 
 		if paramPath != "" {
 			value := gjson.Get(j, paramPath)
@@ -152,7 +152,7 @@ var getParamsCmd = &cobra.Command{
 				fmt.Println(value) // no formatting because this isn't always json, this is just the value of a field
 			}
 		} else {
-			formatted := Pretty(j, flagColorOutput)
+			formatted := Pretty(j, rootFlagColorOutput)
 			fmt.Println(formatted)
 		}
 

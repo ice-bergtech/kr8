@@ -65,7 +65,7 @@ func generateCommand(cmd *cobra.Command, args []string) {
 	allClusters, err := getClusters(flagClusterDir)
 	fatalErrorCheck(err, "Error getting list of clusters")
 	for _, c := range allClusters.Cluster {
-		allClusterParams[c.Name] = renderClusterParamsOnly(flagVMConfig, c.Name, "", false)
+		allClusterParams[c.Name] = renderClusterParamsOnly(rootFlagVMConfig, c.Name, "", false)
 	}
 
 	// This will store the list of clusters to generate components for.
@@ -82,7 +82,7 @@ func generateCommand(cmd *cobra.Command, args []string) {
 		cl := clusterName
 		_ = ants_cl.Submit(func() {
 			defer wg.Done()
-			genProcessCluster(flagVMConfig, cl, ants_cp)
+			genProcessCluster(rootFlagVMConfig, cl, ants_cp)
 		})
 	}
 	wg.Wait()
@@ -382,9 +382,9 @@ func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec Cluste
 	}
 
 	// jPath always includes base lib. Add jpaths from spec if set
-	jPath := []string{flagBaseDir + "/lib"}
+	jPath := []string{rootFlagBaseDir + "/lib"}
 	for _, j := range compSpec.JPaths {
-		jPath = append(jPath, flagBaseDir+"/"+compPath+"/"+j)
+		jPath = append(jPath, rootFlagBaseDir+"/"+compPath+"/"+j)
 	}
 	vm.Importer(&jsonnet.FileImporter{
 		JPaths: jPath,
@@ -392,7 +392,7 @@ func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec Cluste
 
 	// file imports
 	for k, v := range compSpec.ExtFiles {
-		vPath := flagBaseDir + "/" + compPath + "/" + v // use full path for file
+		vPath := rootFlagBaseDir + "/" + compPath + "/" + v // use full path for file
 		extFile, err := os.ReadFile(vPath)
 		fatalErrorCheck(err, "Error importing extfiles item")
 		log.Debug().Str("cluster", kr8Spec.Name).
@@ -497,16 +497,16 @@ func processIncludesFile(vm *jsonnet.VM, config string, kr8Spec ClusterSpec, com
 	case ".jsonnet":
 		// file is processed as an ExtCode input, so that we can postprocess it
 		// in the snippet
-		input = "( import '" + flagBaseDir + "/" + componentPath + "/" + incInfo.File + "')"
+		input = "( import '" + rootFlagBaseDir + "/" + componentPath + "/" + incInfo.File + "')"
 		outStr, err = processJsonnet(vm, input, incInfo.File)
 	case ".yml":
 	case ".yaml":
-		input = "std.native('parseYaml')(importstr '" + flagBaseDir + "/" + componentPath + "/" + incInfo.File + "')"
+		input = "std.native('parseYaml')(importstr '" + rootFlagBaseDir + "/" + componentPath + "/" + incInfo.File + "')"
 		outStr, err = processJsonnet(vm, input, incInfo.File)
 	case ".tmpl":
 	case ".tpl":
 		// Pass component config as data for the template
-		outStr, err = processTemplate(flagBaseDir+"/"+componentPath+"/"+incInfo.File, gjson.Get(config, componentName).Map())
+		outStr, err = processTemplate(rootFlagBaseDir+"/"+componentPath+"/"+incInfo.File, gjson.Get(config, componentName).Map())
 	default:
 		outStr, err = "", errors.New("unsupported file extension")
 	}

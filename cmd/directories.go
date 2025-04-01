@@ -165,7 +165,7 @@ func renderClusterParams(vmconfig VMConfig, clusterName string, componentNames [
 		// we are passed a list of components
 		for _, key := range componentNames {
 			if value, ok := componentMap[key]; ok {
-				path := flagBaseDir + "/" + value.Path + "/params.jsonnet"
+				path := rootFlagBaseDir + "/" + value.Path + "/params.jsonnet"
 				fileC, err := os.ReadFile(path)
 				if err != nil {
 					log.Fatal().Err(err).Msg("Error reading " + path)
@@ -179,7 +179,7 @@ func renderClusterParams(vmconfig VMConfig, clusterName string, componentNames [
 			if flagComponentName != "" && key != flagComponentName {
 				continue
 			}
-			path := flagBaseDir + "/" + value.Path + "/params.jsonnet"
+			path := rootFlagBaseDir + "/" + value.Path + "/params.jsonnet"
 			fileC, err := os.ReadFile(path)
 			if err != nil {
 				log.Fatal().Err(err).Msg("Error reading " + path)
