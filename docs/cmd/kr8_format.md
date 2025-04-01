@@ -13,17 +13,16 @@ kr8 format [flags]
 ### Options
 
 ```
-      --dir string         Root directory to walk and format (default "./")
+  -B, --base string        Root directory to walk and format (default "./")
   -h, --help               help for format
       --parallel int       parallelism - defaults to GOMAXPROCS (default 32)
-      --pexcludes string   filter included paths by excluding paths - filepath.Match format - https://pkg.go.dev/path/filepath#Match
-      --pincludes string   filter included paths by including paths - filepath.Match format - https://pkg.go.dev/path/filepath#Match
+  -x, --pexcludes string   filter included paths by excluding paths - filepath.Match format - https://pkg.go.dev/path/filepath#Match
+  -i, --pincludes string   filter included paths by including paths - filepath.Match format - https://pkg.go.dev/path/filepath#Match
 ```
 
 ### Options inherited from parent commands
 
 ```
-  -B, --base string            kr8 config base directory (default ".")
   -D, --clusterdir string      kr8 cluster directory
       --color                  enable colorized output (default). Set to false to disable (default true)
   -d, --componentdir string    kr8 component directory
