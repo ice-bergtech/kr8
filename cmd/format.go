@@ -5,7 +5,6 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -14,14 +13,6 @@ import (
 	"github.com/panjf2000/ants/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-)
-
-var (
-	formatDir     string
-	pIncludes     string
-	pExcludes     string
-	formatOptions formatter.Options
 )
 
 func setDefaultFormatOptions() formatter.Options {
@@ -46,6 +37,25 @@ func formatJsonnetString(input string) (string, error) {
 	return formatter.Format("", input, formatOptions)
 }
 
+var (
+	formatOptions formatter.Options
+)
+
+type cmdFormatOptions struct {
+	Includes string
+	Excludes string
+}
+
+var cmdformatFlags cmdFormatOptions
+
+func init() {
+	RootCmd.AddCommand(formatCmd)
+	formatCmd.Flags().StringVarP(&cmdformatFlags.Includes, "clincludes", "i", "", "filter included cluster by including clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
+	formatCmd.Flags().StringVarP(&cmdformatFlags.Excludes, "clexcludes", "x", "", "filter included cluster by excluding clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
+
+	setDefaultFormatOptions()
+}
+
 var formatCmd = &cobra.Command{
 	Use:   "format",
 	Short: "Format jsonnet files",
@@ -55,7 +65,7 @@ var formatCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		var fileList []string
-		filepath.Walk(formatDir, func(path string, info fs.FileInfo, err error) error {
+		filepath.Walk(rootFlagBaseDir, func(path string, info fs.FileInfo, err error) error {
 			if info.IsDir() && info.Name() == ".git" {
 				return filepath.SkipDir
 			}
@@ -64,14 +74,14 @@ var formatCmd = &cobra.Command{
 				var errf error
 				match := true
 				excludeMatch := false
-				if pIncludes != "" {
-					match, errf = filepath.Match(pIncludes, path)
+				if cmdformatFlags.Includes != "" {
+					match, errf = filepath.Match(cmdformatFlags.Includes, path)
 					if errf != nil {
 						return nil
 					}
 				}
-				if pExcludes != "" {
-					excludeMatch, errf = filepath.Match(pExcludes, path)
+				if cmdformatFlags.Excludes != "" {
+					excludeMatch, errf = filepath.Match(cmdformatFlags.Excludes, path)
 					if errf != nil {
 						return nil
 					}
@@ -89,7 +99,6 @@ var formatCmd = &cobra.Command{
 			log.Fatal().Err(err).Msg("")
 		}
 		log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
-		setDefaultFormatOptions()
 		ants_file, _ := ants.NewPool(parallel)
 		for _, filename := range fileList {
 			wg.Add(1)
@@ -111,17 +120,4 @@ var formatCmd = &cobra.Command{
 		}
 		wg.Wait()
 	},
-}
-
-func init() {
-	RootCmd.AddCommand(formatCmd)
-	formatCmd.Flags().StringVarP(&formatDir, "base", "B", "./", "Root directory to walk and format")
-
-	formatCmd.Flags().StringVarP(&pIncludes, "pincludes", "i", "", "filter included paths by including paths - filepath.Match format - https://pkg.go.dev/path/filepath#Match")
-	formatCmd.Flags().StringVarP(&pExcludes, "pexcludes", "x", "", "filter included paths by excluding paths - filepath.Match format - https://pkg.go.dev/path/filepath#Match")
-	formatCmd.Flags().IntP("parallel", "", runtime.GOMAXPROCS(0), "parallelism - defaults to GOMAXPROCS")
-
-	viper.BindPFlag("base", RootCmd.PersistentFlags().Lookup("base"))
-	viper.BindPFlag("pIncludes", formatCmd.PersistentFlags().Lookup("pIncludes"))
-	viper.BindPFlag("pExcludes", formatCmd.PersistentFlags().Lookup("pExcludes"))
 }
