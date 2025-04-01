@@ -96,8 +96,18 @@ var initCluster = &cobra.Command{
 			}
 			survey.AskOne(prompt, &cSpec.PostProcessor)
 		}
-		// place final cluster.jsonnet file in output path
-	},
+// Write out a struct to a specified path and file
+func writeInitializedStruct(filename string, path string, objStruct interface{}) error {
+	fatalErrorCheck(os.MkdirAll(componentDir, 0755), "error creating component directory")
+
+	jsonStr, errJ := json.MarshalIndent(objStruct, "", "  ")
+	fatalErrorCheck(errJ, "error marshalling component jsonnet to json")
+
+	jsonStrFormatted, errF := formatJsonnetString(string(jsonStr))
+	fatalErrorCheck(errF, "error formatting component jsonnet to json")
+
+	return (os.WriteFile(filename, []byte(jsonStrFormatted), 0644))
+}
 }
 
 var initComponent = &cobra.Command{
