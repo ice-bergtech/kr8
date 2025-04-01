@@ -30,8 +30,6 @@ type ClusterSpec struct {
 	PruneParams bool `json:"prune_params"`
 	ClusterDir  string
 	Name        string
-	Path        string
-	ShortNames  bool
 }
 
 func CreateClusterSpec(cmd *cobra.Command, clusterName string, spec gjson.Result) (ClusterSpec, error) {
@@ -55,6 +53,7 @@ func CreateClusterSpec(cmd *cobra.Command, clusterName string, spec gjson.Result
 		spec.Get("generate_short_names").Bool(),
 		spec.Get("prune_params").Bool(),
 		clusterDir,
+		clusterName,
 	}, nil
 }
 
