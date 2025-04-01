@@ -405,7 +405,7 @@ func genProcessComponent(cmd *cobra.Command, componentName string, kr8Spec Clust
 		vm.ExtVar(k, string(extFile))
 	}
 
-	componentOutputDir := clusterDir + "/" + componentName
+	componentOutputDir := kr8Spec.ClusterDir + "/" + componentName
 	// create component dir if needed
 	if _, err := os.Stat(componentOutputDir); os.IsNotExist(err) {
 		err := os.MkdirAll(componentOutputDir, os.ModePerm)
@@ -479,7 +479,7 @@ func processIncludesFile(vm *jsonnet.VM, config string, kr8Spec ClusterSpec, com
 	// ensure this directory exists
 	outputDir := componentOutputDir
 	if incInfo.DestDir != "" {
-		outputDir = kr8Spec.GenerateDir + "/" + incInfo.DestDir
+		outputDir = kr8Spec.ClusterDir + "/" + incInfo.DestDir
 	}
 	if _, err := os.Stat(outputDir); os.IsNotExist(err) {
 		err = os.MkdirAll(outputDir, os.ModePerm)
