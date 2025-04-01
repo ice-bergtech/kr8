@@ -38,6 +38,7 @@ var (
 	initCoPath      string
 	initCoType      string
 	initInteractive bool
+	//initSkipDocs    bool
 )
 
 // initCmd represents the init command
@@ -191,15 +192,16 @@ func init() {
 	initCmd.AddCommand(initCluster)
 	initCmd.AddCommand(initComponent)
 
-	initCmd.Flags().Bool(&initInteractive, "interactive", "i", false)
+	initCmd.PersistentFlags().BoolVarP(&initInteractive, "interactive", "i", false, "Initialize a resource interactivly")
+	//initCmd.PersistentFlags().BoolVarP(&initSkipDocs, "skip-docs", "s", false, "Skip config doc lines")
 
 	repoCmd.PersistentFlags().StringVar(&dl_url, "url", "", "Source of skeleton directory to create repo from")
 
-	initCluster.Flags().StringVarP(&initClName, "name", "", "cluster-tpl", "Cluster name")
-	initCluster.Flags().StringVarP(&initClPath, "path", "", "clusters", "Cluster path")
+	initCluster.Flags().StringVarP(&initClName, "name", "o", "cluster-tpl", "Cluster name")
+	initCluster.Flags().StringVarP(&initClPath, "path", "p", "clusters", "Cluster path")
 
-	initComponent.Flags().StringVarP(&initCoName, "name", "", "component-tpl", "Component name")
-	initComponent.Flags().StringVarP(&initCoPath, "path", "", "components", "Component path")
-	initComponent.Flags().StringVarP(&initCoType, "type", "", "jsonnet", "Component type, one of: [`jsonnet`, `yml`, `chart`]")
+	initComponent.Flags().StringVarP(&initCoName, "name", "o", "component-tpl", "Component name")
+	initComponent.Flags().StringVarP(&initCoPath, "path", "p", "components", "Component path")
+	initComponent.Flags().StringVarP(&initCoType, "type", "t", "jsonnet", "Component type, one of: [`jsonnet`, `yml`, `chart`]")
 
 }
