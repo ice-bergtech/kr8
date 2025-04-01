@@ -49,14 +49,15 @@ func Execute(version string) {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	RootCmd.PersistentFlags().StringVarP(&baseDir, "base", "d", ".", "kr8 config base directory")
-	RootCmd.PersistentFlags().StringVarP(&clusterDir, "clusterdir", "D", "", "kr8 cluster directory")
-	RootCmd.PersistentFlags().StringVarP(&componentDir, "componentdir", "X", "", "kr8 component directory")
-	RootCmd.PersistentFlags().StringVarP(&logLevel, "loglevel", "L", "info", "set log level")
 	RootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "log more information about what kr8 is doing. Overrides --loglevel")
+	RootCmd.PersistentFlags().StringVarP(&logLevel, "loglevel", "L", "info", "set log level")
+	RootCmd.PersistentFlags().StringVarP(&baseDir, "base", "B", ".", "kr8 config base directory")
+	RootCmd.PersistentFlags().StringVarP(&clusterDir, "clusterdir", "D", "", "kr8 cluster directory")
+	RootCmd.PersistentFlags().StringVarP(&componentDir, "componentdir", "d", "", "kr8 component directory")
 	RootCmd.PersistentFlags().BoolVar(&colorOutput, "color", true, "enable colorized output (default). Set to false to disable")
 	RootCmd.PersistentFlags().StringArrayP("jpath", "J", nil, "Directories to add to jsonnet include path. Repeat arg for multiple directories")
 	RootCmd.PersistentFlags().StringSlice("ext-str-file", nil, "Set jsonnet extvar from file contents")
+
 	viper.BindPFlag("base", RootCmd.PersistentFlags().Lookup("base"))
 	viper.BindPFlag("clusterdir", RootCmd.PersistentFlags().Lookup("clusterdir"))
 	viper.BindPFlag("componentdir", RootCmd.PersistentFlags().Lookup("componentdir"))
