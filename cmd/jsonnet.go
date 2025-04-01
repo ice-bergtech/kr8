@@ -153,60 +153,27 @@ Copyright 2018 ksonnet
 */
 
 func RegisterNativeFuncs(vm *jsonnet.VM) {
-	// TODO(mkm): go-jsonnet 0.12.x now contains native std.parseJson; deprecate and remove this one.
-	vm.NativeFunction(&jsonnet.NativeFunction{
-		Name:   "parseJson",
-		Params: []jsonnetAst.Identifier{"json"},
-		Func: func(args []interface{}) (res interface{}, err error) {
-			data := []byte(args[0].(string))
-			err = json.Unmarshal(data, &res)
-			return
-		},
-	})
+	// Adds on to functions described here: https://jsonnet.org/ref/stdlib.html
 
 	vm.NativeFunction(&jsonnet.NativeFunction{
-		Name:   "parseYaml",
-		Params: []jsonnetAst.Identifier{"yaml"},
+		Name:   "template",
+		Params: []jsonnetAst.Identifier{"config", "str"},
 		Func: func(args []interface{}) (res interface{}, err error) {
-			ret := []interface{}{}
-			data := []byte(args[0].(string))
-			d := yaml.NewYAMLToJSONDecoder(bytes.NewReader(data))
-			for {
-				var doc interface{}
-				if err := d.Decode(&doc); err != nil {
-					if err == io.EOF {
-						break
-					}
-					return nil, err
-				}
-				ret = append(ret, doc)
-			}
-			return ret, nil
-		},
-	})
-
-	vm.NativeFunction(&jsonnet.NativeFunction{
-		Name:   "manifestJson",
-		Params: []jsonnetAst.Identifier{"json", "indent"},
-		Func: func(args []interface{}) (res interface{}, err error) {
-			value := args[0]
-			indent := int(args[1].(float64))
-			data, err := json.MarshalIndent(value, "", strings.Repeat(" ", indent))
+			var config any
+			err = json.Unmarshal([]byte(args[0].(string)), config)
 			if err != nil {
 				return "", err
 			}
-			data = append(data, byte('\n'))
-			return string(data), nil
-		},
-	})
 
-	vm.NativeFunction(&jsonnet.NativeFunction{
-		Name:   "manifestYaml",
-		Params: []jsonnetAst.Identifier{"json"},
-		Func: func(args []interface{}) (res interface{}, err error) {
-			value := args[0]
-			output, err := goyaml.Marshal(value)
-			return string(output), err
+			input := []byte(args[1].(string))
+			tmpl, err := template.New("file").Parse(string(input))
+			if err != nil {
+				return "", err
+			}
+
+			var buff bytes.Buffer
+			err = tmpl.Execute(&buff, config)
+			return buff.String(), err
 		},
 	})
 
