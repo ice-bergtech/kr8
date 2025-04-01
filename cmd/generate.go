@@ -61,8 +61,6 @@ var generateCmd = &cobra.Command{
 
 func generateCommand(cmd *cobra.Command, args []string) {
 
-	var clusterList []string
-
 	// get list of all clusters, render cluster level params for all of them
 	allClusterParams = make(map[string]string)
 	allClusters, err := getClusters(clusterDir)
@@ -71,6 +69,33 @@ func generateCommand(cmd *cobra.Command, args []string) {
 		allClusterParams[c.Name] = renderClusterParamsOnly(cmd, c.Name, "", false)
 	}
 
+	// This will store the list of clusters to generate components for.
+	clusterList := calculateClusterIncludesExcludes()
+
+	// Setup the threading pools, one for clusters and one for clusters
+	var wg sync.WaitGroup
+	parallel, err := cmd.Flags().GetInt("parallel")
+	fatalErrorCheck(err, "Failed to get parallel flag")
+	log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
+	ants_cp, _ := ants.NewPool(parallel)
+	ants_cl, _ := ants.NewPool(parallel)
+
+	// Generate config for each cluster in parallel
+	for _, clusterName := range clusterList {
+		wg.Add(1)
+		cl := clusterName
+		_ = ants_cl.Submit(func() {
+			defer wg.Done()
+			genProcessCluster(cmd, cl, ants_cp)
+		})
+	}
+	wg.Wait()
+}
+
+// Using the allClusterParams variable and command flags to create a list of clusters to generate
+// Clusters can be filtered with "=" for equality or "~" for regex match
+func calculateClusterIncludesExcludes() []string {
+	var clusterList []string
 	for c := range allClusterParams {
 		if clIncludes != "" || clExcludes != "" {
 			gjResult := gjson.Parse(allClusterParams[c])
@@ -154,24 +179,54 @@ func generateCommand(cmd *cobra.Command, args []string) {
 
 		}
 	}
+	return clusterList
+}
 
-	var wg sync.WaitGroup
-	parallel, err := cmd.Flags().GetInt("parallel")
-	fatalErrorCheck(err, "Failed to get parallel flag")
-	log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
-	ants_cp, _ := ants.NewPool(parallel)
-	ants_cl, _ := ants.NewPool(parallel)
+// Only processes specified component if it's defined in the cluster
+// Processes components in string sorted order
+// Sorts out orphaned, generated components directories
+func buildComponentList(generatedCompList []string, clusterComponents map[string]gjson.Result, clusterDir string, clusterName string) []string {
+	var compList []string
+	var currentCompList []string
 
-	// Generate config for each cluster in parallel
-	for _, clusterName := range clusterList {
-		wg.Add(1)
-		cl := clusterName
-		_ = ants_cl.Submit(func() {
-			defer wg.Done()
-			genProcessCluster(cmd, cl, ants_cp)
-		})
+	if components != "" {
+		for _, b := range strings.Split(components, ",") {
+			for _, c := range generatedCompList {
+				matched, _ := regexp.MatchString("^"+b+"$", c)
+				if matched {
+					currentCompList = append(currentCompList, c)
+				}
+			}
+			for c := range clusterComponents {
+				matched, _ := regexp.MatchString("^"+b+"$", c)
+				if matched {
+					compList = append(compList, c)
+				}
+			}
+		}
+	} else {
+		for c := range clusterComponents {
+			compList = append(compList, c)
+		}
+		currentCompList = generatedCompList
 	}
-	wg.Wait()
+	sort.Strings(compList)
+
+	tmpMap := make(map[string]struct{}, len(clusterComponents))
+	for e := range clusterComponents {
+		tmpMap[e] = struct{}{}
+	}
+
+	for _, e := range currentCompList {
+		if _, found := tmpMap[e]; !found {
+			delComp := filepath.Join(clusterDir, e)
+			os.RemoveAll(delComp)
+			log.Info().Str("cluster", clusterName).
+				Str("component", e).
+				Msg("Deleting generated for component")
+		}
+	}
+	return compList
 }
 
 func fatalErrorCheck(err error, message string) {
@@ -267,53 +322,6 @@ func genProcessCluster(cmd *cobra.Command, clusterName string, p *ants.Pool) {
 	}
 	wg.Wait()
 
-}
-
-// Only processes specified component if it's defined in the cluster
-// Processes components in string sorted order
-// Sorts out orphaned, generated components directories
-func buildComponentList(generatedCompList []string, clusterComponents map[string]gjson.Result, clusterDir string, clusterName string) []string {
-	var compList []string
-	var currentCompList []string
-
-	if components != "" {
-		for _, b := range strings.Split(components, ",") {
-			for _, c := range generatedCompList {
-				matched, _ := regexp.MatchString("^"+b+"$", c)
-				if matched {
-					currentCompList = append(currentCompList, c)
-				}
-			}
-			for c := range clusterComponents {
-				matched, _ := regexp.MatchString("^"+b+"$", c)
-				if matched {
-					compList = append(compList, c)
-				}
-			}
-		}
-	} else {
-		for c := range clusterComponents {
-			compList = append(compList, c)
-		}
-		currentCompList = generatedCompList
-	}
-	sort.Strings(compList)
-
-	tmpMap := make(map[string]struct{}, len(clusterComponents))
-	for e := range clusterComponents {
-		tmpMap[e] = struct{}{}
-	}
-
-	for _, e := range currentCompList {
-		if _, found := tmpMap[e]; !found {
-			delComp := filepath.Join(clusterDir, e)
-			os.RemoveAll(delComp)
-			log.Info().Str("cluster", clusterName).
-				Str("component", e).
-				Msg("Deleting generated for component")
-		}
-	}
-	return compList
 }
 
 func genProcessComponent(cmd *cobra.Command, clusterName string, componentName string, clusterDir string, clGenerateDir string, config string, allConfig *safeString, postProcessorFunction string, pruneParams bool, generateShortNames bool) {
