@@ -96,6 +96,11 @@ var initCluster = &cobra.Command{
 			}
 			survey.AskOne(prompt, &cSpec.PostProcessor)
 		}
+		// Generate the jsonnet file based on the config
+		fatalErrorCheck(generateClusterJsonnet(cSpec), "Error generating cluster jsonnet file")
+	},
+}
+
 // Write out a struct to a specified path and file
 func writeInitializedStruct(filename string, path string, objStruct interface{}) error {
 	fatalErrorCheck(os.MkdirAll(componentDir, 0755), "error creating component directory")
@@ -108,6 +113,19 @@ func writeInitializedStruct(filename string, path string, objStruct interface{})
 
 	return (os.WriteFile(filename, []byte(jsonStrFormatted), 0644))
 }
+
+func generateClusterJsonnet(cSpec ClusterSpec) error {
+	filename := "cluster.jsonnet"
+	clusterJson := ClusterJsonnet{
+		ClusterSpec: cSpec,
+		Cluster:     Cluster{Name: cSpec.Name},
+		Components:  map[string]ClusterComponent{},
+	}
+	clOutDir := clusterDir + "/" + initClName
+	if initClPath != "" {
+		clOutDir = initClPath
+	}
+	return writeInitializedStruct(filename, clOutDir, clusterJson)
 }
 
 var initComponent = &cobra.Command{
