@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+	"text/template"
 
 	goyaml "github.com/ghodss/yaml"
 	jsonnet "github.com/google/go-jsonnet"
@@ -17,7 +17,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"k8s.io/apimachinery/pkg/util/yaml"
 )
 
 var (
