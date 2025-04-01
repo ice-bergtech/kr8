@@ -17,7 +17,7 @@ import (
 var renderCmd = &cobra.Command{
 	Use:   "render",
 	Short: "Render files",
-	Long:  `Render files in jsonnet or UAML`,
+	Long:  `Render files in jsonnet or YAML`,
 }
 
 var renderJsonnetCmd = &cobra.Command{
@@ -32,7 +32,7 @@ var renderJsonnetCmd = &cobra.Command{
 }
 
 var helmCleanCmd = &cobra.Command{
-	Use:   "helmclean",
+	Use:   "helm",
 	Short: "Clean YAML stream from Helm Template output - Reads from Stdin",
 	Long:  `Removes Null YAML objects from a YAML stream`,
 	Run: func(cmd *cobra.Command, args []string) {
