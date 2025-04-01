@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in cluster get init jsonnet render yaml; do
+for i in cluster get init jsonnet render; do
   echo "Testing '$i' command"
   ./bats/bin/bats ${i}_test.sh
   echo

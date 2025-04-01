@@ -4,7 +4,7 @@ if [ -z "$KR8" ]; then
   KR8=kr8
 fi
 
-KR8_ARGS="-d data"
+KR8_ARGS="-D data"
 CLUSTER=bats
 
 # NOTE: These are expected to be the same as "cluster ..." output, so reuse
@@ -27,21 +27,21 @@ CLUSTER=bats
 # These have a (debug?) output line in the stock version
 @test "Check get params for all components" {
   expected=$(<expected/get_params)
-  run $KR8 $KR8_ARGS get params -c "$CLUSTER"
+  run $KR8 $KR8_ARGS get params -C "$CLUSTER"
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
 
 @test "Check get params for one component with cluster config (-C)" {
   expected=$(<expected/get_params_comp1)
-  run $KR8 $KR8_ARGS get params -c "$CLUSTER" -C comp1
+  run $KR8 $KR8_ARGS get params -C "$CLUSTER" -c comp1
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
 
 @test "Check get component params for one component only (-P)" {
   expected=$(<expected/get_params_comp2)
-  run $KR8 $KR8_ARGS get params -c "$CLUSTER" -P comp2
+  run $KR8 $KR8_ARGS get params -C "$CLUSTER" -P comp2
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
@@ -50,7 +50,7 @@ CLUSTER=bats
 # FIXME: why?
 @test "Check get params with file override - FAIL" {
   #expected=$(<expected/cluster_params_file)
-  run $KR8 $KR8_ARGS get params -c "$CLUSTER" --clusterparams data/misc/cluster_params.jsonnet
+  run $KR8 $KR8_ARGS get params -C "$CLUSTER" --clusterparams data/misc/cluster_params.jsonnet
   [ "$status" -eq 255 ]
   #diff <(echo "$output") <(echo "$expected")
 }

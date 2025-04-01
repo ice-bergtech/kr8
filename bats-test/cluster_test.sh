@@ -4,19 +4,19 @@ if [ -z "$KR8" ]; then
   KR8=kr8
 fi
 
-KR8_ARGS="-d data"
+KR8_ARGS="-D data"
 CLUSTER=bats
 
 @test "Check cluster list output" {
   expected=$(<expected/cluster_list)
-  run $KR8 $KR8_ARGS cluster list
+  run $KR8 $KR8_ARGS get clusters
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
 
 @test "Check cluster components output" {
   expected=$(<expected/cluster_components)
-  run $KR8 $KR8_ARGS cluster components --cluster "$CLUSTER"
+  run $KR8 $KR8_ARGS get components --cluster "$CLUSTER"
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
@@ -28,28 +28,28 @@ CLUSTER=bats
 
 @test "Check cluster params for all components" {
   expected=$(<expected/cluster_params)
-  run $KR8 $KR8_ARGS cluster params -c "$CLUSTER"
+  run $KR8 $KR8_ARGS get params -c "$CLUSTER"
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
 
 @test "Check cluster params for one component with cluster config (-C)" {
   expected=$(<expected/cluster_params_comp1)
-  run $KR8 $KR8_ARGS cluster params -c "$CLUSTER" -C comp1
+  run $KR8 $KR8_ARGS get params -c "$CLUSTER" -C comp1
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
 
 @test "Check cluster params for one component only (-P)" {
   expected=$(<expected/cluster_params_comp2)
-  run $KR8 $KR8_ARGS cluster params -c "$CLUSTER" -P comp2
+  run $KR8 $KR8_ARGS get params -c "$CLUSTER" -P comp2
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
 
 @test "Check cluster params with file override" {
   expected=$(<expected/cluster_params_file)
-  run $KR8 $KR8_ARGS cluster params -c "$CLUSTER" --clusterparams data/misc/cluster_params.jsonnet
+  run $KR8 $KR8_ARGS get params -c "$CLUSTER" --clusterparams data/misc/cluster_params.jsonnet
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
@@ -58,7 +58,7 @@ CLUSTER=bats
 @test "Check cluster params with unset component (-P)" {
   # This is wonky because of "echo" and fmt.Println, but matches anyway
   expected=""
-  run $KR8 $KR8_ARGS cluster params -c "$CLUSTER" -P no_component
+  run $KR8 $KR8_ARGS get params -c "$CLUSTER" -P no_component
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
@@ -66,21 +66,21 @@ CLUSTER=bats
 # Check behavior on a component that doesn't exist
 @test "Check cluster params with unset component (-C)" {
   expected=$(<expected/cluster_params_no_comp)
-  run $KR8 $KR8_ARGS cluster params -c "$CLUSTER" -C no_component
+  run $KR8 $KR8_ARGS get params -c "$CLUSTER" -C no_component
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
 
 # --notunset has interesting behavior, and only exists on "cluster", not on "get"
 @test "Check cluster params with unset component (-P) and --nounset flag - FAIL" {
-  run $KR8 $KR8_ARGS cluster params -c "$CLUSTER" -P no_component --notunset
+  run $KR8 $KR8_ARGS get params -c "$CLUSTER" -P no_component --notunset
   [ "$status" -eq 1 ]
 }
 
 # But this *works* and gives cluster config + component list
 @test "Check cluster params with unset component (-C) and --nounset flag" {
   expected=$(<expected/cluster_params_no_comp)
-  run $KR8 $KR8_ARGS cluster params -c "$CLUSTER" -C no_component --notunset
+  run $KR8 $KR8_ARGS get params -c "$CLUSTER" -C no_component --notunset
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }

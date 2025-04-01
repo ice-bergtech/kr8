@@ -4,7 +4,7 @@ if [ -z "$KR8" ]; then
   KR8=kr8
 fi
 
-KR8_ARGS="-d data"
+KR8_ARGS="-D data"
 CLUSTER=bats
 
 $KR8 $KR8_ARGS cluster list > expected/cluster_list
