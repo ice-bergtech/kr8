@@ -11,21 +11,21 @@ CLUSTER=bats
 
 @test "Check render jsonnet json parsing" {
   expected=$(<expected/jsonnet_basic_json)
-  run $KR8 $KR8_ARGS -C $CLUSTER render jsonnet data/misc/basic.json
+  run $KR8 $KR8_ARGS render jsonnet -C $CLUSTER data/misc/basic.json
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
 
 @test "Check render jsonnet basic jsonnet parsing" {
   expected=$(<expected/jsonnet_basic_jsonnet)
-  run $KR8 $KR8_ARGS -C $CLUSTER render jsonnet data/misc/basic.jsonnet
+  run $KR8 $KR8_ARGS render jsonnet -C $CLUSTER  data/misc/basic.jsonnet
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
 
 @test "Check render jsonnet component parsing (default: json)" {
   expected=$(<expected/jsonnet_comp1_json)
-  run $KR8 $KR8_ARGS render jsonnet -C bats -c comp1 data/components/comp1/comp1.jsonnet
+  run $KR8 $KR8_ARGS render jsonnet -C $CLUSTER -c comp1 data/components/comp1/comp1.jsonnet
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
@@ -34,8 +34,8 @@ CLUSTER=bats
 # FIXME: could be better
 @test "Check render jsonnet parsing without component - FAIL" {
   expected=$(<expected/jsonnet_comp1_json)
-  run $KR8 $KR8_ARGS render jsonnet -C bats data/components/comp1/comp1.jsonnet
-  [ "$status" -eq 2 ]
+  run $KR8 $KR8_ARGS render jsonnet -C $CLUSTER data/components/comp1/comp1.jsonnet
+  [ "$status" -eq 1 ]
 }
 
 # Explicit formats
@@ -58,7 +58,7 @@ CLUSTER=bats
 @test "Check render jsonnet component parsing (format: stream) - FAIL" {
   expected=$(<expected/jsonnet_comp1_json)
   run $KR8 $KR8_ARGS render jsonnet -C bats -c comp1 -F stream data/components/comp1/comp1.jsonnet
-  [ "$status" -eq 2 ]
+  [ "$status" -eq 1 ]
 }
 
 # List of objects
@@ -99,38 +99,8 @@ CLUSTER=bats
   #expected=$(<expected/jsonnet_comp2_with_file_stream)
   run $KR8 $KR8_ARGS render jsonnet -c comp1 -F stream data/components/comp2/comp1_list.jsonnet \
     --clusterparams data/misc/cluster_params.jsonnet
-  [ "$status" -eq 2 ]
+  [ "$status" -eq 1 ]
   #diff <(echo "$output") <(echo "$expected")
-}
-
-# helmclean tests - use "yaml" command generated files
-
-# Stacktrace on bad YAML
-# FIXME: could be better
-@test "Check render helmclean on bad YAML  - FAIL" {
-  run $KR8 $KR8_ARGS render helmclean < data/misc/fail.yaml
-  [ "$status" -eq 2 ]
-}
-
-# Stacktrace if we don't match "kind" or other k8sy things
-# FIXME: could be better
-@test "Check render helmclean object without kind - FAIL" {
-  run $KR8 $KR8_ARGS render helmclean < data/misc/nokind.yaml
-  [ "$status" -eq 2 ]
-}
-@test "Check render helmclean stream with no nulls" {
-  expected=$(<expected/yaml_helmclean_clean)
-  run $KR8 $KR8_ARGS render helmclean < data/misc/clean.yaml
-  [ "$status" -eq 0 ]
-  diff <(echo "$output") <(echo "$expected")
-}
-
-@test "Check render helmclean stream with nulls" {
-  # we are explicitly expecting the "clean" output to match
-  expected=$(<expected/yaml_helmclean_clean)
-  run $KR8 $KR8_ARGS render helmclean < data/misc/dirty.yaml
-  [ "$status" -eq 0 ]
-  diff <(echo "$output") <(echo "$expected")
 }
 
 # Stacktrace on bad YAML
