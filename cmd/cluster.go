@@ -19,6 +19,10 @@ var clusterCmd = &cobra.Command{
 	//Run: func(cmd *cobra.Command, args []string) { },
 }
 
+var (
+	printRaw bool
+)
+
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List Clusters",
@@ -29,6 +33,13 @@ var listCmd = &cobra.Command{
 
 		if err != nil {
 			log.Fatal().Err(err).Msg("Error getting cluster")
+		}
+
+		if printRaw {
+			for _, c := range clusters.Cluster {
+				println(c.Name + ": " + c.Path)
+			}
+			return
 		}
 
 		var entry []string
@@ -42,7 +53,6 @@ var listCmd = &cobra.Command{
 			entry = entry[:0]
 		}
 		table.Render()
-
 	},
 }
 
@@ -123,9 +133,13 @@ func init() {
 	clusterCmd.AddCommand(listCmd)
 	clusterCmd.AddCommand(paramsCmd)
 	clusterCmd.AddCommand(componentsCmd)
-	clusterCmd.PersistentFlags().StringP("cluster", "c", "", "cluster to operate on")
+
+	clusterCmd.PersistentFlags().StringP("cluster", "C", "", "cluster to operate on")
 	clusterCmd.PersistentFlags().StringVarP(&clusterParams, "clusterparams", "", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
-	paramsCmd.PersistentFlags().StringVarP(&componentName, "component", "C", "", "component to render params for")
+
+	listCmd.PersistentFlags().BoolVarP(&printRaw, "raw", "r", false, "If true, just prints result instead of placing in table.")
+
+	paramsCmd.PersistentFlags().StringVarP(&componentName, "component", "c", "", "component to render params for")
 	paramsCmd.Flags().StringVarP(&paramPath, "param", "P", "", "return value of json param from supplied path")
 	paramsCmd.Flags().BoolP("notunset", "", false, "Fail if specified param is not set. Otherwise returns blank value if param is not set")
 }
