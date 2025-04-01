@@ -37,6 +37,143 @@ var (
 	allClusterParams map[string]string
 )
 
+func init() {
+	RootCmd.AddCommand(generateCmd)
+	generateCmd.Flags().StringVarP(&clusterParams, "clusterparams", "", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
+	generateCmd.Flags().StringVarP(&clusters, "clusters", "", "", "clusters to generate - comma separated list of cluster names and/or regular expressions ")
+	generateCmd.Flags().StringVarP(&components, "components", "", "", "components to generate - comma separated list of component names and/or regular expressions")
+	generateCmd.Flags().StringVarP(&generateDir, "generate-dir", "", "", "output directory")
+	generateCmd.Flags().StringVarP(&clIncludes, "clincludes", "", "", "filter included cluster by including clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
+	generateCmd.Flags().StringVarP(&clExcludes, "clexcludes", "", "", "filter included cluster by excluding clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
+	generateCmd.Flags().IntP("parallel", "", runtime.GOMAXPROCS(0), "parallelism - defaults to GOMAXPROCS")
+	viper.BindPFlag("clincludes", generateCmd.PersistentFlags().Lookup("clincludes"))
+	viper.BindPFlag("clexcludes", generateCmd.PersistentFlags().Lookup("clexcludes"))
+}
+
+var generateCmd = &cobra.Command{
+	Use:   "generate",
+	Short: "Generate components",
+	Long:  `Generate components in clusters`,
+
+	Args: cobra.MinimumNArgs(0),
+	Run:  generateCommand,
+}
+
+func generateCommand(cmd *cobra.Command, args []string) {
+
+	var clusterList []string
+
+	// get list of all clusters, render cluster level params for all of them
+	allClusterParams = make(map[string]string)
+	allClusters, err := getClusters(clusterDir)
+	fatalErrorCheck(err, "Error getting list of clusters")
+	for _, c := range allClusters.Cluster {
+		allClusterParams[c.Name] = renderClusterParamsOnly(cmd, c.Name, "", false)
+	}
+
+	for c := range allClusterParams {
+		if clIncludes != "" || clExcludes != "" {
+			gjResult := gjson.Parse(allClusterParams[c])
+			// includes
+			if clIncludes != "" {
+				// filter on cluster parameters, passed in gjson path notation with either
+				// "=" for equality or "~" for regex match
+				var include bool
+				for _, b := range strings.Split(clIncludes, ",") {
+					include = false
+					// equality match
+					kv := strings.SplitN(b, "=", 2)
+					if len(kv) == 2 {
+						if gjResult.Get(kv[0]).String() == kv[1] {
+							include = true
+						}
+					} else {
+						// regex match
+						kv := strings.SplitN(b, "~", 2)
+						if len(kv) == 2 {
+							matched, _ := regexp.MatchString(kv[1], gjResult.Get(kv[0]).String())
+							if matched {
+								include = true
+							}
+						}
+					}
+					if !include {
+						break
+					}
+				}
+				if !include {
+					continue
+				}
+			}
+			// excludes
+			if clExcludes != "" {
+				// filter on cluster parameters, passed in gjson path notation with either
+				// "=" for equality or "~" for regex match
+				var exclude bool
+				for _, b := range strings.Split(clExcludes, ",") {
+					exclude = false
+					// equality match
+					kv := strings.SplitN(b, "=", 2)
+					if len(kv) == 2 {
+						if gjResult.Get(kv[0]).String() == kv[1] {
+							exclude = true
+						}
+					} else {
+						// regex match
+						kv := strings.SplitN(b, "~", 2)
+						if len(kv) == 2 {
+							matched, _ := regexp.MatchString(kv[1], gjResult.Get(kv[0]).String())
+							if matched {
+								exclude = true
+							}
+						}
+					}
+					if exclude {
+						break
+					}
+				}
+				if exclude {
+					continue
+				}
+			}
+		}
+
+		if clusters == "" {
+			// all clusters
+			clusterList = append(clusterList, c)
+		} else {
+			// match --clusters list
+			for _, b := range strings.Split(clusters, ",") {
+				// match cluster names as anchored regex
+				matched, _ := regexp.MatchString("^"+b+"$", c)
+				if matched {
+					clusterList = append(clusterList, c)
+					break
+				}
+			}
+
+		}
+	}
+
+	var wg sync.WaitGroup
+	parallel, err := cmd.Flags().GetInt("parallel")
+	fatalErrorCheck(err, "Failed to get parallel flag")
+	log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
+	ants_cp, _ := ants.NewPool(parallel)
+	ants_cl, _ := ants.NewPool(parallel)
+
+	// Generate config for each cluster in parallel
+	for _, clusterName := range clusterList {
+		wg.Add(1)
+		cl := clusterName
+		_ = ants_cl.Submit(func() {
+			defer wg.Done()
+			genProcessCluster(cmd, cl, ants_cp)
+		})
+	}
+	wg.Wait()
+}
+
 func fatalErrorCheck(err error, message string) {
 	if err != nil {
 		log.Fatal().Err(err).Msg(message)
@@ -401,139 +538,4 @@ func genProcessComponent(cmd *cobra.Command, clusterName string, componentName s
 		}
 		d.Close()
 	}
-}
-
-var generateCmd = &cobra.Command{
-	Use:   "generate",
-	Short: "Generate components",
-	Long:  `Generate components in clusters`,
-
-	Args: cobra.MinimumNArgs(0),
-	Run: func(cmd *cobra.Command, args []string) {
-
-		var clusterList []string
-
-		// get list of all clusters, render cluster level params for all of them
-		allClusterParams = make(map[string]string)
-		allClusters, err := getClusters(clusterDir)
-		fatalErrorCheck(err, "Error getting list of clusters")
-		for _, c := range allClusters.Cluster {
-			allClusterParams[c.Name] = renderClusterParamsOnly(cmd, c.Name, "", false)
-		}
-
-		for c := range allClusterParams {
-			if clIncludes != "" || clExcludes != "" {
-				gjResult := gjson.Parse(allClusterParams[c])
-				// includes
-				if clIncludes != "" {
-					// filter on cluster parameters, passed in gjson path notation with either
-					// "=" for equality or "~" for regex match
-					var include bool
-					for _, b := range strings.Split(clIncludes, ",") {
-						include = false
-						// equality match
-						kv := strings.SplitN(b, "=", 2)
-						if len(kv) == 2 {
-							if gjResult.Get(kv[0]).String() == kv[1] {
-								include = true
-							}
-						} else {
-							// regex match
-							kv := strings.SplitN(b, "~", 2)
-							if len(kv) == 2 {
-								matched, _ := regexp.MatchString(kv[1], gjResult.Get(kv[0]).String())
-								if matched {
-									include = true
-								}
-							}
-						}
-						if !include {
-							break
-						}
-					}
-					if !include {
-						continue
-					}
-				}
-				// excludes
-				if clExcludes != "" {
-					// filter on cluster parameters, passed in gjson path notation with either
-					// "=" for equality or "~" for regex match
-					var exclude bool
-					for _, b := range strings.Split(clExcludes, ",") {
-						exclude = false
-						// equality match
-						kv := strings.SplitN(b, "=", 2)
-						if len(kv) == 2 {
-							if gjResult.Get(kv[0]).String() == kv[1] {
-								exclude = true
-							}
-						} else {
-							// regex match
-							kv := strings.SplitN(b, "~", 2)
-							if len(kv) == 2 {
-								matched, _ := regexp.MatchString(kv[1], gjResult.Get(kv[0]).String())
-								if matched {
-									exclude = true
-								}
-							}
-						}
-						if exclude {
-							break
-						}
-					}
-					if exclude {
-						continue
-					}
-				}
-			}
-
-			if clusters == "" {
-				// all clusters
-				clusterList = append(clusterList, c)
-			} else {
-				// match --clusters list
-				for _, b := range strings.Split(clusters, ",") {
-					// match cluster names as anchored regex
-					matched, _ := regexp.MatchString("^"+b+"$", c)
-					if matched {
-						clusterList = append(clusterList, c)
-						break
-					}
-				}
-
-			}
-		}
-
-		var wg sync.WaitGroup
-		parallel, err := cmd.Flags().GetInt("parallel")
-		fatalErrorCheck(err, "Failed to get parallel flag")
-		log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
-		ants_cp, _ := ants.NewPool(parallel)
-		ants_cl, _ := ants.NewPool(parallel)
-
-		// Generate config for each cluster in parallel
-		for _, clusterName := range clusterList {
-			wg.Add(1)
-			cl := clusterName
-			_ = ants_cl.Submit(func() {
-				defer wg.Done()
-				genProcessCluster(cmd, cl, ants_cp)
-			})
-		}
-		wg.Wait()
-	},
-}
-
-func init() {
-	RootCmd.AddCommand(generateCmd)
-	generateCmd.Flags().StringVarP(&clusterParams, "clusterparams", "", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
-	generateCmd.Flags().StringVarP(&clusters, "clusters", "", "", "clusters to generate - comma separated list of cluster names and/or regular expressions ")
-	generateCmd.Flags().StringVarP(&components, "components", "", "", "components to generate - comma separated list of component names and/or regular expressions")
-	generateCmd.Flags().StringVarP(&generateDir, "generate-dir", "", "", "output directory")
-	generateCmd.Flags().StringVarP(&clIncludes, "clincludes", "", "", "filter included cluster by including clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
-	generateCmd.Flags().StringVarP(&clExcludes, "clexcludes", "", "", "filter included cluster by excluding clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
-	generateCmd.Flags().IntP("parallel", "", runtime.GOMAXPROCS(0), "parallelism - defaults to GOMAXPROCS")
-	viper.BindPFlag("clincludes", generateCmd.PersistentFlags().Lookup("clincludes"))
-	viper.BindPFlag("clexcludes", generateCmd.PersistentFlags().Lookup("clexcludes"))
 }
