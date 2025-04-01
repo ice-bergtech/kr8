@@ -9,18 +9,18 @@ It has been designed to work as a simple configuration management framework, all
 
 ## Features
 
- - Generate and customize component configuration for Kubernetes clusters across environments, regions and platforms
- - Opinionated config, flexible deployment. kr8+ simply generates manifests for you, you decide how to deploy them
- - Render and override component config from multiple sources, such as Helm, Kustomize and static manifests
- - CI/CD friendly
+- Generate and customize component configuration for Kubernetes clusters across environments, regions and platforms
+- Opinionated config, flexible deployment. kr8+ simply generates manifests for you, you decide how to deploy them
+- Render and override component config from multiple sources, such as Helm, Kustomize and static manifests
+- CI/CD friendly
 
 For more information about the inspiration and the problem kr8+ solves, check out this [blog post](https://leebriggs.co.uk/blog/2018/05/08/kubernetes-config-mgmt.html).
 
 kr8+ consists of:
 
- - kr8+ - a Go binary for rendering manifests
- - jsonnet - [go-jsonnet](https://pkg.go.dev/github.com/google/go-jsonnet) `v0.20.0`
- - template - [text/template](https://pkg.go.dev/text/template#hdr-Text_and_spaces)
+- kr8+ - a Go binary for rendering manifests
+- jsonnet - [go-jsonnet](https://pkg.go.dev/github.com/google/go-jsonnet) `v0.20.0`
+- template - [text/template](https://pkg.go.dev/text/template#hdr-Text_and_spaces)
 
 kr8+ is not designed to be a tool to help you install and deploy applications.
 It's specifically designed to manage and maintain configuration for the cluster level services.
