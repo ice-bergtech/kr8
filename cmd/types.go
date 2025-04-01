@@ -36,14 +36,18 @@ type ClusterComponent struct {
 }
 
 type ClusterSpec struct {
+	// A jsonnet function that each output entry is processed through. Default `function(input) input`
 	PostProcessor string `json:"postprocessor"`
-	GenerateDir   string `json:"generate_dir"`
+	// The name of the root generate directory. Default `generated`
+	GenerateDir string `json:"generate_dir"`
 	// if this is true, we don't use the full file path to generate output file names
 	GenerateShortNames bool `json:"generate_short_names"`
 	// if this is true, we prune component parameters
-	PruneParams bool   `json:"prune_params"`
-	ClusterDir  string `json:"-"`
-	Name        string `json:"-"`
+	PruneParams bool `json:"prune_params"`
+	// The root directory for the cluster. Default `clusters`
+	ClusterDir string `json:"-"`
+	// The name of the current cluster
+	Name string `json:"-"`
 }
 
 func CreateClusterSpec(cmd *cobra.Command, clusterName string, spec gjson.Result) (ClusterSpec, error) {
@@ -61,13 +65,12 @@ func CreateClusterSpec(cmd *cobra.Command, clusterName string, spec gjson.Result
 	}
 	clusterDir := clGenerateDir + "/" + clusterName
 	return ClusterSpec{
-		spec.Get("postprocessor").String(),
-		clGenerateDir,
-		// if this is true, we don't use the full file path to generate output file names
-		spec.Get("generate_short_names").Bool(),
-		spec.Get("prune_params").Bool(),
-		clusterDir,
-		clusterName,
+		PostProcessor:      spec.Get("postprocessor").String(),
+		GenerateDir:        clGenerateDir,
+		GenerateShortNames: spec.Get("generate_short_names").Bool(),
+		PruneParams:        spec.Get("prune_params").Bool(),
+		ClusterDir:         clusterDir,
+		Name:               clusterName,
 	}, nil
 }
 
@@ -110,10 +113,15 @@ func CreateComponentSpec(spec gjson.Result) (ComponentSpec, error) {
 		Kr8_allparams:         spec.Get("enable_kr8_allparams").Bool(),
 		Kr8_allclusters:       spec.Get("enable_kr8_allclusters").Bool(),
 		DisableOutputDirClean: spec.Get("disable_output_clean").Bool(),
+		ExtFiles:              ExtFileVar{},
+		JPaths:                []string{},
+		Includes:              []interface{}{},
 	}
 
 	for k, v := range spec.Get("extfiles").Map() {
-		componentSpec.ExtFiles[k] = v.String()
+		if v.Type == gjson.String {
+			componentSpec.ExtFiles[k] = v.String()
+		}
 	}
 
 	jPaths := spec.Get("jpaths").Array()
