@@ -99,9 +99,7 @@ func renderJsonnet(cmd *cobra.Command, files []string, param string, prune bool,
 
 	// Create a JSonnet VM
 	vm, err := JsonnetVM(cmd)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Error creating jsonnet VM")
-	}
+	fatalErrorCheck(err, "Error creating jsonnet VM")
 
 	// Join the slices into a jsonnet compat string. Prepend code from "prepend" variable, if set.
 	var jsonnetImport string
@@ -122,10 +120,7 @@ func renderJsonnet(cmd *cobra.Command, files []string, param string, prune bool,
 
 	// render the jsonnet
 	out, err := vm.EvaluateAnonymousSnippet(source, jsonnetImport)
-
-	if err != nil {
-		log.Fatal().Err(err).Msg("Error evaluating jsonnet snippet")
-	}
+	fatalErrorCheck(err, "Error evaluating jsonnet snippet")
 
 	return out
 
@@ -284,28 +279,19 @@ var jsonnetRenderCmd = &cobra.Command{
 			input = "( import '" + args[0] + "')"
 		}
 		j, err := vm.EvaluateAnonymousSnippet("file", input)
-
-		if err != nil {
-			log.Fatal().Err(err).Msg("Error evaluating jsonnet snippet")
-		}
+		fatalErrorCheck(err, "Error evaluating jsonnet snippet")
 		switch outputFormat {
 		case "yaml":
 			yaml, err := goyaml.JSONToYAML([]byte(j))
-			if err != nil {
-				log.Fatal().Err(err).Msg("Error converting JSON to YAML")
-			}
+			fatalErrorCheck(err, "Error converting JSON to YAML")
 			fmt.Println(string(yaml))
 		case "stream": // output yaml stream
 			var o []interface{}
-			if err := json.Unmarshal([]byte(j), &o); err != nil {
-				log.Fatal().Err(err).Msg("")
-			}
+			fatalErrorCheck(json.Unmarshal([]byte(j), &o), "Error outputting yaml stream")
 			for _, jobj := range o {
 				fmt.Println("---")
 				buf, err := goyaml.Marshal(jobj)
-				if err != nil {
-					log.Fatal().Err(err).Msg("")
-				}
+				fatalErrorCheck(err, "Error marshalling to YAML")
 				fmt.Println(string(buf))
 			}
 		case "json":

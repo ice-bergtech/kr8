@@ -62,9 +62,7 @@ var formatCmd = &cobra.Command{
 
 		var wg sync.WaitGroup
 		parallel, err := cmd.Flags().GetInt("parallel")
-		if err != nil {
-			log.Fatal().Err(err).Msg("")
-		}
+		fatalErrorCheck(err, "Error getting parallel flag")
 		log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
 
 		ants_file, _ := ants.NewPool(parallel)
