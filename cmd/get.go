@@ -17,6 +17,7 @@ package cmd
 import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 
 	"fmt"
@@ -32,6 +33,10 @@ var getCmd = &cobra.Command{
 	Long:  `Displays information about kr8 resources such as clusters and components`,
 }
 
+var (
+	printRaw bool
+)
+
 var getClustersCmd = &cobra.Command{
 	Use:   "clusters",
 	Short: "Get all clusters",
@@ -42,6 +47,13 @@ var getClustersCmd = &cobra.Command{
 
 		if err != nil {
 			log.Fatal().Err(err).Msg("Error getting cluster")
+		}
+
+		if printRaw {
+			for _, c := range clusters.Cluster {
+				println(c.Name + ": " + c.Path)
+			}
+			return
 		}
 
 		var entry []string
@@ -65,10 +77,11 @@ var getComponentsCmd = &cobra.Command{
 	Long:  "Get all available components defined in the kr8 config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		clusterName := cluster
+		viper.BindPFlag("cluster", clusterCmd.PersistentFlags().Lookup("cluster"))
+		clusterName := viper.GetString("cluster")
 
-		if clusterName == "" {
-			log.Fatal().Msg("Please specify a --cluster name")
+		if clusterName == "" && clusterParams == "" {
+			log.Fatal().Msg("Please specify a --cluster name and/or --clusterparams")
 		}
 
 		var params []string
@@ -108,9 +121,12 @@ var getParamsCmd = &cobra.Command{
 			log.Fatal().Msg("Please specify a --cluster")
 		}
 
-		fmt.Println(componentName)
+		var cList []string
+		if componentName != "" {
+			cList = append(cList, componentName)
+		}
 
-		j := renderClusterParams(cmd, clusterName, []string{componentName}, clusterParams, true)
+		j := renderClusterParams(cmd, clusterName, cList, clusterParams, true)
 
 		if paramPath != "" {
 			value := gjson.Get(j, paramPath)
@@ -130,15 +146,18 @@ var getParamsCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(getCmd)
+
 	// clusters
 	getCmd.AddCommand(getClustersCmd)
+	getClustersCmd.PersistentFlags().BoolVarP(&printRaw, "raw", "r", false, "If true, just prints result instead of placing in table.")
+	getClustersCmd.PersistentFlags().StringVarP(&clusterParams, "clusterparams", "", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
 	// components
 	getCmd.AddCommand(getComponentsCmd)
-	getComponentsCmd.PersistentFlags().StringVarP(&cluster, "cluster", "c", "", "get components for cluster")
+	getComponentsCmd.PersistentFlags().StringVarP(&cluster, "cluster", "C", "", "get components for cluster")
 	// params
 	getCmd.AddCommand(getParamsCmd)
-	getParamsCmd.PersistentFlags().StringVarP(&cluster, "cluster", "c", "", "get components for cluster")
-	getParamsCmd.PersistentFlags().StringVarP(&componentName, "component", "C", "", "component to render params for")
+	getParamsCmd.PersistentFlags().StringVarP(&cluster, "cluster", "C", "", "get components for cluster")
+	getParamsCmd.PersistentFlags().StringVarP(&componentName, "component", "c", "", "component to render params for")
 	getParamsCmd.Flags().StringVarP(&paramPath, "param", "P", "", "return value of json param from supplied path")
 
 }
