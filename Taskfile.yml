@@ -5,6 +5,26 @@ tasks:
     cmds:
       - task: build
 
+  
+  test:
+    desc: Tesk kr8 for your local system
+    aliases:
+      - t
+    cmds:
+      - go test
+      - task: build
+      - task: test-package
+
+  test-package:
+    desc: Test compiled kr8 binary against test inputs
+    aliases:
+      - tp
+    dir: ./bats-test
+    env:
+      KR8: '../kr8'
+    cmds:
+      - ./TEST_ALL.sh
+
   build:
     desc: Build kr8 for your local system
     aliases:
