@@ -66,7 +66,7 @@ func generateCommand(cmd *cobra.Command, args []string) {
 	allClusters, err := getClusters(clusterDir)
 	fatalErrorCheck(err, "Error getting list of clusters")
 	for _, c := range allClusters.Cluster {
-		allClusterParams[c.Name] = renderClusterParamsOnly(cmd, c.Name, "", false)
+		allClusterParams[c.Name] = renderClusterParamsOnly(rootVMConfig, c.Name, "", false)
 	}
 
 	// This will store the list of clusters to generate components for.
@@ -86,7 +86,7 @@ func generateCommand(cmd *cobra.Command, args []string) {
 		cl := clusterName
 		_ = ants_cl.Submit(func() {
 			defer wg.Done()
-			genProcessCluster(cmd, cl, ants_cp)
+			genProcessCluster(rootVMConfig, cl, ants_cp)
 		})
 	}
 	wg.Wait()
@@ -276,15 +276,15 @@ func processTemplate(filename string, data map[string]gjson.Result) (string, err
 	return buffer.String(), nil
 }
 
-func genProcessCluster(cmd *cobra.Command, clusterName string, p *ants.Pool) {
+func genProcessCluster(vmConfig VMConfig, clusterName string, p *ants.Pool) {
 	log.Debug().Str("cluster", clusterName).Msg("Process cluster")
 
 	// get list of components for cluster
 	params := getClusterParams(clusterDir, getCluster(clusterDir, clusterName))
-	clusterComponents := gjson.Parse(renderJsonnet(cmd, params, "._components", true, "", "clustercomponents")).Map()
+	clusterComponents := gjson.Parse(renderJsonnet(vmConfig, params, "._components", true, "", "clustercomponents")).Map()
 
 	// get kr8 settings for cluster
-	kr8Spec, err := CreateClusterSpec(cmd, clusterName, gjson.Parse(renderJsonnet(cmd, params, "._kr8_spec", false, "", "kr8_spec")))
+	kr8Spec, err := CreateClusterSpec(clusterName, gjson.Parse(renderJsonnet(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")), generateDir)
 	fatalErrorCheck(err, "Error creating kr8Spec")
 
 	// create cluster dir
@@ -309,7 +309,7 @@ func genProcessCluster(cmd *cobra.Command, clusterName string, p *ants.Pool) {
 	}
 
 	// render full params for cluster for all selected components
-	config := renderClusterParams(cmd, kr8Spec.Name, compList, clusterParams, false)
+	config := renderClusterParams(vmConfig, kr8Spec.Name, compList, clusterParams, false)
 
 	var allconfig safeString
 
@@ -320,14 +320,14 @@ func genProcessCluster(cmd *cobra.Command, clusterName string, p *ants.Pool) {
 		cName := componentName
 		_ = p.Submit(func() {
 			defer wg.Done()
-			genProcessComponent(cmd, cName, kr8Spec, config, &allconfig)
+			genProcessComponent(vmConfig, cName, kr8Spec, config, &allconfig)
 		})
 	}
 	wg.Wait()
 
 }
 
-func genProcessComponent(cmd *cobra.Command, componentName string, kr8Spec ClusterSpec, config string, allConfig *safeString) {
+func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec ClusterSpec, config string, allConfig *safeString) {
 	log.Info().Str("cluster", kr8Spec.Name).
 		Str("component", componentName).
 		Msg("Process component")
@@ -338,7 +338,7 @@ func genProcessComponent(cmd *cobra.Command, componentName string, kr8Spec Clust
 	compSpec, _ := CreateComponentSpec(gjson.Get(config, componentName+".kr8_spec"))
 
 	// it's faster to create this VM for each component, rather than re-use
-	vm, _ := JsonnetVM(cmd)
+	vm, _ := JsonnetVM(vmconfig)
 	vm.ExtCode("kr8_cluster", "std.prune("+config+"._cluster)")
 	//vm.ExtCode("kr8_components", "std.prune("+config+"._components)")
 	if kr8Spec.PostProcessor != "" {
@@ -365,7 +365,7 @@ func genProcessComponent(cmd *cobra.Command, componentName string, kr8Spec Clust
 				// all component params are in config
 				allConfig.config = config
 			} else {
-				allConfig.config = renderClusterParams(cmd, kr8Spec.Name, []string{}, clusterParams, false)
+				allConfig.config = renderClusterParams(vmconfig, kr8Spec.Name, []string{}, clusterParams, false)
 			}
 		}
 		vm.ExtCode("kr8_allparams", allConfig.config)

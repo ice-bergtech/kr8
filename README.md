@@ -75,6 +75,17 @@ task build-snapshot
 
 See the [Building](docs/building.md) documentation.
 
+## Testing
+
+```sh
+git submodule init
+git submodule update --remote --init
+```
+
+```sh
+go task test
+```
+
 ## Contributing
 
 Fork the repo in github and send a merge request!

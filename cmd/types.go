@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 )
 
@@ -50,9 +49,9 @@ type ClusterSpec struct {
 	Name string `json:"-"`
 }
 
-func CreateClusterSpec(cmd *cobra.Command, clusterName string, spec gjson.Result) (ClusterSpec, error) {
+func CreateClusterSpec(clusterName string, spec gjson.Result, genDirOverride string) (ClusterSpec, error) {
 	// First determine the value of generate_dir from the command line args or spec.
-	clGenerateDir := cmd.Flags().Lookup("generate-dir").Value.String()
+	clGenerateDir := genDirOverride
 	if clGenerateDir == "" {
 		clGenerateDir = spec.Get("generate_dir").String()
 	}

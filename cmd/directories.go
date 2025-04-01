@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 )
 
@@ -123,7 +122,7 @@ func getClusterParams(basePath string, targetPath string) []string {
 }
 
 // only render cluster params (_cluster), without components
-func renderClusterParamsOnly(cmd *cobra.Command, clusterName string, clusterParams string, prune bool) string {
+func renderClusterParamsOnly(vmconfig VMConfig, clusterName string, clusterParams string, prune bool) string {
 	var params []string
 	if clusterName != "" {
 		clusterPath := getCluster(clusterDir, clusterName)
@@ -132,13 +131,13 @@ func renderClusterParamsOnly(cmd *cobra.Command, clusterName string, clusterPara
 	if clusterParams != "" {
 		params = append(params, clusterParams)
 	}
-	renderedParams := renderJsonnet(cmd, params, "._cluster", prune, "", "clusterparams")
+	renderedParams := renderJsonnet(vmconfig, params, "._cluster", prune, "", "clusterparams")
 
 	return renderedParams
 }
 
 // render cluster params, merged with one or more component's parameters. Empty componentName list renders all component parameters
-func renderClusterParams(cmd *cobra.Command, clusterName string, componentNames []string, clusterParams string, prune bool) string {
+func renderClusterParams(vmconfig VMConfig, clusterName string, componentNames []string, clusterParams string, prune bool) string {
 	if clusterName == "" && clusterParams == "" {
 		log.Fatal().Msg("Please specify a --cluster name and/or --clusterparams")
 	}
@@ -154,7 +153,7 @@ func renderClusterParams(cmd *cobra.Command, clusterName string, componentNames 
 		params = append(params, clusterParams)
 	}
 
-	compParams := renderJsonnet(cmd, params, "", true, "", "clusterparams")
+	compParams := renderJsonnet(vmconfig, params, "", true, "", "clusterparams")
 
 	compString := gjson.Get(compParams, "_components")
 	err := json.Unmarshal([]byte(compString.String()), &componentMap)
@@ -190,7 +189,7 @@ func renderClusterParams(cmd *cobra.Command, clusterName string, componentNames 
 	}
 	componentDefaultsMerged = componentDefaultsMerged + "}"
 
-	compParams = renderJsonnet(cmd, params, "", prune, componentDefaultsMerged, "componentparams")
+	compParams = renderJsonnet(vmconfig, params, "", prune, componentDefaultsMerged, "componentparams")
 
 	return compParams
 }

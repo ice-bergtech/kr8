@@ -21,6 +21,8 @@ var (
 	cluster       string
 	logLevel      string
 
+	rootVMConfig VMConfig
+
 	debug       bool
 	colorOutput bool
 )
@@ -55,8 +57,8 @@ func init() {
 	RootCmd.PersistentFlags().StringVarP(&clusterDir, "clusterdir", "D", "", "kr8 cluster directory")
 	RootCmd.PersistentFlags().StringVarP(&componentDir, "componentdir", "d", "", "kr8 component directory")
 	RootCmd.PersistentFlags().BoolVar(&colorOutput, "color", true, "enable colorized output (default). Set to false to disable")
-	RootCmd.PersistentFlags().StringArrayP("jpath", "J", nil, "Directories to add to jsonnet include path. Repeat arg for multiple directories")
-	RootCmd.PersistentFlags().StringSlice("ext-str-file", nil, "Set jsonnet extvar from file contents")
+	RootCmd.PersistentFlags().StringArrayVarP(&rootVMConfig.Jpaths, "jpath", "J", nil, "Directories to add to jsonnet include path. Repeat arg for multiple directories")
+	RootCmd.PersistentFlags().StringSliceVar(&rootVMConfig.ExtVars, "ext-str-file", nil, "Set jsonnet extvar from file contents")
 
 	viper.BindPFlag("base", RootCmd.PersistentFlags().Lookup("base"))
 	viper.BindPFlag("clusterdir", RootCmd.PersistentFlags().Lookup("clusterdir"))
