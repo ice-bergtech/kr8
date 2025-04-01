@@ -293,7 +293,7 @@ func genProcessCluster(cmd *cobra.Command, clusterName string, p *ants.Pool) {
 		fatalErrorCheck(err, "Error creating cluster generateDir")
 	}
 
-	// list of current generated components directories
+	// get list of current generated components directories
 	d, err := os.Open(kr8Spec.ClusterDir)
 	fatalErrorCheck(err, "Error opening clusterDir")
 	defer d.Close()
@@ -302,14 +302,14 @@ func genProcessCluster(cmd *cobra.Command, clusterName string, p *ants.Pool) {
 	fatalErrorCheck(err, "Error reading directories")
 
 	// determine list of components to process
-	compList := buildComponentList(generatedCompList, clusterComponents, kr8Spec.ClusterDir, clusterName)
+	compList := buildComponentList(generatedCompList, clusterComponents, kr8Spec.ClusterDir, kr8Spec.Name)
 
 	if len(compList) == 0 { // this needs to be moved so purging above works first
 		return
 	}
 
 	// render full params for cluster for all selected components
-	config := renderClusterParams(cmd, clusterName, compList, clusterParams, false)
+	config := renderClusterParams(cmd, kr8Spec.Name, compList, clusterParams, false)
 
 	var allconfig safeString
 
@@ -327,9 +327,8 @@ func genProcessCluster(cmd *cobra.Command, clusterName string, p *ants.Pool) {
 
 }
 
-func genProcessComponent(cmd *cobra.Command, clusterName string, componentName string, clusterDir string, clGenerateDir string, config string, allConfig *safeString, postProcessorFunction string, pruneParams bool, generateShortNames bool) {
-
-	log.Info().Str("cluster", clusterName).
+func genProcessComponent(cmd *cobra.Command, componentName string, kr8Spec ClusterSpec, config string, allConfig *safeString) {
+	log.Info().Str("cluster", kr8Spec.Name).
 		Str("component", componentName).
 		Msg("Process component")
 
@@ -345,15 +344,15 @@ func genProcessComponent(cmd *cobra.Command, clusterName string, componentName s
 	vm, _ := JsonnetVM(cmd)
 	vm.ExtCode("kr8_cluster", "std.prune("+config+"._cluster)")
 	//vm.ExtCode("kr8_components", "std.prune("+config+"._components)")
-	if postProcessorFunction != "" {
-		vm.ExtCode("process", postProcessorFunction)
+	if kr8Spec.PostProcessor != "" {
+		vm.ExtCode("process", kr8Spec.PostProcessor)
 	} else {
 		// default postprocessor just copies input
 		vm.ExtCode("process", "function(input) input")
 	}
 
 	// prune params if required
-	if pruneParams {
+	if kr8Spec.PruneParams {
 		vm.ExtCode("kr8", "std.prune("+config+"."+componentName+")")
 	} else {
 		vm.ExtCode("kr8", config+"."+componentName)
@@ -369,7 +368,7 @@ func genProcessComponent(cmd *cobra.Command, clusterName string, componentName s
 				// all component params are in config
 				allConfig.config = config
 			} else {
-				allConfig.config = renderClusterParams(cmd, clusterName, []string{}, clusterParams, false)
+				allConfig.config = renderClusterParams(cmd, kr8Spec.Name, []string{}, clusterParams, false)
 			}
 		}
 		vm.ExtCode("kr8_allparams", allConfig.config)
@@ -403,7 +402,7 @@ func genProcessComponent(cmd *cobra.Command, clusterName string, componentName s
 		vPath := baseDir + "/" + compPath + "/" + v.String() // use full path for file
 		extFile, err := os.ReadFile(vPath)
 		fatalErrorCheck(err, "Error importing extfiles item")
-		log.Debug().Str("cluster", clusterName).
+		log.Debug().Str("cluster", kr8Spec.Name).
 			Str("component", componentName).
 			Msg("Extfile: " + k + "=" + v.String())
 		vm.ExtVar(k, string(extFile))
@@ -467,9 +466,9 @@ func genProcessComponent(cmd *cobra.Command, clusterName string, componentName s
 		// remember output filename for purging files
 		outputFileMap[sFile+"."+sFileExtension] = true
 
-		log.Debug().Str("cluster", clusterName).
-			Str("component", componentName).
-			Msg("Process file: " + filename + " -> " + outputFile)
+	log.Debug().Str("cluster", kr8Spec.Name).
+		Str("component", componentName).
+		Msg("Process file: " + filename + " -> " + outputFile)
 
 		var input string
 		var outStr string
