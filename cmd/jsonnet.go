@@ -287,10 +287,10 @@ func init() {
 	RootCmd.AddCommand(jsonnetCmd)
 	jsonnetCmd.AddCommand(jsonnetRenderCmd)
 	jsonnetRenderCmd.PersistentFlags().BoolVarP(&pruneFlag, "prune", "", true, "Prune null and empty objects from rendered json")
-	jsonnetRenderCmd.PersistentFlags().StringVarP(&clusterParams, "clusterparams", "", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
-	jsonnetRenderCmd.PersistentFlags().StringVarP(&componentName, "component", "C", "", "component to render params for")
+	jsonnetRenderCmd.PersistentFlags().StringVarP(&clusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
+	jsonnetRenderCmd.PersistentFlags().StringVarP(&componentName, "component", "c", "", "component to render params for")
 	jsonnetRenderCmd.PersistentFlags().StringVarP(&outputFormat, "format", "F", "json", "Output format: json, yaml, stream")
 
-	jsonnetRenderCmd.PersistentFlags().StringP("cluster", "c", "", "cluster to render params for")
+	jsonnetRenderCmd.PersistentFlags().StringP("cluster", "C", "", "cluster to render params for")
 	viper.BindPFlag("cluster", jsonnetRenderCmd.PersistentFlags().Lookup("cluster"))
 }

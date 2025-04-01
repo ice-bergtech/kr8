@@ -19,10 +19,10 @@ func init() {
 
 	renderCmd.AddCommand(renderJsonnetCmd)
 	renderJsonnetCmd.PersistentFlags().BoolVarP(&pruneFlag, "prune", "", true, "Prune null and empty objects from rendered json")
-	renderJsonnetCmd.PersistentFlags().StringVarP(&clusterParams, "clusterparams", "", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
-	renderJsonnetCmd.PersistentFlags().StringVarP(&componentName, "component", "C", "", "component to render params for")
+	renderJsonnetCmd.PersistentFlags().StringVarP(&clusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
+	renderJsonnetCmd.PersistentFlags().StringVarP(&componentName, "component", "c", "", "component to render params for")
 	renderJsonnetCmd.PersistentFlags().StringVarP(&outputFormat, "format", "F", "json", "Output format: json, yaml, stream")
-	renderJsonnetCmd.PersistentFlags().StringVarP(&cluster, "cluster", "c", "", "cluster to render params for")
+	renderJsonnetCmd.PersistentFlags().StringVarP(&cluster, "cluster", "C", "", "cluster to render params for")
 
 	renderCmd.AddCommand(helmCleanCmd)
 }

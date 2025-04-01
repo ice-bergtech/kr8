@@ -9,7 +9,7 @@ Displays information about kr8 resources such as clusters and components
 ### Options
 
 ```
-      --clusterparams string   provide cluster params as single file - can be combined with --cluster to override cluster
+  -p, --clusterparams string   provide cluster params as single file - can be combined with --cluster to override cluster
   -h, --help                   help for get
 ```
 

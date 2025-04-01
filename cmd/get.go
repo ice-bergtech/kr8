@@ -17,7 +17,6 @@ package cmd
 import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 
 	"fmt"
@@ -39,7 +38,7 @@ var (
 
 func init() {
 	RootCmd.AddCommand(getCmd)
-	getCmd.PersistentFlags().StringVarP(&clusterParams, "clusterparams", "", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
+	getCmd.PersistentFlags().StringVarP(&clusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
 
 	// clusters
 	getCmd.AddCommand(getClustersCmd)
@@ -47,6 +46,7 @@ func init() {
 	// components
 	getCmd.AddCommand(getComponentsCmd)
 	getComponentsCmd.PersistentFlags().StringVarP(&cluster, "cluster", "C", "", "get components for cluster")
+
 	// params
 	getCmd.AddCommand(getParamsCmd)
 	getParamsCmd.PersistentFlags().StringVarP(&cluster, "cluster", "C", "", "get components for cluster")
@@ -95,16 +95,13 @@ var getComponentsCmd = &cobra.Command{
 	Long:  "Get all available components defined in the kr8 config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		viper.BindPFlag("cluster", getCmd.PersistentFlags().Lookup("cluster"))
-		clusterName := viper.GetString("cluster")
-
-		if clusterName == "" && clusterParams == "" {
+		if cluster == "" && clusterParams == "" {
 			log.Fatal().Msg("Please specify a --cluster name and/or --clusterparams")
 		}
 
 		var params []string
-		if clusterName != "" {
-			clusterPath := getCluster(clusterDir, clusterName)
+		if cluster != "" {
+			clusterPath := getCluster(clusterDir, cluster)
 			params = getClusterParams(clusterDir, clusterPath)
 		}
 		if clusterParams != "" {
