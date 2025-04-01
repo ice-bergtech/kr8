@@ -49,6 +49,11 @@ var initCmd = &cobra.Command{
 This init command helps in creating directory structure for repos, clusters and 
 components`,
 	//Run: func(cmd *cobra.Command, args []string) {},
+	// Directory tree:
+	//   components/
+	//   clusters/
+	//   lib/
+	//   generated/
 }
 
 var initCluster = &cobra.Command{
