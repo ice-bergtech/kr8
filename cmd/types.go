@@ -21,6 +21,20 @@ type Clusters struct {
 	Cluster []Cluster
 }
 
+type ClusterJsonnet struct {
+	// kr8 configuration for how to process the cluster
+	ClusterSpec ClusterSpec `json:"_kr8_spec"`
+	// Cluster Level configuration that components can reference
+	Cluster Cluster `json:"_cluster"`
+	// Distictly named components.
+	Components map[string]ClusterComponent `json:"_components"`
+}
+
+type ClusterComponent struct {
+	// The path to a component folder that contains a params.jsonnet file
+	Path string `json:"path"`
+}
+
 type ClusterSpec struct {
 	PostProcessor string `json:"postprocessor"`
 	GenerateDir   string `json:"generate_dir"`
@@ -55,6 +69,17 @@ func CreateClusterSpec(cmd *cobra.Command, clusterName string, spec gjson.Result
 		clusterDir,
 		clusterName,
 	}, nil
+}
+
+type ComponentJsonnet struct {
+	// The default namespace to deploy the component to (optional)
+	Namespace string `json:"namespace"`
+	// A unique name for the component (optional)
+	ReleaseName string `json:"release_name"`
+	// Component version number (optional)
+	Version string `json:"version"`
+	// Component-specific configuration for kr8 (required)
+	Kr8Spec ComponentSpec `json:"kr8_spec"`
 }
 
 // kr8_spec object in cluster config
