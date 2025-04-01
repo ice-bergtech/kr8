@@ -12,14 +12,14 @@ import (
 )
 
 var (
-	dl_url          string
-	real_url        string
-	initClName      string
-	initClPath      string
-	initCoName      string
-	initCoPath      string
-	initCoType      string
-	initInteractive bool
+	flagInitUrl         string
+	real_url            string
+	flagInitClName      string
+	flagInitClPath      string
+	flagInitCoName      string
+	flagInitCoPath      string
+	flagInitCoType      string
+	flagInitInteractive bool
 	//initSkipDocs    bool
 )
 
@@ -44,24 +44,24 @@ var initCluster = &cobra.Command{
 	Long:  "Initialize a new cluster configuration file",
 	Run: func(cmd *cobra.Command, args []string) {
 		cSpec := ClusterSpec{
-			Name:               initClName,
-			ClusterDir:         initClPath,
+			Name:               flagInitClName,
+			ClusterDir:         flagInitClPath,
 			PostProcessor:      "function(input) input",
 			GenerateDir:        "generated",
 			GenerateShortNames: false,
 			PruneParams:        false,
 		}
 		// Get cluster name, path from user if not set
-		if initInteractive {
+		if flagInitInteractive {
 			prompt := &survey.Input{
 				Message: "Set the cluster name",
-				Default: initClName,
+				Default: flagInitClName,
 			}
 			survey.AskOne(prompt, &cSpec.Name)
 
 			prompt = &survey.Input{
 				Message: "Set the cluster path",
-				Default: initClPath,
+				Default: flagInitClPath,
 			}
 			survey.AskOne(prompt, &cSpec.ClusterDir)
 
@@ -90,7 +90,7 @@ var initCluster = &cobra.Command{
 
 // Write out a struct to a specified path and file
 func writeInitializedStruct(filename string, path string, objStruct interface{}) error {
-	fatalErrorCheck(os.MkdirAll(componentDir, 0755), "error creating component directory")
+	fatalErrorCheck(os.MkdirAll(flagComponentDir, 0755), "error creating component directory")
 
 	jsonStr, errJ := json.MarshalIndent(objStruct, "", "  ")
 	fatalErrorCheck(errJ, "error marshalling component jsonnet to json")
@@ -108,9 +108,9 @@ func generateClusterJsonnet(cSpec ClusterSpec) error {
 		Cluster:     Cluster{Name: cSpec.Name},
 		Components:  map[string]ClusterComponent{},
 	}
-	clOutDir := clusterDir + "/" + initClName
-	if initClPath != "" {
-		clOutDir = initClPath
+	clOutDir := flagClusterDir + "/" + flagInitClName
+	if flagInitClPath != "" {
+		clOutDir = flagInitClPath
 	}
 	return writeInitializedStruct(filename, clOutDir, clusterJson)
 }
@@ -121,24 +121,24 @@ var initComponent = &cobra.Command{
 	Long:  "Initialize a new component configuration file",
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get component name, path and type from user if not set
-		if initInteractive {
+		if flagInitInteractive {
 			prompt := &survey.Input{
 				Message: "Enter component name",
-				Default: initCoName,
+				Default: flagInitCoName,
 			}
-			survey.AskOne(prompt, &initCoName)
+			survey.AskOne(prompt, &flagInitCoName)
 
 			prompt = &survey.Input{
 				Message: "Enter component path",
-				Default: initCoPath,
+				Default: flagInitCoPath,
 			}
-			survey.AskOne(prompt, &initCoPath)
+			survey.AskOne(prompt, &flagInitCoPath)
 
 			promptS := &survey.Select{
 				Message: "Select component type",
 				Options: []string{"jsonnet", "yml", "tpl", "chart"},
 			}
-			survey.AskOne(promptS, &initCoType)
+			survey.AskOne(promptS, &flagInitCoType)
 		}
 		generateComponentJsonnet()
 	},
@@ -160,11 +160,11 @@ func generateComponentJsonnet() error {
 			ExtFiles:              map[string]string{},
 			JPaths:                []string{},
 		},
-		ReleaseName: strings.ReplaceAll(initCoName, "_", "-"),
+		ReleaseName: strings.ReplaceAll(flagInitCoName, "_", "-"),
 		Namespace:   "Default",
 		Version:     "1.0.0",
 	}
-	switch initCoType {
+	switch flagInitCoType {
 	case "jsonnet":
 		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, "component.jsonnet")
 	case "yml":
@@ -178,9 +178,9 @@ func generateComponentJsonnet() error {
 	}
 
 	filename := "params.jsonnet"
-	componentDir := clusterDir + "/" + initCoName
-	if initCoPath != "" {
-		componentDir = initCoPath
+	componentDir := flagClusterDir + "/" + flagInitCoName
+	if flagInitCoPath != "" {
+		componentDir = flagInitCoPath
 	}
 
 	return writeInitializedStruct(filename, componentDir, compJson)
@@ -198,8 +198,8 @@ and initialize a git repo so you can get started`,
 			log.Fatal().Msg("Must specify a destination")
 		}
 
-		if dl_url != "" {
-			real_url = dl_url
+		if flagInitUrl != "" {
+			real_url = flagInitUrl
 		} else {
 			log.Fatal().Msg("Must specify a URL")
 		}
@@ -237,15 +237,15 @@ func init() {
 	initCmd.AddCommand(initCluster)
 	initCmd.AddCommand(initComponent)
 
-	initCmd.PersistentFlags().BoolVarP(&initInteractive, "interactive", "i", false, "Initialize a resource interactivly")
+	initCmd.PersistentFlags().BoolVarP(&flagInitInteractive, "interactive", "i", false, "Initialize a resource interactivly")
 
-	repoCmd.PersistentFlags().StringVar(&dl_url, "url", "", "Source of skeleton directory to create repo from")
+	repoCmd.PersistentFlags().StringVar(&flagInitUrl, "url", "", "Source of skeleton directory to create repo from")
 
-	initCluster.Flags().StringVarP(&initClName, "name", "o", "cluster-tpl", "Cluster name")
-	initCluster.Flags().StringVarP(&initClPath, "path", "p", "clusters", "Cluster path")
+	initCluster.Flags().StringVarP(&flagInitClName, "name", "o", "cluster-tpl", "Cluster name")
+	initCluster.Flags().StringVarP(&flagInitClPath, "path", "p", "clusters", "Cluster path")
 
-	initComponent.Flags().StringVarP(&initCoName, "name", "o", "component-tpl", "Component name")
-	initComponent.Flags().StringVarP(&initCoPath, "path", "p", "components", "Component path")
-	initComponent.Flags().StringVarP(&initCoType, "type", "t", "jsonnet", "Component type, one of: [`jsonnet`, `yml`, `chart`]")
+	initComponent.Flags().StringVarP(&flagInitCoName, "name", "o", "component-tpl", "Component name")
+	initComponent.Flags().StringVarP(&flagInitCoPath, "path", "p", "components", "Component path")
+	initComponent.Flags().StringVarP(&flagInitCoType, "type", "t", "jsonnet", "Component type, one of: [`jsonnet`, `yml`, `chart`]")
 
 }

@@ -15,7 +15,7 @@ kr8 format [flags]
 ```
   -B, --base string        Root directory to walk and format (default "./")
   -h, --help               help for format
-      --parallel int       parallelism - defaults to GOMAXPROCS (default 32)
+      --parallel int       parallelism - defaults to GOMAXPROCS (default 12)
   -x, --pexcludes string   filter included paths by excluding paths - filepath.Match format - https://pkg.go.dev/path/filepath#Match
   -i, --pincludes string   filter included paths by including paths - filepath.Match format - https://pkg.go.dev/path/filepath#Match
 ```

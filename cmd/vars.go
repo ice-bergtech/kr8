@@ -1,6 +1,6 @@
 package cmd
 
 var (
-	componentName string
-	paramPath     string
+	flagComponentName string
+	paramPath         string
 )

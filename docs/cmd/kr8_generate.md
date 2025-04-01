@@ -20,7 +20,6 @@ kr8 generate [flags]
   -c, --components string      components to generate - comma separated list of component names and/or regular expressions
   -o, --generate-dir string    output directory
   -h, --help                   help for generate
-      --parallel int           parallelism - defaults to GOMAXPROCS (default 32)
 ```
 
 ### Options inherited from parent commands
@@ -34,6 +33,7 @@ kr8 generate [flags]
       --ext-str-file strings   Set jsonnet extvar from file contents
   -J, --jpath stringArray      Directories to add to jsonnet include path. Repeat arg for multiple directories
   -L, --loglevel string        set log level (default "info")
+      --parallel int           parallelism - defaults to GOMAXPROCS (default 12)
 ```
 
 ### SEE ALSO

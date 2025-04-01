@@ -38,19 +38,19 @@ var (
 
 func init() {
 	RootCmd.AddCommand(getCmd)
-	getCmd.PersistentFlags().StringVarP(&clusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
+	getCmd.PersistentFlags().StringVarP(&flagClusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
 
 	// clusters
 	getCmd.AddCommand(getClustersCmd)
 	getClustersCmd.PersistentFlags().BoolVarP(&printRaw, "raw", "r", false, "If true, just prints result instead of placing in table.")
 	// components
 	getCmd.AddCommand(getComponentsCmd)
-	getComponentsCmd.PersistentFlags().StringVarP(&cluster, "cluster", "C", "", "get components for cluster")
+	getComponentsCmd.PersistentFlags().StringVarP(&flagCluster, "cluster", "C", "", "get components for cluster")
 
 	// params
 	getCmd.AddCommand(getParamsCmd)
-	getParamsCmd.PersistentFlags().StringVarP(&cluster, "cluster", "C", "", "get components for cluster")
-	getParamsCmd.PersistentFlags().StringVarP(&componentName, "component", "c", "", "component to render params for")
+	getParamsCmd.PersistentFlags().StringVarP(&flagCluster, "cluster", "C", "", "get components for cluster")
+	getParamsCmd.PersistentFlags().StringVarP(&flagComponentName, "component", "c", "", "component to render params for")
 	getParamsCmd.Flags().StringVarP(&paramPath, "param", "P", "", "return value of json param from supplied path")
 
 }
@@ -61,7 +61,7 @@ var getClustersCmd = &cobra.Command{
 	Long:  "Get all clusters defined in kr8 config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		clusters, err := getClusters(clusterDir)
+		clusters, err := getClusters(flagClusterDir)
 
 		if err != nil {
 			log.Fatal().Err(err).Msg("Error getting cluster")
@@ -95,30 +95,30 @@ var getComponentsCmd = &cobra.Command{
 	Long:  "Get all available components defined in the kr8 config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if cluster == "" && clusterParams == "" {
+		if flagCluster == "" && flagClusterParams == "" {
 			log.Fatal().Msg("Please specify a --cluster name and/or --clusterparams")
 		}
 
 		var params []string
-		if cluster != "" {
-			clusterPath := getCluster(clusterDir, cluster)
-			params = getClusterParams(clusterDir, clusterPath)
+		if flagCluster != "" {
+			clusterPath := getCluster(flagClusterDir, flagCluster)
+			params = getClusterParams(flagClusterDir, clusterPath)
 		}
-		if clusterParams != "" {
-			params = append(params, clusterParams)
+		if flagClusterParams != "" {
+			params = append(params, flagClusterParams)
 		}
 
-		j := renderJsonnet(rootVMConfig, params, "._components", true, "", "components")
+		j := renderJsonnet(flagVMConfig, params, "._components", true, "", "components")
 		if paramPath != "" {
 			value := gjson.Get(j, paramPath)
 			if value.String() == "" {
 				log.Fatal().Msg("Error getting param: " + paramPath)
 			} else {
-				formatted := Pretty(j, colorOutput)
+				formatted := Pretty(j, flagColorOutput)
 				fmt.Println(formatted)
 			}
 		} else {
-			formatted := Pretty(j, colorOutput)
+			formatted := Pretty(j, flagColorOutput)
 			fmt.Println(formatted)
 		}
 	},
@@ -130,18 +130,18 @@ var getParamsCmd = &cobra.Command{
 	Long:  "Get parameters assigned to clusters and components in the kr8 config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		clusterName := cluster
+		clusterName := flagCluster
 
 		if clusterName == "" {
 			log.Fatal().Msg("Please specify a --cluster")
 		}
 
 		var cList []string
-		if componentName != "" {
-			cList = append(cList, componentName)
+		if flagComponentName != "" {
+			cList = append(cList, flagComponentName)
 		}
 
-		j := renderClusterParams(rootVMConfig, clusterName, cList, clusterParams, true)
+		j := renderClusterParams(flagVMConfig, clusterName, cList, flagClusterParams, true)
 
 		if paramPath != "" {
 			value := gjson.Get(j, paramPath)
@@ -152,7 +152,7 @@ var getParamsCmd = &cobra.Command{
 				fmt.Println(value) // no formatting because this isn't always json, this is just the value of a field
 			}
 		} else {
-			formatted := Pretty(j, colorOutput)
+			formatted := Pretty(j, flagColorOutput)
 			fmt.Println(formatted)
 		}
 

@@ -7,9 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"runtime"
 	"sort"
-	"strconv"
 	"strings"
 	"sync"
 	"text/template"
@@ -29,23 +27,24 @@ type safeString struct {
 }
 
 var (
-	components       string
-	clusters         string
-	generateDir      string
-	clIncludes       string
-	clExcludes       string
+	flagComponents   string
+	flagClusters     string
+	flagGenerateDir  string
+	flagClIncludes   string
+	flagClExcludes   string
+	flagParallel     int
 	allClusterParams map[string]string
 )
 
 func init() {
 	RootCmd.AddCommand(generateCmd)
-	generateCmd.Flags().StringVarP(&clusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
-	generateCmd.Flags().StringVarP(&clusters, "clusters", "C", "", "clusters to generate - comma separated list of cluster names and/or regular expressions ")
-	generateCmd.Flags().StringVarP(&components, "components", "c", "", "components to generate - comma separated list of component names and/or regular expressions")
-	generateCmd.Flags().StringVarP(&generateDir, "generate-dir", "o", "", "output directory")
-	generateCmd.Flags().StringVarP(&clIncludes, "clincludes", "i", "", "filter included cluster by including clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
-	generateCmd.Flags().StringVarP(&clExcludes, "clexcludes", "x", "", "filter included cluster by excluding clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
-	generateCmd.Flags().IntP("parallel", "", runtime.GOMAXPROCS(0), "parallelism - defaults to GOMAXPROCS")
+	generateCmd.Flags().StringVarP(&flagClusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
+	generateCmd.Flags().StringVarP(&flagClusters, "clusters", "C", "", "clusters to generate - comma separated list of cluster names and/or regular expressions ")
+	generateCmd.Flags().StringVarP(&flagComponents, "components", "c", "", "components to generate - comma separated list of component names and/or regular expressions")
+	generateCmd.Flags().StringVarP(&flagGenerateDir, "generate-dir", "o", "", "output directory")
+	generateCmd.Flags().StringVarP(&flagClIncludes, "clincludes", "i", "", "filter included cluster by including clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
+	generateCmd.Flags().StringVarP(&flagClExcludes, "clexcludes", "x", "", "filter included cluster by excluding clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
+
 	viper.BindPFlag("clincludes", generateCmd.PersistentFlags().Lookup("clincludes"))
 	viper.BindPFlag("clexcludes", generateCmd.PersistentFlags().Lookup("clexcludes"))
 }
@@ -63,10 +62,10 @@ func generateCommand(cmd *cobra.Command, args []string) {
 
 	// get list of all clusters, render cluster level params for all of them
 	allClusterParams = make(map[string]string)
-	allClusters, err := getClusters(clusterDir)
+	allClusters, err := getClusters(flagClusterDir)
 	fatalErrorCheck(err, "Error getting list of clusters")
 	for _, c := range allClusters.Cluster {
-		allClusterParams[c.Name] = renderClusterParamsOnly(rootVMConfig, c.Name, "", false)
+		allClusterParams[c.Name] = renderClusterParamsOnly(flagVMConfig, c.Name, "", false)
 	}
 
 	// This will store the list of clusters to generate components for.
@@ -74,11 +73,8 @@ func generateCommand(cmd *cobra.Command, args []string) {
 
 	// Setup the threading pools, one for clusters and one for clusters
 	var wg sync.WaitGroup
-	parallel, err := cmd.Flags().GetInt("parallel")
-	fatalErrorCheck(err, "Failed to get parallel flag")
-	log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
-	ants_cp, _ := ants.NewPool(parallel)
-	ants_cl, _ := ants.NewPool(parallel)
+	ants_cp, _ := ants.NewPool(flagParallel)
+	ants_cl, _ := ants.NewPool(flagParallel)
 
 	// Generate config for each cluster in parallel
 	for _, clusterName := range clusterList {
@@ -86,7 +82,7 @@ func generateCommand(cmd *cobra.Command, args []string) {
 		cl := clusterName
 		_ = ants_cl.Submit(func() {
 			defer wg.Done()
-			genProcessCluster(rootVMConfig, cl, ants_cp)
+			genProcessCluster(flagVMConfig, cl, ants_cp)
 		})
 	}
 	wg.Wait()
@@ -97,14 +93,14 @@ func generateCommand(cmd *cobra.Command, args []string) {
 func calculateClusterIncludesExcludes() []string {
 	var clusterList []string
 	for c := range allClusterParams {
-		if clIncludes != "" || clExcludes != "" {
+		if flagClIncludes != "" || flagClExcludes != "" {
 			gjResult := gjson.Parse(allClusterParams[c])
 			// includes
-			if clIncludes != "" {
+			if flagClIncludes != "" {
 				// filter on cluster parameters, passed in gjson path notation with either
 				// "=" for equality or "~" for regex match
 				var include bool
-				for _, b := range strings.Split(clIncludes, ",") {
+				for _, b := range strings.Split(flagClIncludes, ",") {
 					include = false
 					// equality match
 					kv := strings.SplitN(b, "=", 2)
@@ -131,11 +127,11 @@ func calculateClusterIncludesExcludes() []string {
 				}
 			}
 			// excludes
-			if clExcludes != "" {
+			if flagClExcludes != "" {
 				// filter on cluster parameters, passed in gjson path notation with either
 				// "=" for equality or "~" for regex match
 				var exclude bool
-				for _, b := range strings.Split(clExcludes, ",") {
+				for _, b := range strings.Split(flagClExcludes, ",") {
 					exclude = false
 					// equality match
 					kv := strings.SplitN(b, "=", 2)
@@ -163,12 +159,12 @@ func calculateClusterIncludesExcludes() []string {
 			}
 		}
 
-		if clusters == "" {
+		if flagClusters == "" {
 			// all clusters
 			clusterList = append(clusterList, c)
 		} else {
 			// match --clusters list
-			for _, b := range strings.Split(clusters, ",") {
+			for _, b := range strings.Split(flagClusters, ",") {
 				// match cluster names as anchored regex
 				matched, _ := regexp.MatchString("^"+b+"$", c)
 				if matched {
@@ -189,8 +185,8 @@ func buildComponentList(generatedCompList []string, clusterComponents map[string
 	var compList []string
 	var currentCompList []string
 
-	if components != "" {
-		for _, b := range strings.Split(components, ",") {
+	if flagComponents != "" {
+		for _, b := range strings.Split(flagComponents, ",") {
 			for _, c := range generatedCompList {
 				matched, _ := regexp.MatchString("^"+b+"$", c)
 				if matched {
@@ -280,11 +276,11 @@ func genProcessCluster(vmConfig VMConfig, clusterName string, p *ants.Pool) {
 	log.Debug().Str("cluster", clusterName).Msg("Process cluster")
 
 	// get list of components for cluster
-	params := getClusterParams(clusterDir, getCluster(clusterDir, clusterName))
+	params := getClusterParams(flagClusterDir, getCluster(flagClusterDir, clusterName))
 	clusterComponents := gjson.Parse(renderJsonnet(vmConfig, params, "._components", true, "", "clustercomponents")).Map()
 
 	// get kr8 settings for cluster
-	kr8Spec, err := CreateClusterSpec(clusterName, gjson.Parse(renderJsonnet(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")), generateDir)
+	kr8Spec, err := CreateClusterSpec(clusterName, gjson.Parse(renderJsonnet(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")), flagGenerateDir)
 	fatalErrorCheck(err, "Error creating kr8Spec")
 
 	// create cluster dir
@@ -309,7 +305,7 @@ func genProcessCluster(vmConfig VMConfig, clusterName string, p *ants.Pool) {
 	}
 
 	// render full params for cluster for all selected components
-	config := renderClusterParams(vmConfig, kr8Spec.Name, compList, clusterParams, false)
+	config := renderClusterParams(vmConfig, kr8Spec.Name, compList, flagClusterParams, false)
 
 	var allconfig safeString
 
@@ -361,11 +357,11 @@ func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec Cluste
 		allConfig.mu.Lock()
 		if allConfig.config == "" {
 			// only do this if we have not already cached it and don't already have it stored
-			if components == "" {
+			if flagComponents == "" {
 				// all component params are in config
 				allConfig.config = config
 			} else {
-				allConfig.config = renderClusterParams(vmconfig, kr8Spec.Name, []string{}, clusterParams, false)
+				allConfig.config = renderClusterParams(vmconfig, kr8Spec.Name, []string{}, flagClusterParams, false)
 			}
 		}
 		vm.ExtCode("kr8_allparams", allConfig.config)
@@ -386,9 +382,9 @@ func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec Cluste
 	}
 
 	// jPath always includes base lib. Add jpaths from spec if set
-	jPath := []string{baseDir + "/lib"}
+	jPath := []string{flagBaseDir + "/lib"}
 	for _, j := range compSpec.JPaths {
-		jPath = append(jPath, baseDir+"/"+compPath+"/"+j)
+		jPath = append(jPath, flagBaseDir+"/"+compPath+"/"+j)
 	}
 	vm.Importer(&jsonnet.FileImporter{
 		JPaths: jPath,
@@ -396,7 +392,7 @@ func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec Cluste
 
 	// file imports
 	for k, v := range compSpec.ExtFiles {
-		vPath := baseDir + "/" + compPath + "/" + v // use full path for file
+		vPath := flagBaseDir + "/" + compPath + "/" + v // use full path for file
 		extFile, err := os.ReadFile(vPath)
 		fatalErrorCheck(err, "Error importing extfiles item")
 		log.Debug().Str("cluster", kr8Spec.Name).
@@ -501,16 +497,16 @@ func processIncludesFile(vm *jsonnet.VM, config string, kr8Spec ClusterSpec, com
 	case ".jsonnet":
 		// file is processed as an ExtCode input, so that we can postprocess it
 		// in the snippet
-		input = "( import '" + baseDir + "/" + componentPath + "/" + incInfo.File + "')"
+		input = "( import '" + flagBaseDir + "/" + componentPath + "/" + incInfo.File + "')"
 		outStr, err = processJsonnet(vm, input, incInfo.File)
 	case ".yml":
 	case ".yaml":
-		input = "std.native('parseYaml')(importstr '" + baseDir + "/" + componentPath + "/" + incInfo.File + "')"
+		input = "std.native('parseYaml')(importstr '" + flagBaseDir + "/" + componentPath + "/" + incInfo.File + "')"
 		outStr, err = processJsonnet(vm, input, incInfo.File)
 	case ".tmpl":
 	case ".tpl":
 		// Pass component config as data for the template
-		outStr, err = processTemplate(baseDir+"/"+componentPath+"/"+incInfo.File, gjson.Get(config, componentName).Map())
+		outStr, err = processTemplate(flagBaseDir+"/"+componentPath+"/"+incInfo.File, gjson.Get(config, componentName).Map())
 	default:
 		outStr, err = "", errors.New("unsupported file extension")
 	}

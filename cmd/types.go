@@ -60,7 +60,7 @@ func CreateClusterSpec(clusterName string, spec gjson.Result, genDirOverride str
 	}
 	// if generateDir does not start with /, then it goes in baseDir
 	if !strings.HasPrefix(clGenerateDir, "/") {
-		clGenerateDir = baseDir + "/" + clGenerateDir
+		clGenerateDir = flagBaseDir + "/" + clGenerateDir
 	}
 	clusterDir := clGenerateDir + "/" + clusterName
 	return ClusterSpec{
@@ -104,7 +104,7 @@ func CreateComponentSpec(spec gjson.Result) (ComponentSpec, error) {
 	specM := spec.Map()
 	// spec is missing?
 	if len(specM) == 0 {
-		log.Fatal().Str("component", componentName).
+		log.Fatal().Str("component", flagComponentName).
 			Msg("Component has no `kr8_spec` object")
 	}
 
