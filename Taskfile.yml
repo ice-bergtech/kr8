@@ -10,6 +10,7 @@ tasks:
     aliases:
       - b
     cmds:
+      - go fmt
       - go build
 
   build-snapshot:
