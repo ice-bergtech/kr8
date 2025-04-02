@@ -45,12 +45,3 @@ CLUSTER=bats
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
-
-# Not implemented in "get", only "cluster"
-# FIXME: why?
-@test "Check get params with file override - FAIL" {
-  #expected=$(<expected/cluster_params_file)
-  run $KR8 $KR8_ARGS get params -C "$CLUSTER" --clusterparams data/misc/cluster_params.jsonnet
-  [ "$status" -eq 255 ]
-  #diff <(echo "$output") <(echo "$expected")
-}
