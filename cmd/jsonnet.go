@@ -10,6 +10,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/Masterminds/sprig/v3"
 	goyaml "github.com/ghodss/yaml"
 	jsonnet "github.com/google/go-jsonnet"
 	jsonnetAst "github.com/google/go-jsonnet/ast"
@@ -150,7 +151,7 @@ func RegisterNativeFuncs(vm *jsonnet.VM) {
 			}
 
 			input := []byte(args[1].(string))
-			tmpl, err := template.New("file").Parse(string(input))
+			tmpl, err := template.New("file").Funcs(sprig.FuncMap()).Parse(string(input))
 			if err != nil {
 				return "", err
 			}

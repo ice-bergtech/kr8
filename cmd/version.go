@@ -15,6 +15,7 @@ var versionCmd = &cobra.Command{
 		fmt.Println(RootCmd.Use + " Plus Version: " + Version)
 		fmt.Println("github.com/google/go-jsonnet v0.20.0")
 		fmt.Println("github.com/ghodss/yaml v1.0.0")
+		fmt.Println("github.com/Masterminds/sprig/v3 v3.2.3")
 	},
 }
 

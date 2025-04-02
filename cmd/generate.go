@@ -12,6 +12,7 @@ import (
 	"sync"
 	"text/template"
 
+	"github.com/Masterminds/sprig/v3"
 	goyaml "github.com/ghodss/yaml"
 	jsonnet "github.com/google/go-jsonnet"
 	"github.com/panjf2000/ants/v2"
@@ -256,7 +257,7 @@ func processTemplate(filename string, data map[string]gjson.Result) (string, err
 	if err != nil {
 		return "Error loading template", err
 	}
-	tmpl, err = template.New("file").Parse(string(tInput))
+	tmpl, err = template.New("file").Funcs(sprig.FuncMap()).Parse(string(tInput))
 	if err != nil {
 		return "Error parsing template", err
 	}
