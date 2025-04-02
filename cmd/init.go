@@ -99,31 +99,46 @@ var initCluster = &cobra.Command{
 			survey.AskOne(prompt, &cSpec.PostProcessor)
 		}
 		// Generate the jsonnet file based on the config
-		fatalErrorCheck(generateClusterJsonnet(cSpec, rootConfig.BaseDir+"/"+cSpec.ClusterDir), "Error generating cluster jsonnet file")
+		fatalErrorCheck(generateClusterJsonnet(cSpec, cSpec.ClusterDir), "Error generating cluster jsonnet file")
 	},
 }
 
-// Write out a struct to a specified path and file
-func writeInitializedStruct(filename string, path string, objStruct interface{}) error {
-	fatalErrorCheck(os.MkdirAll(path, 0755), "error creating resource directory")
-
-	jsonStr, errJ := json.MarshalIndent(objStruct, "", "  ")
-	fatalErrorCheck(errJ, "error marshalling component resource to json")
-
-	jsonStrFormatted, errF := formatJsonnetString(string(jsonStr))
-	fatalErrorCheck(errF, "error formatting component resource to json")
-
-	return (os.WriteFile(path+"/"+filename, []byte(jsonStrFormatted), 0644))
-}
-
-func generateClusterJsonnet(cSpec ClusterSpec, dstDir string) error {
-	filename := "cluster.jsonnet"
-	clusterJson := ClusterJsonnet{
-		ClusterSpec: cSpec,
-		Cluster:     Cluster{Name: cSpec.Name},
-		Components:  map[string]ClusterComponent{},
-	}
-	return writeInitializedStruct(filename, dstDir+"/"+cSpec.Name, clusterJson)
+var repoCmd = &cobra.Command{
+	Use:   "repo dir",
+	Args:  cobra.MinimumNArgs(1),
+	Short: "Initialize a new kr8 config repo",
+	Long: `Initialize a new kr8 config repo by downloading the kr8 config skeleton repo
+and initialize a git repo so you can get started`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			log.Fatal().Msg("Error: no directory specified")
+		}
+		log.Debug().Msg("Initializing kr8 config repo in " + args[0])
+		if cmdInitFlags.InitUrl != "" {
+			fetchRepoUrl(cmdInitFlags.InitUrl, args[0])
+			return
+		}
+		// struct for component and clusters
+		cmdInitOptions := cmdInitOptions{
+			InitUrl:       cmdInitFlags.InitUrl,
+			ClusterName:   cmdInitFlags.ClusterName,
+			ComponentName: "example-component",
+			ComponentType: "jsonnet",
+			Interactive:   false,
+		}
+		clusterOptions := ClusterSpec{
+			PostProcessor:      "",
+			GenerateDir:        "generated",
+			GenerateShortNames: false,
+			PruneParams:        false,
+			ClusterDir:         "clusters",
+			Name:               cmdInitFlags.ClusterName,
+		}
+		generateClusterJsonnet(clusterOptions, args[0]+"/clusters")
+		generateComponentJsonnet(cmdInitOptions, args[0]+"/components")
+		generateLib(false, args[0]+"/components")
+		generateReadme(args[0], cmdInitOptions, clusterOptions)
+	},
 }
 
 var initComponent = &cobra.Command{
@@ -153,6 +168,29 @@ var initComponent = &cobra.Command{
 		}
 		generateComponentJsonnet(cmdInitFlags, rootConfig.ComponentDir)
 	},
+}
+
+// Write out a struct to a specified path and file
+func writeInitializedStruct(filename string, path string, objStruct interface{}) error {
+	fatalErrorCheck(os.MkdirAll(path, 0755), "error creating resource directory")
+
+	jsonStr, errJ := json.MarshalIndent(objStruct, "", "  ")
+	fatalErrorCheck(errJ, "error marshalling component resource to json")
+
+	jsonStrFormatted, errF := formatJsonnetString(string(jsonStr))
+	fatalErrorCheck(errF, "error formatting component resource to json")
+
+	return (os.WriteFile(path+"/"+filename, []byte(jsonStrFormatted), 0644))
+}
+
+func generateClusterJsonnet(cSpec ClusterSpec, dstDir string) error {
+	filename := "cluster.jsonnet"
+	clusterJson := ClusterJsonnet{
+		ClusterSpec: cSpec,
+		Cluster:     Cluster{Name: cSpec.Name},
+		Components:  map[string]ClusterComponent{},
+	}
+	return writeInitializedStruct(filename, dstDir+"/"+cSpec.Name, clusterJson)
 }
 
 // Generate default component kr8_spec values and store in params.jsonnet
@@ -214,43 +252,13 @@ func fetchRepoUrl(url string, destination string) {
 	}
 }
 
-func generateLib(fetch bool) {}
+func generateLib(fetch bool, dstDir string) {
+	fatalErrorCheck(os.MkdirAll(dstDir, 0755), "error creating lib directory")
+	if fetch {
+		fetchRepoUrl("https://github.com/kube-libsonnet/kube-libsonnet.git", dstDir+"/klib")
+	}
+}
 
-func generateReadme() {}
+func generateReadme(dstDir string, cmdOptions cmdInitOptions, clusterSpec ClusterSpec) {
 
-var repoCmd = &cobra.Command{
-	Use:   "repo dir",
-	Args:  cobra.MinimumNArgs(1),
-	Short: "Initialize a new kr8 config repo",
-	Long: `Initialize a new kr8 config repo by downloading the kr8 config skeleton repo
-and initialize a git repo so you can get started`,
-	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			log.Fatal().Msg("Error: no directory specified")
-		}
-		log.Debug().Msg("Initializing kr8 config repo in " + args[0])
-		if cmdInitFlags.InitUrl != "" {
-			fetchRepoUrl(cmdInitFlags.InitUrl, args[0])
-			return
-		}
-		// struct for component and clusters
-		item := cmdInitOptions{
-			InitUrl:       cmdInitFlags.InitUrl,
-			ClusterName:   cmdInitFlags.ClusterName,
-			ComponentName: "example-component",
-			ComponentType: "jsonnet",
-			Interactive:   false,
-		}
-		generateClusterJsonnet(ClusterSpec{
-			PostProcessor:      "",
-			GenerateDir:        "generated",
-			GenerateShortNames: false,
-			PruneParams:        false,
-			ClusterDir:         "clusters",
-			Name:               cmdInitFlags.ClusterName,
-		}, args[0]+"/clusters")
-		generateComponentJsonnet(item, args[0]+"/components")
-		//generateLib()
-		//generateReadme()
-	},
 }
