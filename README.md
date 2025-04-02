@@ -25,7 +25,7 @@ kr8+ consists of:
 
 - kr8+ - a Go binary for rendering manifests
 - jsonnet - [go-jsonnet](https://pkg.go.dev/github.com/google/go-jsonnet) `v0.20.0`
-- template - [text/template](https://pkg.go.dev/text/template#hdr-Text_and_spaces)
+- sprig - [Masterminds/sprig](https://pkg.go.dev/github.com/Masterminds/sprig#section-readme) - [Template Documentation](http://masterminds.github.io/sprig/)
 
 kr8+ is not designed to be a tool to help you install and deploy applications.
 It's specifically designed to manage and maintain configuration for the cluster level services.
