@@ -63,7 +63,7 @@ func init() {
 }
 
 var getClustersCmd = &cobra.Command{
-	Use:   "clusters",
+	Use:   "clusters [flags]",
 	Short: "Get all clusters",
 	Long:  "Get all clusters defined in kr8 config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -94,7 +94,7 @@ var getClustersCmd = &cobra.Command{
 }
 
 var getComponentsCmd = &cobra.Command{
-	Use:   "components",
+	Use:   "components [flags]",
 	Short: "Get all components",
 	Long:  "Get all available components defined in the kr8 config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -129,7 +129,7 @@ var getComponentsCmd = &cobra.Command{
 }
 
 var getParamsCmd = &cobra.Command{
-	Use:   "params",
+	Use:   "params [flags]",
 	Short: "Get parameter for components and clusters",
 	Long:  "Get parameters assigned to clusters and components in the kr8 config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {

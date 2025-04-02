@@ -57,7 +57,7 @@ func init() {
 }
 
 var formatCmd = &cobra.Command{
-	Use:   "format",
+	Use:   "format [flags]",
 	Short: "Format jsonnet files",
 	Long:  `Format jsonnet configuration files`,
 

@@ -7,7 +7,7 @@ Render a jsonnet file
 Render a jsonnet file to JSON or YAML
 
 ```
-kr8 jsonnet render file [file ...] [flags]
+kr8 jsonnet render [flags] file [file ...]
 ```
 
 ### Options

@@ -261,13 +261,15 @@ func jsonnetRender(cmdFlagsJsonnet CmdJsonnetOptions, filename string, vmConfig 
 }
 
 var jsonnetRenderCmd = &cobra.Command{
-	Use:   "render file [file ...]",
+	Use:   "render [flags] file [file ...]",
 	Short: "Render a jsonnet file",
 	Long:  `Render a jsonnet file to JSON or YAML`,
 
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		jsonnetRender(cmdFlagsJsonnet, args[0], rootConfig.VMConfig)
+		for _, f := range args {
+			jsonnetRender(cmdFlagsJsonnet, f, rootConfig.VMConfig)
+		}
 	},
 }
 

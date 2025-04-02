@@ -50,7 +50,7 @@ func init() {
 }
 
 var generateCmd = &cobra.Command{
-	Use:   "generate",
+	Use:   "generate [flags]",
 	Short: "Generate components",
 	Long:  `Generate components in clusters`,
 
