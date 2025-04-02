@@ -72,6 +72,13 @@ Jsonnet was chosen because it allows us to use code for configuration, while sta
 
 ## Building
 
+### Prerequisites
+
+- Go 1.23 or later
+
+### Steps to Build
+
+
 ```sh
 go build
 # or
@@ -82,10 +89,18 @@ See the [Building](docs/building.md) documentation.
 
 ## Testing
 
+
+### Prerequisites
+
+- Go 1.23 or later
+- `git` for cloning submodules
+
 ```sh
 git submodule init
 git submodule update --remote --init
 ```
+
+To test: 
 
 ```sh
 go task test
