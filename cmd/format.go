@@ -65,7 +65,7 @@ var formatCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		var fileList []string
-		filepath.Walk(rootFlagBaseDir, func(path string, info fs.FileInfo, err error) error {
+		filepath.Walk(rootConfig.BaseDir, func(path string, info fs.FileInfo, err error) error {
 			if info.IsDir() && info.Name() == ".git" {
 				return filepath.SkipDir
 			}

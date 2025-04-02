@@ -50,7 +50,7 @@ func JsonnetVM(vmconfig VMConfig) (*jsonnet.VM, error) {
 	RegisterNativeFuncs(vm)
 
 	// always add lib directory in base directory to path
-	jpath := []string{rootFlagBaseDir + "/lib"}
+	jpath := []string{rootConfig.BaseDir + "/lib"}
 
 	jpath = append(jpath, filepath.SplitList(os.Getenv("KR8_JPATH"))...)
 	jpathArgs := vmconfig.Jpaths

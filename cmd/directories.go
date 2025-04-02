@@ -125,8 +125,8 @@ func getClusterParams(basePath string, targetPath string) []string {
 func renderClusterParamsOnly(vmconfig VMConfig, clusterName string, clusterParams string, prune bool) string {
 	var params []string
 	if clusterName != "" {
-		clusterPath := getCluster(flagClusterDir, clusterName)
-		params = getClusterParams(flagClusterDir, clusterPath)
+		clusterPath := getCluster(rootConfig.ClusterDir, clusterName)
+		params = getClusterParams(rootConfig.ClusterDir, clusterPath)
 	}
 	if clusterParams != "" {
 		params = append(params, clusterParams)
@@ -146,8 +146,8 @@ func renderClusterParams(vmconfig VMConfig, clusterName string, componentNames [
 	var componentMap map[string]componentDef
 
 	if clusterName != "" {
-		clusterPath := getCluster(flagClusterDir, clusterName)
-		params = getClusterParams(flagClusterDir, clusterPath)
+		clusterPath := getCluster(rootConfig.ClusterDir, clusterName)
+		params = getClusterParams(rootConfig.ClusterDir, clusterPath)
 	}
 	if clusterParams != "" {
 		params = append(params, clusterParams)
@@ -165,7 +165,7 @@ func renderClusterParams(vmconfig VMConfig, clusterName string, componentNames [
 		// we are passed a list of components
 		for _, key := range componentNames {
 			if value, ok := componentMap[key]; ok {
-				path := rootFlagBaseDir + "/" + value.Path + "/params.jsonnet"
+				path := rootConfig.BaseDir + "/" + value.Path + "/params.jsonnet"
 				fileC, err := os.ReadFile(path)
 				if err != nil {
 					log.Fatal().Err(err).Msg("Error reading " + path)
@@ -179,7 +179,7 @@ func renderClusterParams(vmconfig VMConfig, clusterName string, componentNames [
 			if flagComponentName != "" && key != flagComponentName {
 				continue
 			}
-			path := rootFlagBaseDir + "/" + value.Path + "/params.jsonnet"
+			path := rootConfig.BaseDir + "/" + value.Path + "/params.jsonnet"
 			fileC, err := os.ReadFile(path)
 			if err != nil {
 				log.Fatal().Err(err).Msg("Error reading " + path)

@@ -61,7 +61,7 @@ var getClustersCmd = &cobra.Command{
 	Long:  "Get all clusters defined in kr8 config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		clusters, err := getClusters(flagClusterDir)
+		clusters, err := getClusters(rootConfig.ClusterDir)
 
 		if err != nil {
 			log.Fatal().Err(err).Msg("Error getting cluster")
@@ -101,8 +101,8 @@ var getComponentsCmd = &cobra.Command{
 
 		var params []string
 		if flagCluster != "" {
-			clusterPath := getCluster(flagClusterDir, flagCluster)
-			params = getClusterParams(flagClusterDir, clusterPath)
+			clusterPath := getCluster(rootConfig.ClusterDir, flagCluster)
+			params = getClusterParams(rootConfig.ClusterDir, clusterPath)
 		}
 		if flagClusterParams != "" {
 			params = append(params, flagClusterParams)

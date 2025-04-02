@@ -108,7 +108,7 @@ func generateClusterJsonnet(cSpec ClusterSpec) error {
 		Cluster:     Cluster{Name: cSpec.Name},
 		Components:  map[string]ClusterComponent{},
 	}
-	clOutDir := flagClusterDir + "/" + flagInitClName
+	clOutDir := rootConfig.ClusterDir + "/" + flagInitClName
 	if flagInitClPath != "" {
 		clOutDir = flagInitClPath
 	}
@@ -178,7 +178,7 @@ func generateComponentJsonnet() error {
 	}
 
 	filename := "params.jsonnet"
-	componentDir := flagClusterDir + "/" + flagInitCoName
+	componentDir := rootConfig.ClusterDir + "/" + flagInitCoName
 	if flagInitCoPath != "" {
 		componentDir = flagInitCoPath
 	}

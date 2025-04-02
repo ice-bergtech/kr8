@@ -49,7 +49,7 @@ type ClusterSpec struct {
 	Name string `json:"-"`
 }
 
-func CreateClusterSpec(clusterName string, spec gjson.Result, genDirOverride string) (ClusterSpec, error) {
+func CreateClusterSpec(clusterName string, spec gjson.Result, baseDir string, genDirOverride string) (ClusterSpec, error) {
 	// First determine the value of generate_dir from the command line args or spec.
 	clGenerateDir := genDirOverride
 	if clGenerateDir == "" {
@@ -60,7 +60,7 @@ func CreateClusterSpec(clusterName string, spec gjson.Result, genDirOverride str
 	}
 	// if generateDir does not start with /, then it goes in baseDir
 	if !strings.HasPrefix(clGenerateDir, "/") {
-		clGenerateDir = rootFlagBaseDir + "/" + clGenerateDir
+		clGenerateDir = baseDir + "/" + clGenerateDir
 	}
 	clusterDir := clGenerateDir + "/" + clusterName
 	return ClusterSpec{
