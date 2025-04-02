@@ -58,8 +58,7 @@ func init() {
 	getCmd.AddCommand(getParamsCmd)
 	getParamsCmd.PersistentFlags().StringVarP(&cmdGetFlags.Cluster, "cluster", "C", "", "get components for cluster")
 	getParamsCmd.PersistentFlags().StringVarP(&cmdGetFlags.Component, "component", "c", "", "component to render params for")
-	getParamsCmd.Flags().StringVarP(&cmdGetFlags.ParamField, "param", "P", "", "return value of json param from supplied path")
-
+	getParamsCmd.PersistentFlags().StringVarP(&cmdGetFlags.ParamField, "param", "P", "", "return value of json param from supplied path")
 }
 
 var getClustersCmd = &cobra.Command{
@@ -144,17 +143,25 @@ var getParamsCmd = &cobra.Command{
 
 		params := renderClusterParams(rootConfig.VMConfig, cmdGetFlags.Cluster, cList, cmdGetFlags.ClusterParams, true)
 
+		// if we're not filtering the output, just pretty print and finish
+		if cmdGetFlags.ParamField == "" {
+			if cmdGetFlags.Component != "" {
+				result := gjson.Get(params, cmdGetFlags.Component).String()
+				fmt.Println(Pretty(result, rootConfig.Color))
+			} else {
+				fmt.Println(Pretty(params, rootConfig.Color))
+			}
+			return
+		}
+
+		// Filter on component name first, then field name
 		if cmdGetFlags.ParamField != "" {
 			value := gjson.Get(params, cmdGetFlags.ParamField)
 			if value.String() == "" {
 				log.Fatal().Msg("Error getting param: " + cmdGetFlags.ParamField)
-			} else {
-				fmt.Println(value) // no formatting because this isn't always json, this is just the value of a field
 			}
-		} else {
-			formatted := Pretty(params, rootConfig.Color)
-			fmt.Println(formatted)
+			// no formatting because this isn't always json, this is just the value of a field
+			fmt.Println(value)
 		}
-
 	},
 }
