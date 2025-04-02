@@ -258,7 +258,7 @@ func jsonnetRender(cmdFlagsJsonnet CmdJsonnetOptions, filename string, vmConfig 
 			fmt.Println(string(buf))
 		}
 	case "json":
-		formatted := Pretty(j, rootFlagColorOutput)
+		formatted := Pretty(j, rootConfig.Color)
 		fmt.Println(formatted)
 	default:
 		log.Fatal().Msg("Output format must be json, yaml or stream")
@@ -272,7 +272,7 @@ var jsonnetRenderCmd = &cobra.Command{
 
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		jsonnetRender(cmdFlagsJsonnet, args[0], rootFlagVMConfig)
+		jsonnetRender(cmdFlagsJsonnet, args[0], rootConfig.VMConfig)
 	},
 }
 

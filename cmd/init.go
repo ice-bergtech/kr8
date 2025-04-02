@@ -90,7 +90,7 @@ var initCluster = &cobra.Command{
 
 // Write out a struct to a specified path and file
 func writeInitializedStruct(filename string, path string, objStruct interface{}) error {
-	fatalErrorCheck(os.MkdirAll(flagComponentDir, 0755), "error creating component directory")
+	fatalErrorCheck(os.MkdirAll(rootConfig.ComponentDir, 0755), "error creating component directory")
 
 	jsonStr, errJ := json.MarshalIndent(objStruct, "", "  ")
 	fatalErrorCheck(errJ, "error marshalling component jsonnet to json")

@@ -19,6 +19,7 @@ Utility commands to process jsonnet
   -D, --clusterdir string      kr8 cluster directory
       --color                  enable colorized output (default). Set to false to disable (default true)
   -d, --componentdir string    kr8 component directory
+      --config string          A config file with kr8 configuration
       --debug                  log more information about what kr8 is doing. Overrides --loglevel
       --ext-str-file strings   Set jsonnet extvar from file contents
   -J, --jpath stringArray      Directories to add to jsonnet include path. Repeat arg for multiple directories

@@ -13,23 +13,24 @@ kr8 format [flags]
 ### Options
 
 ```
-  -B, --base string        Root directory to walk and format (default "./")
-  -h, --help               help for format
-      --parallel int       parallelism - defaults to GOMAXPROCS (default 12)
-  -x, --pexcludes string   filter included paths by excluding paths - filepath.Match format - https://pkg.go.dev/path/filepath#Match
-  -i, --pincludes string   filter included paths by including paths - filepath.Match format - https://pkg.go.dev/path/filepath#Match
+  -x, --clexcludes string   filter included cluster by excluding clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)
+  -i, --clincludes string   filter included cluster by including clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)
+  -h, --help                help for format
 ```
 
 ### Options inherited from parent commands
 
 ```
+  -B, --base string            kr8 config base directory (default ".")
   -D, --clusterdir string      kr8 cluster directory
       --color                  enable colorized output (default). Set to false to disable (default true)
   -d, --componentdir string    kr8 component directory
+      --config string          A config file with kr8 configuration
       --debug                  log more information about what kr8 is doing. Overrides --loglevel
       --ext-str-file strings   Set jsonnet extvar from file contents
   -J, --jpath stringArray      Directories to add to jsonnet include path. Repeat arg for multiple directories
   -L, --loglevel string        set log level (default "info")
+      --parallel int           parallelism - defaults to GOMAXPROCS (default 12)
 ```
 
 ### SEE ALSO
