@@ -41,12 +41,12 @@ var (
 	formatOptions formatter.Options
 )
 
-type cmdFormatOptions struct {
+type PathFilterOptions struct {
 	Includes string
 	Excludes string
 }
 
-var cmdformatFlags cmdFormatOptions
+var cmdformatFlags PathFilterOptions
 
 func init() {
 	RootCmd.AddCommand(formatCmd)
