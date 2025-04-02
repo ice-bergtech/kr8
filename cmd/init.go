@@ -13,7 +13,6 @@ import (
 
 var (
 	flagInitUrl         string
-	real_url            string
 	flagInitClName      string
 	flagInitClPath      string
 	flagInitCoName      string
@@ -193,9 +192,7 @@ var repoCmd = &cobra.Command{
 	Long: `Initialize a new kr8 config repo by downloading the kr8 config skeleton repo
 and initialize a git repo so you can get started`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if flagInitUrl != "" {
-			real_url = flagInitUrl
-		} else {
+		if flagInitUrl == "" {
 			log.Fatal().Msg("Must specify a URL arg")
 		}
 		// Get the current working directory
@@ -203,9 +200,9 @@ and initialize a git repo so you can get started`,
 		fatalErrorCheck(err, "Error getting working directory")
 
 		// Download the skeletion directory
-		log.Debug().Msg("Downloading skeleton repo from " + real_url)
+		log.Debug().Msg("Downloading skeleton repo from " + flagInitUrl)
 		client := &getter.Client{
-			Src:  real_url,
+			Src:  flagInitUrl,
 			Dst:  args[0],
 			Pwd:  pwd,
 			Mode: getter.ClientModeAny,

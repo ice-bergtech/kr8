@@ -55,8 +55,7 @@ func getClusters(searchDir string) (Clusters, error) {
 }
 
 func getCluster(searchDir string, clusterName string) string {
-
-	var clusterPath string
+	clusterPath := ""
 
 	fatalErrorCheck(
 		filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {

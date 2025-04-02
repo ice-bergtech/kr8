@@ -32,10 +32,6 @@ var getCmd = &cobra.Command{
 	Long:  `Displays information about kr8 resources such as clusters and components`,
 }
 
-var (
-	printRaw bool
-)
-
 type CmdGetOptions struct {
 	ClusterParams string
 	NoTable       bool

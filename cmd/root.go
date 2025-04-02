@@ -13,8 +13,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var ()
-
 func fatalErrorCheck(err error, message string) {
 	if err != nil {
 		log.Fatal().Err(err).Msg(message)
