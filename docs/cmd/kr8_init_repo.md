@@ -8,12 +8,13 @@ Initialize a new kr8 config repo by downloading the kr8 config skeleton repo
 and initialize a git repo so you can get started
 
 ```
-kr8 init repo dir [flags]
+kr8 init repo [flags] dir
 ```
 
 ### Options
 
 ```
+  -f, --fetch         Fetch remote resources
   -h, --help          help for repo
   -o, --name string   Cluster name (default "cluster-tpl")
       --url string    Source of skeleton directory to create repo from

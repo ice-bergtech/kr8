@@ -17,6 +17,7 @@ type cmdInitOptions struct {
 	ComponentName string
 	ComponentType string
 	Interactive   bool
+	Fetch         bool
 }
 
 var cmdInitFlags cmdInitOptions
@@ -28,6 +29,7 @@ func init() {
 	initCmd.AddCommand(repoCmd)
 	repoCmd.PersistentFlags().StringVar(&cmdInitFlags.InitUrl, "url", "", "Source of skeleton directory to create repo from")
 	repoCmd.Flags().StringVarP(&cmdInitFlags.ClusterName, "name", "o", "cluster-tpl", "Cluster name")
+	repoCmd.PersistentFlags().BoolVarP(&cmdInitFlags.Fetch, "fetch", "f", false, "Fetch remote resources")
 
 	initCmd.AddCommand(initCluster)
 	initCluster.Flags().StringVarP(&cmdInitFlags.ClusterName, "name", "o", "cluster-tpl", "Cluster name")
@@ -54,7 +56,7 @@ components`,
 }
 
 var initCluster = &cobra.Command{
-	Use:   "cluster",
+	Use:   "cluster [flags]",
 	Short: "Init a new cluster config file",
 	Long:  "Initialize a new cluster configuration file",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -104,7 +106,7 @@ var initCluster = &cobra.Command{
 }
 
 var repoCmd = &cobra.Command{
-	Use:   "repo dir",
+	Use:   "repo [flags] dir",
 	Args:  cobra.MinimumNArgs(1),
 	Short: "Initialize a new kr8 config repo",
 	Long: `Initialize a new kr8 config repo by downloading the kr8 config skeleton repo
@@ -113,9 +115,10 @@ and initialize a git repo so you can get started`,
 		if len(args) == 0 {
 			log.Fatal().Msg("Error: no directory specified")
 		}
-		log.Debug().Msg("Initializing kr8 config repo in " + args[0])
+		outDir := args[len(args)-1]
+		log.Debug().Msg("Initializing kr8 config repo in " + outDir)
 		if cmdInitFlags.InitUrl != "" {
-			fetchRepoUrl(cmdInitFlags.InitUrl, args[0])
+			fetchRepoUrl(cmdInitFlags.InitUrl, outDir, cmdInitFlags.Fetch)
 			return
 		}
 		// struct for component and clusters
@@ -134,15 +137,15 @@ and initialize a git repo so you can get started`,
 			ClusterDir:         "clusters",
 			Name:               cmdInitFlags.ClusterName,
 		}
-		generateClusterJsonnet(clusterOptions, args[0]+"/clusters")
-		generateComponentJsonnet(cmdInitOptions, args[0]+"/components")
-		generateLib(false, args[0]+"/lib")
-		generateReadme(args[0], cmdInitOptions, clusterOptions)
+		generateClusterJsonnet(clusterOptions, outDir+"/clusters")
+		generateComponentJsonnet(cmdInitOptions, outDir+"/components")
+		generateLib(cmdInitFlags.Fetch, outDir+"/lib")
+		generateReadme(outDir, cmdInitOptions, clusterOptions)
 	},
 }
 
 var initComponent = &cobra.Command{
-	Use:   "component",
+	Use:   "component [flags]",
 	Short: "Init a new component config file",
 	Long:  "Initialize a new component configuration file",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -229,7 +232,16 @@ func generateComponentJsonnet(componentOptions cmdInitOptions, dstDir string) er
 	return writeInitializedStruct("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
 }
 
-func fetchRepoUrl(url string, destination string) {
+func fetchRepoUrl(url string, destination string, performFetch bool) {
+	if !performFetch {
+		gitCommand := "git clone -- " + url + " " + destination
+		cleanupCmd := "rm -rf \"" + destination + "/.git\""
+		log.Info().Msg("Fetch disabled. Would have ran: ")
+		log.Info().Msg("`" + gitCommand + "`")
+		log.Info().Msg("`" + cleanupCmd + "`")
+		return
+	}
+
 	// Get the current working directory
 	pwd, err := os.Getwd()
 	fatalErrorCheck(err, "Error getting working directory")
@@ -254,9 +266,7 @@ func fetchRepoUrl(url string, destination string) {
 
 func generateLib(fetch bool, dstDir string) {
 	fatalErrorCheck(os.MkdirAll(dstDir, 0755), "error creating lib directory")
-	if fetch {
-		fetchRepoUrl("https://github.com/kube-libsonnet/kube-libsonnet.git", dstDir+"/klib")
-	}
+	fetchRepoUrl("git::https://github.com/kube-libsonnet/kube-libsonnet.git", dstDir+"/klib", fetch)
 }
 
 func generateReadme(dstDir string, cmdOptions cmdInitOptions, clusterSpec ClusterSpec) {

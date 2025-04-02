@@ -14,6 +14,17 @@ fi
   rm -rf ./init-test
 }
 
+@test "Check init success - fetch libs" {
+  rm -rf ./init-test
+  run $KR8 init repo -f true ./init-test
+  [ "$status" -eq 0 ]
+  [ -d "init-test/clusters" ]
+  [ -d "init-test/components" ]
+  [ -d "init-test/lib" ]
+  [ -d "init-test/lib/klib" ]
+  rm -rf ./init-test
+}
+
 @test "Check init cluster - named cluster" {
   expected=$(<expected/init_cluster_temp-cluster)
   mkdir -p ./init-test-cluster
