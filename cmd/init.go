@@ -193,8 +193,8 @@ var repoCmd = &cobra.Command{
 	Long: `Initialize a new kr8 config repo by downloading the kr8 config skeleton repo
 and initialize a git repo so you can get started`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if dl_url != "" {
-			real_url = dl_url
+		if flagInitUrl != "" {
+			real_url = flagInitUrl
 		} else {
 			log.Fatal().Msg("Must specify a URL arg")
 		}

@@ -71,7 +71,7 @@ var getClustersCmd = &cobra.Command{
 	Long:  "Get all clusters defined in kr8 config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		clusters, err := getClusters(clusterDir)
+		clusters, err := getClusters(rootConfig.ClusterDir)
 		fatalErrorCheck(err, "Error getting clusters")
 
 		if cmdGetFlags.NoTable {

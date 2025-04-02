@@ -75,7 +75,7 @@ func JsonnetVM(vmconfig VMConfig) (*jsonnet.VM, error) {
 }
 
 // Takes a list of jsonnet files and imports each one and mixes them with "+"
-func renderJsonnet(vmconfig VMConfig, files []string, param string, prune bool, prepend string, source string) string {
+func renderJsonnet(vmConfig VMConfig, files []string, param string, prune bool, prepend string, source string) string {
 
 	// copy the slice so that we don't unitentionally modify the original
 	jsonnetPaths := make([]string, len(files[:0]))
@@ -87,7 +87,7 @@ func renderJsonnet(vmconfig VMConfig, files []string, param string, prune bool, 
 	}
 
 	// Create a JSonnet VM
-	vm, err := JsonnetVM(cmd)
+	vm, err := JsonnetVM(vmConfig)
 	fatalErrorCheck(err, "Error creating jsonnet VM")
 
 	// Join the slices into a jsonnet compat string. Prepend code from "prepend" variable, if set.

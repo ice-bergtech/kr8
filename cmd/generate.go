@@ -225,12 +225,6 @@ func buildComponentList(generatedCompList []string, clusterComponents map[string
 	return compList
 }
 
-func fatalErrorCheck(err error, message string) {
-	if err != nil {
-		log.Fatal().Err(err).Msg(message)
-	}
-}
-
 func processJsonnet(vm *jsonnet.VM, input string, snippetFilename string) (string, error) {
 	vm.ExtCode("input", input)
 	j, err := vm.EvaluateAnonymousSnippet(snippetFilename, "std.extVar('process')(std.extVar('input'))")
