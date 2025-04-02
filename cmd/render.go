@@ -18,6 +18,7 @@ type cmdRenderOptions struct {
 	Prune         bool
 	ClusterParams string
 	ComponentName string
+	Cluster       string
 	Format        string
 }
 
@@ -30,6 +31,7 @@ func init() {
 	renderJsonnetCmd.PersistentFlags().BoolVarP(&cmdRenderFlags.Prune, "prune", "", true, "Prune null and empty objects from rendered json")
 	renderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.ClusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
 	renderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.ComponentName, "component", "c", "", "component to render params for")
+	renderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.Cluster, "cluster", "C", "", "cluster to render params for")
 	renderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.Format, "format", "F", "json", "Output format: json, yaml, stream")
 
 	renderCmd.AddCommand(helmCleanCmd)
@@ -53,6 +55,7 @@ var renderJsonnetCmd = &cobra.Command{
 				CmdJsonnetOptions{
 					Prune:         cmdRenderFlags.Prune,
 					ClusterParams: cmdRenderFlags.ClusterParams,
+					Cluster:       cmdRenderFlags.Cluster,
 					Component:     cmdRenderFlags.ComponentName,
 					Format:        cmdRenderFlags.Format,
 				}, f, rootConfig.VMConfig)
