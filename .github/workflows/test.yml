@@ -32,16 +32,16 @@ jobs:
       - name: 🧪 Run kr8 render tests
         env:
           KR8: '../kr8'
-        run: bats render_test.sh
+        run: cd bats-test && bats render_test.sh
       - name: 🧪 Run kr8 init tests
         env:
           KR8: '../kr8'
-        run: bats init_test.sh
+        run: cd bats-test && bats init_test.sh
       - name: 🧪 Run kr8 cluster tests
         env:
           KR8: '../kr8'
-        run: bats cluster_test.sh
+        run: cd bats-test && bats cluster_test.sh
       - name: 🧪 Run kr8 get tests
         env:
           KR8: '../kr8'
-        run: bats get_test.sh
+        run: cd bats-test && bats get_test.sh
