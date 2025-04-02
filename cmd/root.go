@@ -112,8 +112,14 @@ func initConfig() {
 			Out:     os.Stderr,
 			NoColor: !rootConfig.Color,
 			FormatErrFieldValue: func(err interface{}) string {
-				return strings.ReplaceAll(strings.Join(strings.Split(fmt.Sprintf("%v", err), "\\n"), " | "), "\\t", "")
-			}})
+				// https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L21
+				colorRed := 31
+				colorBold := 1
+				s := strings.ReplaceAll(strings.ReplaceAll(strings.TrimRight(err.(string), "\\n"), "\\t", " "), "\\n", " |")
+				return colorize(colorize(fmt.Sprintf("%s", s), colorBold, !rootConfig.Color), colorRed, !rootConfig.Color)
+			},
+		},
+	)
 
 	// Setup configuration defaults
 	//s.BaseDir = viper.GetString("base")
@@ -129,4 +135,17 @@ func initConfig() {
 		rootConfig.ComponentDir = rootConfig.BaseDir + "/components"
 	}
 	log.Debug().Msg("Using component directory: " + rootConfig.ComponentDir)
+}
+
+// https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389
+func colorize(s interface{}, c int, disabled bool) string {
+	e := os.Getenv("NO_COLOR")
+	if e != "" || c == 0 {
+		disabled = true
+	}
+
+	if disabled {
+		return fmt.Sprintf("%s", s)
+	}
+	return fmt.Sprintf("\x1b[%dm%v\x1b[0m", c, s)
 }
