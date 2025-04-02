@@ -1,5 +1,5 @@
 {
-      "image": "comp1:1.0.0",
-      "namespace": "default",
-      "release_name": "comp1"
-   }
+    "image": "comp1:1.0.0",
+    "namespace": "default",
+    "release_name": "comp1"
+}

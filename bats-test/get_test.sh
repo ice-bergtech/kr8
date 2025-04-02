@@ -10,14 +10,14 @@ CLUSTER=bats
 # NOTE: These are expected to be the same as "cluster ..." output, so reuse
 # the expected files.  --clusterparams might throw a wrench in this
 
-@test "Check get clusters output" {
+@test "01 Check get clusters output" {
   expected=$(<expected/cluster_list)
   run $KR8 $KR8_ARGS get clusters
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
 
-@test "Check get components output" {
+@test "02 Check get components output" {
   expected=$(<expected/cluster_components)
   run $KR8 $KR8_ARGS get components --cluster "$CLUSTER"
   [ "$status" -eq 0 ]
@@ -25,21 +25,21 @@ CLUSTER=bats
 }
 
 # These have a (debug?) output line in the stock version
-@test "Check get params for all components" {
+@test "03 Check get params for all components" {
   expected=$(<expected/get_params)
   run $KR8 $KR8_ARGS get params -C "$CLUSTER"
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
 
-@test "Check get params for one component with cluster config (-C)" {
+@test "04 Check get params for one component with cluster config (-c)" {
   expected=$(<expected/get_params_comp1)
   run $KR8 $KR8_ARGS get params -C "$CLUSTER" -c comp1
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
 
-@test "Check get component params for one component only (-P)" {
+@test "05 Check get component params for one component only (-P)" {
   expected=$(<expected/get_params_comp2)
   run $KR8 $KR8_ARGS get params -C "$CLUSTER" -P comp2
   [ "$status" -eq 0 ]
