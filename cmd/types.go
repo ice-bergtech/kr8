@@ -105,8 +105,7 @@ func CreateComponentSpec(spec gjson.Result) (ComponentSpec, error) {
 	specM := spec.Map()
 	// spec is missing?
 	if len(specM) == 0 {
-		log.Fatal().Str("component", flagComponentName).
-			Msg("Component has no `kr8_spec` object")
+		log.Fatal().Msg("Component has no `kr8_spec` object")
 	}
 
 	componentSpec := ComponentSpec{

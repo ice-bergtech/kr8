@@ -42,6 +42,7 @@ type CmdGetOptions struct {
 	FieldName     string
 	Cluster       string
 	Component     string
+	ParamField    string
 }
 
 var cmdGetFlags CmdGetOptions
@@ -61,7 +62,7 @@ func init() {
 	getCmd.AddCommand(getParamsCmd)
 	getParamsCmd.PersistentFlags().StringVarP(&cmdGetFlags.Cluster, "cluster", "C", "", "get components for cluster")
 	getParamsCmd.PersistentFlags().StringVarP(&cmdGetFlags.Component, "component", "c", "", "component to render params for")
-	getParamsCmd.Flags().StringVarP(&paramPath, "param", "P", "", "return value of json param from supplied path")
+	getParamsCmd.Flags().StringVarP(&cmdGetFlags.ParamField, "param", "P", "", "return value of json param from supplied path")
 
 }
 
@@ -116,10 +117,10 @@ var getComponentsCmd = &cobra.Command{
 		}
 
 		j := renderJsonnet(rootConfig.VMConfig, params, "._components", true, "", "components")
-		if paramPath != "" {
-			value := gjson.Get(j, paramPath)
+		if cmdGetFlags.ParamField != "" {
+			value := gjson.Get(j, cmdGetFlags.ParamField)
 			if value.String() == "" {
-				log.Fatal().Msg("Error getting param: " + paramPath)
+				log.Fatal().Msg("Error getting param: " + cmdGetFlags.ParamField)
 			} else {
 				formatted := Pretty(j, rootConfig.Color)
 				fmt.Println(formatted)
@@ -141,17 +142,17 @@ var getParamsCmd = &cobra.Command{
 		}
 
 		var cList []string
-		if flagComponentName != "" {
-			cList = append(cList, flagComponentName)
+		if cmdGetFlags.Component != "" {
+			cList = append(cList, cmdGetFlags.Component)
 		}
 
 		params := renderClusterParams(rootConfig.VMConfig, cmdGetFlags.Cluster, cList, cmdGetFlags.ClusterParams, true)
 
-		if paramPath != "" {
-			value := gjson.Get(params, paramPath)
+		if cmdGetFlags.ParamField != "" {
+			value := gjson.Get(params, cmdGetFlags.ParamField)
 			notUnset, _ := cmd.Flags().GetBool("notunset")
 			if notUnset && value.String() == "" {
-				log.Fatal().Msg("Error getting param: " + paramPath)
+				log.Fatal().Msg("Error getting param: " + cmdGetFlags.ParamField)
 			} else {
 				fmt.Println(value) // no formatting because this isn't always json, this is just the value of a field
 			}

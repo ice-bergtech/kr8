@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"golang.org/x/exp/maps"
+
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 )
@@ -155,25 +157,18 @@ func renderClusterParams(vmconfig VMConfig, clusterName string, componentNames [
 	err := json.Unmarshal([]byte(compString.String()), &componentMap)
 	fatalErrorCheck(err, "failed to parse component map")
 	componentDefaultsMerged := "{"
+
+	listComponentKeys := maps.Keys(componentMap)
 	if len(componentNames) > 0 {
-		// we are passed a list of components
-		for _, key := range componentNames {
-			if value, ok := componentMap[key]; ok {
-				path := rootConfig.BaseDir + "/" + value.Path + "/params.jsonnet"
-				fileC, err := os.ReadFile(path)
-				fatalErrorCheck(err, "Error reading file "+path)
-				componentDefaultsMerged = componentDefaultsMerged + fmt.Sprintf("'%s': %s,", key, string(fileC))
-			}
-		}
-	} else {
-		// all components
-		for key, value := range componentMap {
-			if flagComponentName != "" && key != flagComponentName {
-				continue
-			}
+		listComponentKeys = componentNames
+	}
+
+	// all components
+	for _, key := range listComponentKeys {
+		if value, ok := componentMap[key]; ok {
 			path := rootConfig.BaseDir + "/" + value.Path + "/params.jsonnet"
 			fileC, err := os.ReadFile(path)
-			fatalErrorCheck(err, "Error reading file"+path)
+			fatalErrorCheck(err, "Error reading file "+path)
 			componentDefaultsMerged = componentDefaultsMerged + fmt.Sprintf("'%s': %s,", key, string(fileC))
 		}
 	}
