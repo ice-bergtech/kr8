@@ -26,12 +26,12 @@ jobs:
         run: go build
       # Start of bats tests
       - name: 🧪 Run kr8 jsonnet tests
-        run: bats bats-test/jsonnet_test.sh
+        run: cd bats-test && bats jsonnet_test.sh
       - name: 🧪 Run kr8 render tests
-        run: bats bats-test/render_test.sh
+        run: bats render_test.sh
       - name: 🧪 Run kr8 init tests
-        run: bats bats-test/init_test.sh
+        run: bats init_test.sh
       - name: 🧪 Run kr8 cluster tests
-        run: bats bats-test/cluster_test.sh
+        run: bats cluster_test.sh
       - name: 🧪 Run kr8 get tests
-        run: bats bats-test/get_test.sh
+        run: bats get_test.sh
