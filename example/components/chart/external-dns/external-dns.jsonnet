@@ -1,4 +1,3 @@
-local kr8_cluster = std.extVar('kr8_cluster');
 local config = std.extVar('kr8');
 
 local helm_template = std.native('helmTemplate')(config.release_name, './vendor/'+"external-dns-"+config.chart_version, {

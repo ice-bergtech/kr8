@@ -7,9 +7,9 @@ Its main function is to manipulate JSON and YAML without using a templating engi
 Index
 
 * [Installation](installation.md)
-* [Building](building.md)
+* [Examples](../example)
 * [Concepts](concepts/overview.md)
 * [Clusters](concepts/clusters.md)
 * [Components](concepts/components.md)
+* [Building](building.md)
 * [Helpers](helpers.md) | [Script](../scripts/kr8-helpers)
-* [Examples](../example)
