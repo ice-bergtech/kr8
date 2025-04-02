@@ -85,7 +85,7 @@ CLUSTER=bats
 
 # Test with --clusterparams
 @test "Check render jsonnet parsing with --clusterparams" {
-  expected=$(<expected/jsonnet_comp2_with_file_stream)
+  expected=$(<expected/render_comp2_with_file_yaml)
   run $KR8 $KR8_ARGS render jsonnet -c comp2 -F yaml data/components/comp2/comp2.jsonnet \
     --clusterparams data/misc/cluster_params.jsonnet
   [ "$status" -eq 0 ]
