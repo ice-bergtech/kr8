@@ -27,6 +27,8 @@ jobs:
       - name: Run build
         run: go build
       - name: Run application tests
+        env:
+          KR8: ../kr8
         run: cd ./bats-test && ./TEST_ALL.sh
   build-publish:
     name: Goreleaser build and Publish
