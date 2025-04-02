@@ -70,17 +70,3 @@ CLUSTER=bats
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
-
-# --notunset has interesting behavior, and only exists on "cluster", not on "get"
-@test "Check cluster params with unset component (-P) and --nounset flag - FAIL" {
-  run $KR8 $KR8_ARGS get params -C "$CLUSTER" -P no_component --notunset
-  [ "$status" -eq 1 ]
-}
-
-# But this *works* and gives cluster config + component list
-@test "Check cluster params with unset component (-C) and --nounset flag" {
-  expected=$(<expected/cluster_params_no_comp)
-  run $KR8 $KR8_ARGS get params -C "$CLUSTER" -c no_component --notunset
-  [ "$status" -eq 0 ]
-  diff <(echo "$output") <(echo "$expected")
-}

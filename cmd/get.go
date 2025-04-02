@@ -146,8 +146,7 @@ var getParamsCmd = &cobra.Command{
 
 		if cmdGetFlags.ParamField != "" {
 			value := gjson.Get(params, cmdGetFlags.ParamField)
-			notUnset, _ := cmd.Flags().GetBool("notunset")
-			if notUnset && value.String() == "" {
+			if value.String() == "" {
 				log.Fatal().Msg("Error getting param: " + cmdGetFlags.ParamField)
 			} else {
 				fmt.Println(value) // no formatting because this isn't always json, this is just the value of a field
