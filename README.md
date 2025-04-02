@@ -1,11 +1,16 @@
 # kr8+
 
+[![CI status](https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg)](https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI)
+
 kr8+ is a fork of [kr8](https://github.com/apptio/kr8) with some additional features and improvements.
 kr8 was used in production to great success at Apptio for managing components of multiple Kubernetes clusters.
 
 kr8+ is a very opinionated tool used for rendering [jsonnet](http://jsonnet.org) manifests for multiple Kubernetes clusters.
 
 It has been designed to work as a simple configuration management framework, allowing operators to specify configurations at different cluster context levels to generate component manifests across multiple clusters.
+
+Kr8+ is `pre-1.0`.
+This means that breaking changes will still happen from time to time, but it's stable enough for both scripting and interactive use.
 
 ## Features
 
