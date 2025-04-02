@@ -11,14 +11,32 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	flagInitUrl         string
-	flagInitClName      string
-	flagInitCoName      string
-	flagInitCoType      string
-	flagInitInteractive bool
-	//initSkipDocs    bool
-)
+type cmdInitOptions struct {
+	InitUrl       string
+	ClusterName   string
+	ComponentName string
+	ComponentType string
+	Interactive   bool
+}
+
+var cmdInitFlags cmdInitOptions
+
+func init() {
+	RootCmd.AddCommand(initCmd)
+	initCmd.PersistentFlags().BoolVarP(&cmdInitFlags.Interactive, "interactive", "i", false, "Initialize a resource interactivly")
+
+	initCmd.AddCommand(repoCmd)
+	repoCmd.PersistentFlags().StringVar(&cmdInitFlags.InitUrl, "url", "", "Source of skeleton directory to create repo from")
+	repoCmd.Flags().StringVarP(&cmdInitFlags.ClusterName, "name", "o", "cluster-tpl", "Cluster name")
+
+	initCmd.AddCommand(initCluster)
+	initCluster.Flags().StringVarP(&cmdInitFlags.ClusterName, "name", "o", "cluster-tpl", "Cluster name")
+
+	initCmd.AddCommand(initComponent)
+	initComponent.Flags().StringVarP(&cmdInitFlags.ComponentName, "name", "o", "component-tpl", "Component name")
+	initComponent.Flags().StringVarP(&cmdInitFlags.ComponentType, "type", "t", "jsonnet", "Component type, one of: [`jsonnet`, `yml`, `chart`]")
+
+}
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
@@ -41,7 +59,7 @@ var initCluster = &cobra.Command{
 	Long:  "Initialize a new cluster configuration file",
 	Run: func(cmd *cobra.Command, args []string) {
 		cSpec := ClusterSpec{
-			Name:               flagInitClName,
+			Name:               cmdInitFlags.ClusterName,
 			ClusterDir:         rootConfig.ClusterDir,
 			PostProcessor:      "function(input) input",
 			GenerateDir:        "generated",
@@ -49,15 +67,15 @@ var initCluster = &cobra.Command{
 			PruneParams:        false,
 		}
 		// Get cluster name, path from user if not set
-		if flagInitInteractive {
+		if cmdInitFlags.Interactive {
 			prompt := &survey.Input{
 				Message: "Set the cluster name",
-				Default: flagInitClName,
+				Default: cmdInitFlags.ClusterName,
 			}
 			survey.AskOne(prompt, &cSpec.Name)
 
 			prompt = &survey.Input{
-				Message: "Set the cluster path",
+				Message: "Set the cluster configuration directory",
 				Default: rootConfig.ClusterDir,
 			}
 			survey.AskOne(prompt, &cSpec.ClusterDir)
@@ -81,35 +99,31 @@ var initCluster = &cobra.Command{
 			survey.AskOne(prompt, &cSpec.PostProcessor)
 		}
 		// Generate the jsonnet file based on the config
-		fatalErrorCheck(generateClusterJsonnet(cSpec), "Error generating cluster jsonnet file")
+		fatalErrorCheck(generateClusterJsonnet(cSpec, rootConfig.BaseDir+"/"+cSpec.ClusterDir), "Error generating cluster jsonnet file")
 	},
 }
 
 // Write out a struct to a specified path and file
 func writeInitializedStruct(filename string, path string, objStruct interface{}) error {
-	fatalErrorCheck(os.MkdirAll(rootConfig.ComponentDir, 0755), "error creating component directory")
+	fatalErrorCheck(os.MkdirAll(path, 0755), "error creating resource directory")
 
 	jsonStr, errJ := json.MarshalIndent(objStruct, "", "  ")
-	fatalErrorCheck(errJ, "error marshalling component jsonnet to json")
+	fatalErrorCheck(errJ, "error marshalling component resource to json")
 
 	jsonStrFormatted, errF := formatJsonnetString(string(jsonStr))
-	fatalErrorCheck(errF, "error formatting component jsonnet to json")
+	fatalErrorCheck(errF, "error formatting component resource to json")
 
 	return (os.WriteFile(path+"/"+filename, []byte(jsonStrFormatted), 0644))
 }
 
-func generateClusterJsonnet(cSpec ClusterSpec) error {
+func generateClusterJsonnet(cSpec ClusterSpec, dstDir string) error {
 	filename := "cluster.jsonnet"
 	clusterJson := ClusterJsonnet{
 		ClusterSpec: cSpec,
 		Cluster:     Cluster{Name: cSpec.Name},
 		Components:  map[string]ClusterComponent{},
 	}
-	clOutDir := rootConfig.ClusterDir + "/" + flagInitClName
-	if rootConfig.ClusterDir != "" {
-		clOutDir = rootConfig.ClusterDir
-	}
-	return writeInitializedStruct(filename, clOutDir, clusterJson)
+	return writeInitializedStruct(filename, dstDir+"/"+cSpec.Name, clusterJson)
 }
 
 var initComponent = &cobra.Command{
@@ -118,15 +132,15 @@ var initComponent = &cobra.Command{
 	Long:  "Initialize a new component configuration file",
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get component name, path and type from user if not set
-		if flagInitInteractive {
+		if cmdInitFlags.Interactive {
 			prompt := &survey.Input{
 				Message: "Enter component name",
-				Default: flagInitCoName,
+				Default: cmdInitFlags.ComponentName,
 			}
-			survey.AskOne(prompt, &flagInitCoName)
+			survey.AskOne(prompt, &cmdInitFlags.ComponentName)
 
 			prompt = &survey.Input{
-				Message: "Enter component path",
+				Message: "Enter component directory",
 				Default: rootConfig.ComponentDir,
 			}
 			survey.AskOne(prompt, &rootConfig.ComponentDir)
@@ -135,9 +149,9 @@ var initComponent = &cobra.Command{
 				Message: "Select component type",
 				Options: []string{"jsonnet", "yml", "tpl", "chart"},
 			}
-			survey.AskOne(promptS, &flagInitCoType)
+			survey.AskOne(promptS, &cmdInitFlags.ComponentType)
 		}
-		generateComponentJsonnet()
+		generateComponentJsonnet(cmdInitFlags, rootConfig.ComponentDir)
 	},
 }
 
@@ -146,7 +160,7 @@ var initComponent = &cobra.Command{
 // jsonnet: create a component.jsonnet file and reference it from the params.jsonnet file
 // yml: leave a note in the params.jsonnet file about where and how the yml files can be referenced
 // chart: generate a simple taskfile that handles vendoring the chart data
-func generateComponentJsonnet() error {
+func generateComponentJsonnet(componentOptions cmdInitOptions, dstDir string) error {
 
 	compJson := ComponentJsonnet{
 		Kr8Spec: ComponentSpec{
@@ -157,11 +171,11 @@ func generateComponentJsonnet() error {
 			ExtFiles:              map[string]string{},
 			JPaths:                []string{},
 		},
-		ReleaseName: strings.ReplaceAll(flagInitCoName, "_", "-"),
+		ReleaseName: strings.ReplaceAll(componentOptions.ComponentName, "_", "-"),
 		Namespace:   "Default",
 		Version:     "1.0.0",
 	}
-	switch flagInitCoType {
+	switch componentOptions.ComponentType {
 	case "jsonnet":
 		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, "component.jsonnet")
 	case "yml":
@@ -174,14 +188,35 @@ func generateComponentJsonnet() error {
 		break
 	}
 
-	filename := "params.jsonnet"
-	componentDir := rootConfig.ClusterDir + "/" + flagInitCoName
-	if rootConfig.ComponentDir != "" {
-		componentDir = rootConfig.ComponentDir
+	return writeInitializedStruct("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
+}
+
+func fetchRepoUrl(url string, destination string) {
+	// Get the current working directory
+	pwd, err := os.Getwd()
+	fatalErrorCheck(err, "Error getting working directory")
+
+	// Download the skeletion directory
+	log.Debug().Msg("Downloading skeleton repo from " + url)
+	client := &getter.Client{
+		Src:  url,
+		Dst:  destination,
+		Pwd:  pwd,
+		Mode: getter.ClientModeAny,
 	}
 
-	return writeInitializedStruct(filename, componentDir, compJson)
+	fatalErrorCheck(client.Get(), "Error getting repo")
+
+	// Check for .git folder
+	if _, err := os.Stat(destination + "/.git"); !os.IsNotExist(err) {
+		log.Debug().Msg("Removing .git directory")
+		os.RemoveAll(destination + "/.git")
+	}
 }
+
+func generateLib(fetch bool) {}
+
+func generateReadme() {}
 
 var repoCmd = &cobra.Command{
 	Use:   "repo dir",
@@ -190,45 +225,32 @@ var repoCmd = &cobra.Command{
 	Long: `Initialize a new kr8 config repo by downloading the kr8 config skeleton repo
 and initialize a git repo so you can get started`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if flagInitUrl == "" {
-			log.Fatal().Msg("Must specify a URL arg")
+		if len(args) == 0 {
+			log.Fatal().Msg("Error: no directory specified")
 		}
-		// Get the current working directory
-		pwd, err := os.Getwd()
-		fatalErrorCheck(err, "Error getting working directory")
-
-		// Download the skeletion directory
-		log.Debug().Msg("Downloading skeleton repo from " + flagInitUrl)
-		client := &getter.Client{
-			Src:  flagInitUrl,
-			Dst:  args[0],
-			Pwd:  pwd,
-			Mode: getter.ClientModeAny,
+		log.Debug().Msg("Initializing kr8 config repo in " + args[0])
+		if cmdInitFlags.InitUrl != "" {
+			fetchRepoUrl(cmdInitFlags.InitUrl, args[0])
+			return
 		}
-
-		fatalErrorCheck(client.Get(), "Error getting repo")
-
-		// Check for .git folder
-		if _, err := os.Stat(args[0] + "/.git"); !os.IsNotExist(err) {
-			log.Debug().Msg("Removing .git directory")
-			os.RemoveAll(args[0] + "/.git")
+		// struct for component and clusters
+		item := cmdInitOptions{
+			InitUrl:       cmdInitFlags.InitUrl,
+			ClusterName:   cmdInitFlags.ClusterName,
+			ComponentName: "example-component",
+			ComponentType: "jsonnet",
+			Interactive:   false,
 		}
+		generateClusterJsonnet(ClusterSpec{
+			PostProcessor:      "",
+			GenerateDir:        "generated",
+			GenerateShortNames: false,
+			PruneParams:        false,
+			ClusterDir:         "clusters",
+			Name:               cmdInitFlags.ClusterName,
+		}, args[0]+"/clusters")
+		generateComponentJsonnet(item, args[0]+"/components")
+		//generateLib()
+		//generateReadme()
 	},
-}
-
-func init() {
-	RootCmd.AddCommand(initCmd)
-	initCmd.AddCommand(repoCmd)
-	initCmd.AddCommand(initCluster)
-	initCmd.AddCommand(initComponent)
-
-	initCmd.PersistentFlags().BoolVarP(&flagInitInteractive, "interactive", "i", false, "Initialize a resource interactivly")
-
-	repoCmd.PersistentFlags().StringVar(&flagInitUrl, "url", "", "Source of skeleton directory to create repo from")
-
-	initCluster.Flags().StringVarP(&flagInitClName, "name", "o", "cluster-tpl", "Cluster name")
-
-	initComponent.Flags().StringVarP(&flagInitCoName, "name", "o", "component-tpl", "Component name")
-	initComponent.Flags().StringVarP(&flagInitCoType, "type", "t", "jsonnet", "Component type, one of: [`jsonnet`, `yml`, `chart`]")
-
 }

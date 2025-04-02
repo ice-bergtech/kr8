@@ -15,7 +15,6 @@ kr8 init component [flags]
 ```
   -h, --help           help for component
   -o, --name string    Component name (default "component-tpl")
-  -p, --path string    Component path (default "components")
   -t, --type jsonnet   Component type, one of: [jsonnet, `yml`, `chart`] (default "jsonnet")
 ```
 

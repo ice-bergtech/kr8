@@ -15,7 +15,6 @@ kr8 init cluster [flags]
 ```
   -h, --help          help for cluster
   -o, --name string   Cluster name (default "cluster-tpl")
-  -p, --path string   Cluster path (default "clusters")
 ```
 
 ### Options inherited from parent commands

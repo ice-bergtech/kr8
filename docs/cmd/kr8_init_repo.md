@@ -14,8 +14,9 @@ kr8 init repo dir [flags]
 ### Options
 
 ```
-  -h, --help         help for repo
-      --url string   Source of skeleton directory to create repo from
+  -h, --help          help for repo
+  -o, --name string   Cluster name (default "cluster-tpl")
+      --url string    Source of skeleton directory to create repo from
 ```
 
 ### Options inherited from parent commands
