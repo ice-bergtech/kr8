@@ -7,8 +7,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"golang.org/x/exp/maps"
+
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 )
 
@@ -54,8 +55,7 @@ func getClusters(searchDir string) (Clusters, error) {
 }
 
 func getCluster(searchDir string, clusterName string) string {
-
-	var clusterPath string
+	clusterPath := ""
 
 	fatalErrorCheck(
 		filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {
@@ -119,22 +119,22 @@ func getClusterParams(basePath string, targetPath string) []string {
 }
 
 // only render cluster params (_cluster), without components
-func renderClusterParamsOnly(cmd *cobra.Command, clusterName string, clusterParams string, prune bool) string {
+func renderClusterParamsOnly(vmconfig VMConfig, clusterName string, clusterParams string, prune bool) string {
 	var params []string
 	if clusterName != "" {
-		clusterPath := getCluster(clusterDir, clusterName)
-		params = getClusterParams(clusterDir, clusterPath)
+		clusterPath := getCluster(rootConfig.ClusterDir, clusterName)
+		params = getClusterParams(rootConfig.ClusterDir, clusterPath)
 	}
 	if clusterParams != "" {
 		params = append(params, clusterParams)
 	}
-	renderedParams := renderJsonnet(cmd, params, "._cluster", prune, "", "clusterparams")
+	renderedParams := renderJsonnet(vmconfig, params, "._cluster", prune, "", "clusterparams")
 
 	return renderedParams
 }
 
 // render cluster params, merged with one or more component's parameters. Empty componentName list renders all component parameters
-func renderClusterParams(cmd *cobra.Command, clusterName string, componentNames []string, clusterParams string, prune bool) string {
+func renderClusterParams(vmconfig VMConfig, clusterName string, componentNames []string, clusterParams string, prune bool) string {
 	if clusterName == "" && clusterParams == "" {
 		log.Fatal().Msg("Please specify a --cluster name and/or --clusterparams")
 	}
@@ -143,44 +143,37 @@ func renderClusterParams(cmd *cobra.Command, clusterName string, componentNames 
 	var componentMap map[string]componentDef
 
 	if clusterName != "" {
-		clusterPath := getCluster(clusterDir, clusterName)
-		params = getClusterParams(clusterDir, clusterPath)
+		clusterPath := getCluster(rootConfig.ClusterDir, clusterName)
+		params = getClusterParams(rootConfig.ClusterDir, clusterPath)
 	}
 	if clusterParams != "" {
 		params = append(params, clusterParams)
 	}
 
-	compParams := renderJsonnet(cmd, params, "", true, "", "clusterparams")
+	compParams := renderJsonnet(vmconfig, params, "", true, "", "clusterparams")
 
 	compString := gjson.Get(compParams, "_components")
 	err := json.Unmarshal([]byte(compString.String()), &componentMap)
 	fatalErrorCheck(err, "failed to parse component map")
 	componentDefaultsMerged := "{"
+
+	listComponentKeys := maps.Keys(componentMap)
 	if len(componentNames) > 0 {
-		// we are passed a list of components
-		for _, key := range componentNames {
-			if value, ok := componentMap[key]; ok {
-				path := baseDir + "/" + value.Path + "/params.jsonnet"
-				fileC, err := os.ReadFile(path)
-				fatalErrorCheck(err, "Error reading file "+path)
-				componentDefaultsMerged = componentDefaultsMerged + fmt.Sprintf("'%s': %s,", key, string(fileC))
-			}
-		}
-	} else {
-		// all components
-		for key, value := range componentMap {
-			if componentName != "" && key != componentName {
-				continue
-			}
-			path := baseDir + "/" + value.Path + "/params.jsonnet"
+		listComponentKeys = componentNames
+	}
+
+	// all components
+	for _, key := range listComponentKeys {
+		if value, ok := componentMap[key]; ok {
+			path := rootConfig.BaseDir + "/" + value.Path + "/params.jsonnet"
 			fileC, err := os.ReadFile(path)
-			fatalErrorCheck(err, "Error reading file"+path)
+			fatalErrorCheck(err, "Error reading file "+path)
 			componentDefaultsMerged = componentDefaultsMerged + fmt.Sprintf("'%s': %s,", key, string(fileC))
 		}
 	}
 	componentDefaultsMerged = componentDefaultsMerged + "}"
 
-	compParams = renderJsonnet(cmd, params, "", prune, componentDefaultsMerged, "componentparams")
+	compParams = renderJsonnet(vmconfig, params, "", prune, componentDefaultsMerged, "componentparams")
 
 	return compParams
 }

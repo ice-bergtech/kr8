@@ -1,28 +1,9 @@
-// Copyright © 2018 Lee Briggs <lee@leebriggs.co.uk>
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
 package cmd
 
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -30,19 +11,6 @@ import (
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-)
-
-var (
-	cfgFile       string
-	baseDir       string
-	clusterDir    string
-	componentDir  string
-	clusterParams string
-	cluster       string
-	logLevel      string
-
-	debug       bool
-	colorOutput bool
 )
 
 func fatalErrorCheck(err error, message string) {
@@ -72,33 +40,45 @@ func Execute(version string) {
 	}
 }
 
+type cmdRootOptions struct {
+	BaseDir      string
+	ClusterDir   string
+	ComponentDir string
+	ConfigFile   string
+	Parallel     int
+	Debug        bool
+	LogLevel     string
+	Color        bool
+	VMConfig     VMConfig
+}
+
+var rootConfig cmdRootOptions
+
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	RootCmd.PersistentFlags().StringVarP(&baseDir, "base", "d", ".", "kr8 config base directory")
-	RootCmd.PersistentFlags().StringVarP(&clusterDir, "clusterdir", "D", "", "kr8 cluster directory")
-	RootCmd.PersistentFlags().StringVarP(&componentDir, "componentdir", "X", "", "kr8 component directory")
-	RootCmd.PersistentFlags().StringVarP(&logLevel, "loglevel", "L", "info", "set log level")
-	RootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "log more information about what kr8 is doing. Overrides --loglevel")
-	RootCmd.PersistentFlags().BoolVar(&colorOutput, "color", true, "enable colorized output (default). Set to false to disable")
-	RootCmd.PersistentFlags().StringArrayP("jpath", "J", nil, "Directories to add to jsonnet include path. Repeat arg for multiple directories")
-	RootCmd.PersistentFlags().StringSlice("ext-str-file", nil, "Set jsonnet extvar from file contents")
-	viper.BindPFlag("base", RootCmd.PersistentFlags().Lookup("base"))
-	viper.BindPFlag("clusterdir", RootCmd.PersistentFlags().Lookup("clusterdir"))
-	viper.BindPFlag("componentdir", RootCmd.PersistentFlags().Lookup("componentdir"))
-	viper.BindPFlag("color", RootCmd.PersistentFlags().Lookup("color"))
+	RootCmd.PersistentFlags().BoolVar(&rootConfig.Debug, "debug", false, "log more information about what kr8 is doing. Overrides --loglevel")
+	RootCmd.PersistentFlags().StringVarP(&rootConfig.LogLevel, "loglevel", "L", "info", "set log level")
+	RootCmd.PersistentFlags().StringVarP(&rootConfig.BaseDir, "base", "B", ".", "kr8 config base directory")
+	RootCmd.PersistentFlags().StringVarP(&rootConfig.ClusterDir, "clusterdir", "D", "", "kr8 cluster directory")
+	RootCmd.PersistentFlags().StringVarP(&rootConfig.ComponentDir, "componentdir", "d", "", "kr8 component directory")
+	RootCmd.PersistentFlags().BoolVar(&rootConfig.Color, "color", true, "enable colorized output (default). Set to false to disable")
+	RootCmd.PersistentFlags().StringArrayVarP(&rootConfig.VMConfig.Jpaths, "jpath", "J", nil, "Directories to add to jsonnet include path. Repeat arg for multiple directories")
+	RootCmd.PersistentFlags().StringSliceVar(&rootConfig.VMConfig.ExtVars, "ext-str-file", nil, "Set jsonnet extvar from file contents")
+	RootCmd.PersistentFlags().IntVarP(&rootConfig.Parallel, "parallel", "", runtime.GOMAXPROCS(0), "parallelism - defaults to GOMAXPROCS")
+	RootCmd.PersistentFlags().StringVarP(&rootConfig.ConfigFile, "config", "", "", "A config file with kr8 configuration")
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" { // enable ability to specify config file via flag
-		viper.SetConfigFile(cfgFile)
+	if rootConfig.ConfigFile != "" { // enable ability to specify config file via flag
+		viper.SetConfigFile(rootConfig.ConfigFile)
 	}
 
-	if debug {
+	if rootConfig.Debug {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	} else {
-		switch logLevel {
+		switch rootConfig.LogLevel {
 		case "debug":
 			zerolog.SetGlobalLevel(zerolog.DebugLevel)
 		case "info":
@@ -112,7 +92,7 @@ func initConfig() {
 		case "panic":
 			zerolog.SetGlobalLevel(zerolog.PanicLevel)
 		default:
-			log.Fatal().Msg("invalid log level: " + logLevel)
+			log.Fatal().Msg("invalid log level: " + rootConfig.LogLevel)
 		}
 	}
 
@@ -126,25 +106,27 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		log.Debug().Msg("Using config file:" + viper.ConfigFileUsed())
 	}
-	colorOutput = viper.GetBool("color")
+
 	log.Logger = log.Output(
 		zerolog.ConsoleWriter{
 			Out:     os.Stderr,
-			NoColor: !colorOutput,
+			NoColor: !rootConfig.Color,
 			FormatErrFieldValue: func(err interface{}) string {
 				return strings.ReplaceAll(strings.Join(strings.Split(fmt.Sprintf("%v", err), "\\n"), " | "), "\\t", "")
 			}})
 
-	baseDir = viper.GetString("base")
-	log.Debug().Msg("Using base directory: " + baseDir)
-	clusterDir = viper.GetString("clusterdir")
-	if clusterDir == "" {
-		clusterDir = baseDir + "/clusters"
-	}
-	log.Debug().Msg("Using cluster directory: " + clusterDir)
-	if componentDir == "" {
-		componentDir = baseDir + "/components"
-	}
-	log.Debug().Msg("Using component directory: " + componentDir)
+	// Setup configuration defaults
+	//s.BaseDir = viper.GetString("base")
+	log.Debug().Msg("Using base directory: " + rootConfig.BaseDir)
 
+	//s.ClusterDir = viper.GetString("clusterdir")
+	if rootConfig.ClusterDir == "" {
+		rootConfig.ClusterDir = rootConfig.BaseDir + "/clusters"
+	}
+	log.Debug().Msg("Using cluster directory: " + rootConfig.ClusterDir)
+
+	if rootConfig.ComponentDir == "" {
+		rootConfig.ComponentDir = rootConfig.BaseDir + "/components"
+	}
+	log.Debug().Msg("Using component directory: " + rootConfig.ComponentDir)
 }

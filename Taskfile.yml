@@ -5,12 +5,42 @@ tasks:
     cmds:
       - task: build
 
+  
+  test:
+    desc: Tesk kr8 for your local system
+    aliases:
+      - t
+    cmds:
+      - go test
+      - task: build
+      - task: test-package
+
+  test-package:
+    desc: Test compiled kr8 binary against test inputs
+    aliases:
+      - tp
+    dir: ./bats-test
+    env:
+      KR8: '../kr8'
+    cmds:
+      - ./TEST_ALL.sh
+  
+  setup-tests:
+    aliases:
+      - st
+    dir: ./bats-test
+    env:
+      KR8: '../kr8'
+    cmds:
+      - ./GEN_ALL.sh
+
   build:
     desc: Build kr8 for your local system
     aliases:
       - b
     cmds:
       - go fmt
+      - go generate ./docs
       - go build
 
   build-snapshot:
@@ -18,6 +48,7 @@ tasks:
     aliases:
       - bs
     cmds:
+      - go generate ./docs
       - goreleaser release --snapshot --clean --skip=homebrew,docker
 
   mkdocs:
