@@ -37,31 +37,15 @@ func Execute(version string) {
 }
 
 type cmdRootOptions struct {
-	Debug        bool
-	LogLevel     string
 	BaseDir      string
 	ClusterDir   string
 	ComponentDir string
+	ConfigFile   string
+	Parallel     int
+	Debug        bool
+	LogLevel     string
 	Color        bool
 	VMConfig     VMConfig
-	Parallel     int
-	ConfigFile   string
-}
-
-func (s cmdRootOptions) SyncFromViper() {
-	s.BaseDir = viper.GetString("base")
-	log.Debug().Msg("Using base directory: " + s.BaseDir)
-
-	s.ClusterDir = viper.GetString("clusterdir")
-	if s.ClusterDir == "" {
-		s.ClusterDir = s.BaseDir + "/clusters"
-	}
-	log.Debug().Msg("Using cluster directory: " + s.ClusterDir)
-
-	if s.ComponentDir == "" {
-		s.ComponentDir = s.BaseDir + "/components"
-	}
-	log.Debug().Msg("Using cluster directory: " + s.ComponentDir)
 }
 
 var rootConfig cmdRootOptions
@@ -127,8 +111,18 @@ func initConfig() {
 				return strings.ReplaceAll(strings.Join(strings.Split(fmt.Sprintf("%v", err), "\\n"), " | "), "\\t", "")
 			}})
 
-	rootConfig.SyncFromViper()
+	// Setup configuration defaults
+	//s.BaseDir = viper.GetString("base")
+	log.Debug().Msg("Using base directory: " + rootConfig.BaseDir)
 
+	//s.ClusterDir = viper.GetString("clusterdir")
+	if rootConfig.ClusterDir == "" {
+		rootConfig.ClusterDir = rootConfig.BaseDir + "/clusters"
+	}
+	log.Debug().Msg("Using cluster directory: " + rootConfig.ClusterDir)
+
+	if rootConfig.ComponentDir == "" {
+		rootConfig.ComponentDir = rootConfig.BaseDir + "/components"
+	}
 	log.Debug().Msg("Using component directory: " + rootConfig.ComponentDir)
-
 }
