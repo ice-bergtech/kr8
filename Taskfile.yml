@@ -5,7 +5,6 @@ tasks:
     cmds:
       - task: build
 
-  
   test:
     desc: Tesk kr8 for your local system
     aliases:
