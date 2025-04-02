@@ -1,6 +1,5 @@
 # Native Functions
 
-
 Additional functions have been added to the jsonnet vm to add functionality.
 They are able to be called from jsonnet using `std.native('funcName')`, where `funcName` is the name of the function.
 
@@ -8,7 +7,7 @@ They are able to be called from jsonnet using `std.native('funcName')`, where `f
 
 Templates the passed in input `str` using the json string `config`.
 Config is unmarshaled into a json object and passed to the template engine.
-The template engine used is sprig.
+The template engine used is sprig - [Template Documentation](https://masterminds.github.io/sprig/).
 The resulting string is returned.
 
 Usage:
