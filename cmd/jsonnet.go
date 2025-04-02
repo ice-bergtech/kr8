@@ -87,10 +87,8 @@ func renderJsonnet(vmconfig VMConfig, files []string, param string, prune bool, 
 	}
 
 	// Create a JSonnet VM
-	vm, err := JsonnetVM(vmconfig)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Error creating jsonnet VM")
-	}
+	vm, err := JsonnetVM(cmd)
+	fatalErrorCheck(err, "Error creating jsonnet VM")
 
 	// Join the slices into a jsonnet compat string. Prepend code from "prepend" variable, if set.
 	var jsonnetImport string
@@ -111,10 +109,7 @@ func renderJsonnet(vmconfig VMConfig, files []string, param string, prune bool, 
 
 	// render the jsonnet
 	out, err := vm.EvaluateAnonymousSnippet(source, jsonnetImport)
-
-	if err != nil {
-		log.Fatal().Err(err).Msg("Error evaluating jsonnet snippet")
-	}
+	fatalErrorCheck(err, "Error evaluating jsonnet snippet")
 
 	return out
 

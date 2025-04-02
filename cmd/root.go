@@ -15,6 +15,12 @@ import (
 
 var ()
 
+func fatalErrorCheck(err error, message string) {
+	if err != nil {
+		log.Fatal().Err(err).Msg(message)
+	}
+}
+
 // exported Version variable
 var Version string
 
