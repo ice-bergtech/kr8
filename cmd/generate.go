@@ -44,7 +44,7 @@ func init() {
 	generateCmd.Flags().StringVarP(&cmdGenerateFlags.ClusterParamsFile, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
 	generateCmd.Flags().StringVarP(&cmdGenerateFlags.Clusters, "clusters", "C", "", "clusters to generate - comma separated list of cluster names and/or regular expressions ")
 	generateCmd.Flags().StringVarP(&cmdGenerateFlags.Components, "components", "c", "", "components to generate - comma separated list of component names and/or regular expressions")
-	generateCmd.Flags().StringVarP(&cmdGenerateFlags.GenerateDir, "generate-dir", "o", "", "output directory")
+	generateCmd.Flags().StringVarP(&cmdGenerateFlags.GenerateDir, "generate-dir", "o", "generated", "output directory")
 	generateCmd.Flags().StringVarP(&cmdGenerateFlags.Filters.Includes, "clincludes", "i", "", "filter included cluster by including clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
 	generateCmd.Flags().StringVarP(&cmdGenerateFlags.Filters.Excludes, "clexcludes", "x", "", "filter included cluster by excluding clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
 }
@@ -280,7 +280,7 @@ func genProcessCluster(vmConfig VMConfig, clusterName string, p *ants.Pool) {
 	clusterComponents := gjson.Parse(renderJsonnet(vmConfig, params, "._components", true, "", "clustercomponents")).Map()
 
 	// get kr8 settings for cluster
-	kr8Spec, err := CreateClusterSpec(clusterName, gjson.Parse(renderJsonnet(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")), rootConfig.BaseDir, rootConfig.ClusterDir)
+	kr8Spec, err := CreateClusterSpec(clusterName, gjson.Parse(renderJsonnet(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")), rootConfig.BaseDir, cmdGenerateFlags.GenerateDir)
 	fatalErrorCheck(err, "Error creating kr8Spec")
 
 	// create cluster dir

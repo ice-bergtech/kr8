@@ -18,7 +18,7 @@ kr8 generate [flags]
   -p, --clusterparams string   provide cluster params as single file - can be combined with --cluster to override cluster
   -C, --clusters string        clusters to generate - comma separated list of cluster names and/or regular expressions 
   -c, --components string      components to generate - comma separated list of component names and/or regular expressions
-  -o, --generate-dir string    output directory
+  -o, --generate-dir string    output directory (default "generated")
   -h, --help                   help for generate
 ```
 

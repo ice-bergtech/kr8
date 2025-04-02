@@ -63,6 +63,7 @@ func CreateClusterSpec(clusterName string, spec gjson.Result, baseDir string, ge
 		clGenerateDir = baseDir + "/" + clGenerateDir
 	}
 	clusterDir := clGenerateDir + "/" + clusterName
+	log.Debug().Str("cluster", clusterName).Msg("output directory: " + clusterDir)
 	return ClusterSpec{
 		PostProcessor:      spec.Get("postprocessor").String(),
 		GenerateDir:        clGenerateDir,
