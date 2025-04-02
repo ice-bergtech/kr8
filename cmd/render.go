@@ -14,15 +14,23 @@ import (
 	"k8s.io/apimachinery/pkg/util/yaml"
 )
 
+type cmdRenderOptions struct {
+	Prune         bool
+	ClusterParams string
+	ComponentName string
+	Format        string
+}
+
+var cmdRenderFlags cmdRenderOptions
+
 func init() {
 	RootCmd.AddCommand(renderCmd)
 
 	renderCmd.AddCommand(renderJsonnetCmd)
-	renderJsonnetCmd.PersistentFlags().BoolVarP(&flagPrune, "prune", "", true, "Prune null and empty objects from rendered json")
-	renderJsonnetCmd.PersistentFlags().StringVarP(&flagClusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
-	renderJsonnetCmd.PersistentFlags().StringVarP(&flagComponentName, "component", "c", "", "component to render params for")
-	renderJsonnetCmd.PersistentFlags().StringVarP(&flagOutputFormat, "format", "F", "json", "Output format: json, yaml, stream")
-	renderJsonnetCmd.PersistentFlags().StringVarP(&flagCluster, "cluster", "C", "", "cluster to render params for")
+	renderJsonnetCmd.PersistentFlags().BoolVarP(&cmdRenderFlags.Prune, "prune", "", true, "Prune null and empty objects from rendered json")
+	renderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.ClusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
+	renderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.ComponentName, "component", "c", "", "component to render params for")
+	renderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.Format, "format", "F", "json", "Output format: json, yaml, stream")
 
 	renderCmd.AddCommand(helmCleanCmd)
 }
@@ -40,7 +48,15 @@ var renderJsonnetCmd = &cobra.Command{
 
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		jsonnetRenderCmd.Run(cmd, args)
+		for _, f := range args {
+			jsonnetRender(
+				CmdJsonnetOptions{
+					Prune:         cmdRenderFlags.Prune,
+					ClusterParams: cmdRenderFlags.ClusterParams,
+					Component:     cmdRenderFlags.ComponentName,
+					Format:        cmdRenderFlags.Format,
+				}, f, rootFlagVMConfig)
+		}
 	},
 }
 
