@@ -11,14 +11,14 @@ CLUSTER=bats
 
 @test "Check jsonnet json parsing" {
   expected=$(<expected/jsonnet_basic_json)
-  run $KR8 $KR8_ARGS -C $CLUSTER jsonnet render data/misc/basic.json
+  run $KR8 $KR8_ARGS jsonnet render -C $CLUSTER data/misc/basic.json
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
 
 @test "Check jsonnet basic jsonnet parsing" {
   expected=$(<expected/jsonnet_basic_jsonnet)
-  run $KR8 $KR8_ARGS -C $CLUSTER jsonnet render data/misc/basic.jsonnet
+  run $KR8 $KR8_ARGS jsonnet render -C $CLUSTER data/misc/basic.jsonnet
   [ "$status" -eq 0 ]
   diff <(echo "$output") <(echo "$expected")
 }
@@ -35,7 +35,7 @@ CLUSTER=bats
 @test "Check jsonnet parsing without component - FAIL" {
   expected=$(<expected/jsonnet_comp1_json)
   run $KR8 $KR8_ARGS jsonnet render -C bats data/components/comp1/comp1.jsonnet
-  [ "$status" -eq 2 ]
+  [ "$status" -eq 1 ]
 }
 
 # Explicit formats
@@ -58,7 +58,7 @@ CLUSTER=bats
 @test "Check jsonnet component parsing (format: stream) - FAIL" {
   expected=$(<expected/jsonnet_comp1_json)
   run $KR8 $KR8_ARGS jsonnet render -C bats -c comp1 -F stream data/components/comp1/comp1.jsonnet
-  [ "$status" -eq 2 ]
+  [ "$status" -eq 1 ]
 }
 
 # List of objects
@@ -99,6 +99,6 @@ CLUSTER=bats
   #expected=$(<expected/jsonnet_comp2_with_file_stream)
   run $KR8 $KR8_ARGS jsonnet render -c comp1 -F stream data/components/comp2/comp1_list.jsonnet \
     --clusterparams data/misc/cluster_params.jsonnet
-  [ "$status" -eq 2 ]
+  [ "$status" -eq 1 ]
   #diff <(echo "$output") <(echo "$expected")
 }

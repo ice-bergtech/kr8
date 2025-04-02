@@ -96,7 +96,7 @@ CLUSTER=bats
 #        even if that component exists and has its own params
 #        Only the clusterprams file gets used, even blanking other params
 @test "Check render jsonnet stream parsing with --clusterparams" {
-  #expected=$(<expected/jsonnet_comp2_with_file_stream)
+  #expected=$(<expected/jsonnet_comp1_list_stream)
   run $KR8 $KR8_ARGS render jsonnet -c comp1 -F stream data/components/comp2/comp1_list.jsonnet \
     --clusterparams data/misc/cluster_params.jsonnet
   [ "$status" -eq 1 ]

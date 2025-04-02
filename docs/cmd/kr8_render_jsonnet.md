@@ -13,6 +13,7 @@ kr8 render jsonnet file [file ...] [flags]
 ### Options
 
 ```
+  -C, --cluster string         cluster to render params for
   -p, --clusterparams string   provide cluster params as single file - can be combined with --cluster to override cluster
   -c, --component string       component to render params for
   -F, --format string          Output format: json, yaml, stream (default "json")
