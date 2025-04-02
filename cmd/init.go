@@ -50,21 +50,14 @@ var repoCmd = &cobra.Command{
 	Long: `Initialize a new kr8 config repo by downloading the kr8 config skeleton repo
 and initialize a git repo so you can get started`,
 	Run: func(cmd *cobra.Command, args []string) {
-
-		if len(args) < 1 {
-			log.Fatal().Msg("Must specify a destination")
-		}
-
 		if dl_url != "" {
 			real_url = dl_url
 		} else {
-			log.Fatal().Msg("Must specify a URL")
+			log.Fatal().Msg("Must specify a URL arg")
 		}
 		// Get the current working directory
 		pwd, err := os.Getwd()
-		if err != nil {
-			log.Fatal().Err(err).Msg("Error getting working directory")
-		}
+		fatalErrorCheck(err, "Error getting working directory")
 
 		// Download the skeletion directory
 		log.Debug().Msg("Downloading skeleton repo from " + real_url)
@@ -75,10 +68,7 @@ and initialize a git repo so you can get started`,
 			Mode: getter.ClientModeAny,
 		}
 
-		if err := client.Get(); err != nil {
-			log.Fatal().Err(err).Msg("")
-			os.Exit(1)
-		}
+		fatalErrorCheck(client.Get(), "Error getting repo")
 
 		// Check for .git folder
 		if _, err := os.Stat(args[0] + "/.git"); !os.IsNotExist(err) {
