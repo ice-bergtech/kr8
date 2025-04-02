@@ -57,7 +57,7 @@ A component is something you install in your cluster to make it function and wor
 Some examples of components might be:
 
 - cluster core resources: [cert-manager](https://github.com/jetstack/cert-manager) or [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets)
-- argo applications: generate argo cd applications for manageing applying cluster configuration to live nodes
+- argo applications: generate argo cd applications for managing applying cluster configuration to live nodes
 - application: a single application that you want to run in your cluster. This is usually a web application, but it can also be a database, cron job, or documentation.
 
 Components are applications you want to run in your cluster.
