@@ -4,7 +4,7 @@ if [ -z "$KR8" ]; then
   KR8=kr8
 fi
 
-@test "Check init success" {
+@test "01 Check init success" {
   rm -rf ./init-test
   run $KR8 init repo ./init-test
   [ "$status" -eq 0 ]
@@ -14,7 +14,7 @@ fi
   rm -rf ./init-test
 }
 
-@test "Check init success - fetch libs" {
+@test "02 Check init success - fetch libs" {
   rm -rf ./init-test
   run $KR8 init repo -f true ./init-test
   [ "$status" -eq 0 ]
@@ -25,7 +25,7 @@ fi
   rm -rf ./init-test
 }
 
-@test "Check init cluster - named cluster" {
+@test "03 Check init cluster - named cluster" {
   expected=$(<expected/init_cluster_temp-cluster)
   mkdir -p ./init-test-cluster
   run $KR8 init cluster -B ./init-test-cluster -o temp-cluster
@@ -35,7 +35,7 @@ fi
   rm -rf ./init-test-cluster
 }
 
-@test "Check init component - named component" {
+@test "04 Check init component - named component" {
   expected=$(<expected/init_component_temp-component)
   mkdir -p ./init-test-component
   run $KR8 init component -B ./init-test-component -o temp-component
@@ -45,10 +45,7 @@ fi
   rm -rf ./init-test-component
 }
 
-# Remove this for now
-#  There's a weird race condition where it can check out "master" for kr8
-#  and cause problems.  That's going to be deeper in the code.
-@test "Check init failure - existing directory" {
+@test "05 Check init failure - existing directory" {
   skip "skip testing, code issue"
   mkdir -p ./init-test2
   run $KR8 init repo ./init-test2
