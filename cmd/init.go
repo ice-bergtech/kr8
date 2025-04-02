@@ -14,9 +14,7 @@ import (
 var (
 	flagInitUrl         string
 	flagInitClName      string
-	flagInitClPath      string
 	flagInitCoName      string
-	flagInitCoPath      string
 	flagInitCoType      string
 	flagInitInteractive bool
 	//initSkipDocs    bool
@@ -44,7 +42,7 @@ var initCluster = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cSpec := ClusterSpec{
 			Name:               flagInitClName,
-			ClusterDir:         flagInitClPath,
+			ClusterDir:         rootConfig.ClusterDir,
 			PostProcessor:      "function(input) input",
 			GenerateDir:        "generated",
 			GenerateShortNames: false,
@@ -60,7 +58,7 @@ var initCluster = &cobra.Command{
 
 			prompt = &survey.Input{
 				Message: "Set the cluster path",
-				Default: flagInitClPath,
+				Default: rootConfig.ClusterDir,
 			}
 			survey.AskOne(prompt, &cSpec.ClusterDir)
 
@@ -108,8 +106,8 @@ func generateClusterJsonnet(cSpec ClusterSpec) error {
 		Components:  map[string]ClusterComponent{},
 	}
 	clOutDir := rootConfig.ClusterDir + "/" + flagInitClName
-	if flagInitClPath != "" {
-		clOutDir = flagInitClPath
+	if rootConfig.ClusterDir != "" {
+		clOutDir = rootConfig.ClusterDir
 	}
 	return writeInitializedStruct(filename, clOutDir, clusterJson)
 }
@@ -129,9 +127,9 @@ var initComponent = &cobra.Command{
 
 			prompt = &survey.Input{
 				Message: "Enter component path",
-				Default: flagInitCoPath,
+				Default: rootConfig.ComponentDir,
 			}
-			survey.AskOne(prompt, &flagInitCoPath)
+			survey.AskOne(prompt, &rootConfig.ComponentDir)
 
 			promptS := &survey.Select{
 				Message: "Select component type",
@@ -178,8 +176,8 @@ func generateComponentJsonnet() error {
 
 	filename := "params.jsonnet"
 	componentDir := rootConfig.ClusterDir + "/" + flagInitCoName
-	if flagInitCoPath != "" {
-		componentDir = flagInitCoPath
+	if rootConfig.ComponentDir != "" {
+		componentDir = rootConfig.ComponentDir
 	}
 
 	return writeInitializedStruct(filename, componentDir, compJson)
@@ -229,10 +227,8 @@ func init() {
 	repoCmd.PersistentFlags().StringVar(&flagInitUrl, "url", "", "Source of skeleton directory to create repo from")
 
 	initCluster.Flags().StringVarP(&flagInitClName, "name", "o", "cluster-tpl", "Cluster name")
-	initCluster.Flags().StringVarP(&flagInitClPath, "path", "p", "clusters", "Cluster path")
 
 	initComponent.Flags().StringVarP(&flagInitCoName, "name", "o", "component-tpl", "Component name")
-	initComponent.Flags().StringVarP(&flagInitCoPath, "path", "p", "components", "Component path")
 	initComponent.Flags().StringVarP(&flagInitCoType, "type", "t", "jsonnet", "Component type, one of: [`jsonnet`, `yml`, `chart`]")
 
 }
