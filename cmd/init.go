@@ -136,7 +136,7 @@ and initialize a git repo so you can get started`,
 		}
 		generateClusterJsonnet(clusterOptions, args[0]+"/clusters")
 		generateComponentJsonnet(cmdInitOptions, args[0]+"/components")
-		generateLib(false, args[0]+"/components")
+		generateLib(false, args[0]+"/lib")
 		generateReadme(args[0], cmdInitOptions, clusterOptions)
 	},
 }
