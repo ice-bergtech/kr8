@@ -43,10 +43,6 @@ var (
 type cmdGenerateOptions struct {
 	// ClusterParamsFile is a string that stores the path to the cluster params file
 	ClusterParamsFile string
-	// Components is a string that stores the components to generate
-	Components string
-	// Clusters is a string that stores the clusters to generate
-	Clusters string
 	// GenerateDir is a string that stores the output directory for generated files
 	GenerateDir string
 	// Filters is a PathFilterOptions struct that stores the filters to apply to clusters and components when generating files
@@ -58,8 +54,8 @@ var cmdGenerateFlags cmdGenerateOptions
 func init() {
 	RootCmd.AddCommand(generateCmd)
 	generateCmd.Flags().StringVarP(&cmdGenerateFlags.ClusterParamsFile, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
-	generateCmd.Flags().StringVarP(&cmdGenerateFlags.Clusters, "clusters", "C", "", "clusters to generate - comma separated list of cluster names and/or regular expressions ")
-	generateCmd.Flags().StringVarP(&cmdGenerateFlags.Components, "components", "c", "", "components to generate - comma separated list of component names and/or regular expressions")
+	generateCmd.Flags().StringVarP(&cmdGenerateFlags.Filters.Clusters, "clusters", "C", "", "clusters to generate - comma separated list of cluster names and/or regular expressions ")
+	generateCmd.Flags().StringVarP(&cmdGenerateFlags.Filters.Components, "components", "c", "", "components to generate - comma separated list of component names and/or regular expressions")
 	generateCmd.Flags().StringVarP(&cmdGenerateFlags.GenerateDir, "generate-dir", "o", "generated", "output directory")
 	generateCmd.Flags().StringVarP(&cmdGenerateFlags.Filters.Includes, "clincludes", "i", "", "filter included cluster by including clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
 	generateCmd.Flags().StringVarP(&cmdGenerateFlags.Filters.Excludes, "clexcludes", "x", "", "filter included cluster by excluding clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
@@ -87,9 +83,14 @@ func generateCommand(cmd *cobra.Command, args []string) {
 		allClusterParams[c.Name] = jvm.RenderClusterParamsOnly(rootConfig.VMConfig, c.Name, "", false)
 	}
 
+	var clusterList []string
 	// Filter out and cluster or components we don't want to generate
-	clusterList := util.CalculateClusterIncludesExcludes(allClusterParams, cmdGenerateFlags.Filters)
-	log.Debug().Msg("Have " + strconv.Itoa(len(clusterList)) + " after filtering")
+	if cmdGenerateFlags.Filters.Includes != "" || cmdGenerateFlags.Filters.Excludes != "" {
+		clusterList = util.CalculateClusterIncludesExcludes(allClusterParams, cmdGenerateFlags.Filters)
+		log.Debug().Msg("Have " + strconv.Itoa(len(clusterList)) + " after filtering")
+	} else {
+		clusterList = maps.Keys(allClusterParams)
+	}
 
 	// Setup the threading pools, one for clusters and one for clusters
 	var wg sync.WaitGroup
@@ -115,11 +116,11 @@ func buildComponentList(generatedCompList []string, clusterComponents map[string
 	var compList []string
 	var currentCompRefList []string
 
-	if cmdGenerateFlags.Components == "" {
+	if cmdGenerateFlags.Filters.Components == "" {
 		compList = maps.Keys(clusterComponents)
 		currentCompRefList = generatedCompList
 	} else {
-		for _, b := range strings.Split(cmdGenerateFlags.Components, ",") {
+		for _, b := range strings.Split(cmdGenerateFlags.Filters.Components, ",") {
 			listFilterComp := util.Filter(generatedCompList, func(s string) bool { r, _ := regexp.MatchString("^"+b+"$", s); return r })
 			currentCompRefList = append(currentCompRefList, listFilterComp...)
 
@@ -268,7 +269,7 @@ func genProcessComponent(vmconfig types.VMConfig, componentName string, kr8Spec 
 		allConfig.mu.Lock()
 		if allConfig.config == "" {
 			// only do this if we have not already cached it and don't already have it stored
-			if cmdGenerateFlags.Components == "" {
+			if cmdGenerateFlags.Filters.Components == "" {
 				// all component params are in config
 				allConfig.config = config
 			} else {

@@ -37,6 +37,8 @@ type PathFilterOptions struct {
 	// Comma separated cluster names
 	// Filters keys on exact match
 	Clusters string
+	// Comma separated component names
+	Components string
 }
 
 // Checks if a input object matches a filter string.

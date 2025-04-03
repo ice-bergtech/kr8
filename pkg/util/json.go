@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	formatter "github.com/google/go-jsonnet/formatter"
+
 	"github.com/fatih/color"
 	goyaml "github.com/ghodss/yaml"
 	"github.com/hokaccha/go-prettyjson"
@@ -67,4 +69,31 @@ func JsonnetPrint(output string, format string, color bool) {
 	default:
 		log.Fatal().Msg("Output format must be json, yaml or stream")
 	}
+}
+
+// Configures the default options for the jsonnet formatter
+func GetDefaultFormatOptions() formatter.Options {
+	return formatter.Options{
+		Indent:           2,
+		MaxBlankLines:    2,
+		StringStyle:      formatter.StringStyleLeave,
+		CommentStyle:     formatter.CommentStyleLeave,
+		UseImplicitPlus:  false,
+		PrettyFieldNames: true,
+		PadArrays:        false,
+		PadObjects:       true,
+		SortImports:      true,
+		StripEverything:  false,
+		StripComments:    false,
+	}
+}
+
+// Formats a jsonnet string using the default options
+func formatJsonnetString(input string) (string, error) {
+	return formatJsonnetStringCustom(input, GetDefaultFormatOptions())
+}
+
+// Formats a jsonnet string using custom options
+func formatJsonnetStringCustom(input string, opts formatter.Options) (string, error) {
+	return formatter.Format("", input, opts)
 }

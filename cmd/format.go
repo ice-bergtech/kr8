@@ -17,33 +17,6 @@ import (
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
-// Configures the default options for the jsonnet formatter
-func GetDefaultFormatOptions() formatter.Options {
-	return formatter.Options{
-		Indent:           2,
-		MaxBlankLines:    2,
-		StringStyle:      formatter.StringStyleLeave,
-		CommentStyle:     formatter.CommentStyleLeave,
-		UseImplicitPlus:  false,
-		PrettyFieldNames: true,
-		PadArrays:        false,
-		PadObjects:       true,
-		SortImports:      true,
-		StripEverything:  false,
-		StripComments:    false,
-	}
-}
-
-// Formats a jsonnet string using the default options
-func formatJsonnetString(input string) (string, error) {
-	return formatJsonnetStringCustom(input, GetDefaultFormatOptions())
-}
-
-// Formats a jsonnet string using custom options
-func formatJsonnetStringCustom(input string, opts formatter.Options) (string, error) {
-	return formatter.Format("", input, opts)
-}
-
 // Contains the paths to include and exclude for a format command
 var cmdformatFlags util.PathFilterOptions
 
@@ -60,35 +33,44 @@ var formatCmd = &cobra.Command{
 
 	Args: cobra.MinimumNArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-
+		// First get a list of all files in the base directory and subdirectories. Ignore .git directories.
 		var fileList []string
 		filepath.Walk(rootConfig.BaseDir, func(path string, info fs.FileInfo, err error) error {
-			if info.IsDir() && info.Name() == ".git" {
-				return filepath.SkipDir
+			if info.IsDir() {
+				if info.Name() == ".git" {
+					return filepath.SkipDir
+				}
+				return nil
 			}
-
-			if !info.IsDir() {
-				var errf error
-				match := true
-				excludeMatch := false
-				if cmdformatFlags.Includes != "" {
-					match, errf = filepath.Match(cmdformatFlags.Includes, path)
-					if errf != nil {
-						return nil
-					}
-				}
-				if cmdformatFlags.Excludes != "" {
-					excludeMatch, errf = filepath.Match(cmdformatFlags.Excludes, path)
-					if errf != nil {
-						return nil
-					}
-				}
-				if match && !excludeMatch && (strings.HasSuffix(info.Name(), ".jsonnet") || strings.HasSuffix(info.Name(), ".libsonnet")) {
-					fileList = append(fileList, path)
-				}
-			}
+			fileList = append(fileList, path)
 			return nil
 		})
+
+		fileList = util.Filter(fileList, func(s string) bool {
+			var result bool
+			for _, f := range strings.Split(cmdformatFlags.Includes, ",") {
+				t, _ := filepath.Match(f, s)
+				if t {
+					return t
+				}
+				result = result || t
+			}
+			return result
+		})
+
+		fileList = util.Filter(fileList, func(s string) bool {
+			var result bool
+			for _, f := range strings.Split(cmdformatFlags.Excludes, ",") {
+				t, _ := filepath.Match(f, s)
+				if t {
+					return !t
+				}
+				result = result || t
+			}
+			return !result
+		})
+		log.Debug().Msg("Filtered file list: " + fmt.Sprintf("%v", fileList))
+		log.Debug().Msg("Formatting files...")
 
 		var wg sync.WaitGroup
 		parallel, err := cmd.Flags().GetInt("parallel")
@@ -101,7 +83,7 @@ var formatCmd = &cobra.Command{
 				defer wg.Done()
 				var bytes []byte
 				bytes, err = os.ReadFile(filename)
-				output, err := formatter.Format(filename, string(bytes), GetDefaultFormatOptions())
+				output, err := formatter.Format(filename, string(bytes), util.GetDefaultFormatOptions())
 				if err != nil {
 					fmt.Fprintln(os.Stderr, err.Error())
 					return
