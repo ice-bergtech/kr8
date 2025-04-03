@@ -33,7 +33,7 @@ kr8 jsonnet render [flags] file [file ...]
       --ext-str-file strings   Set jsonnet extvar from file contents
   -J, --jpath stringArray      Directories to add to jsonnet include path. Repeat arg for multiple directories
   -L, --loglevel string        set log level (default "info")
-      --parallel int           parallelism - defaults to GOMAXPROCS (default 32)
+      --parallel int           parallelism - defaults to GOMAXPROCS (default 12)
 ```
 
 ### SEE ALSO
