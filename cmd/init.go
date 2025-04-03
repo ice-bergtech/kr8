@@ -1,12 +1,10 @@
 package cmd
 
 import (
-	"encoding/json"
 	"os"
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/hashicorp/go-getter"
 	types "github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
 	"github.com/rs/zerolog/log"
@@ -127,7 +125,7 @@ and initialize a git repo so you can get started`,
 		outDir := args[len(args)-1]
 		log.Debug().Msg("Initializing kr8 config repo in " + outDir)
 		if cmdInitFlags.InitUrl != "" {
-			fetchRepoUrl(cmdInitFlags.InitUrl, outDir, cmdInitFlags.Fetch)
+			util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, cmdInitFlags.Fetch)
 			return
 		}
 		// struct for component and clusters
@@ -182,19 +180,6 @@ var initComponent = &cobra.Command{
 	},
 }
 
-// Write out a struct to a specified path and file
-func writeObjToJsonFile(filename string, path string, objStruct interface{}) error {
-	util.FatalErrorCheck(os.MkdirAll(path, 0755), "error creating resource directory")
-
-	jsonStr, errJ := json.MarshalIndent(objStruct, "", "  ")
-	util.FatalErrorCheck(errJ, "error marshalling component resource to json")
-
-	jsonStrFormatted, errF := util.FormatJsonnetString(string(jsonStr))
-	util.FatalErrorCheck(errF, "error formatting component resource to json")
-
-	return (os.WriteFile(path+"/"+filename, []byte(jsonStrFormatted), 0644))
-}
-
 // Generate a cluster.jsonnet file based on the provided Kr8ClusterSpec and store it in the specified directory.
 func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error {
 	filename := "cluster.jsonnet"
@@ -203,7 +188,7 @@ func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error {
 		Cluster:     types.Kr8Cluster{Name: cSpec.Name},
 		Components:  map[string]types.Kr8ClusterComponentRef{},
 	}
-	return writeObjToJsonFile(filename, dstDir+"/"+cSpec.Name, clusterJson)
+	return util.WriteObjToJsonFile(filename, dstDir+"/"+cSpec.Name, clusterJson)
 }
 
 // Generate default component kr8_spec values and store in params.jsonnet
@@ -239,46 +224,12 @@ func GenerateComponentJsonnet(componentOptions cmdInitOptions, dstDir string) er
 		break
 	}
 
-	return writeObjToJsonFile("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
-}
-
-// Fetch a git repo from a url and clone it to a destination directory
-// if the performFetch flag is false, it will log the command that would be run and return without doing anything
-func fetchRepoUrl(url string, destination string, performFetch bool) {
-	if !performFetch {
-		gitCommand := "git clone -- " + url + " " + destination
-		cleanupCmd := "rm -rf \"" + destination + "/.git\""
-		log.Info().Msg("Fetch disabled. Would have ran: ")
-		log.Info().Msg("`" + gitCommand + "`")
-		log.Info().Msg("`" + cleanupCmd + "`")
-		return
-	}
-
-	// Get the current working directory
-	pwd, err := os.Getwd()
-	util.FatalErrorCheck(err, "Error getting working directory")
-
-	// Download the skeletion directory
-	log.Debug().Msg("Downloading skeleton repo from git::" + url)
-	client := &getter.Client{
-		Src:  "git::" + url,
-		Dst:  destination,
-		Pwd:  pwd,
-		Mode: getter.ClientModeAny,
-	}
-
-	util.FatalErrorCheck(client.Get(), "Error getting repo")
-
-	// Check for .git folder
-	if _, err := os.Stat(destination + "/.git"); !os.IsNotExist(err) {
-		log.Debug().Msg("Removing .git directory")
-		os.RemoveAll(destination + "/.git")
-	}
+	return util.WriteObjToJsonFile("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
 }
 
 func GenerateLib(fetch bool, dstDir string) {
 	util.FatalErrorCheck(os.MkdirAll(dstDir, 0755), "error creating lib directory")
-	fetchRepoUrl("https://github.com/kube-libsonnet/kube-libsonnet.git", dstDir+"/klib", fetch)
+	util.FetchRepoUrl("https://github.com/kube-libsonnet/kube-libsonnet.git", dstDir+"/klib", fetch)
 }
 
 func GenerateReadme(dstDir string, cmdOptions cmdInitOptions, clusterSpec types.Kr8ClusterSpec) {

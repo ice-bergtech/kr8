@@ -97,3 +97,16 @@ func FormatJsonnetString(input string) (string, error) {
 func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, error) {
 	return formatter.Format("", input, opts)
 }
+
+// Write out a struct to a specified path and file
+func WriteObjToJsonFile(filename string, path string, objStruct interface{}) error {
+	FatalErrorCheck(os.MkdirAll(path, 0755), "error creating resource directory")
+
+	jsonStr, errJ := json.MarshalIndent(objStruct, "", "  ")
+	FatalErrorCheck(errJ, "error marshalling component resource to json")
+
+	jsonStrFormatted, errF := FormatJsonnetString(string(jsonStr))
+	FatalErrorCheck(errF, "error formatting component resource to json")
+
+	return (os.WriteFile(path+"/"+filename, []byte(jsonStrFormatted), 0644))
+}
