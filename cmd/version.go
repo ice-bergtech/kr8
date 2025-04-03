@@ -17,6 +17,7 @@ var versionCmd = &cobra.Command{
 		fmt.Println("yml: github.com/ghodss/yaml v1.0.0")
 		fmt.Println("template: github.com/Masterminds/sprig/v3 v3.2.3")
 		fmt.Println("helm: github.com/grafana/tanka v0.27.1")
+		fmt.Println("kompose: github.com/kubernetes/kompose v1.35.0")
 	},
 }
 
