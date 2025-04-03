@@ -37,7 +37,7 @@ func GoMarkDoc() {
 	log := logger.New(logger.DebugLevel)
 	pkg, err := lang.NewPackageFromBuild(log, buildPkg)
 	output, err := out.Package(pkg)
-	os.WriteFile("kr8-cmd.md", []byte(output), 0644)
+	os.WriteFile("kr8-godoc.md", []byte(output), 0644)
 }
 
 func main() {

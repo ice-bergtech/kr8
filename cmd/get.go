@@ -15,6 +15,8 @@
 package cmd
 
 import (
+	jvm "github.com/ice-bergtech/kr8/pkg/jvm"
+	util "github.com/ice-bergtech/kr8/pkg/util"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
@@ -32,13 +34,20 @@ var getCmd = &cobra.Command{
 	Long:  `Displays information about kr8 resources such as clusters and components`,
 }
 
+// Holds the options for the get command.
 type CmdGetOptions struct {
+	// ClusterParams provides a way to provide cluster params as a single file. This can be combined with --cluster to override the cluster.
 	ClusterParams string
-	NoTable       bool
-	FieldName     string
-	Cluster       string
-	Component     string
-	ParamField    string
+	// If true, just prints result instead of placing in table
+	NoTable bool
+	// Field to display from the resource
+	FieldName string
+	// Cluster to get resources from
+	Cluster string
+	// Component to get resources from
+	Component string
+	// Param to display from the resource
+	ParamField string
 }
 
 var cmdGetFlags CmdGetOptions
@@ -67,11 +76,11 @@ var getClustersCmd = &cobra.Command{
 	Long:  "Get all clusters defined in kr8 config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		clusters, err := getClusters(rootConfig.ClusterDir)
-		fatalErrorCheck(err, "Error getting clusters")
+		clusters, err := util.GetClusters(rootConfig.ClusterDir)
+		util.FatalErrorCheck(err, "Error getting clusters")
 
 		if cmdGetFlags.NoTable {
-			for _, c := range clusters.Cluster {
+			for _, c := range clusters {
 				println(c.Name + ": " + c.Path)
 			}
 			return
@@ -81,7 +90,7 @@ var getClustersCmd = &cobra.Command{
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{"Name", "Path"})
 
-		for _, c := range clusters.Cluster {
+		for _, c := range clusters {
 			entry = append(entry, c.Name)
 			entry = append(entry, c.Path)
 			table.Append(entry)
@@ -104,24 +113,24 @@ var getComponentsCmd = &cobra.Command{
 
 		var params []string
 		if cmdGetFlags.Cluster != "" {
-			clusterPath := getCluster(rootConfig.ClusterDir, cmdGetFlags.Cluster)
-			params = getClusterParams(rootConfig.ClusterDir, clusterPath)
+			clusterPath := util.GetCluster(rootConfig.ClusterDir, cmdGetFlags.Cluster)
+			params = util.GetClusterParams(rootConfig.ClusterDir, clusterPath)
 		}
 		if cmdGetFlags.ClusterParams != "" {
 			params = append(params, cmdGetFlags.ClusterParams)
 		}
 
-		j := renderJsonnet(rootConfig.VMConfig, params, "._components", true, "", "components")
+		j := jvm.RenderJsonnet(rootConfig.VMConfig, params, "._components", true, "", "components")
 		if cmdGetFlags.ParamField != "" {
 			value := gjson.Get(j, cmdGetFlags.ParamField)
 			if value.String() == "" {
 				log.Fatal().Msg("Error getting param: " + cmdGetFlags.ParamField)
 			} else {
-				formatted := Pretty(j, rootConfig.Color)
+				formatted := util.Pretty(j, rootConfig.Color)
 				fmt.Println(formatted)
 			}
 		} else {
-			formatted := Pretty(j, rootConfig.Color)
+			formatted := util.Pretty(j, rootConfig.Color)
 			fmt.Println(formatted)
 		}
 	},
@@ -141,15 +150,15 @@ var getParamsCmd = &cobra.Command{
 			cList = append(cList, cmdGetFlags.Component)
 		}
 
-		params := renderClusterParams(rootConfig.VMConfig, cmdGetFlags.Cluster, cList, cmdGetFlags.ClusterParams, true)
+		params := jvm.RenderClusterParams(rootConfig.VMConfig, cmdGetFlags.Cluster, cList, cmdGetFlags.ClusterParams, true)
 
 		// if we're not filtering the output, just pretty print and finish
 		if cmdGetFlags.ParamField == "" {
 			if cmdGetFlags.Component != "" {
 				result := gjson.Get(params, cmdGetFlags.Component).String()
-				fmt.Println(Pretty(result, rootConfig.Color))
+				fmt.Println(util.Pretty(result, rootConfig.Color))
 			} else {
-				fmt.Println(Pretty(params, rootConfig.Color))
+				fmt.Println(util.Pretty(params, rootConfig.Color))
 			}
 			return
 		}

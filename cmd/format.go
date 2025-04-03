@@ -13,47 +13,17 @@ import (
 	"github.com/panjf2000/ants/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+
+	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
-func setDefaultFormatOptions() formatter.Options {
-	formatOptions = formatter.Options{
-		Indent:           2,
-		MaxBlankLines:    2,
-		StringStyle:      formatter.StringStyleLeave,
-		CommentStyle:     formatter.CommentStyleLeave,
-		UseImplicitPlus:  false,
-		PrettyFieldNames: true,
-		PadArrays:        false,
-		PadObjects:       true,
-		SortImports:      true,
-		StripEverything:  false,
-		StripComments:    false,
-	}
-	return formatOptions
-}
-
-func formatJsonnetString(input string) (string, error) {
-	setDefaultFormatOptions()
-	return formatter.Format("", input, formatOptions)
-}
-
-var (
-	formatOptions formatter.Options
-)
-
-type PathFilterOptions struct {
-	Includes string
-	Excludes string
-}
-
-var cmdformatFlags PathFilterOptions
+// Contains the paths to include and exclude for a format command
+var cmdformatFlags util.PathFilterOptions
 
 func init() {
 	RootCmd.AddCommand(formatCmd)
 	formatCmd.Flags().StringVarP(&cmdformatFlags.Includes, "clincludes", "i", "", "filter included cluster by including clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
 	formatCmd.Flags().StringVarP(&cmdformatFlags.Excludes, "clexcludes", "x", "", "filter included cluster by excluding clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
-
-	setDefaultFormatOptions()
 }
 
 var formatCmd = &cobra.Command{
@@ -63,39 +33,48 @@ var formatCmd = &cobra.Command{
 
 	Args: cobra.MinimumNArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-
+		// First get a list of all files in the base directory and subdirectories. Ignore .git directories.
 		var fileList []string
 		filepath.Walk(rootConfig.BaseDir, func(path string, info fs.FileInfo, err error) error {
-			if info.IsDir() && info.Name() == ".git" {
-				return filepath.SkipDir
+			if info.IsDir() {
+				if info.Name() == ".git" {
+					return filepath.SkipDir
+				}
+				return nil
 			}
-
-			if !info.IsDir() {
-				var errf error
-				match := true
-				excludeMatch := false
-				if cmdformatFlags.Includes != "" {
-					match, errf = filepath.Match(cmdformatFlags.Includes, path)
-					if errf != nil {
-						return nil
-					}
-				}
-				if cmdformatFlags.Excludes != "" {
-					excludeMatch, errf = filepath.Match(cmdformatFlags.Excludes, path)
-					if errf != nil {
-						return nil
-					}
-				}
-				if match && !excludeMatch && (strings.HasSuffix(info.Name(), ".jsonnet") || strings.HasSuffix(info.Name(), ".libsonnet")) {
-					fileList = append(fileList, path)
-				}
-			}
+			fileList = append(fileList, path)
 			return nil
 		})
 
+		fileList = util.Filter(fileList, func(s string) bool {
+			var result bool
+			for _, f := range strings.Split(cmdformatFlags.Includes, ",") {
+				t, _ := filepath.Match(f, s)
+				if t {
+					return t
+				}
+				result = result || t
+			}
+			return result
+		})
+
+		fileList = util.Filter(fileList, func(s string) bool {
+			var result bool
+			for _, f := range strings.Split(cmdformatFlags.Excludes, ",") {
+				t, _ := filepath.Match(f, s)
+				if t {
+					return !t
+				}
+				result = result || t
+			}
+			return !result
+		})
+		log.Debug().Msg("Filtered file list: " + fmt.Sprintf("%v", fileList))
+		log.Debug().Msg("Formatting files...")
+
 		var wg sync.WaitGroup
 		parallel, err := cmd.Flags().GetInt("parallel")
-		fatalErrorCheck(err, "Error getting parallel flag")
+		util.FatalErrorCheck(err, "Error getting parallel flag")
 		log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
 		ants_file, _ := ants.NewPool(parallel)
 		for _, filename := range fileList {
@@ -104,7 +83,7 @@ var formatCmd = &cobra.Command{
 				defer wg.Done()
 				var bytes []byte
 				bytes, err = os.ReadFile(filename)
-				output, err := formatter.Format(filename, string(bytes), formatOptions)
+				output, err := formatter.Format(filename, string(bytes), util.GetDefaultFormatOptions())
 				if err != nil {
 					fmt.Fprintln(os.Stderr, err.Error())
 					return

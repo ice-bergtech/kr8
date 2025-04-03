@@ -1,23 +1,30 @@
 package cmd
 
 import (
-	"encoding/json"
 	"os"
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/hashicorp/go-getter"
+	types "github.com/ice-bergtech/kr8/pkg/types"
+	util "github.com/ice-bergtech/kr8/pkg/util"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
+// cmdInitOptions defines the options used by the init subcommands
 type cmdInitOptions struct {
-	InitUrl       string
-	ClusterName   string
+	// URL to fetch the skeleton directory from
+	InitUrl string
+	// Name of the cluster to initialize
+	ClusterName string
+	// Name of the component to initialize
 	ComponentName string
+	// Type of component to initialize (e.g. jsonnet, yml, chart, compose)
 	ComponentType string
-	Interactive   bool
-	Fetch         bool
+	// Whether to run in interactive mode or not
+	Interactive bool
+	// Whether to fetch remote resources or not
+	Fetch bool
 }
 
 var cmdInitFlags cmdInitOptions
@@ -60,7 +67,7 @@ var initCluster = &cobra.Command{
 	Short: "Init a new cluster config file",
 	Long:  "Initialize a new cluster configuration file",
 	Run: func(cmd *cobra.Command, args []string) {
-		cSpec := ClusterSpec{
+		cSpec := types.Kr8ClusterSpec{
 			Name:               cmdInitFlags.ClusterName,
 			ClusterDir:         rootConfig.ClusterDir,
 			PostProcessor:      "function(input) input",
@@ -101,7 +108,7 @@ var initCluster = &cobra.Command{
 			survey.AskOne(prompt, &cSpec.PostProcessor)
 		}
 		// Generate the jsonnet file based on the config
-		fatalErrorCheck(generateClusterJsonnet(cSpec, cSpec.ClusterDir), "Error generating cluster jsonnet file")
+		util.FatalErrorCheck(GenerateClusterJsonnet(cSpec, cSpec.ClusterDir), "Error generating cluster jsonnet file")
 	},
 }
 
@@ -118,7 +125,7 @@ and initialize a git repo so you can get started`,
 		outDir := args[len(args)-1]
 		log.Debug().Msg("Initializing kr8 config repo in " + outDir)
 		if cmdInitFlags.InitUrl != "" {
-			fetchRepoUrl(cmdInitFlags.InitUrl, outDir, cmdInitFlags.Fetch)
+			util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, cmdInitFlags.Fetch)
 			return
 		}
 		// struct for component and clusters
@@ -129,7 +136,7 @@ and initialize a git repo so you can get started`,
 			ComponentType: "jsonnet",
 			Interactive:   false,
 		}
-		clusterOptions := ClusterSpec{
+		clusterOptions := types.Kr8ClusterSpec{
 			PostProcessor:      "",
 			GenerateDir:        "generated",
 			GenerateShortNames: false,
@@ -137,10 +144,10 @@ and initialize a git repo so you can get started`,
 			ClusterDir:         "clusters",
 			Name:               cmdInitFlags.ClusterName,
 		}
-		generateClusterJsonnet(clusterOptions, outDir+"/clusters")
-		generateComponentJsonnet(cmdInitOptions, outDir+"/components")
-		generateLib(cmdInitFlags.Fetch, outDir+"/lib")
-		generateReadme(outDir, cmdInitOptions, clusterOptions)
+		GenerateClusterJsonnet(clusterOptions, outDir+"/clusters")
+		GenerateComponentJsonnet(cmdInitOptions, outDir+"/components")
+		GenerateLib(cmdInitFlags.Fetch, outDir+"/lib")
+		GenerateReadme(outDir, cmdInitOptions, clusterOptions)
 	},
 }
 
@@ -169,31 +176,19 @@ var initComponent = &cobra.Command{
 			}
 			survey.AskOne(promptS, &cmdInitFlags.ComponentType)
 		}
-		generateComponentJsonnet(cmdInitFlags, rootConfig.ComponentDir)
+		GenerateComponentJsonnet(cmdInitFlags, rootConfig.ComponentDir)
 	},
 }
 
-// Write out a struct to a specified path and file
-func writeInitializedStruct(filename string, path string, objStruct interface{}) error {
-	fatalErrorCheck(os.MkdirAll(path, 0755), "error creating resource directory")
-
-	jsonStr, errJ := json.MarshalIndent(objStruct, "", "  ")
-	fatalErrorCheck(errJ, "error marshalling component resource to json")
-
-	jsonStrFormatted, errF := formatJsonnetString(string(jsonStr))
-	fatalErrorCheck(errF, "error formatting component resource to json")
-
-	return (os.WriteFile(path+"/"+filename, []byte(jsonStrFormatted), 0644))
-}
-
-func generateClusterJsonnet(cSpec ClusterSpec, dstDir string) error {
+// Generate a cluster.jsonnet file based on the provided Kr8ClusterSpec and store it in the specified directory.
+func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error {
 	filename := "cluster.jsonnet"
-	clusterJson := ClusterJsonnet{
+	clusterJson := types.Kr8ClusterJsonnet{
 		ClusterSpec: cSpec,
-		Cluster:     Cluster{Name: cSpec.Name},
-		Components:  map[string]ClusterComponent{},
+		Cluster:     types.Kr8Cluster{Name: cSpec.Name},
+		Components:  map[string]types.Kr8ClusterComponentRef{},
 	}
-	return writeInitializedStruct(filename, dstDir+"/"+cSpec.Name, clusterJson)
+	return util.WriteObjToJsonFile(filename, dstDir+"/"+cSpec.Name, clusterJson)
 }
 
 // Generate default component kr8_spec values and store in params.jsonnet
@@ -201,10 +196,10 @@ func generateClusterJsonnet(cSpec ClusterSpec, dstDir string) error {
 // jsonnet: create a component.jsonnet file and reference it from the params.jsonnet file
 // yml: leave a note in the params.jsonnet file about where and how the yml files can be referenced
 // chart: generate a simple taskfile that handles vendoring the chart data
-func generateComponentJsonnet(componentOptions cmdInitOptions, dstDir string) error {
+func GenerateComponentJsonnet(componentOptions cmdInitOptions, dstDir string) error {
 
-	compJson := ComponentJsonnet{
-		Kr8Spec: ComponentSpec{
+	compJson := types.Kr8ComponentJsonnet{
+		Kr8Spec: types.Kr8ComponentSpec{
 			Kr8_allparams:         false,
 			Kr8_allclusters:       false,
 			DisableOutputDirClean: false,
@@ -220,59 +215,27 @@ func generateComponentJsonnet(componentOptions cmdInitOptions, dstDir string) er
 	case "jsonnet":
 		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, "component.jsonnet")
 	case "yml":
-		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, IncludeFileEntryStruct{File: "input.yml", DestName: "glhf"})
+		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, types.Kr8ComponentSpecIncludeObject{File: "input.yml", DestName: "glhf"})
 	case "tpl":
-		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, IncludeFileEntryStruct{File: "README.tpl", DestDir: "docs", DestExt: "md"})
+		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, types.Kr8ComponentSpecIncludeObject{File: "README.tpl", DestDir: "docs", DestExt: "md"})
 	case "chart":
 		break
 	default:
 		break
 	}
 
-	return writeInitializedStruct("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
+	return util.WriteObjToJsonFile("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
 }
 
-func fetchRepoUrl(url string, destination string, performFetch bool) {
-	if !performFetch {
-		gitCommand := "git clone -- " + url + " " + destination
-		cleanupCmd := "rm -rf \"" + destination + "/.git\""
-		log.Info().Msg("Fetch disabled. Would have ran: ")
-		log.Info().Msg("`" + gitCommand + "`")
-		log.Info().Msg("`" + cleanupCmd + "`")
-		return
-	}
-
-	// Get the current working directory
-	pwd, err := os.Getwd()
-	fatalErrorCheck(err, "Error getting working directory")
-
-	// Download the skeletion directory
-	log.Debug().Msg("Downloading skeleton repo from " + url)
-	client := &getter.Client{
-		Src:  url,
-		Dst:  destination,
-		Pwd:  pwd,
-		Mode: getter.ClientModeAny,
-	}
-
-	fatalErrorCheck(client.Get(), "Error getting repo")
-
-	// Check for .git folder
-	if _, err := os.Stat(destination + "/.git"); !os.IsNotExist(err) {
-		log.Debug().Msg("Removing .git directory")
-		os.RemoveAll(destination + "/.git")
-	}
+func GenerateLib(fetch bool, dstDir string) {
+	util.FatalErrorCheck(os.MkdirAll(dstDir, 0755), "error creating lib directory")
+	util.FetchRepoUrl("https://github.com/kube-libsonnet/kube-libsonnet.git", dstDir+"/klib", fetch)
 }
 
-func generateLib(fetch bool, dstDir string) {
-	fatalErrorCheck(os.MkdirAll(dstDir, 0755), "error creating lib directory")
-	fetchRepoUrl("git::https://github.com/kube-libsonnet/kube-libsonnet.git", dstDir+"/klib", fetch)
-}
-
-func generateReadme(dstDir string, cmdOptions cmdInitOptions, clusterSpec ClusterSpec) {
+func GenerateReadme(dstDir string, cmdOptions cmdInitOptions, clusterSpec types.Kr8ClusterSpec) {
 	type templateVars struct {
 		Cmd     cmdInitOptions
-		Cluster ClusterSpec
+		Cluster types.Kr8ClusterSpec
 	}
 	var fetch string
 	if cmdOptions.Fetch {
