@@ -318,7 +318,7 @@ func genProcessCluster(vmConfig VMConfig, clusterName string, p *ants.Pool) {
 
 }
 
-func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec ClusterSpec, config string, allConfig *safeString) {
+func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec Kr8ClusterSpec, config string, allConfig *safeString) {
 	log.Info().Str("cluster", kr8Spec.Name).
 		Str("component", componentName).
 		Msg("Process component")
@@ -403,7 +403,7 @@ func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec Cluste
 		fatalErrorCheck(err, "Error creating component directory")
 	}
 
-	incInfo := IncludeFileEntryStruct{
+	incInfo := Kr8ComponentSpecIncludeObject{
 		DestExt:  "yaml",
 		DestDir:  "",
 		DestName: "",
@@ -414,15 +414,15 @@ func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec Cluste
 	for _, include := range compSpec.Includes {
 		switch include.(type) {
 		case string:
-			incInfo = IncludeFileEntryStruct{
+			incInfo = Kr8ComponentSpecIncludeObject{
 				File:     include.(string),
 				DestExt:  "yaml", // default to yaml ,
 				DestDir:  "",
 				DestName: "",
 			}
-		case IncludeFileEntryStruct:
+		case Kr8ComponentSpecIncludeObject:
 			// include is a map with multiple fields
-			incInfo = include.(IncludeFileEntryStruct)
+			incInfo = include.(Kr8ComponentSpecIncludeObject)
 		default:
 			log.Fatal().Msg("Invalid include type")
 		}
@@ -464,7 +464,7 @@ func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec Cluste
 	}
 }
 
-func processIncludesFile(vm *jsonnet.VM, config string, kr8Spec ClusterSpec, componentName string, componentPath string, componentOutputDir string, incInfo IncludeFileEntryStruct, outputFileMap map[string]bool) {
+func processIncludesFile(vm *jsonnet.VM, config string, kr8Spec Kr8ClusterSpec, componentName string, componentPath string, componentOutputDir string, incInfo Kr8ComponentSpecIncludeObject, outputFileMap map[string]bool) {
 	file_extension := filepath.Ext(incInfo.File)
 
 	// ensure this directory exists

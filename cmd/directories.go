@@ -17,7 +17,7 @@ type componentDef struct {
 	Path string `json:"path"`
 }
 
-func (c *Clusters) addItem(item Cluster) Clusters {
+func (c *Clusters) addItem(item kr8Cluster) Clusters {
 	c.Cluster = append(c.Cluster, item)
 	return *c
 }
@@ -34,7 +34,7 @@ func getClusters(searchDir string) (Clusters, error) {
 		"Error building cluster list",
 	)
 
-	ClusterData := []Cluster{}
+	ClusterData := []kr8Cluster{}
 	c := Clusters{ClusterData}
 
 	for _, file := range fileList {
@@ -44,7 +44,7 @@ func getClusters(searchDir string) (Clusters, error) {
 		fileName := splitFile[len(splitFile)-1]
 
 		if fileName == "cluster.jsonnet" {
-			entry := Cluster{Name: splitFile[len(splitFile)-2], Path: strings.Join(splitFile[:len(splitFile)-1], "/")}
+			entry := kr8Cluster{Name: splitFile[len(splitFile)-2], Path: strings.Join(splitFile[:len(splitFile)-1], "/")}
 			c.addItem(entry)
 
 		}
