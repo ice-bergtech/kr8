@@ -41,9 +41,11 @@ Copyright 2018 ksonnet
 
 */
 
+// VMConfig describes configuration to initialize Jsonnet VM with
 type VMConfig struct {
-	// VMConfig is a configuration for the Jsonnet VM
-	Jpaths  []string `json:"jpath" yaml:"jpath"`
+	// Jpaths is a list of paths to search for Jsonnet libraries (libsonnet files)
+	Jpaths []string `json:"jpath" yaml:"jpath"`
+	// ExtVars is a list of external variables to pass to Jsonnet VM
 	ExtVars []string `json:"ext_str_file" yaml:"ext_str_files"`
 }
 
@@ -139,9 +141,12 @@ Copyright 2018 ksonnet
 
 */
 
+// Registers additional native functions in the jsonnet VM
+// These functions are used to extend the functionality of jsonnet
+// Adds on to functions part of the jsonnet stdlib: https://jsonnet.org/ref/stdlib.html
 func RegisterNativeFuncs(vm *jsonnet.VM) {
-	// Adds on to functions described here: https://jsonnet.org/ref/stdlib.html
-
+	// Register the template function
+	// Uses sprig to process as passed in template and config
 	vm.NativeFunction(&jsonnet.NativeFunction{
 		Name:   "template",
 		Params: []jsonnetAst.Identifier{"config", "str"},
@@ -164,6 +169,8 @@ func RegisterNativeFuncs(vm *jsonnet.VM) {
 		},
 	})
 
+	// Register the escapeStringRegex function
+	// Escapes a string for use in regex
 	vm.NativeFunction(&jsonnet.NativeFunction{
 		Name:   "escapeStringRegex",
 		Params: []jsonnetAst.Identifier{"str"},
@@ -172,6 +179,8 @@ func RegisterNativeFuncs(vm *jsonnet.VM) {
 		},
 	})
 
+	// Register the regexMatch function
+	// Matches a string against a regex pattern
 	vm.NativeFunction(&jsonnet.NativeFunction{
 		Name:   "regexMatch",
 		Params: []jsonnetAst.Identifier{"regex", "string"},
@@ -180,6 +189,8 @@ func RegisterNativeFuncs(vm *jsonnet.VM) {
 		},
 	})
 
+	// Register the regexSubst function
+	// Substitutes a regex pattern in a string with another string
 	vm.NativeFunction(&jsonnet.NativeFunction{
 		Name:   "regexSubst",
 		Params: []jsonnetAst.Identifier{"regex", "src", "repl"},
@@ -196,13 +207,16 @@ func RegisterNativeFuncs(vm *jsonnet.VM) {
 		},
 	})
 
+	// Register the helm function
+	// Allows executing helm template to process a helm chart and make available to kr8 configuration
 	// Source: https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L23
-
 	vm.NativeFunction(helm.NativeFunc(helm.ExecHelm{}))
 
+	// Register the kompose function
+	// Allows converting a docker-compose file into kubernetes resources using kompose
 	// Source: https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
 	vm.NativeFunction(&jsonnet.NativeFunction{
-		Name:   "",
+		Name:   "kompose",
 		Params: []jsonnetAst.Identifier{"input", "komposeOpts"},
 		Func: func(args []interface{}) (res interface{}, err error) {
 			//input := args[0].(string)
@@ -224,57 +238,62 @@ var jsonnetCmd = &cobra.Command{
 	Long:  `Utility commands to process jsonnet`,
 }
 
+// Renders a jsonnet file with the specified options.
 func jsonnetRender(cmdFlagsJsonnet CmdJsonnetOptions, filename string, vmConfig VMConfig) {
-
+	// Check if cluster and/or clusterparams are specified
 	if cmdFlagsJsonnet.Cluster == "" && cmdFlagsJsonnet.ClusterParams == "" {
 		log.Fatal().Msg("Please specify a --cluster name and/or --clusterparams")
 	}
 
+	// Render the cluster parameters
 	config := renderClusterParams(vmConfig, cmdFlagsJsonnet.Cluster, []string{cmdFlagsJsonnet.Component}, cmdFlagsJsonnet.ClusterParams, false)
 
-	// VM
+	// Create a new VM instance
 	vm, _ := JsonnetVM(vmConfig)
-
-	var input string
-	// pass component, _cluster and _components as extvars
-
+	// Setup kr8 config as external vars
 	vm.ExtCode("kr8_cluster", "std.prune("+config+"._cluster)")
 	vm.ExtCode("kr8_components", "std.prune("+config+"._components)")
 	vm.ExtCode("kr8", "std.prune("+config+"."+cmdFlagsJsonnet.Component+")")
 	vm.ExtCode("kr8_unpruned", config+"."+cmdFlagsJsonnet.Component)
 
+	var input string
+	// If pruning is enabled, prune the input before rendering
+	// This removes all null and empty fields from the imported file
 	if cmdFlagsJsonnet.Prune {
 		input = "std.prune(import '" + filename + "')"
 	} else {
 		input = "( import '" + filename + "')"
 	}
-	j, err := vm.EvaluateAnonymousSnippet("file", input)
 
-	if err != nil {
-		log.Fatal().Err(err).Msg("Error evaluating jsonnet snippet")
-	}
-	switch cmdFlagsJsonnet.Format {
+	//
+	// Evaluate the jsonnet snippet and print the result
+	// This is where the magic happens! The jsonnet code is evaluated and the result is stored
+	//
+	j, err := vm.EvaluateAnonymousSnippet("file", input)
+	fatalErrorCheck(err, "Error evaluating jsonnet snippet")
+
+	jsonnetPrint(j, cmdFlagsJsonnet.Format)
+}
+
+// Print the jsonnet output in the specified format
+// allows for: yaml, stream, json
+func jsonnetPrint(output string, format string) {
+	switch format {
 	case "yaml":
-		yaml, err := goyaml.JSONToYAML([]byte(j))
-		if err != nil {
-			log.Fatal().Err(err).Msg("Error converting JSON to YAML")
-		}
+		yaml, err := goyaml.JSONToYAML([]byte(output))
+		fatalErrorCheck(err, "Error converting output JSON to YAML")
 		fmt.Println(string(yaml))
 	case "stream": // output yaml stream
 		var o []interface{}
-		if err := json.Unmarshal([]byte(j), &o); err != nil {
-			log.Fatal().Err(err).Msg("")
-		}
+		fatalErrorCheck(json.Unmarshal([]byte(output), &o), "Error unmarshalling output JSON")
 		for _, jobj := range o {
 			fmt.Println("---")
 			buf, err := goyaml.Marshal(jobj)
-			if err != nil {
-				log.Fatal().Err(err).Msg("")
-			}
+			fatalErrorCheck(err, "Error marshalling output JSON to YAML")
 			fmt.Println(string(buf))
 		}
 	case "json":
-		formatted := Pretty(j, rootConfig.Color)
+		formatted := Pretty(output, rootConfig.Color)
 		fmt.Println(formatted)
 	default:
 		log.Fatal().Msg("Output format must be json, yaml or stream")
@@ -307,7 +326,7 @@ var cmdFlagsJsonnet CmdJsonnetOptions
 func init() {
 	RootCmd.AddCommand(jsonnetCmd)
 	jsonnetCmd.AddCommand(jsonnetRenderCmd)
-	jsonnetRenderCmd.PersistentFlags().BoolVarP(&cmdFlagsJsonnet.Prune, "prune", "", true, "Prune null and empty objects from rendered json")
+	jsonnetRenderCmd.PersistentFlags().BoolVarP(&cmdFlagsJsonnet.Prune, "prune", "", true, "Prune removes null and empty objects from ingested jsonnet files")
 	jsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.ClusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
 	jsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.Component, "component", "c", "", "component to render params for")
 	jsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.Format, "format", "F", "json", "Output format: json, yaml, stream")
