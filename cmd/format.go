@@ -15,8 +15,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func setDefaultFormatOptions() formatter.Options {
-	formatOptions = formatter.Options{
+// Configures the default options for the jsonnet formatter
+func GetDefaultFormatOptions() formatter.Options {
+	return formatter.Options{
 		Indent:           2,
 		MaxBlankLines:    2,
 		StringStyle:      formatter.StringStyleLeave,
@@ -29,31 +30,38 @@ func setDefaultFormatOptions() formatter.Options {
 		StripEverything:  false,
 		StripComments:    false,
 	}
-	return formatOptions
 }
 
+// Formats a jsonnet string using the default options
 func formatJsonnetString(input string) (string, error) {
-	setDefaultFormatOptions()
-	return formatter.Format("", input, formatOptions)
+	return formatJsonnetStringCustom(input, GetDefaultFormatOptions())
 }
 
-var (
-	formatOptions formatter.Options
-)
+// Formats a jsonnet string using custom options
+func formatJsonnetStringCustom(input string, opts formatter.Options) (string, error) {
+	return formatter.Format("", input, opts)
+}
 
+// Fill with string to include and exclude, using kr8's special parsing
 type PathFilterOptions struct {
 	Includes string
 	Excludes string
 }
 
+func (pf PathFilterOptions) Filter(input []string) ([]string, error) {
+	if pf.Includes == "" && pf.Excludes == "" {
+		return nil, fmt.Errorf("no filter conditions provided")
+	}
+	return input, nil
+}
+
+// Contains the paths to include and exclude for a format command
 var cmdformatFlags PathFilterOptions
 
 func init() {
 	RootCmd.AddCommand(formatCmd)
 	formatCmd.Flags().StringVarP(&cmdformatFlags.Includes, "clincludes", "i", "", "filter included cluster by including clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
 	formatCmd.Flags().StringVarP(&cmdformatFlags.Excludes, "clexcludes", "x", "", "filter included cluster by excluding clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
-
-	setDefaultFormatOptions()
 }
 
 var formatCmd = &cobra.Command{
@@ -104,7 +112,7 @@ var formatCmd = &cobra.Command{
 				defer wg.Done()
 				var bytes []byte
 				bytes, err = os.ReadFile(filename)
-				output, err := formatter.Format(filename, string(bytes), formatOptions)
+				output, err := formatter.Format(filename, string(bytes), GetDefaultFormatOptions())
 				if err != nil {
 					fmt.Fprintln(os.Stderr, err.Error())
 					return
