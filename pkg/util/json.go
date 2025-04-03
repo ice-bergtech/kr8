@@ -89,11 +89,11 @@ func GetDefaultFormatOptions() formatter.Options {
 }
 
 // Formats a jsonnet string using the default options
-func formatJsonnetString(input string) (string, error) {
-	return formatJsonnetStringCustom(input, GetDefaultFormatOptions())
+func FormatJsonnetString(input string) (string, error) {
+	return FormatJsonnetStringCustom(input, GetDefaultFormatOptions())
 }
 
 // Formats a jsonnet string using custom options
-func formatJsonnetStringCustom(input string, opts formatter.Options) (string, error) {
+func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, error) {
 	return formatter.Format("", input, opts)
 }

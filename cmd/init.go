@@ -189,7 +189,7 @@ func writeObjToJsonFile(filename string, path string, objStruct interface{}) err
 	jsonStr, errJ := json.MarshalIndent(objStruct, "", "  ")
 	util.FatalErrorCheck(errJ, "error marshalling component resource to json")
 
-	jsonStrFormatted, errF := formatJsonnetString(string(jsonStr))
+	jsonStrFormatted, errF := util.FormatJsonnetString(string(jsonStr))
 	util.FatalErrorCheck(errF, "error formatting component resource to json")
 
 	return (os.WriteFile(path+"/"+filename, []byte(jsonStrFormatted), 0644))
