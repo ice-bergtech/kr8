@@ -8,10 +8,14 @@ import "github.com/ice-bergtech/kr8/cmd"
 
 - [Variables](<#variables>)
 - [func Execute\(version string\)](<#Execute>)
+- [func GenerateClusterJsonnet\(cSpec Kr8ClusterSpec, dstDir string\) error](<#GenerateClusterJsonnet>)
+- [func GenerateComponentJsonnet\(componentOptions cmdInitOptions, dstDir string\) error](<#GenerateComponentJsonnet>)
+- [func GenerateLib\(fetch bool, dstDir string\)](<#GenerateLib>)
+- [func GenerateReadme\(dstDir string, cmdOptions cmdInitOptions, clusterSpec Kr8ClusterSpec\)](<#GenerateReadme>)
+- [func GetDefaultFormatOptions\(\) formatter.Options](<#GetDefaultFormatOptions>)
 - [func JsonnetVM\(vmconfig VMConfig\) \(\*jsonnet.VM, error\)](<#JsonnetVM>)
 - [func Pretty\(input string, colorOutput bool\) string](<#Pretty>)
 - [func RegisterNativeFuncs\(vm \*jsonnet.VM\)](<#RegisterNativeFuncs>)
-- [type Clusters](<#Clusters>)
 - [type CmdGetOptions](<#CmdGetOptions>)
 - [type CmdJsonnetOptions](<#CmdJsonnetOptions>)
 - [type ExtFileVar](<#ExtFileVar>)
@@ -25,7 +29,6 @@ import "github.com/ice-bergtech/kr8/cmd"
   - [func CreateComponentSpec\(spec gjson.Result\) \(Kr8ComponentSpec, error\)](<#CreateComponentSpec>)
 - [type Kr8ComponentSpecIncludeFile](<#Kr8ComponentSpecIncludeFile>)
 - [type Kr8ComponentSpecIncludeObject](<#Kr8ComponentSpecIncludeObject>)
-- [type PathFilterOptions](<#PathFilterOptions>)
 - [type VMConfig](<#VMConfig>)
 
 
@@ -49,7 +52,7 @@ var Version string
 ```
 
 <a name="Execute"></a>
-## func [Execute](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L35>)
+## func [Execute](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L31>)
 
 ```go
 func Execute(version string)
@@ -57,8 +60,53 @@ func Execute(version string)
 
 Execute adds all child commands to the root command sets flags appropriately. This is called by main.main\(\). It only needs to happen once to the rootCmd.
 
+<a name="GenerateClusterJsonnet"></a>
+## func [GenerateClusterJsonnet](<https://github.com/ice-bergtech/kr8/blob/main/cmd/init.go#L198>)
+
+```go
+func GenerateClusterJsonnet(cSpec Kr8ClusterSpec, dstDir string) error
+```
+
+Generate a cluster.jsonnet file based on the provided Kr8ClusterSpec and store it in the specified directory.
+
+<a name="GenerateComponentJsonnet"></a>
+## func [GenerateComponentJsonnet](<https://github.com/ice-bergtech/kr8/blob/main/cmd/init.go#L213>)
+
+```go
+func GenerateComponentJsonnet(componentOptions cmdInitOptions, dstDir string) error
+```
+
+Generate default component kr8\_spec values and store in params.jsonnet Based on the type: jsonnet: create a component.jsonnet file and reference it from the params.jsonnet file yml: leave a note in the params.jsonnet file about where and how the yml files can be referenced chart: generate a simple taskfile that handles vendoring the chart data
+
+<a name="GenerateLib"></a>
+## func [GenerateLib](<https://github.com/ice-bergtech/kr8/blob/main/cmd/init.go#L278>)
+
+```go
+func GenerateLib(fetch bool, dstDir string)
+```
+
+
+
+<a name="GenerateReadme"></a>
+## func [GenerateReadme](<https://github.com/ice-bergtech/kr8/blob/main/cmd/init.go#L283>)
+
+```go
+func GenerateReadme(dstDir string, cmdOptions cmdInitOptions, clusterSpec Kr8ClusterSpec)
+```
+
+
+
+<a name="GetDefaultFormatOptions"></a>
+## func [GetDefaultFormatOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/format.go#L21>)
+
+```go
+func GetDefaultFormatOptions() formatter.Options
+```
+
+Configures the default options for the jsonnet formatter
+
 <a name="JsonnetVM"></a>
-## func [JsonnetVM](<https://github.com/ice-bergtech/kr8/blob/main/cmd/jsonnet.go#L49>)
+## func [JsonnetVM](<https://github.com/ice-bergtech/kr8/blob/main/cmd/jsonnet.go#L52>)
 
 ```go
 func JsonnetVM(vmconfig VMConfig) (*jsonnet.VM, error)
@@ -67,52 +115,47 @@ func JsonnetVM(vmconfig VMConfig) (*jsonnet.VM, error)
 
 
 <a name="Pretty"></a>
-## func [Pretty](<https://github.com/ice-bergtech/kr8/blob/main/cmd/json.go#L8>)
+## func [Pretty](<https://github.com/ice-bergtech/kr8/blob/main/cmd/json.go#L10>)
 
 ```go
 func Pretty(input string, colorOutput bool) string
 ```
 
-
+Pretty formats the input jsonnet string with indentation and optional color output.
 
 <a name="RegisterNativeFuncs"></a>
-## func [RegisterNativeFuncs](<https://github.com/ice-bergtech/kr8/blob/main/cmd/jsonnet.go#L141>)
+## func [RegisterNativeFuncs](<https://github.com/ice-bergtech/kr8/blob/main/cmd/jsonnet.go#L147>)
 
 ```go
 func RegisterNativeFuncs(vm *jsonnet.VM)
 ```
 
-
-
-<a name="Clusters"></a>
-## type [Clusters](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L19-L21>)
-
-init a grouping struct
-
-```go
-type Clusters struct {
-    Cluster []kr8Cluster
-}
-```
+Registers additional native functions in the jsonnet VM These functions are used to extend the functionality of jsonnet Adds on to functions part of the jsonnet stdlib: https://jsonnet.org/ref/stdlib.html
 
 <a name="CmdGetOptions"></a>
-## type [CmdGetOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/get.go#L35-L42>)
+## type [CmdGetOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/get.go#L37-L50>)
 
-
+Holds the options for the get command.
 
 ```go
 type CmdGetOptions struct {
+    // ClusterParams provides a way to provide cluster params as a single file. This can be combined with --cluster to override the cluster.
     ClusterParams string
-    NoTable       bool
-    FieldName     string
-    Cluster       string
-    Component     string
-    ParamField    string
+    // If true, just prints result instead of placing in table
+    NoTable bool
+    // Field to display from the resource
+    FieldName string
+    // Cluster to get resources from
+    Cluster string
+    // Component to get resources from
+    Component string
+    // Param to display from the resource
+    ParamField string
 }
 ```
 
 <a name="CmdJsonnetOptions"></a>
-## type [CmdJsonnetOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/jsonnet.go#L296-L302>)
+## type [CmdJsonnetOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/jsonnet.go#L316-L322>)
 
 
 
@@ -127,7 +170,7 @@ type CmdJsonnetOptions struct {
 ```
 
 <a name="ExtFileVar"></a>
-## type [ExtFileVar](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L165>)
+## type [ExtFileVar](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L160>)
 
 Map of external files to load into jsonnet vm as external variables Keys are the variable names, values are the paths to the files to load as strings into the jsonnet vm To reference the variable in jsonnet code, use std.extvar\("variable\_name"\)
 
@@ -136,7 +179,7 @@ type ExtFileVar map[string]string
 ```
 
 <a name="KomposeConvertOptions"></a>
-## type [KomposeConvertOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L187-L264>)
+## type [KomposeConvertOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L185-L262>)
 
 A struct describing a compose file that will be processed by kompose to produce kubernetes manifests Based on https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
 
@@ -216,7 +259,7 @@ type KomposeConvertOptions struct {
 ```
 
 <a name="Kr8ClusterComponentRef"></a>
-## type [Kr8ClusterComponentRef](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L35-L38>)
+## type [Kr8ClusterComponentRef](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L30-L33>)
 
 A reference to a component folder that contains a params.jsonnet file. This is used in the cluster jsonnet file to reference components.
 
@@ -228,7 +271,7 @@ type Kr8ClusterComponentRef struct {
 ```
 
 <a name="Kr8ClusterJsonnet"></a>
-## type [Kr8ClusterJsonnet](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L25-L32>)
+## type [Kr8ClusterJsonnet](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L20-L27>)
 
 The specification for a clusters.jsonnet file This file contains configuration for clusters, including
 
@@ -244,7 +287,7 @@ type Kr8ClusterJsonnet struct {
 ```
 
 <a name="Kr8ClusterSpec"></a>
-## type [Kr8ClusterSpec](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L42-L55>)
+## type [Kr8ClusterSpec](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L37-L50>)
 
 The specification for how to process a cluster. This is used in the cluster jsonnet file to configure how kr8 should process the cluster.
 
@@ -266,7 +309,7 @@ type Kr8ClusterSpec struct {
 ```
 
 <a name="CreateClusterSpec"></a>
-### func [CreateClusterSpec](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L59>)
+### func [CreateClusterSpec](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L54>)
 
 ```go
 func CreateClusterSpec(clusterName string, spec gjson.Result, baseDir string, genDirOverride string) (Kr8ClusterSpec, error)
@@ -275,7 +318,7 @@ func CreateClusterSpec(clusterName string, spec gjson.Result, baseDir string, ge
 This function creates a cluster spec from the given cluster name, spec, base directory, and generate directory override. If genDirOverride is empty, the value of generate\_dir from the spec is used.
 
 <a name="Kr8ComponentJsonnet"></a>
-## type [Kr8ComponentJsonnet](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L87-L96>)
+## type [Kr8ComponentJsonnet](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L82-L91>)
 
 The specification for component's params.jsonnet file It contains all the configuration and variables used to generate component resources This configuration is often modified from the cluster config to add cluster\-specific configuration
 
@@ -293,7 +336,7 @@ type Kr8ComponentJsonnet struct {
 ```
 
 <a name="Kr8ComponentSpec"></a>
-## type [Kr8ComponentSpec](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L100-L113>)
+## type [Kr8ComponentSpec](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L95-L108>)
 
 The kr8\_spec object in a cluster config file This configures how kr8 processes the component
 
@@ -315,7 +358,7 @@ type Kr8ComponentSpec struct {
 ```
 
 <a name="CreateComponentSpec"></a>
-### func [CreateComponentSpec](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L116>)
+### func [CreateComponentSpec](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L111>)
 
 ```go
 func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error)
@@ -324,7 +367,7 @@ func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error)
 Extracts a component spec from a jsonnet object.
 
 <a name="Kr8ComponentSpecIncludeFile"></a>
-## type [Kr8ComponentSpecIncludeFile](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L168-L171>)
+## type [Kr8ComponentSpecIncludeFile](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L163-L166>)
 
 A struct describing an included file that will be processed to produce a file
 
@@ -336,9 +379,9 @@ type Kr8ComponentSpecIncludeFile interface {
 ```
 
 <a name="Kr8ComponentSpecIncludeObject"></a>
-## type [Kr8ComponentSpecIncludeObject](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L173-L183>)
+## type [Kr8ComponentSpecIncludeObject](<https://github.com/ice-bergtech/kr8/blob/main/cmd/types.go#L171-L181>)
 
-
+An includes object which configures how kr8 includes an object It allows configuring the included file's destination directory and file name The input file will be processed differently depending on the filetype
 
 ```go
 type Kr8ComponentSpecIncludeObject struct {
@@ -354,27 +397,16 @@ type Kr8ComponentSpecIncludeObject struct {
 }
 ```
 
-<a name="PathFilterOptions"></a>
-## type [PathFilterOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/format.go#L44-L47>)
-
-
-
-```go
-type PathFilterOptions struct {
-    Includes string
-    Excludes string
-}
-```
-
 <a name="VMConfig"></a>
-## type [VMConfig](<https://github.com/ice-bergtech/kr8/blob/main/cmd/jsonnet.go#L43-L47>)
+## type [VMConfig](<https://github.com/ice-bergtech/kr8/blob/main/cmd/jsonnet.go#L45-L50>)
 
-
+VMConfig describes configuration to initialize Jsonnet VM with
 
 ```go
 type VMConfig struct {
-    // VMConfig is a configuration for the Jsonnet VM
-    Jpaths  []string `json:"jpath" yaml:"jpath"`
+    // Jpaths is a list of paths to search for Jsonnet libraries (libsonnet files)
+    Jpaths []string `json:"jpath" yaml:"jpath"`
+    // ExtVars is a list of external variables to pass to Jsonnet VM
     ExtVars []string `json:"ext_str_file" yaml:"ext_str_files"`
 }
 ```

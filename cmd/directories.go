@@ -9,6 +9,7 @@ import (
 
 	"golang.org/x/exp/maps"
 
+	util "github.com/ice-bergtech/kr8/pkg/util"
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 )
@@ -17,7 +18,7 @@ func getClusters(searchDir string) ([]kr8Cluster, error) {
 
 	fileList := make([]string, 0)
 
-	fatalErrorCheck(
+	util.FatalErrorCheck(
 		filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {
 			fileList = append(fileList, path)
 			return err
@@ -46,7 +47,7 @@ func getClusters(searchDir string) ([]kr8Cluster, error) {
 func getCluster(searchDir string, clusterName string) string {
 	clusterPath := ""
 
-	fatalErrorCheck(
+	util.FatalErrorCheck(
 		filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {
 			dir, file := filepath.Split(path)
 			if filepath.Base(dir) == clusterName && file == "cluster.jsonnet" {
@@ -143,7 +144,7 @@ func renderClusterParams(vmconfig VMConfig, clusterName string, componentNames [
 
 	compString := gjson.Get(compParams, "_components")
 	err := json.Unmarshal([]byte(compString.String()), &componentMap)
-	fatalErrorCheck(err, "failed to parse component map")
+	util.FatalErrorCheck(err, "failed to parse component map")
 	componentDefaultsMerged := "{"
 
 	listComponentKeys := maps.Keys(componentMap)
@@ -156,7 +157,7 @@ func renderClusterParams(vmconfig VMConfig, clusterName string, componentNames [
 		if value, ok := componentMap[key]; ok {
 			path := rootConfig.BaseDir + "/" + value.Path + "/params.jsonnet"
 			fileC, err := os.ReadFile(path)
-			fatalErrorCheck(err, "Error reading file "+path)
+			util.FatalErrorCheck(err, "Error reading file "+path)
 			componentDefaultsMerged = componentDefaultsMerged + fmt.Sprintf("'%s': %s,", key, string(fileC))
 		}
 	}

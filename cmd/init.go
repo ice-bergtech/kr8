@@ -7,6 +7,7 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/hashicorp/go-getter"
+	util "github.com/ice-bergtech/kr8/pkg/util"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -108,7 +109,7 @@ var initCluster = &cobra.Command{
 			survey.AskOne(prompt, &cSpec.PostProcessor)
 		}
 		// Generate the jsonnet file based on the config
-		fatalErrorCheck(GenerateClusterJsonnet(cSpec, cSpec.ClusterDir), "Error generating cluster jsonnet file")
+		util.FatalErrorCheck(GenerateClusterJsonnet(cSpec, cSpec.ClusterDir), "Error generating cluster jsonnet file")
 	},
 }
 
@@ -182,13 +183,13 @@ var initComponent = &cobra.Command{
 
 // Write out a struct to a specified path and file
 func writeObjToJsonFile(filename string, path string, objStruct interface{}) error {
-	fatalErrorCheck(os.MkdirAll(path, 0755), "error creating resource directory")
+	util.FatalErrorCheck(os.MkdirAll(path, 0755), "error creating resource directory")
 
 	jsonStr, errJ := json.MarshalIndent(objStruct, "", "  ")
-	fatalErrorCheck(errJ, "error marshalling component resource to json")
+	util.FatalErrorCheck(errJ, "error marshalling component resource to json")
 
 	jsonStrFormatted, errF := formatJsonnetString(string(jsonStr))
-	fatalErrorCheck(errF, "error formatting component resource to json")
+	util.FatalErrorCheck(errF, "error formatting component resource to json")
 
 	return (os.WriteFile(path+"/"+filename, []byte(jsonStrFormatted), 0644))
 }
@@ -254,7 +255,7 @@ func fetchRepoUrl(url string, destination string, performFetch bool) {
 
 	// Get the current working directory
 	pwd, err := os.Getwd()
-	fatalErrorCheck(err, "Error getting working directory")
+	util.FatalErrorCheck(err, "Error getting working directory")
 
 	// Download the skeletion directory
 	log.Debug().Msg("Downloading skeleton repo from git::" + url)
@@ -265,7 +266,7 @@ func fetchRepoUrl(url string, destination string, performFetch bool) {
 		Mode: getter.ClientModeAny,
 	}
 
-	fatalErrorCheck(client.Get(), "Error getting repo")
+	util.FatalErrorCheck(client.Get(), "Error getting repo")
 
 	// Check for .git folder
 	if _, err := os.Stat(destination + "/.git"); !os.IsNotExist(err) {
@@ -275,7 +276,7 @@ func fetchRepoUrl(url string, destination string, performFetch bool) {
 }
 
 func GenerateLib(fetch bool, dstDir string) {
-	fatalErrorCheck(os.MkdirAll(dstDir, 0755), "error creating lib directory")
+	util.FatalErrorCheck(os.MkdirAll(dstDir, 0755), "error creating lib directory")
 	fetchRepoUrl("https://github.com/kube-libsonnet/kube-libsonnet.git", dstDir+"/klib", fetch)
 }
 

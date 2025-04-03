@@ -11,15 +11,9 @@ import (
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-)
 
-// fatalErrorCheck is a helper function that logs an error and exits the program if the error is not nil.
-// Saves 3 lines per use and centralizes fatal errors for rewriting
-func fatalErrorCheck(err error, message string) {
-	if err != nil {
-		log.Fatal().Err(err).Msg(message)
-	}
-}
+	util "github.com/ice-bergtech/kr8/pkg/util"
+)
 
 // exported Version variable
 var Version string
@@ -118,7 +112,7 @@ func initConfig() {
 				colorRed := 31
 				colorBold := 1
 				s := strings.ReplaceAll(strings.ReplaceAll(strings.TrimRight(err.(string), "\\n"), "\\t", " "), "\\n", " |")
-				return colorize(colorize(fmt.Sprintf("%s", s), colorBold, !rootConfig.Color), colorRed, !rootConfig.Color)
+				return util.Colorize(util.Colorize(fmt.Sprintf("%s", s), colorBold, !rootConfig.Color), colorRed, !rootConfig.Color)
 			},
 		},
 	)
@@ -137,18 +131,4 @@ func initConfig() {
 		rootConfig.ComponentDir = rootConfig.BaseDir + "/components"
 	}
 	log.Debug().Msg("Using component directory: " + rootConfig.ComponentDir)
-}
-
-// colorize function from zerolog console.go file to replicate their coloring functionality.
-// https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389
-func colorize(s interface{}, c int, disabled bool) string {
-	e := os.Getenv("NO_COLOR")
-	if e != "" || c == 0 {
-		disabled = true
-	}
-
-	if disabled {
-		return fmt.Sprintf("%s", s)
-	}
-	return fmt.Sprintf("\x1b[%dm%v\x1b[0m", c, s)
 }

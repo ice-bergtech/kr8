@@ -15,7 +15,7 @@ import (
 	jsonnet "github.com/google/go-jsonnet"
 	jsonnetAst "github.com/google/go-jsonnet/ast"
 	"github.com/grafana/tanka/pkg/helm"
-	kompose "github.com/kubernetes/kompose/pkg/app"
+	util "github.com/ice-bergtech/kr8/pkg/util"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -92,7 +92,7 @@ func renderJsonnet(vmConfig VMConfig, files []string, param string, prune bool, 
 
 	// Create a JSonnet VM
 	vm, err := JsonnetVM(vmConfig)
-	fatalErrorCheck(err, "Error creating jsonnet VM")
+	util.FatalErrorCheck(err, "Error creating jsonnet VM")
 
 	// Join the slices into a jsonnet compat string. Prepend code from "prepend" variable, if set.
 	var jsonnetImport string
@@ -113,7 +113,7 @@ func renderJsonnet(vmConfig VMConfig, files []string, param string, prune bool, 
 
 	// render the jsonnet
 	out, err := vm.EvaluateAnonymousSnippet(source, jsonnetImport)
-	fatalErrorCheck(err, "Error evaluating jsonnet snippet")
+	util.FatalErrorCheck(err, "Error evaluating jsonnet snippet")
 
 	return out
 
@@ -221,11 +221,11 @@ func RegisterNativeFuncs(vm *jsonnet.VM) {
 		Func: func(args []interface{}) (res interface{}, err error) {
 			//input := args[0].(string)
 			// Set the output controller ("deployment"|"daemonSet"|"replicationController")
-			depType := "deployment"
-			options :=
+			// depType := "deployment"
+			// options :=
 
-				kompose.ValidateComposeFile(&options)
-			kompose.Convert(options)
+			// 	kompose.ValidateComposeFile(&options)
+			// kompose.Convert(options)
 			return "", nil
 		},
 	})
@@ -270,7 +270,7 @@ func jsonnetRender(cmdFlagsJsonnet CmdJsonnetOptions, filename string, vmConfig 
 	// This is where the magic happens! The jsonnet code is evaluated and the result is stored
 	//
 	j, err := vm.EvaluateAnonymousSnippet("file", input)
-	fatalErrorCheck(err, "Error evaluating jsonnet snippet")
+	util.FatalErrorCheck(err, "Error evaluating jsonnet snippet")
 
 	jsonnetPrint(j, cmdFlagsJsonnet.Format)
 }
@@ -281,15 +281,15 @@ func jsonnetPrint(output string, format string) {
 	switch format {
 	case "yaml":
 		yaml, err := goyaml.JSONToYAML([]byte(output))
-		fatalErrorCheck(err, "Error converting output JSON to YAML")
+		util.FatalErrorCheck(err, "Error converting output JSON to YAML")
 		fmt.Println(string(yaml))
 	case "stream": // output yaml stream
 		var o []interface{}
-		fatalErrorCheck(json.Unmarshal([]byte(output), &o), "Error unmarshalling output JSON")
+		util.FatalErrorCheck(json.Unmarshal([]byte(output), &o), "Error unmarshalling output JSON")
 		for _, jobj := range o {
 			fmt.Println("---")
 			buf, err := goyaml.Marshal(jobj)
-			fatalErrorCheck(err, "Error marshalling output JSON to YAML")
+			util.FatalErrorCheck(err, "Error marshalling output JSON to YAML")
 			fmt.Println(string(buf))
 		}
 	case "json":

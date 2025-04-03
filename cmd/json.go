@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/fatih/color"
 	"github.com/hokaccha/go-prettyjson"
+	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
 // Pretty formats the input jsonnet string with indentation and optional color output.
@@ -19,7 +20,7 @@ func Pretty(input string, colorOutput bool) string {
 	f.NullColor = color.New(color.Underline)
 
 	formatted, err := f.Format([]byte(input))
-	fatalErrorCheck(err, "Error formatting JSON")
+	util.FatalErrorCheck(err, "Error formatting JSON")
 
 	return string(formatted)
 }

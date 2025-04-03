@@ -11,6 +11,8 @@ import (
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/util/yaml"
+
+	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
 // Contains parameters for the kr8 render command
@@ -81,24 +83,24 @@ var helmCleanCmd = &cobra.Command{
 			if err == io.EOF {
 				break
 			} else if err != nil {
-				fatalErrorCheck(err, "Error decoding decoding yaml stream")
+				util.FatalErrorCheck(err, "Error decoding decoding yaml stream")
 			}
 			if len(bytes) == 0 {
 				continue
 			}
 			jsonData, err := yaml.ToJSON(bytes)
-			fatalErrorCheck(err, "Error converting yaml to JSON")
+			util.FatalErrorCheck(err, "Error converting yaml to JSON")
 			if string(jsonData) == "null" {
 				// skip empty json
 				continue
 			}
 			_, _, err = unstructured.UnstructuredJSONScheme.Decode(jsonData, nil, nil)
-			fatalErrorCheck(err, "Error handling unstructured JSON")
+			util.FatalErrorCheck(err, "Error handling unstructured JSON")
 			jsa = append(jsa, jsonData)
 		}
 		for _, j := range jsa {
 			out, err := goyaml.JSONToYAML(j)
-			fatalErrorCheck(err, "Error encoding JSON to YAML")
+			util.FatalErrorCheck(err, "Error encoding JSON to YAML")
 			fmt.Println("---")
 			fmt.Println(string(out))
 		}

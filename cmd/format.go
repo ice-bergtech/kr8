@@ -13,6 +13,8 @@ import (
 	"github.com/panjf2000/ants/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+
+	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
 // Configures the default options for the jsonnet formatter
@@ -42,21 +44,8 @@ func formatJsonnetStringCustom(input string, opts formatter.Options) (string, er
 	return formatter.Format("", input, opts)
 }
 
-// Fill with string to include and exclude, using kr8's special parsing
-type PathFilterOptions struct {
-	Includes string
-	Excludes string
-}
-
-func (pf PathFilterOptions) Filter(input []string) ([]string, error) {
-	if pf.Includes == "" && pf.Excludes == "" {
-		return nil, fmt.Errorf("no filter conditions provided")
-	}
-	return input, nil
-}
-
 // Contains the paths to include and exclude for a format command
-var cmdformatFlags PathFilterOptions
+var cmdformatFlags util.PathFilterOptions
 
 func init() {
 	RootCmd.AddCommand(formatCmd)
@@ -103,7 +92,7 @@ var formatCmd = &cobra.Command{
 
 		var wg sync.WaitGroup
 		parallel, err := cmd.Flags().GetInt("parallel")
-		fatalErrorCheck(err, "Error getting parallel flag")
+		util.FatalErrorCheck(err, "Error getting parallel flag")
 		log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
 		ants_file, _ := ants.NewPool(parallel)
 		for _, filename := range fileList {

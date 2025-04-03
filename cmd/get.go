@@ -15,6 +15,7 @@
 package cmd
 
 import (
+	util "github.com/ice-bergtech/kr8/pkg/util"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
@@ -75,7 +76,7 @@ var getClustersCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		clusters, err := getClusters(rootConfig.ClusterDir)
-		fatalErrorCheck(err, "Error getting clusters")
+		util.FatalErrorCheck(err, "Error getting clusters")
 
 		if cmdGetFlags.NoTable {
 			for _, c := range clusters {
