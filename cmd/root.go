@@ -12,6 +12,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
+	types "github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
@@ -45,7 +46,7 @@ type cmdRootOptions struct {
 	Debug        bool
 	LogLevel     string
 	Color        bool
-	VMConfig     VMConfig
+	VMConfig     types.VMConfig
 }
 
 var rootConfig cmdRootOptions
@@ -130,5 +131,7 @@ func initConfig() {
 	if rootConfig.ComponentDir == "" {
 		rootConfig.ComponentDir = rootConfig.BaseDir + "/components"
 	}
+	// Set base config for jvm repo as well.
+	rootConfig.VMConfig.BaseDir = rootConfig.BaseDir
 	log.Debug().Msg("Using component directory: " + rootConfig.ComponentDir)
 }

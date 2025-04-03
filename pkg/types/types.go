@@ -1,4 +1,4 @@
-package cmd
+package types
 
 import (
 	"encoding/json"
@@ -10,7 +10,7 @@ import (
 )
 
 // An object that stores variables that can be referenced by components
-type kr8Cluster struct {
+type Kr8Cluster struct {
 	Name string `json:"name"`
 	Path string `json:"-"`
 }
@@ -21,7 +21,7 @@ type Kr8ClusterJsonnet struct {
 	// kr8 configuration for how to process the cluster
 	ClusterSpec Kr8ClusterSpec `json:"_kr8_spec"`
 	// Cluster Level configuration that components can reference
-	Cluster kr8Cluster `json:"_cluster"`
+	Cluster Kr8Cluster `json:"_cluster"`
 	// Distictly named components.
 	Components map[string]Kr8ClusterComponentRef `json:"_components"`
 }
@@ -178,6 +178,25 @@ type Kr8ComponentSpecIncludeObject struct {
 	DestName string `json:"dest_name,omitempty"`
 	// override destination file extension
 	DestExt string `json:"dest_ext,omitempty"`
+}
+
+type CmdJsonnetOptions struct {
+	Prune         bool
+	Cluster       string
+	ClusterParams string
+	Component     string
+	Format        string
+	Color         bool
+}
+
+// VMConfig describes configuration to initialize Jsonnet VM with
+type VMConfig struct {
+	// Jpaths is a list of paths to search for Jsonnet libraries (libsonnet files)
+	Jpaths []string `json:"jpath" yaml:"jpath"`
+	// ExtVars is a list of external variables to pass to Jsonnet VM
+	ExtVars []string `json:"ext_str_file" yaml:"ext_str_files"`
+	// base directory for the project
+	BaseDir string `json:"base_dir" yaml:"base_dir"`
 }
 
 // A struct describing a compose file that will be processed by kompose to produce kubernetes manifests

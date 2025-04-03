@@ -2,7 +2,6 @@ package util
 
 import (
 	"fmt"
-	"os"
 	"regexp"
 	"strings"
 
@@ -85,18 +84,4 @@ func FatalErrorCheck(err error, message string) {
 	if err != nil {
 		log.Fatal().Err(err).Msg(message)
 	}
-}
-
-// colorize function from zerolog console.go file to replicate their coloring functionality.
-// https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389
-func Colorize(s interface{}, c int, disabled bool) string {
-	e := os.Getenv("NO_COLOR")
-	if e != "" || c == 0 {
-		disabled = true
-	}
-
-	if disabled {
-		return fmt.Sprintf("%s", s)
-	}
-	return fmt.Sprintf("\x1b[%dm%v\x1b[0m", c, s)
 }

@@ -21,6 +21,8 @@ import (
 	"github.com/tidwall/gjson"
 	"golang.org/x/exp/maps"
 
+	jvm "github.com/ice-bergtech/kr8/pkg/jvm"
+	types "github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
@@ -76,10 +78,10 @@ var generateCmd = &cobra.Command{
 func generateCommand(cmd *cobra.Command, args []string) {
 	// get list of all clusters, render cluster level params for all of them
 	allClusterParams = make(map[string]string)
-	allClusters, err := getClusters(rootConfig.ClusterDir)
+	allClusters, err := util.GetClusters(rootConfig.ClusterDir)
 	util.FatalErrorCheck(err, "Error getting list of clusters")
 	for _, c := range allClusters {
-		allClusterParams[c.Name] = renderClusterParamsOnly(rootConfig.VMConfig, c.Name, "", false)
+		allClusterParams[c.Name] = jvm.RenderClusterParamsOnly(rootConfig.VMConfig, c.Name, "", false)
 	}
 
 	// Filter out and cluster or components we don't want to generate
@@ -195,15 +197,15 @@ func processTemplate(filename string, data map[string]gjson.Result) (string, err
 	return buffer.String(), nil
 }
 
-func genProcessCluster(vmConfig VMConfig, clusterName string, p *ants.Pool) {
+func genProcessCluster(vmConfig types.VMConfig, clusterName string, p *ants.Pool) {
 	log.Debug().Str("cluster", clusterName).Msg("Process cluster")
 
 	// get list of components for cluster
-	params := getClusterParams(rootConfig.ClusterDir, getCluster(rootConfig.ClusterDir, clusterName))
-	clusterComponents := gjson.Parse(renderJsonnet(vmConfig, params, "._components", true, "", "clustercomponents")).Map()
+	params := util.GetClusterParams(rootConfig.ClusterDir, util.GetCluster(rootConfig.ClusterDir, clusterName))
+	clusterComponents := gjson.Parse(jvm.RenderJsonnet(vmConfig, params, "._components", true, "", "clustercomponents")).Map()
 
 	// get kr8 settings for cluster
-	kr8Spec, err := CreateClusterSpec(clusterName, gjson.Parse(renderJsonnet(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")), rootConfig.BaseDir, cmdGenerateFlags.GenerateDir)
+	kr8Spec, err := types.CreateClusterSpec(clusterName, gjson.Parse(jvm.RenderJsonnet(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")), rootConfig.BaseDir, cmdGenerateFlags.GenerateDir)
 	util.FatalErrorCheck(err, "Error creating kr8Spec")
 
 	// create cluster dir
@@ -228,7 +230,7 @@ func genProcessCluster(vmConfig VMConfig, clusterName string, p *ants.Pool) {
 	}
 
 	// render full params for cluster for all selected components
-	config := renderClusterParams(vmConfig, kr8Spec.Name, compList, cmdGenerateFlags.ClusterParamsFile, false)
+	config := jvm.RenderClusterParams(vmConfig, kr8Spec.Name, compList, cmdGenerateFlags.ClusterParamsFile, false)
 
 	var allconfig safeString
 
@@ -246,7 +248,7 @@ func genProcessCluster(vmConfig VMConfig, clusterName string, p *ants.Pool) {
 
 }
 
-func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec Kr8ClusterSpec, config string, allConfig *safeString) {
+func genProcessComponent(vmconfig types.VMConfig, componentName string, kr8Spec types.Kr8ClusterSpec, config string, allConfig *safeString) {
 	log.Info().Str("cluster", kr8Spec.Name).
 		Str("component", componentName).
 		Msg("Process component")
@@ -254,10 +256,10 @@ func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec Kr8Clu
 	// get kr8_spec from component's params
 	//spec := gjson.Get(config, componentName+".kr8_spec").Map()
 	compPath := gjson.Get(config, "_components."+componentName+".path").String()
-	compSpec, _ := CreateComponentSpec(gjson.Get(config, componentName+".kr8_spec"))
+	compSpec, _ := types.CreateComponentSpec(gjson.Get(config, componentName+".kr8_spec"))
 
 	// it's faster to create this VM for each component, rather than re-use
-	vm, _ := JsonnetVM(vmconfig)
+	vm, _ := jvm.JsonnetVM(vmconfig)
 	vm.ExtCode("kr8_cluster", "std.prune("+config+"._cluster)")
 	//vm.ExtCode("kr8_components", "std.prune("+config+"._components)")
 	if kr8Spec.PostProcessor != "" {
@@ -284,7 +286,7 @@ func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec Kr8Clu
 				// all component params are in config
 				allConfig.config = config
 			} else {
-				allConfig.config = renderClusterParams(vmconfig, kr8Spec.Name, []string{}, cmdGenerateFlags.ClusterParamsFile, false)
+				allConfig.config = jvm.RenderClusterParams(vmconfig, kr8Spec.Name, []string{}, cmdGenerateFlags.ClusterParamsFile, false)
 			}
 		}
 		vm.ExtCode("kr8_allparams", allConfig.config)
@@ -331,7 +333,7 @@ func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec Kr8Clu
 		util.FatalErrorCheck(err, "Error creating component directory")
 	}
 
-	incInfo := Kr8ComponentSpecIncludeObject{
+	incInfo := types.Kr8ComponentSpecIncludeObject{
 		DestExt:  "yaml",
 		DestDir:  "",
 		DestName: "",
@@ -342,15 +344,15 @@ func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec Kr8Clu
 	for _, include := range compSpec.Includes {
 		switch include.(type) {
 		case string:
-			incInfo = Kr8ComponentSpecIncludeObject{
+			incInfo = types.Kr8ComponentSpecIncludeObject{
 				File:     include.(string),
 				DestExt:  "yaml", // default to yaml ,
 				DestDir:  "",
 				DestName: "",
 			}
-		case Kr8ComponentSpecIncludeObject:
+		case types.Kr8ComponentSpecIncludeObject:
 			// include is a map with multiple fields
-			incInfo = include.(Kr8ComponentSpecIncludeObject)
+			incInfo = include.(types.Kr8ComponentSpecIncludeObject)
 		default:
 			log.Fatal().Msg("Invalid include type")
 		}
@@ -392,7 +394,7 @@ func genProcessComponent(vmconfig VMConfig, componentName string, kr8Spec Kr8Clu
 	}
 }
 
-func processIncludesFile(vm *jsonnet.VM, config string, kr8Spec Kr8ClusterSpec, componentName string, componentPath string, componentOutputDir string, incInfo Kr8ComponentSpecIncludeObject, outputFileMap map[string]bool) {
+func processIncludesFile(vm *jsonnet.VM, config string, kr8Spec types.Kr8ClusterSpec, componentName string, componentPath string, componentOutputDir string, incInfo types.Kr8ComponentSpecIncludeObject, outputFileMap map[string]bool) {
 	file_extension := filepath.Ext(incInfo.File)
 
 	// ensure this directory exists

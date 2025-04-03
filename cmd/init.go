@@ -7,6 +7,7 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/hashicorp/go-getter"
+	types "github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -68,7 +69,7 @@ var initCluster = &cobra.Command{
 	Short: "Init a new cluster config file",
 	Long:  "Initialize a new cluster configuration file",
 	Run: func(cmd *cobra.Command, args []string) {
-		cSpec := Kr8ClusterSpec{
+		cSpec := types.Kr8ClusterSpec{
 			Name:               cmdInitFlags.ClusterName,
 			ClusterDir:         rootConfig.ClusterDir,
 			PostProcessor:      "function(input) input",
@@ -137,7 +138,7 @@ and initialize a git repo so you can get started`,
 			ComponentType: "jsonnet",
 			Interactive:   false,
 		}
-		clusterOptions := Kr8ClusterSpec{
+		clusterOptions := types.Kr8ClusterSpec{
 			PostProcessor:      "",
 			GenerateDir:        "generated",
 			GenerateShortNames: false,
@@ -195,12 +196,12 @@ func writeObjToJsonFile(filename string, path string, objStruct interface{}) err
 }
 
 // Generate a cluster.jsonnet file based on the provided Kr8ClusterSpec and store it in the specified directory.
-func GenerateClusterJsonnet(cSpec Kr8ClusterSpec, dstDir string) error {
+func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error {
 	filename := "cluster.jsonnet"
-	clusterJson := Kr8ClusterJsonnet{
+	clusterJson := types.Kr8ClusterJsonnet{
 		ClusterSpec: cSpec,
-		Cluster:     kr8Cluster{Name: cSpec.Name},
-		Components:  map[string]Kr8ClusterComponentRef{},
+		Cluster:     types.Kr8Cluster{Name: cSpec.Name},
+		Components:  map[string]types.Kr8ClusterComponentRef{},
 	}
 	return writeObjToJsonFile(filename, dstDir+"/"+cSpec.Name, clusterJson)
 }
@@ -212,8 +213,8 @@ func GenerateClusterJsonnet(cSpec Kr8ClusterSpec, dstDir string) error {
 // chart: generate a simple taskfile that handles vendoring the chart data
 func GenerateComponentJsonnet(componentOptions cmdInitOptions, dstDir string) error {
 
-	compJson := Kr8ComponentJsonnet{
-		Kr8Spec: Kr8ComponentSpec{
+	compJson := types.Kr8ComponentJsonnet{
+		Kr8Spec: types.Kr8ComponentSpec{
 			Kr8_allparams:         false,
 			Kr8_allclusters:       false,
 			DisableOutputDirClean: false,
@@ -229,9 +230,9 @@ func GenerateComponentJsonnet(componentOptions cmdInitOptions, dstDir string) er
 	case "jsonnet":
 		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, "component.jsonnet")
 	case "yml":
-		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, Kr8ComponentSpecIncludeObject{File: "input.yml", DestName: "glhf"})
+		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, types.Kr8ComponentSpecIncludeObject{File: "input.yml", DestName: "glhf"})
 	case "tpl":
-		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, Kr8ComponentSpecIncludeObject{File: "README.tpl", DestDir: "docs", DestExt: "md"})
+		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, types.Kr8ComponentSpecIncludeObject{File: "README.tpl", DestDir: "docs", DestExt: "md"})
 	case "chart":
 		break
 	default:
@@ -280,10 +281,10 @@ func GenerateLib(fetch bool, dstDir string) {
 	fetchRepoUrl("https://github.com/kube-libsonnet/kube-libsonnet.git", dstDir+"/klib", fetch)
 }
 
-func GenerateReadme(dstDir string, cmdOptions cmdInitOptions, clusterSpec Kr8ClusterSpec) {
+func GenerateReadme(dstDir string, cmdOptions cmdInitOptions, clusterSpec types.Kr8ClusterSpec) {
 	type templateVars struct {
 		Cmd     cmdInitOptions
-		Cluster Kr8ClusterSpec
+		Cluster types.Kr8ClusterSpec
 	}
 	var fetch string
 	if cmdOptions.Fetch {

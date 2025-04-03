@@ -12,6 +12,8 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/util/yaml"
 
+	jvm "github.com/ice-bergtech/kr8/pkg/jvm"
+	types "github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
@@ -59,8 +61,8 @@ var renderJsonnetCmd = &cobra.Command{
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, f := range args {
-			jsonnetRender(
-				CmdJsonnetOptions{
+			jvm.JsonnetRender(
+				types.CmdJsonnetOptions{
 					Prune:         cmdRenderFlags.Prune,
 					ClusterParams: cmdRenderFlags.ClusterParams,
 					Cluster:       cmdRenderFlags.Cluster,
