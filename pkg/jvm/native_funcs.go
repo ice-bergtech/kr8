@@ -15,7 +15,7 @@ import (
 // Native Jsonnet funcs to add
 /*
 
-This code is copied almost verbatim from the kubecfg project: https://github.com/ksonnet/kubecfg
+Much of this code is based on the kubecfg project: https://github.com/ksonnet/kubecfg
 Native funcs: https://github.com/kubecfg/kubecfg/blob/main/utils/nativefuncs.go
 
 Copyright 2018 ksonnet
@@ -39,7 +39,6 @@ Copyright 2018 ksonnet
 // Adds on to functions part of the jsonnet stdlib: https://jsonnet.org/ref/stdlib.html
 func RegisterNativeFuncs(vm *jsonnet.VM) {
 	// Register the template function
-	// Uses sprig to process as passed in template and config
 	vm.NativeFunction(&jsonnet.NativeFunction{
 		Name:   "template",
 		Params: []jsonnetAst.Identifier{"config", "str"},
@@ -47,7 +46,6 @@ func RegisterNativeFuncs(vm *jsonnet.VM) {
 	})
 
 	// Register the escapeStringRegex function
-	// Escapes a string for use in regex
 	vm.NativeFunction(&jsonnet.NativeFunction{
 		Name:   "escapeStringRegex",
 		Params: []jsonnetAst.Identifier{"str"},
@@ -55,7 +53,6 @@ func RegisterNativeFuncs(vm *jsonnet.VM) {
 	})
 
 	// Register the regexMatch function
-	// Matches a string against a regex pattern
 	vm.NativeFunction(&jsonnet.NativeFunction{
 		Name:   "regexMatch",
 		Params: []jsonnetAst.Identifier{"regex", "string"},
@@ -63,7 +60,6 @@ func RegisterNativeFuncs(vm *jsonnet.VM) {
 	})
 
 	// Register the regexSubst function
-	// Substitutes a regex pattern in a string with another string
 	vm.NativeFunction(&jsonnet.NativeFunction{
 		Name:   "regexSubst",
 		Params: []jsonnetAst.Identifier{"regex", "src", "repl"},
@@ -76,8 +72,6 @@ func RegisterNativeFuncs(vm *jsonnet.VM) {
 	vm.NativeFunction(helm.NativeFunc(helm.ExecHelm{}))
 
 	// Register the kompose function
-	// Allows converting a docker-compose file into kubernetes resources using kompose
-	// Source: https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
 	vm.NativeFunction(&jsonnet.NativeFunction{
 		Name:   "kompose",
 		Params: []jsonnetAst.Identifier{"input", "komposeOpts"},
@@ -86,6 +80,7 @@ func RegisterNativeFuncs(vm *jsonnet.VM) {
 
 }
 
+// Uses sprig to process passed in config data and template
 // Inputs: "config" "str"
 func nativeTemplate(args []interface{}) (res interface{}, err error) {
 	var config any
@@ -105,16 +100,19 @@ func nativeTemplate(args []interface{}) (res interface{}, err error) {
 	return buff.String(), err
 }
 
+// Escapes a string for use in regex
 // Inputs: "str"
 func nativeRegexEscape(args []interface{}) (res interface{}, err error) {
 	return regexp.QuoteMeta(args[0].(string)), nil
 }
 
+// Matches a string against a regex pattern
 // Inputs: "regex", "string"
 func nativeRegexMatch(args []interface{}) (res interface{}, err error) {
 	return regexp.MatchString(args[0].(string), args[1].(string))
 }
 
+// Substitutes a regex pattern in a string with another string
 // Inputs: "regex", "src", "repl"
 func nativeRegexSubst(args []interface{}) (res interface{}, err error) {
 	regex := args[0].(string)
@@ -128,6 +126,8 @@ func nativeRegexSubst(args []interface{}) (res interface{}, err error) {
 	return r.ReplaceAllString(src, repl), nil
 }
 
+// Allows converting a docker-compose file into kubernetes resources using kompose
+// Source: https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
 // Inputs: "input", "komposeOpts"
 func nativeKompose(args []interface{}) (res interface{}, err error) {
 	//input := args[0].(string)
