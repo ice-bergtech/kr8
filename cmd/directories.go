@@ -13,16 +13,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type componentDef struct {
-	Path string `json:"path"`
-}
-
-func (c *Clusters) addItem(item kr8Cluster) Clusters {
-	c.Cluster = append(c.Cluster, item)
-	return *c
-}
-
-func getClusters(searchDir string) (Clusters, error) {
+func getClusters(searchDir string) ([]kr8Cluster, error) {
 
 	fileList := make([]string, 0)
 
@@ -35,7 +26,6 @@ func getClusters(searchDir string) (Clusters, error) {
 	)
 
 	ClusterData := []kr8Cluster{}
-	c := Clusters{ClusterData}
 
 	for _, file := range fileList {
 
@@ -45,12 +35,11 @@ func getClusters(searchDir string) (Clusters, error) {
 
 		if fileName == "cluster.jsonnet" {
 			entry := kr8Cluster{Name: splitFile[len(splitFile)-2], Path: strings.Join(splitFile[:len(splitFile)-1], "/")}
-			c.addItem(entry)
-
+			ClusterData = append(ClusterData, entry)
 		}
 	}
 
-	return c, nil
+	return ClusterData, nil
 
 }
 
@@ -140,7 +129,7 @@ func renderClusterParams(vmconfig VMConfig, clusterName string, componentNames [
 	}
 
 	var params []string
-	var componentMap map[string]componentDef
+	var componentMap map[string]Kr8ClusterComponentRef
 
 	if clusterName != "" {
 		clusterPath := getCluster(rootConfig.ClusterDir, clusterName)

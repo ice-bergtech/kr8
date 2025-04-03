@@ -65,7 +65,7 @@ func generateCommand(cmd *cobra.Command, args []string) {
 	allClusterParams = make(map[string]string)
 	allClusters, err := getClusters(rootConfig.ClusterDir)
 	fatalErrorCheck(err, "Error getting list of clusters")
-	for _, c := range allClusters.Cluster {
+	for _, c := range allClusters {
 		allClusterParams[c.Name] = renderClusterParamsOnly(rootConfig.VMConfig, c.Name, "", false)
 	}
 

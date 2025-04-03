@@ -71,7 +71,7 @@ var getClustersCmd = &cobra.Command{
 		fatalErrorCheck(err, "Error getting clusters")
 
 		if cmdGetFlags.NoTable {
-			for _, c := range clusters.Cluster {
+			for _, c := range clusters {
 				println(c.Name + ": " + c.Path)
 			}
 			return
@@ -81,7 +81,7 @@ var getClustersCmd = &cobra.Command{
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{"Name", "Path"})
 
-		for _, c := range clusters.Cluster {
+		for _, c := range clusters {
 			entry = append(entry, c.Name)
 			entry = append(entry, c.Path)
 			table.Append(entry)
