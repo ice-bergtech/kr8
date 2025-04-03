@@ -13,14 +13,21 @@ import (
 	"k8s.io/apimachinery/pkg/util/yaml"
 )
 
+// Contains parameters for the kr8 render command
 type cmdRenderOptions struct {
-	Prune         bool
+	// Prune null and empty objects from rendered json
+	Prune bool
+	// Filename to read cluster configuration from
 	ClusterParams string
+	// Name of the component to render
 	ComponentName string
-	Cluster       string
-	Format        string
+	// Name of the cluster to render
+	Cluster string
+	// Format of the output (yaml, json or stream)
+	Format string
 }
 
+// Stores the render command options
 var cmdRenderFlags cmdRenderOptions
 
 func init() {
