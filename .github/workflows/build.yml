@@ -6,12 +6,26 @@ on:
       - "main"
     tags:
       - "v*"
+    paths:
+      - *.go
+      - cmd/*
+      - go.mod
+      - go.sum
+      - .goreleaser.yml
   pull_request:
+    paths:
+      - *.go
+      - cmd/*
+      - go.mod
+      - go.sum
+      - .goreleaser.yml
+  workflow_dispatch:
 
 jobs:
   build-publish:
     name: Goreleaser build and Publish
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
