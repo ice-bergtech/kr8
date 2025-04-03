@@ -15,11 +15,6 @@ type kr8Cluster struct {
 	Path string `json:"-"`
 }
 
-// init a grouping struct
-type Clusters struct {
-	Cluster []kr8Cluster
-}
-
 // The specification for a clusters.jsonnet file
 // This file contains configuration for clusters, including
 type Kr8ClusterJsonnet struct {
@@ -170,6 +165,9 @@ type Kr8ComponentSpecIncludeFile interface {
 	Kr8ComponentSpecIncludeObject
 }
 
+// An includes object which configures how kr8 includes an object
+// It allows configuring the included file's destination directory and file name
+// The input file will be processed differently depending on the filetype
 type Kr8ComponentSpecIncludeObject struct {
 	// an input file to process
 	// accepted filetypes: .jsonnet .yml .yaml .tmpl .tpl

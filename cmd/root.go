@@ -13,6 +13,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// fatalErrorCheck is a helper function that logs an error and exits the program if the error is not nil.
+// Saves 3 lines per use and centralizes fatal errors for rewriting
 func fatalErrorCheck(err error, message string) {
 	if err != nil {
 		log.Fatal().Err(err).Msg(message)
@@ -137,6 +139,7 @@ func initConfig() {
 	log.Debug().Msg("Using component directory: " + rootConfig.ComponentDir)
 }
 
+// colorize function from zerolog console.go file to replicate their coloring functionality.
 // https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389
 func colorize(s interface{}, c int, disabled bool) string {
 	e := os.Getenv("NO_COLOR")
