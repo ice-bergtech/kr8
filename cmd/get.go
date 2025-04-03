@@ -32,13 +32,20 @@ var getCmd = &cobra.Command{
 	Long:  `Displays information about kr8 resources such as clusters and components`,
 }
 
+// Holds the options for the get command.
 type CmdGetOptions struct {
+	// ClusterParams provides a way to provide cluster params as a single file. This can be combined with --cluster to override the cluster.
 	ClusterParams string
-	NoTable       bool
-	FieldName     string
-	Cluster       string
-	Component     string
-	ParamField    string
+	// If true, just prints result instead of placing in table
+	NoTable bool
+	// Field to display from the resource
+	FieldName string
+	// Cluster to get resources from
+	Cluster string
+	// Component to get resources from
+	Component string
+	// Param to display from the resource
+	ParamField string
 }
 
 var cmdGetFlags CmdGetOptions

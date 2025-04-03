@@ -21,8 +21,11 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+// safeString is a thread-safe string that can be used to store and retrieve configuration data
 type safeString struct {
-	mu     sync.Mutex
+	// mu is a mutex that ensures thread-safe access to the struct field
+	mu sync.Mutex
+	// config is a string that stores the configuration data
 	config string
 }
 
@@ -31,11 +34,16 @@ var (
 )
 
 type cmdGenerateOptions struct {
+	// ClusterParamsFile is a string that stores the path to the cluster params file
 	ClusterParamsFile string
-	Components        string
-	Clusters          string
-	GenerateDir       string
-	Filters           PathFilterOptions
+	// Components is a string that stores the components to generate
+	Components string
+	// Clusters is a string that stores the clusters to generate
+	Clusters string
+	// GenerateDir is a string that stores the output directory for generated files
+	GenerateDir string
+	// Filters is a PathFilterOptions struct that stores the filters to apply to clusters and components when generating files
+	Filters PathFilterOptions
 }
 
 var cmdGenerateFlags cmdGenerateOptions
@@ -59,8 +67,9 @@ var generateCmd = &cobra.Command{
 	Run:  generateCommand,
 }
 
+// This function will generate the components for each cluster in parallel
+// It uses a wait group to ensure that all clusters have been processed before exiting.
 func generateCommand(cmd *cobra.Command, args []string) {
-
 	// get list of all clusters, render cluster level params for all of them
 	allClusterParams = make(map[string]string)
 	allClusters, err := getClusters(rootConfig.ClusterDir)
@@ -69,7 +78,7 @@ func generateCommand(cmd *cobra.Command, args []string) {
 		allClusterParams[c.Name] = renderClusterParamsOnly(rootConfig.VMConfig, c.Name, "", false)
 	}
 
-	// This will store the list of clusters to generate components for.
+	// Filter out and cluster or components we don't want to generate
 	clusterList := calculateClusterIncludesExcludes(cmdGenerateFlags.Filters)
 
 	// Setup the threading pools, one for clusters and one for clusters

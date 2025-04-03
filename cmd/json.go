@@ -5,6 +5,7 @@ import (
 	"github.com/hokaccha/go-prettyjson"
 )
 
+// Pretty formats the input jsonnet string with indentation and optional color output.
 func Pretty(input string, colorOutput bool) string {
 	if input == "" {
 		return ""
