@@ -10,6 +10,8 @@ import (
 	jsonnet "github.com/google/go-jsonnet"
 	jsonnetAst "github.com/google/go-jsonnet/ast"
 	"github.com/grafana/tanka/pkg/helm"
+
+	types "github.com/ice-bergtech/kr8/pkg/types"
 )
 
 // Native Jsonnet funcs to add
@@ -126,16 +128,23 @@ func nativeRegexSubst(args []interface{}) (res interface{}, err error) {
 	return r.ReplaceAllString(src, repl), nil
 }
 
-// Allows converting a docker-compose file into kubernetes resources using kompose
+// Allows converting a docker-compose file string into kubernetes resources using kompose
 // Source: https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
-// Inputs: "input", "komposeOpts"
+// Inputs: "input filename", "outdir", "componentConfig"
+// Filename must be one of: “
 func nativeKompose(args []interface{}) (res interface{}, err error) {
-	//input := args[0].(string)
+	input := args[0].(string)
+	outDir := args[1].(string)
+	var componentSpec types.Kr8ComponentJsonnet
+	if err := json.Unmarshal([]byte(args[2].(string)), componentSpec); err != nil {
+		return "", err
+	}
 	// Set the output controller ("deployment"|"daemonSet"|"replicationController")
 	// depType := "deployment"
-	// options :=
 
-	// 	kompose.ValidateComposeFile(&options)
-	// kompose.Convert(options)
-	return "", nil
+	options := types.Create([]string{input}, outDir, componentSpec)
+	if err := options.Validate(); err != nil {
+		return "", err
+	}
+	return options.Convert()
 }
