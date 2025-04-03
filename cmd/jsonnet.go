@@ -15,6 +15,7 @@ import (
 	jsonnet "github.com/google/go-jsonnet"
 	jsonnetAst "github.com/google/go-jsonnet/ast"
 	"github.com/grafana/tanka/pkg/helm"
+	kompose "github.com/kubernetes/kompose/pkg/app"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -196,7 +197,24 @@ func RegisterNativeFuncs(vm *jsonnet.VM) {
 	})
 
 	// Source: https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L23
+
 	vm.NativeFunction(helm.NativeFunc(helm.ExecHelm{}))
+
+	// Source: https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
+	vm.NativeFunction(&jsonnet.NativeFunction{
+		Name:   "",
+		Params: []jsonnetAst.Identifier{"input", "komposeOpts"},
+		Func: func(args []interface{}) (res interface{}, err error) {
+			//input := args[0].(string)
+			// Set the output controller ("deployment"|"daemonSet"|"replicationController")
+			depType := "deployment"
+			options :=
+
+				kompose.ValidateComposeFile(&options)
+			kompose.Convert(options)
+			return "", nil
+		},
+	})
 
 }
 

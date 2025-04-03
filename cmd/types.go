@@ -169,3 +169,83 @@ type IncludeFileEntryStruct struct {
 	// override destination file extension
 	DestExt string `json:"dest_ext,omitempty"`
 }
+
+// Based on https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
+type KomposeConvertOptions struct {
+	// Kubernetes: Create a Helm chart for converted objects
+	CreateChart bool
+	// Kubernetes: Set the output controller ("deployment"|"daemonSet"|"replicationController")
+	Controller       string
+	IsDaemonSetFlag  bool
+	IsDeploymentFlag bool
+
+	// Print converted objects to stdout
+	ToStdout bool
+
+	// Openshift: Specify source repository for buildconfig (default remote origin)
+	BuildRepo string
+	// Openshift: Specify repository branch to use for buildconfig (default master)
+	BuildBranch string
+	// Set the type of build ("local"|"build-config"(OpenShift only)|"none")
+	Build string
+
+	// convertCmd.Flags().BoolVar(&ConvertDeploymentConfig, "deployment-config", true, "Generate an OpenShift deploymentconfig object")
+
+	Profiles  []string
+	PushImage bool
+	// Specify registry for pushing image, which will override registry from image name
+	PushImageRegistry string
+	// Generate resource files into YAML format
+	GenerateYaml bool
+	// Generate resource files into JSON format
+	GenerateJSON  bool
+	StoreManifest bool
+	// Use Empty Volumes. Do not generate PVCs
+	EmptyVols bool
+	// Volumes to be generated ("persistentVolumeClaim"|"emptyDir"|"hostPath" | "configMap")
+	Volumes string
+	// Specify the size of pvc storage requests in the generated resource spec
+	PVCRequestSize string
+	// Use an insecure Docker repository for OpenShift ImageStream
+	InsecureRepository bool
+	// Specify the number of replicas in the generated resource spec
+	Replicas   int
+	InputFiles []string
+	// Specify a file name or directory to save objects to (if path does not exist, a file will be created)
+	OutFile  string
+	Provider string
+	// Specify the namespace of the generated resources`)
+	Namespace string
+
+	// convertCmd.Flags().BoolVar(&ConvertPushImage, "push-image", false, "If we should push the docker image we built")
+	// convertCmd.Flags().StringVar(&BuildCommand, "build-command", "", `Set the command used to build the container image, which will override the docker build command. Should be used in conjuction with --push-command flag.`)
+	// convertCmd.Flags().StringVar(&PushCommand, "push-command", "", `Set the command used to push the container image. override the docker push command. Should be used in conjuction with --build-command flag.`)
+
+	IsReplicationControllerFlag bool
+	IsReplicaSetFlag            bool
+	IsDeploymentConfigFlag      bool
+	IsNamespaceFlag             bool
+
+	BuildCommand string
+	PushCommand  string
+
+	Server string
+
+	// Spaces length to indent generated yaml files
+	YAMLIndent int
+
+	// Add kompose annotations to generated resource
+	WithKomposeAnnotation bool
+
+	// Create multiple containers grouped by 'kompose.service.group' label
+	MultipleContainerMode bool
+	// Group multiple service to create single workload by `label`(`kompose.service.group`) or `volume`(shared volumes)
+	ServiceGroupMode string
+	// Using with --service-group-mode=volume to specific a final service name for the group
+	ServiceGroupName string
+
+	// Convert docker-compose secrets into files instead of symlinked directories
+	SecretsAsFiles bool
+	// Specify whether to generate network policies or not
+	GenerateNetworkPolicies bool
+}
