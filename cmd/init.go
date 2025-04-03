@@ -270,5 +270,50 @@ func generateLib(fetch bool, dstDir string) {
 }
 
 func generateReadme(dstDir string, cmdOptions cmdInitOptions, clusterSpec ClusterSpec) {
+	type templateVars struct {
+		Cmd     cmdInitOptions
+		Cluster ClusterSpec
+	}
+	var fetch string
+	if cmdOptions.Fetch {
+		fetch = "true"
+	} else {
+		fetch = "false"
+	}
 
+	readmeTemplate := strings.Join([]string{
+		"# Stack " + cmdOptions.ClusterName + " Readme",
+		"",
+		"## Project Overview",
+		"",
+		"This project is a cluster stack initialized by kr8+",
+		"",
+		"* Generate and customize component configuration for Kubernetes clusters across environments, regions and platforms",
+		"* Opinionated config, flexible deployment. kr8+ simply generates manifests for you, you decide how to deploy them",
+		"* Render and override component config from multiple sources",
+		"  * Helm, Kustomize, Static manifests, raw configuration",
+		"* Generate static configuration across clusters that is CI/CD friendly",
+		"  * Kubernetes manifests, Helm charts, Kustomize overlays, Documentation, text files",
+		"",
+		"## Usage",
+		"",
+		"1. Define components in the `components` directory.",
+		"2. Define tiered cluster configuration in the `" + clusterSpec.ClusterDir + "` directory.",
+		"3. Run `kr8 generate` to generate component configuration files.",
+		"",
+		"## Info ",
+		"",
+		"This project is initialized with the following parameters:",
+		"",
+		"	* ClusterName: `" + cmdOptions.ClusterName + "`",
+		"	* Fetch External Libs: " + fetch,
+		"   * Cluster config root directory: `" + clusterSpec.ClusterDir + "`",
+		"   * Component root directory: `components`",
+		"   * Cluster config root directory: `" + clusterSpec.ClusterDir + "`",
+		"   * Generated config outpu directory: `" + clusterSpec.GenerateDir + "`",
+		"",
+		"Generated using [kr8+](https://github.com/ice-bergtech/kr8) V `" + Version + "`",
+	}, "\n")
+
+	os.WriteFile(dstDir+"/Readme.md", []byte(readmeTemplate), 0644)
 }

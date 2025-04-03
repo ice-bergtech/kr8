@@ -120,6 +120,7 @@ func renderJsonnet(vmConfig VMConfig, files []string, param string, prune bool, 
 /*
 
 This code is copied almost verbatim from the kubecfg project: https://github.com/ksonnet/kubecfg
+Native funcs: https://github.com/kubecfg/kubecfg/blob/main/utils/nativefuncs.go
 
 Copyright 2018 ksonnet
 
@@ -194,6 +195,7 @@ func RegisterNativeFuncs(vm *jsonnet.VM) {
 		},
 	})
 
+	// Source: https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L23
 	vm.NativeFunction(helm.NativeFunc(helm.ExecHelm{}))
 
 }

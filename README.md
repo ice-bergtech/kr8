@@ -1,11 +1,16 @@
 # kr8+
 
+[![CI status](https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg)](https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI)
+
 kr8+ is a fork of [kr8](https://github.com/apptio/kr8) with some additional features and improvements.
 kr8 was used in production to great success at Apptio for managing components of multiple Kubernetes clusters.
 
 kr8+ is a very opinionated tool used for rendering [jsonnet](http://jsonnet.org) manifests for multiple Kubernetes clusters.
 
 It has been designed to work as a simple configuration management framework, allowing operators to specify configurations at different cluster context levels to generate component manifests across multiple clusters.
+
+Kr8+ is `pre-1.0`.
+This means that breaking changes will still happen from time to time, but it's stable enough for both scripting and interactive use.
 
 ## Features
 
@@ -20,7 +25,7 @@ kr8+ consists of:
 
 - kr8+ - a Go binary for rendering manifests
 - jsonnet - [go-jsonnet](https://pkg.go.dev/github.com/google/go-jsonnet) `v0.20.0`
-- sprig - [Masterminds/sprig](https://pkg.go.dev/github.com/Masterminds/sprig#section-readme) - [Template Documentation](http://masterminds.github.io/sprig/)
+- sprig - [Masterminds/sprig](https://pkg.go.dev/github.com/Masterminds/sprig#section-readme) - [Template Documentation](https://masterminds.github.io/sprig/)
 
 kr8+ is not designed to be a tool to help you install and deploy applications.
 It's specifically designed to manage and maintain configuration for the cluster level services.
@@ -52,7 +57,7 @@ A component is something you install in your cluster to make it function and wor
 Some examples of components might be:
 
 - cluster core resources: [cert-manager](https://github.com/jetstack/cert-manager) or [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets)
-- argo applications: generate argo cd applications for manageing applying cluster configuration to live nodes
+- argo applications: generate argo cd applications for managing applying cluster configuration to live nodes
 - application: a single application that you want to run in your cluster. This is usually a web application, but it can also be a database, cron job, or documentation.
 
 Components are applications you want to run in your cluster.
@@ -67,6 +72,13 @@ Jsonnet was chosen because it allows us to use code for configuration, while sta
 
 ## Building
 
+### Prerequisites
+
+- Go 1.23 or later
+
+### Steps to Build
+
+
 ```sh
 go build
 # or
@@ -77,10 +89,18 @@ See the [Building](docs/building.md) documentation.
 
 ## Testing
 
+
+### Prerequisites
+
+- Go 1.23 or later
+- `git` for cloning submodules
+
 ```sh
 git submodule init
 git submodule update --remote --init
 ```
+
+To test: 
 
 ```sh
 go task test

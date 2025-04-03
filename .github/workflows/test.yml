@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  pull_request:
+    paths:
+      - *.go
+      - cmd/*
+      - go.mod
+      - go.sum
+      - .goreleaser.yml
+      - bats-test/*
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: CI Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚧 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: 🚧 Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.23.0
+      - name: 🚧 Setup Bats
+        uses: bats-core/bats-action@3.0.0
+      # Start of testing steps
+      - name: 🧪 Run go tests
+        run: go test ./...
+      - name: 🧪 Run build
+        run: go build
+      # Start of bats tests
+      - name: 🧪 Run kr8 jsonnet tests
+        env:
+          KR8: '../kr8'
+        run: cd bats-test && bats jsonnet_test.sh
+      - name: 🧪 Run kr8 render tests
+        env:
+          KR8: '../kr8'
+        run: cd bats-test && bats render_test.sh
+      - name: 🧪 Run kr8 init tests
+        env:
+          KR8: '../kr8'
+        run: cd bats-test && bats init_test.sh
+      - name: 🧪 Run kr8 cluster tests
+        env:
+          KR8: '../kr8'
+        run: cd bats-test && bats cluster_test.sh
+      - name: 🧪 Run kr8 get tests
+        env:
+          KR8: '../kr8'
+        run: cd bats-test && bats get_test.sh
