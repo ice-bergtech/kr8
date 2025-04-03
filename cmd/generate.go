@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"text/template"
@@ -80,12 +81,15 @@ func generateCommand(cmd *cobra.Command, args []string) {
 	allClusterParams = make(map[string]string)
 	allClusters, err := util.GetClusters(rootConfig.ClusterDir)
 	util.FatalErrorCheck(err, "Error getting list of clusters")
+	log.Debug().Msg("Found " + strconv.Itoa(len(allClusters)) + " clusters")
+
 	for _, c := range allClusters {
 		allClusterParams[c.Name] = jvm.RenderClusterParamsOnly(rootConfig.VMConfig, c.Name, "", false)
 	}
 
 	// Filter out and cluster or components we don't want to generate
-	clusterList := calculateClusterIncludesExcludes(cmdGenerateFlags.Filters)
+	clusterList := util.CalculateClusterIncludesExcludes(allClusterParams, cmdGenerateFlags.Filters)
+	log.Debug().Msg("Have " + strconv.Itoa(len(clusterList)) + " after filtering")
 
 	// Setup the threading pools, one for clusters and one for clusters
 	var wg sync.WaitGroup
@@ -102,24 +106,6 @@ func generateCommand(cmd *cobra.Command, args []string) {
 		})
 	}
 	wg.Wait()
-}
-
-// Using the allClusterParams variable and command flags to create a list of clusters to generate
-// Clusters can be filtered with "=" for equality or "~" for regex match
-func calculateClusterIncludesExcludes(filters util.PathFilterOptions) []string {
-	var clusterList []string
-	if cmdGenerateFlags.Clusters == "" {
-		// all clusters
-		clusterList, _ = util.FilterItems(allClusterParams, filters)
-	} else {
-		for _, key := range strings.Split(cmdGenerateFlags.Clusters, ",") {
-			val, ok := allClusterParams[key]
-			if ok {
-				clusterList = append(clusterList, val)
-			}
-		}
-	}
-	return clusterList
 }
 
 // Only processes specified component if it's defined in the cluster

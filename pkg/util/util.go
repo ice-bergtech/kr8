@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 
@@ -23,8 +22,21 @@ func Filter(vs []string, f func(string) bool) []string {
 
 // Fill with string to include and exclude, using kr8's special parsing
 type PathFilterOptions struct {
+	// Comma-separated list of include filters
+	// Filters can include regex filters using the "~" operator. For example, "name~^myregex$"
+	// Filters can include equality matches using the "=" operator. For example, "name=myvalue"
+	// Filters can include substring matches using the "=" operator. For example, "name=myvalue"
+	// If no operator is provided, it is treated as a substring match against the "name" field.
 	Includes string
+	// Comma-separated list of exclude filters
+	// Filters can include regex filters using the "~" operator. For example, "name~^myregex$"
+	// Filters can include equality matches using the "=" operator. For example, "name=myvalue"
+	// Filters can include substring matches using the "=" operator. For example, "name=myvalue"
+	// If no operator is provided, it is treated as a substring match against the "name" field.
 	Excludes string
+	// Comma separated cluster names
+	// Filters keys on exact match
+	Clusters string
 }
 
 // Checks if a input object matches a filter string.
@@ -46,9 +58,9 @@ func CheckObjectMatch(input gjson.Result, filterString string) bool {
 	return strings.Contains(input.Get("name").String(), filterString)
 }
 
-func FilterItems(input map[string]string, pf PathFilterOptions) ([]string, error) {
+func FilterItems(input map[string]string, pf PathFilterOptions) []string {
 	if pf.Includes == "" && pf.Excludes == "" {
-		return []string{}, fmt.Errorf("no filter conditions provided")
+		return []string{}
 	}
 	var clusterList []string
 	for c := range input {
@@ -75,7 +87,7 @@ func FilterItems(input map[string]string, pf PathFilterOptions) ([]string, error
 			}
 		}
 	}
-	return clusterList, nil
+	return clusterList
 }
 
 // util.FatalErrorCheck is a helper function that logs an error and exits the program if the error is not nil.
@@ -84,4 +96,21 @@ func FatalErrorCheck(err error, message string) {
 	if err != nil {
 		log.Fatal().Err(err).Msg(message)
 	}
+}
+
+// Using the allClusterParams variable and command flags to create a list of clusters to generate
+// Clusters can be filtered with "=" for equality or "~" for regex match
+func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string {
+	if filters.Clusters != "" {
+		var clusterList []string
+		// all clusters
+		for _, key := range strings.Split(filters.Clusters, ",") {
+			val, ok := input[key]
+			if ok {
+				clusterList = append(clusterList, val)
+			}
+		}
+		return clusterList
+	}
+	return FilterItems(input, filters)
 }
