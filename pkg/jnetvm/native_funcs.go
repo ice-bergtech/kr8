@@ -174,7 +174,7 @@ func NativeKompose() *jsonnet.NativeFunction {
 
 			root := filepath.Dir(opts.CalledFrom)
 
-			options := types.Create([]string{root + "/" + inFile}, root+"/"+outPath, *opts)
+			options := types.Create([]string{filepath.Join(root, inFile)}, root+"/"+outPath, *opts)
 			if err := options.Validate(); err != nil {
 				return "", err
 			}

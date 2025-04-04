@@ -36,13 +36,13 @@ import (
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
-// Create a Jsonnet VM to run commands in
+// Create a Jsonnet VM to run commands in.
 func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error) {
 	jvm := jsonnet.MakeVM()
 	RegisterNativeFuncs(jvm)
 
 	// always add lib directory in base directory to path
-	jpath := []string{vmconfig.BaseDir + "/lib"}
+	jpath := []string{filepath.Join(vmconfig.BaseDir, "lib")}
 
 	jpath = append(jpath, filepath.SplitList(os.Getenv("KR8_JPATH"))...)
 	jpathArgs := vmconfig.Jpaths
@@ -66,7 +66,8 @@ func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error) {
 	return jvm, nil
 }
 
-// Takes a list of jsonnet files and imports each one and mixes them with "+"
+// Takes a list of jsonnet files and imports each one.
+// Formats the string for jsonnet using "+".
 func JsonnetRenderFiles(
 	vmConfig types.VMConfig,
 	files []string,
@@ -154,7 +155,7 @@ func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmC
 	util.JsonnetPrint(j, cmdFlagsJsonnet.Format, cmdFlagsJsonnet.Color)
 }
 
-// Only render cluster params (_cluster), without components
+// Only render cluster params (_cluster), without components.
 func JsonnetRenderClusterParamsOnly(
 	vmconfig types.VMConfig,
 	clusterName string,
@@ -213,7 +214,7 @@ func JsonnetRenderClusterParams(
 	// all components
 	for _, key := range listComponentKeys {
 		if value, ok := componentMap[key]; ok {
-			path := vmconfig.BaseDir + "/" + value.Path + "/params.jsonnet"
+			path := filepath.Join(vmconfig.BaseDir, value.Path, "params.jsonnet")
 			fileC, err := os.ReadFile(filepath.Clean(path))
 			util.FatalErrorCheck("Error reading file "+path, err)
 			componentDefaultsMerged += fmt.Sprintf("'%s': %s,", key, string(fileC))

@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/rs/zerolog/log"
@@ -68,9 +69,9 @@ func CreateClusterSpec(
 	}
 	// if generateDir does not start with /, then it goes in baseDir
 	if !strings.HasPrefix(clGenerateDir, "/") {
-		clGenerateDir = baseDir + "/" + clGenerateDir
+		clGenerateDir = filepath.Join(baseDir, clGenerateDir)
 	}
-	clusterDir := clGenerateDir + "/" + clusterName
+	clusterDir := filepath.Join(clGenerateDir, clusterName)
 	log.Debug().Str("cluster", clusterName).Msg("output directory: " + clusterDir)
 
 	return Kr8ClusterSpec{

@@ -2,6 +2,7 @@ package util
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/hashicorp/go-getter"
 	"github.com/rs/zerolog/log"
@@ -12,7 +13,7 @@ import (
 func FetchRepoUrl(url string, destination string, performFetch bool) error {
 	if !performFetch {
 		gitCommand := "git clone -- " + url + " " + destination
-		cleanupCmd := "rm -rf \"" + destination + "/.git\""
+		cleanupCmd := "rm -rf \"" + filepath.Join(destination, ".git") + "\""
 		log.Info().Msg("Fetch disabled. Would have ran: ")
 		log.Info().Msg("`" + gitCommand + "`")
 		log.Info().Msg("`" + cleanupCmd + "`")
@@ -36,7 +37,7 @@ func FetchRepoUrl(url string, destination string, performFetch bool) error {
 	FatalErrorCheck("Error getting repo", client.Get())
 
 	// Check for .git folder
-	if _, err := os.Stat(destination + "/.git"); !os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(destination, ".git")); !os.IsNotExist(err) {
 		log.Debug().Msg("Removing .git directory")
 		FatalErrorCheck("Error removing .git directory", os.RemoveAll(destination+"/.git"))
 	}

@@ -86,8 +86,8 @@ func GetClusterParamsFilenames(basePath string, targetPath string) []string {
 		rel, _ := filepath.Rel(basePath, targetDir)
 
 		// check if there's a params.json in the folder
-		if _, err := os.Stat(targetDir + "/params.jsonnet"); err == nil {
-			results = append(results, targetDir+"/params.jsonnet")
+		if _, err := os.Stat(filepath.Join(targetDir, "params.jsonnet")); err == nil {
+			results = append(results, filepath.Join(targetDir, "params.jsonnet"))
 		}
 
 		// stop if we're in the basePath

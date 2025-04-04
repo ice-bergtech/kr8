@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 
@@ -151,17 +152,15 @@ func InitConfig() {
 	)
 
 	// Setup configuration defaults
-	//s.BaseDir = viper.GetString("base")
 	log.Debug().Msg("Using base directory: " + RootConfig.BaseDir)
 
-	//s.ClusterDir = viper.GetString("clusterdir")
 	if RootConfig.ClusterDir == "" {
-		RootConfig.ClusterDir = RootConfig.BaseDir + "/clusters"
+		RootConfig.ClusterDir = filepath.Join(RootConfig.BaseDir, "clusters")
 	}
 	log.Debug().Msg("Using cluster directory: " + RootConfig.ClusterDir)
 
 	if RootConfig.ComponentDir == "" {
-		RootConfig.ComponentDir = RootConfig.BaseDir + "/components"
+		RootConfig.ComponentDir = filepath.Join(RootConfig.BaseDir, "components")
 	}
 	// Set base config for jvm repo as well.
 	RootConfig.VMConfig.BaseDir = RootConfig.BaseDir

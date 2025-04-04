@@ -367,7 +367,7 @@ func genProcessComponent(
 		jvm.ExtVar(key, string(extFile))
 	}
 
-	componentOutputDir := kr8Spec.ClusterDir + "/" + componentName
+	componentOutputDir := filepath.Join(kr8Spec.ClusterDir, componentName)
 	// create component dir if needed
 	if _, err := os.Stat(componentOutputDir); os.IsNotExist(err) {
 		err := os.MkdirAll(componentOutputDir, 0750)
@@ -415,7 +415,7 @@ func genProcessComponent(
 	// purge any yaml files in the output dir that were not generated
 	if !compSpec.DisableOutputDirClean {
 		// clean component dir
-		d, err := os.Open(componentOutputDir)
+		d, err := os.Open(filepath.Clean(componentOutputDir))
 		util.FatalErrorCheck("", err)
 		// Lifetime of function
 		defer d.Close()
@@ -517,9 +517,8 @@ func processIncludesFile(
 	if updateNeeded {
 		f, err := os.Create(outputFile)
 		util.FatalErrorCheck("Error creating file", err)
-		//defer f.Close()
 		_, err = f.WriteString(outStr)
-		f.Close()
 		util.FatalErrorCheck("Error writing to file", err)
+		util.FatalErrorCheck("Error closing file", f.Close())
 	}
 }
