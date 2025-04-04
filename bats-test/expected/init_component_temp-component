@@ -12,4 +12,5 @@
   namespace: "Default",
   release_name: "temp-component",
   version: "1.0.0",
+  called_from: "",
 }

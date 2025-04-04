@@ -58,5 +58,7 @@ jobs:
           KR8: '../kr8'
         run: cd bats-test && bats get_test.sh
       - name: 🧪 Generate Examples and Compare
-        run: ./kr8 -B example generate && git diff --exit-code || echo "Changes detected"
+        run: ./kr8 -B example generate
+      - name: Verify no changes were made to tracked files by tests 
+        run: git diff --exit-code || echo "Changes detected"
           
