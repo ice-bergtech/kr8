@@ -25,7 +25,7 @@ kr8 get params [flags]
   -B, --base string            kr8 config base directory (default ".")
   -D, --clusterdir string      kr8 cluster directory
   -p, --clusterparams string   provide cluster params as single file - can be combined with --cluster to override cluster
-      --color                  enable colorized output (default). Set to false to disable (default true)
+      --color                  enable colorized output. Set to false to disable (default true)
   -d, --componentdir string    kr8 component directory
       --config string          A config file with kr8 configuration
       --debug                  log more information about what kr8 is doing. Overrides --loglevel

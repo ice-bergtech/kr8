@@ -18,7 +18,7 @@ import (
 )
 
 // Contains parameters for the kr8 render command
-type cmdRenderOptions struct {
+type CmdRenderOptions struct {
 	// Prune null and empty objects from rendered json
 	Prune bool
 	// Filename to read cluster configuration from
@@ -32,28 +32,28 @@ type cmdRenderOptions struct {
 }
 
 // Stores the render command options
-var cmdRenderFlags cmdRenderOptions
+var cmdRenderFlags CmdRenderOptions
 
 func init() {
-	RootCmd.AddCommand(renderCmd)
+	RootCmd.AddCommand(RenderCmd)
 
-	renderCmd.AddCommand(renderJsonnetCmd)
-	renderJsonnetCmd.PersistentFlags().BoolVarP(&cmdRenderFlags.Prune, "prune", "", true, "Prune null and empty objects from rendered json")
-	renderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.ClusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
-	renderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.ComponentName, "component", "c", "", "component to render params for")
-	renderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.Cluster, "cluster", "C", "", "cluster to render params for")
-	renderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.Format, "format", "F", "json", "Output format: json, yaml, stream")
+	RenderCmd.AddCommand(RenderJsonnetCmd)
+	RenderJsonnetCmd.PersistentFlags().BoolVarP(&cmdRenderFlags.Prune, "prune", "", true, "Prune null and empty objects from rendered json")
+	RenderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.ClusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
+	RenderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.ComponentName, "component", "c", "", "component to render params for")
+	RenderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.Cluster, "cluster", "C", "", "cluster to render params for")
+	RenderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.Format, "format", "F", "json", "Output format: json, yaml, stream")
 
-	renderCmd.AddCommand(helmCleanCmd)
+	RenderCmd.AddCommand(RenderHelmCmd)
 }
 
-var renderCmd = &cobra.Command{
+var RenderCmd = &cobra.Command{
 	Use:   "render",
 	Short: "Render files",
 	Long:  `Render files in jsonnet or YAML`,
 }
 
-var renderJsonnetCmd = &cobra.Command{
+var RenderJsonnetCmd = &cobra.Command{
 	Use:   "jsonnet file [file ...]",
 	Short: "Render a jsonnet file",
 	Long:  `Render a jsonnet file to JSON or YAML`,
@@ -68,12 +68,12 @@ var renderJsonnetCmd = &cobra.Command{
 					Cluster:       cmdRenderFlags.Cluster,
 					Component:     cmdRenderFlags.ComponentName,
 					Format:        cmdRenderFlags.Format,
-				}, f, rootConfig.VMConfig)
+				}, f, RootConfig.VMConfig)
 		}
 	},
 }
 
-var helmCleanCmd = &cobra.Command{
+var RenderHelmCmd = &cobra.Command{
 	Use:   "helm",
 	Short: "Clean YAML stream from Helm Template output - Reads from Stdin",
 	Long:  `Removes Null YAML objects from a YAML stream`,

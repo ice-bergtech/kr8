@@ -18,15 +18,15 @@ import (
 )
 
 // Contains the paths to include and exclude for a format command
-var cmdformatFlags util.PathFilterOptions
+var cmdFormatFlags util.PathFilterOptions
 
 func init() {
-	RootCmd.AddCommand(formatCmd)
-	formatCmd.Flags().StringVarP(&cmdformatFlags.Includes, "clincludes", "i", "", "filter included cluster by including clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
-	formatCmd.Flags().StringVarP(&cmdformatFlags.Excludes, "clexcludes", "x", "", "filter included cluster by excluding clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
+	RootCmd.AddCommand(FormatCmd)
+	FormatCmd.Flags().StringVarP(&cmdFormatFlags.Includes, "clincludes", "i", "", "filter included cluster by including clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
+	FormatCmd.Flags().StringVarP(&cmdFormatFlags.Excludes, "clexcludes", "x", "", "filter included cluster by excluding clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
 }
 
-var formatCmd = &cobra.Command{
+var FormatCmd = &cobra.Command{
 	Use:   "format [flags]",
 	Short: "Format jsonnet files",
 	Long:  `Format jsonnet configuration files`,
@@ -35,7 +35,7 @@ var formatCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// First get a list of all files in the base directory and subdirectories. Ignore .git directories.
 		var fileList []string
-		filepath.Walk(rootConfig.BaseDir, func(path string, info fs.FileInfo, err error) error {
+		filepath.Walk(RootConfig.BaseDir, func(path string, info fs.FileInfo, err error) error {
 			if info.IsDir() {
 				if info.Name() == ".git" {
 					return filepath.SkipDir
@@ -48,7 +48,7 @@ var formatCmd = &cobra.Command{
 
 		fileList = util.Filter(fileList, func(s string) bool {
 			var result bool
-			for _, f := range strings.Split(cmdformatFlags.Includes, ",") {
+			for _, f := range strings.Split(cmdFormatFlags.Includes, ",") {
 				t, _ := filepath.Match(f, s)
 				if t {
 					return t
@@ -60,7 +60,7 @@ var formatCmd = &cobra.Command{
 
 		fileList = util.Filter(fileList, func(s string) bool {
 			var result bool
-			for _, f := range strings.Split(cmdformatFlags.Excludes, ",") {
+			for _, f := range strings.Split(cmdFormatFlags.Excludes, ",") {
 				t, _ := filepath.Match(f, s)
 				if t {
 					return !t

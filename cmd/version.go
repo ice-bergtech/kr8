@@ -6,8 +6,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// versionCmd represents the version command
-var versionCmd = &cobra.Command{
+// Print out versions of packages in use
+// Bug() - Updated manually
+var VersionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Return the current version of kr8",
 	Long:  `return the current version of kr8`,
@@ -22,5 +23,5 @@ var versionCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(versionCmd)
+	RootCmd.AddCommand(VersionCmd)
 }

@@ -40,7 +40,7 @@ var (
 )
 
 // stores the options for the 'generate' command.
-type cmdGenerateOptions struct {
+type CmdGenerateOptions struct {
 	// ClusterParamsFile is a string that stores the path to the cluster params file
 	ClusterParamsFile string
 	// GenerateDir is a string that stores the output directory for generated files
@@ -49,38 +49,38 @@ type cmdGenerateOptions struct {
 	Filters util.PathFilterOptions
 }
 
-var cmdGenerateFlags cmdGenerateOptions
+var cmdGenerateFlags CmdGenerateOptions
 
 func init() {
-	RootCmd.AddCommand(generateCmd)
-	generateCmd.Flags().StringVarP(&cmdGenerateFlags.ClusterParamsFile, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
-	generateCmd.Flags().StringVarP(&cmdGenerateFlags.Filters.Clusters, "clusters", "C", "", "clusters to generate - comma separated list of cluster names and/or regular expressions ")
-	generateCmd.Flags().StringVarP(&cmdGenerateFlags.Filters.Components, "components", "c", "", "components to generate - comma separated list of component names and/or regular expressions")
-	generateCmd.Flags().StringVarP(&cmdGenerateFlags.GenerateDir, "generate-dir", "o", "generated", "output directory")
-	generateCmd.Flags().StringVarP(&cmdGenerateFlags.Filters.Includes, "clincludes", "i", "", "filter included cluster by including clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
-	generateCmd.Flags().StringVarP(&cmdGenerateFlags.Filters.Excludes, "clexcludes", "x", "", "filter included cluster by excluding clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
+	RootCmd.AddCommand(GenerateCmd)
+	GenerateCmd.Flags().StringVarP(&cmdGenerateFlags.ClusterParamsFile, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
+	GenerateCmd.Flags().StringVarP(&cmdGenerateFlags.Filters.Clusters, "clusters", "C", "", "clusters to generate - comma separated list of cluster names and/or regular expressions ")
+	GenerateCmd.Flags().StringVarP(&cmdGenerateFlags.Filters.Components, "components", "c", "", "components to generate - comma separated list of component names and/or regular expressions")
+	GenerateCmd.Flags().StringVarP(&cmdGenerateFlags.GenerateDir, "generate-dir", "o", "generated", "output directory")
+	GenerateCmd.Flags().StringVarP(&cmdGenerateFlags.Filters.Includes, "clincludes", "i", "", "filter included cluster by including clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
+	GenerateCmd.Flags().StringVarP(&cmdGenerateFlags.Filters.Excludes, "clexcludes", "x", "", "filter included cluster by excluding clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
 }
 
-var generateCmd = &cobra.Command{
+var GenerateCmd = &cobra.Command{
 	Use:   "generate [flags]",
 	Short: "Generate components",
 	Long:  `Generate components in clusters`,
 
 	Args: cobra.MinimumNArgs(0),
-	Run:  generateCommand,
+	Run:  GenerateCommand,
 }
 
 // This function will generate the components for each cluster in parallel
 // It uses a wait group to ensure that all clusters have been processed before exiting.
-func generateCommand(cmd *cobra.Command, args []string) {
+func GenerateCommand(cmd *cobra.Command, args []string) {
 	// get list of all clusters, render cluster level params for all of them
 	allClusterParams = make(map[string]string)
-	allClusters, err := util.GetClusterFilenames(rootConfig.ClusterDir)
+	allClusters, err := util.GetClusterFilenames(RootConfig.ClusterDir)
 	util.FatalErrorCheck(err, "Error getting list of clusters")
 	log.Debug().Msg("Found " + strconv.Itoa(len(allClusters)) + " clusters")
 
 	for _, c := range allClusters {
-		allClusterParams[c.Name] = jvm.JsonnetRenderClusterParamsOnly(rootConfig.VMConfig, c.Name, "", false)
+		allClusterParams[c.Name] = jvm.JsonnetRenderClusterParamsOnly(RootConfig.VMConfig, c.Name, "", false)
 	}
 
 	var clusterList []string
@@ -94,8 +94,8 @@ func generateCommand(cmd *cobra.Command, args []string) {
 
 	// Setup the threading pools, one for clusters and one for clusters
 	var wg sync.WaitGroup
-	ants_cp, _ := ants.NewPool(rootConfig.Parallel)
-	ants_cl, _ := ants.NewPool(rootConfig.Parallel)
+	ants_cp, _ := ants.NewPool(RootConfig.Parallel)
+	ants_cl, _ := ants.NewPool(RootConfig.Parallel)
 
 	// Generate config for each cluster in parallel
 	for _, clusterName := range clusterList {
@@ -103,7 +103,7 @@ func generateCommand(cmd *cobra.Command, args []string) {
 		cl := clusterName
 		_ = ants_cl.Submit(func() {
 			defer wg.Done()
-			genProcessCluster(rootConfig.VMConfig, cl, ants_cp)
+			genProcessCluster(RootConfig.VMConfig, cl, ants_cp)
 		})
 	}
 	wg.Wait()
@@ -188,11 +188,11 @@ func genProcessCluster(vmConfig types.VMConfig, clusterName string, p *ants.Pool
 	log.Debug().Str("cluster", clusterName).Msg("Process cluster")
 
 	// get list of components for cluster
-	params := util.GetClusterParamsFilenames(rootConfig.ClusterDir, util.GetClusterPaths(rootConfig.ClusterDir, clusterName))
+	params := util.GetClusterParamsFilenames(RootConfig.ClusterDir, util.GetClusterPaths(RootConfig.ClusterDir, clusterName))
 	clusterComponents := gjson.Parse(jvm.JsonnetRenderFiles(vmConfig, params, "._components", true, "", "clustercomponents")).Map()
 
 	// get kr8 settings for cluster
-	kr8Spec, err := types.CreateClusterSpec(clusterName, gjson.Parse(jvm.JsonnetRenderFiles(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")), rootConfig.BaseDir, cmdGenerateFlags.GenerateDir)
+	kr8Spec, err := types.CreateClusterSpec(clusterName, gjson.Parse(jvm.JsonnetRenderFiles(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")), RootConfig.BaseDir, cmdGenerateFlags.GenerateDir)
 	util.FatalErrorCheck(err, "Error creating kr8Spec")
 
 	// create cluster dir
@@ -294,9 +294,9 @@ func genProcessComponent(vmconfig types.VMConfig, componentName string, kr8Spec 
 	}
 
 	// jPath always includes base lib. Add jpaths from spec if set
-	jPath := []string{rootConfig.BaseDir + "/lib"}
+	jPath := []string{RootConfig.BaseDir + "/lib"}
 	for _, j := range compSpec.JPaths {
-		jPath = append(jPath, rootConfig.BaseDir+"/"+compPath+"/"+j)
+		jPath = append(jPath, RootConfig.BaseDir+"/"+compPath+"/"+j)
 	}
 	vm.Importer(&jsonnet.FileImporter{
 		JPaths: jPath,
@@ -304,7 +304,7 @@ func genProcessComponent(vmconfig types.VMConfig, componentName string, kr8Spec 
 
 	// file imports
 	for k, v := range compSpec.ExtFiles {
-		vPath := rootConfig.BaseDir + "/" + compPath + "/" + v // use full path for file
+		vPath := RootConfig.BaseDir + "/" + compPath + "/" + v // use full path for file
 		extFile, err := os.ReadFile(vPath)
 		util.FatalErrorCheck(err, "Error importing extfiles item")
 		log.Debug().Str("cluster", kr8Spec.Name).
@@ -409,16 +409,16 @@ func processIncludesFile(vm *jsonnet.VM, config string, kr8Spec types.Kr8Cluster
 	case ".jsonnet":
 		// file is processed as an ExtCode input, so that we can postprocess it
 		// in the snippet
-		input = "( import '" + rootConfig.BaseDir + "/" + componentPath + "/" + incInfo.File + "')"
+		input = "( import '" + RootConfig.BaseDir + "/" + componentPath + "/" + incInfo.File + "')"
 		outStr, err = processJsonnet(vm, input, incInfo.File)
 	case ".yml":
 	case ".yaml":
-		input = "std.native('parseYaml')(importstr '" + rootConfig.BaseDir + "/" + componentPath + "/" + incInfo.File + "')"
+		input = "std.native('parseYaml')(importstr '" + RootConfig.BaseDir + "/" + componentPath + "/" + incInfo.File + "')"
 		outStr, err = processJsonnet(vm, input, incInfo.File)
 	case ".tmpl":
 	case ".tpl":
 		// Pass component config as data for the template
-		outStr, err = processTemplate(rootConfig.BaseDir+"/"+componentPath+"/"+incInfo.File, gjson.Get(config, componentName).Map())
+		outStr, err = processTemplate(RootConfig.BaseDir+"/"+componentPath+"/"+incInfo.File, gjson.Get(config, componentName).Map())
 	default:
 		outStr, err = "", errors.New("unsupported file extension")
 	}

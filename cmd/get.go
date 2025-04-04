@@ -27,8 +27,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// getCmd represents the get command
-var getCmd = &cobra.Command{
+// GetCmd represents the get command
+var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Display one or many kr8 resources",
 	Long:  `Displays information about kr8 resources such as clusters and components`,
@@ -53,30 +53,30 @@ type CmdGetOptions struct {
 var cmdGetFlags CmdGetOptions
 
 func init() {
-	RootCmd.AddCommand(getCmd)
-	getCmd.PersistentFlags().StringVarP(&cmdGetFlags.ClusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
+	RootCmd.AddCommand(GetCmd)
+	GetCmd.PersistentFlags().StringVarP(&cmdGetFlags.ClusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
 
 	// clusters
-	getCmd.AddCommand(getClustersCmd)
-	getClustersCmd.PersistentFlags().BoolVarP(&cmdGetFlags.NoTable, "raw", "r", false, "If true, just prints result instead of placing in table.")
+	GetCmd.AddCommand(GetClustersCmd)
+	GetClustersCmd.PersistentFlags().BoolVarP(&cmdGetFlags.NoTable, "raw", "r", false, "If true, just prints result instead of placing in table.")
 	// components
-	getCmd.AddCommand(getComponentsCmd)
-	getComponentsCmd.PersistentFlags().StringVarP(&cmdGetFlags.Cluster, "cluster", "C", "", "get components for cluster")
+	GetCmd.AddCommand(GetComponentsCmd)
+	GetComponentsCmd.PersistentFlags().StringVarP(&cmdGetFlags.Cluster, "cluster", "C", "", "get components for cluster")
 
 	// params
-	getCmd.AddCommand(getParamsCmd)
-	getParamsCmd.PersistentFlags().StringVarP(&cmdGetFlags.Cluster, "cluster", "C", "", "get components for cluster")
-	getParamsCmd.PersistentFlags().StringVarP(&cmdGetFlags.Component, "component", "c", "", "component to render params for")
-	getParamsCmd.PersistentFlags().StringVarP(&cmdGetFlags.ParamField, "param", "P", "", "return value of json param from supplied path")
+	GetCmd.AddCommand(GetParamsCmd)
+	GetParamsCmd.PersistentFlags().StringVarP(&cmdGetFlags.Cluster, "cluster", "C", "", "get components for cluster")
+	GetParamsCmd.PersistentFlags().StringVarP(&cmdGetFlags.Component, "component", "c", "", "component to render params for")
+	GetParamsCmd.PersistentFlags().StringVarP(&cmdGetFlags.ParamField, "param", "P", "", "return value of json param from supplied path")
 }
 
-var getClustersCmd = &cobra.Command{
+var GetClustersCmd = &cobra.Command{
 	Use:   "clusters [flags]",
 	Short: "Get all clusters",
 	Long:  "Get all clusters defined in kr8 config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		clusters, err := util.GetClusterFilenames(rootConfig.ClusterDir)
+		clusters, err := util.GetClusterFilenames(RootConfig.ClusterDir)
 		util.FatalErrorCheck(err, "Error getting clusters")
 
 		if cmdGetFlags.NoTable {
@@ -101,7 +101,7 @@ var getClustersCmd = &cobra.Command{
 	},
 }
 
-var getComponentsCmd = &cobra.Command{
+var GetComponentsCmd = &cobra.Command{
 	Use:   "components [flags]",
 	Short: "Get all components",
 	Long:  "Get all available components defined in the kr8 config hierarchy",
@@ -113,30 +113,30 @@ var getComponentsCmd = &cobra.Command{
 
 		var params []string
 		if cmdGetFlags.Cluster != "" {
-			clusterPath := util.GetClusterPaths(rootConfig.ClusterDir, cmdGetFlags.Cluster)
-			params = util.GetClusterParamsFilenames(rootConfig.ClusterDir, clusterPath)
+			clusterPath := util.GetClusterPaths(RootConfig.ClusterDir, cmdGetFlags.Cluster)
+			params = util.GetClusterParamsFilenames(RootConfig.ClusterDir, clusterPath)
 		}
 		if cmdGetFlags.ClusterParams != "" {
 			params = append(params, cmdGetFlags.ClusterParams)
 		}
 
-		j := jvm.JsonnetRenderFiles(rootConfig.VMConfig, params, "._components", true, "", "components")
+		j := jvm.JsonnetRenderFiles(RootConfig.VMConfig, params, "._components", true, "", "components")
 		if cmdGetFlags.ParamField != "" {
 			value := gjson.Get(j, cmdGetFlags.ParamField)
 			if value.String() == "" {
 				log.Fatal().Msg("Error getting param: " + cmdGetFlags.ParamField)
 			} else {
-				formatted := util.Pretty(j, rootConfig.Color)
+				formatted := util.Pretty(j, RootConfig.Color)
 				fmt.Println(formatted)
 			}
 		} else {
-			formatted := util.Pretty(j, rootConfig.Color)
+			formatted := util.Pretty(j, RootConfig.Color)
 			fmt.Println(formatted)
 		}
 	},
 }
 
-var getParamsCmd = &cobra.Command{
+var GetParamsCmd = &cobra.Command{
 	Use:   "params [flags]",
 	Short: "Get parameter for components and clusters",
 	Long:  "Get parameters assigned to clusters and components in the kr8 config hierarchy",
@@ -150,15 +150,15 @@ var getParamsCmd = &cobra.Command{
 			cList = append(cList, cmdGetFlags.Component)
 		}
 
-		params := jvm.JsonnetRenderClusterParams(rootConfig.VMConfig, cmdGetFlags.Cluster, cList, cmdGetFlags.ClusterParams, true)
+		params := jvm.JsonnetRenderClusterParams(RootConfig.VMConfig, cmdGetFlags.Cluster, cList, cmdGetFlags.ClusterParams, true)
 
 		// if we're not filtering the output, just pretty print and finish
 		if cmdGetFlags.ParamField == "" {
 			if cmdGetFlags.Component != "" {
 				result := gjson.Get(params, cmdGetFlags.Component).String()
-				fmt.Println(util.Pretty(result, rootConfig.Color))
+				fmt.Println(util.Pretty(result, RootConfig.Color))
 			} else {
-				fmt.Println(util.Pretty(params, rootConfig.Color))
+				fmt.Println(util.Pretty(params, RootConfig.Color))
 			}
 			return
 		}

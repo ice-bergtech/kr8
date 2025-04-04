@@ -12,25 +12,25 @@ import (
 var cmdInitFlags kr8init.Kr8InitOptions
 
 func init() {
-	RootCmd.AddCommand(initCmd)
-	initCmd.PersistentFlags().BoolVarP(&cmdInitFlags.Interactive, "interactive", "i", false, "Initialize a resource interactivly")
+	RootCmd.AddCommand(InitCmd)
+	InitCmd.PersistentFlags().BoolVarP(&cmdInitFlags.Interactive, "interactive", "i", false, "Initialize a resource interactivly")
 
-	initCmd.AddCommand(repoCmd)
-	repoCmd.PersistentFlags().StringVar(&cmdInitFlags.InitUrl, "url", "", "Source of skeleton directory to create repo from")
-	repoCmd.Flags().StringVarP(&cmdInitFlags.ClusterName, "name", "o", "cluster-tpl", "Cluster name")
-	repoCmd.PersistentFlags().BoolVarP(&cmdInitFlags.Fetch, "fetch", "f", false, "Fetch remote resources")
+	InitCmd.AddCommand(InitRepoCmd)
+	InitRepoCmd.PersistentFlags().StringVar(&cmdInitFlags.InitUrl, "url", "", "Source of skeleton directory to create repo from")
+	InitRepoCmd.Flags().StringVarP(&cmdInitFlags.ClusterName, "name", "o", "cluster-tpl", "Cluster name")
+	InitRepoCmd.PersistentFlags().BoolVarP(&cmdInitFlags.Fetch, "fetch", "f", false, "Fetch remote resources")
 
-	initCmd.AddCommand(initCluster)
-	initCluster.Flags().StringVarP(&cmdInitFlags.ClusterName, "name", "o", "cluster-tpl", "Cluster name")
+	InitCmd.AddCommand(InitClusterCmd)
+	InitClusterCmd.Flags().StringVarP(&cmdInitFlags.ClusterName, "name", "o", "cluster-tpl", "Cluster name")
 
-	initCmd.AddCommand(initComponent)
-	initComponent.Flags().StringVarP(&cmdInitFlags.ComponentName, "name", "o", "component-tpl", "Component name")
-	initComponent.Flags().StringVarP(&cmdInitFlags.ComponentType, "type", "t", "jsonnet", "Component type, one of: [`jsonnet`, `yml`, `chart`]")
+	InitCmd.AddCommand(InitComponentCmd)
+	InitComponentCmd.Flags().StringVarP(&cmdInitFlags.ComponentName, "name", "o", "component-tpl", "Component name")
+	InitComponentCmd.Flags().StringVarP(&cmdInitFlags.ComponentType, "type", "t", "jsonnet", "Component type, one of: [`jsonnet`, `yml`, `chart`]")
 
 }
 
-// initCmd represents the init command
-var initCmd = &cobra.Command{
+// InitCmd represents the init command
+var InitCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize kr8 config repos, components and clusters",
 	Long: `kr8 requires specific directories and exists for its config to work.
@@ -44,14 +44,14 @@ components`,
 	//   generated/
 }
 
-var initCluster = &cobra.Command{
+var InitClusterCmd = &cobra.Command{
 	Use:   "cluster [flags]",
 	Short: "Init a new cluster config file",
 	Long:  "Initialize a new cluster configuration file",
 	Run: func(cmd *cobra.Command, args []string) {
 		cSpec := types.Kr8ClusterSpec{
 			Name:               cmdInitFlags.ClusterName,
-			ClusterDir:         rootConfig.ClusterDir,
+			ClusterDir:         RootConfig.ClusterDir,
 			PostProcessor:      "function(input) input",
 			GenerateDir:        "generated",
 			GenerateShortNames: false,
@@ -67,7 +67,7 @@ var initCluster = &cobra.Command{
 
 			prompt = &survey.Input{
 				Message: "Set the cluster configuration directory",
-				Default: rootConfig.ClusterDir,
+				Default: RootConfig.ClusterDir,
 			}
 			survey.AskOne(prompt, &cSpec.ClusterDir)
 
@@ -94,7 +94,7 @@ var initCluster = &cobra.Command{
 	},
 }
 
-var repoCmd = &cobra.Command{
+var InitRepoCmd = &cobra.Command{
 	Use:   "repo [flags] dir",
 	Args:  cobra.MinimumNArgs(1),
 	Short: "Initialize a new kr8 config repo",
@@ -133,7 +133,7 @@ and initialize a git repo so you can get started`,
 	},
 }
 
-var initComponent = &cobra.Command{
+var InitComponentCmd = &cobra.Command{
 	Use:   "component [flags]",
 	Short: "Init a new component config file",
 	Long:  "Initialize a new component configuration file",
@@ -148,9 +148,9 @@ var initComponent = &cobra.Command{
 
 			prompt = &survey.Input{
 				Message: "Enter component directory",
-				Default: rootConfig.ComponentDir,
+				Default: RootConfig.ComponentDir,
 			}
-			survey.AskOne(prompt, &rootConfig.ComponentDir)
+			survey.AskOne(prompt, &RootConfig.ComponentDir)
 
 			promptS := &survey.Select{
 				Message: "Select component type",
@@ -158,6 +158,6 @@ var initComponent = &cobra.Command{
 			}
 			survey.AskOne(promptS, &cmdInitFlags.ComponentType)
 		}
-		kr8init.GenerateComponentJsonnet(cmdInitFlags, rootConfig.ComponentDir)
+		kr8init.GenerateComponentJsonnet(cmdInitFlags, RootConfig.ComponentDir)
 	},
 }

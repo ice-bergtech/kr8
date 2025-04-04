@@ -37,45 +37,55 @@ func Execute(version string) {
 	}
 }
 
-type cmdRootOptions struct {
-	BaseDir      string
-	ClusterDir   string
+// Default options that are available to all commands
+type CmdRootOptions struct {
+	// kr8 config base directory
+	BaseDir string
+	// kr8 cluster directory
+	ClusterDir string
+	// kr8 component directory
 	ComponentDir string
-	ConfigFile   string
-	Parallel     int
-	Debug        bool
-	LogLevel     string
-	Color        bool
-	VMConfig     types.VMConfig
+	// A config file with kr8 configuration
+	ConfigFile string
+	// parallelism - defaults to runtime.GOMAXPROCS(0)
+	Parallel int
+	// log more information about what kr8 is doing. Overrides --loglevel
+	Debug bool
+	// set log level
+	LogLevel string
+	// enable colorized output (default true). Set to false to disable")
+	Color bool
+	// contains ingormation to configure jsonnet vm
+	VMConfig types.VMConfig
 }
 
-var rootConfig cmdRootOptions
+var RootConfig CmdRootOptions
 
 func init() {
-	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(InitConfig)
 
-	RootCmd.PersistentFlags().BoolVar(&rootConfig.Debug, "debug", false, "log more information about what kr8 is doing. Overrides --loglevel")
-	RootCmd.PersistentFlags().StringVarP(&rootConfig.LogLevel, "loglevel", "L", "info", "set log level")
-	RootCmd.PersistentFlags().StringVarP(&rootConfig.BaseDir, "base", "B", ".", "kr8 config base directory")
-	RootCmd.PersistentFlags().StringVarP(&rootConfig.ClusterDir, "clusterdir", "D", "", "kr8 cluster directory")
-	RootCmd.PersistentFlags().StringVarP(&rootConfig.ComponentDir, "componentdir", "d", "", "kr8 component directory")
-	RootCmd.PersistentFlags().BoolVar(&rootConfig.Color, "color", true, "enable colorized output (default). Set to false to disable")
-	RootCmd.PersistentFlags().StringArrayVarP(&rootConfig.VMConfig.Jpaths, "jpath", "J", nil, "Directories to add to jsonnet include path. Repeat arg for multiple directories")
-	RootCmd.PersistentFlags().StringSliceVar(&rootConfig.VMConfig.ExtVars, "ext-str-file", nil, "Set jsonnet extvar from file contents")
-	RootCmd.PersistentFlags().IntVarP(&rootConfig.Parallel, "parallel", "", -1, "parallelism - defaults to runtime.GOMAXPROCS(0)")
-	RootCmd.PersistentFlags().StringVarP(&rootConfig.ConfigFile, "config", "", "", "A config file with kr8 configuration")
+	RootCmd.PersistentFlags().BoolVar(&RootConfig.Debug, "debug", false, "log more information about what kr8 is doing. Overrides --loglevel")
+	RootCmd.PersistentFlags().StringVarP(&RootConfig.LogLevel, "loglevel", "L", "info", "set log level")
+	RootCmd.PersistentFlags().StringVarP(&RootConfig.BaseDir, "base", "B", ".", "kr8 config base directory")
+	RootCmd.PersistentFlags().StringVarP(&RootConfig.ClusterDir, "clusterdir", "D", "", "kr8 cluster directory")
+	RootCmd.PersistentFlags().StringVarP(&RootConfig.ComponentDir, "componentdir", "d", "", "kr8 component directory")
+	RootCmd.PersistentFlags().BoolVar(&RootConfig.Color, "color", true, "enable colorized output. Set to false to disable")
+	RootCmd.PersistentFlags().StringArrayVarP(&RootConfig.VMConfig.Jpaths, "jpath", "J", nil, "Directories to add to jsonnet include path. Repeat arg for multiple directories")
+	RootCmd.PersistentFlags().StringSliceVar(&RootConfig.VMConfig.ExtVars, "ext-str-file", nil, "Set jsonnet extvar from file contents")
+	RootCmd.PersistentFlags().IntVarP(&RootConfig.Parallel, "parallel", "", -1, "parallelism - defaults to runtime.GOMAXPROCS(0)")
+	RootCmd.PersistentFlags().StringVarP(&RootConfig.ConfigFile, "config", "", "", "A config file with kr8 configuration")
 }
 
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	if rootConfig.ConfigFile != "" { // enable ability to specify config file via flag
-		viper.SetConfigFile(rootConfig.ConfigFile)
+// InitConfig reads in config file and ENV variables if set.
+func InitConfig() {
+	if RootConfig.ConfigFile != "" { // enable ability to specify config file via flag
+		viper.SetConfigFile(RootConfig.ConfigFile)
 	}
 
-	if rootConfig.Debug {
+	if RootConfig.Debug {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	} else {
-		switch rootConfig.LogLevel {
+		switch RootConfig.LogLevel {
 		case "debug":
 			zerolog.SetGlobalLevel(zerolog.DebugLevel)
 		case "info":
@@ -89,12 +99,12 @@ func initConfig() {
 		case "panic":
 			zerolog.SetGlobalLevel(zerolog.PanicLevel)
 		default:
-			log.Fatal().Msg("invalid log level: " + rootConfig.LogLevel)
+			log.Fatal().Msg("invalid log level: " + RootConfig.LogLevel)
 		}
 	}
 
-	if rootConfig.Parallel == -1 {
-		rootConfig.Parallel = runtime.GOMAXPROCS(0)
+	if RootConfig.Parallel == -1 {
+		RootConfig.Parallel = runtime.GOMAXPROCS(0)
 	}
 
 	viper.SetConfigName(".kr8") // name of config file (without extension)
@@ -111,31 +121,31 @@ func initConfig() {
 	log.Logger = log.Output(
 		zerolog.ConsoleWriter{
 			Out:     os.Stderr,
-			NoColor: !rootConfig.Color,
+			NoColor: !RootConfig.Color,
 			FormatErrFieldValue: func(err interface{}) string {
 				// https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L21
 				colorRed := 31
 				colorBold := 1
 				s := strings.ReplaceAll(strings.ReplaceAll(strings.TrimRight(err.(string), "\\n"), "\\t", " "), "\\n", " |")
-				return util.Colorize(util.Colorize(fmt.Sprintf("%s", s), colorBold, !rootConfig.Color), colorRed, !rootConfig.Color)
+				return util.Colorize(util.Colorize(fmt.Sprintf("%s", s), colorBold, !RootConfig.Color), colorRed, !RootConfig.Color)
 			},
 		},
 	)
 
 	// Setup configuration defaults
 	//s.BaseDir = viper.GetString("base")
-	log.Debug().Msg("Using base directory: " + rootConfig.BaseDir)
+	log.Debug().Msg("Using base directory: " + RootConfig.BaseDir)
 
 	//s.ClusterDir = viper.GetString("clusterdir")
-	if rootConfig.ClusterDir == "" {
-		rootConfig.ClusterDir = rootConfig.BaseDir + "/clusters"
+	if RootConfig.ClusterDir == "" {
+		RootConfig.ClusterDir = RootConfig.BaseDir + "/clusters"
 	}
-	log.Debug().Msg("Using cluster directory: " + rootConfig.ClusterDir)
+	log.Debug().Msg("Using cluster directory: " + RootConfig.ClusterDir)
 
-	if rootConfig.ComponentDir == "" {
-		rootConfig.ComponentDir = rootConfig.BaseDir + "/components"
+	if RootConfig.ComponentDir == "" {
+		RootConfig.ComponentDir = RootConfig.BaseDir + "/components"
 	}
 	// Set base config for jvm repo as well.
-	rootConfig.VMConfig.BaseDir = rootConfig.BaseDir
-	log.Debug().Msg("Using component directory: " + rootConfig.ComponentDir)
+	RootConfig.VMConfig.BaseDir = RootConfig.BaseDir
+	log.Debug().Msg("Using component directory: " + RootConfig.ComponentDir)
 }
