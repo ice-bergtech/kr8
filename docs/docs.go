@@ -29,15 +29,28 @@ func GoMarkDoc() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	buildPkg, err := build.ImportDir("../cmd", build.ImportComment)
-	if err != nil {
-		log.Fatal(err)
+
+	os.Mkdir("godoc", 0755)
+
+	docfiles := map[string]string{
+		"../cmd":          "kr8-cmd.md",
+		"../pkg/jvm":      "kr8-jsonnet.md",
+		"../pkg/types":    "kr8-types.md",
+		"../pkg/util":     "kr8-util.md",
+		"../pkg/kr8_init": "kr8-init.md",
 	}
 
-	log := logger.New(logger.DebugLevel)
-	pkg, err := lang.NewPackageFromBuild(log, buildPkg)
-	output, err := out.Package(pkg)
-	os.WriteFile("kr8-godoc.md", []byte(output), 0644)
+	for k, v := range docfiles {
+		buildPkg, err := build.ImportDir(k, build.ImportComment)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log := logger.New(logger.DebugLevel)
+		pkg, err := lang.NewPackageFromBuild(log, buildPkg)
+		output, err := out.Package(pkg)
+		os.WriteFile("godoc/"+v, []byte(output), 0644)
+	}
 }
 
 func main() {

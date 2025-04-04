@@ -1,3 +1,4 @@
+// Utility functions for directories and files
 package util
 
 import (
@@ -10,7 +11,9 @@ import (
 	types "github.com/ice-bergtech/kr8/pkg/types"
 )
 
-func GetClusters(searchDir string) ([]types.Kr8Cluster, error) {
+// Get a list of cluster from within a directory.
+// Walks the directory tree, creating a types.Kr8Cluster for each cluster.jsonnet file found.
+func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error) {
 
 	fileList := make([]string, 0)
 
@@ -40,7 +43,9 @@ func GetClusters(searchDir string) ([]types.Kr8Cluster, error) {
 
 }
 
-func GetCluster(searchDir string, clusterName string) string {
+// Get a specific cluster within a directory by name.
+// Returns the path to the cluster.
+func GetClusterPaths(searchDir string, clusterName string) string {
 	clusterPath := ""
 
 	FatalErrorCheck(
@@ -64,8 +69,9 @@ func GetCluster(searchDir string, clusterName string) string {
 
 }
 
-func GetClusterParams(basePath string, targetPath string) []string {
-
+// Get all cluster parameters within a directory.
+// Walks through the directory hierarchy and returns all paths to `params.jsonnet` files.
+func GetClusterParamsFilenames(basePath string, targetPath string) []string {
 	// a slice to store results
 	var results []string
 	results = append(results, targetPath)
