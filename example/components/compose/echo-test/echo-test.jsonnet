@@ -9,5 +9,5 @@ local kompose_template = std.native('komposeFile')('compose/compose.yml', 'compo
 
 [
     object
-    for object in std.objectValues(kompose_template)
+    for object in kompose_template
 ]
