@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	jvm "github.com/ice-bergtech/kr8/pkg/jvm"
+	jvm "github.com/ice-bergtech/kr8/pkg/jnetvm"
 	types "github.com/ice-bergtech/kr8/pkg/types"
 	"github.com/spf13/cobra"
 )
@@ -32,10 +32,19 @@ var cmdFlagsJsonnet types.CmdJsonnetOptions
 func init() {
 	RootCmd.AddCommand(JsonnetCmd)
 	JsonnetCmd.AddCommand(JsonnetRenderCmd)
-	JsonnetRenderCmd.PersistentFlags().BoolVarP(&cmdFlagsJsonnet.Prune, "prune", "", true, "Prune removes null and empty objects from ingested jsonnet files")
-	JsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.ClusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
-	JsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.Component, "component", "c", "", "component to render params for")
-	JsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.Format, "format", "F", "json", "Output format: json, yaml, stream")
-	JsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.Cluster, "cluster", "C", "", "cluster to render params for")
-
+	JsonnetRenderCmd.PersistentFlags().BoolVarP(&cmdFlagsJsonnet.Prune,
+		"prune", "", true,
+		"Prune removes null and empty objects from ingested jsonnet files")
+	JsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.ClusterParams,
+		"clusterparams", "p", "",
+		"provide cluster params as single file - can be combined with --cluster to override cluster")
+	JsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.Component,
+		"component", "c", "",
+		"component to render params for")
+	JsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.Format,
+		"format", "F", "json",
+		"Output format: json, yaml, stream")
+	JsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.Cluster,
+		"cluster", "C", "",
+		"cluster to render params for")
 }

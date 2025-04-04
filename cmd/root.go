@@ -64,16 +64,34 @@ var RootConfig CmdRootOptions
 func init() {
 	cobra.OnInitialize(InitConfig)
 
-	RootCmd.PersistentFlags().BoolVar(&RootConfig.Debug, "debug", false, "log more information about what kr8 is doing. Overrides --loglevel")
-	RootCmd.PersistentFlags().StringVarP(&RootConfig.LogLevel, "loglevel", "L", "info", "set log level")
+	RootCmd.PersistentFlags().BoolVar(&RootConfig.Debug,
+		"debug", false,
+		"log more information about what kr8 is doing. Overrides --loglevel")
+	RootCmd.PersistentFlags().StringVarP(&RootConfig.LogLevel,
+		"loglevel", "L", "info",
+		"set log level")
 	RootCmd.PersistentFlags().StringVarP(&RootConfig.BaseDir, "base", "B", ".", "kr8 config base directory")
-	RootCmd.PersistentFlags().StringVarP(&RootConfig.ClusterDir, "clusterdir", "D", "", "kr8 cluster directory")
-	RootCmd.PersistentFlags().StringVarP(&RootConfig.ComponentDir, "componentdir", "d", "", "kr8 component directory")
-	RootCmd.PersistentFlags().BoolVar(&RootConfig.Color, "color", true, "enable colorized output. Set to false to disable")
-	RootCmd.PersistentFlags().StringArrayVarP(&RootConfig.VMConfig.Jpaths, "jpath", "J", nil, "Directories to add to jsonnet include path. Repeat arg for multiple directories")
-	RootCmd.PersistentFlags().StringSliceVar(&RootConfig.VMConfig.ExtVars, "ext-str-file", nil, "Set jsonnet extvar from file contents")
-	RootCmd.PersistentFlags().IntVarP(&RootConfig.Parallel, "parallel", "", -1, "parallelism - defaults to runtime.GOMAXPROCS(0)")
-	RootCmd.PersistentFlags().StringVarP(&RootConfig.ConfigFile, "config", "", "", "A config file with kr8 configuration")
+	RootCmd.PersistentFlags().StringVarP(&RootConfig.ClusterDir,
+		"clusterdir", "D", "",
+		"kr8 cluster directory")
+	RootCmd.PersistentFlags().StringVarP(&RootConfig.ComponentDir,
+		"componentdir", "d", "",
+		"kr8 component directory")
+	RootCmd.PersistentFlags().BoolVar(&RootConfig.Color,
+		"color", true,
+		"enable colorized output. Set to false to disable")
+	RootCmd.PersistentFlags().StringArrayVarP(&RootConfig.VMConfig.Jpaths,
+		"jpath", "J", nil,
+		"Directories to add to jsonnet include path. Repeat arg for multiple directories")
+	RootCmd.PersistentFlags().StringSliceVar(&RootConfig.VMConfig.ExtVars,
+		"ext-str-file", nil,
+		"Set jsonnet extvar from file contents")
+	RootCmd.PersistentFlags().IntVarP(&RootConfig.Parallel,
+		"parallel", "", -1,
+		"parallelism - defaults to runtime.GOMAXPROCS(0)")
+	RootCmd.PersistentFlags().StringVarP(&RootConfig.ConfigFile,
+		"config", "", "",
+		"A config file with kr8 configuration")
 }
 
 // InitConfig reads in config file and ENV variables if set.
