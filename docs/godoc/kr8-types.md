@@ -11,6 +11,7 @@ import "github.com/ice-bergtech/kr8/pkg/types"
 - [type KomposeConvertOptions](<#KomposeConvertOptions>)
   - [func Create\(inputFiles \[\]string, outDir string, cmp Kr8ComponentJsonnet\) \*KomposeConvertOptions](<#Create>)
   - [func \(k KomposeConvertOptions\) Convert\(\) \(interface\{\}, error\)](<#KomposeConvertOptions.Convert>)
+  - [func \(k KomposeConvertOptions\) GenKomposePkgOpts\(\) \*kobject.ConvertOptions](<#KomposeConvertOptions.GenKomposePkgOpts>)
   - [func \(k KomposeConvertOptions\) Validate\(\) error](<#KomposeConvertOptions.Validate>)
 - [type Kr8Cluster](<#Kr8Cluster>)
 - [type Kr8ClusterComponentRef](<#Kr8ClusterComponentRef>)
@@ -51,9 +52,11 @@ type ExtFileVar map[string]string
 ```
 
 <a name="KomposeConvertOptions"></a>
-## type [KomposeConvertOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L12-L85>)
+## type [KomposeConvertOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L13-L87>)
 
-A struct describing a compose file that will be processed by kompose to produce kubernetes manifests Based on https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
+A struct describing a compose file that will be processed by kompose to produce kubernetes manifests.
+
+Based on https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
 
 ```go
 type KomposeConvertOptions struct {
@@ -63,7 +66,8 @@ type KomposeConvertOptions struct {
     // The kubecfg (?) profile to use, can use multiple profiles
     Profiles []string
 
-    // List of compose file filenames
+    // List of compose file filenames.
+    // Filenames should be in the format `[docker-]compose.ym[a]l`
     InputFiles []string
     // Specify a file name or directory to save objects to (if path does not exist, a file will be created)
     OutFile string
@@ -133,7 +137,7 @@ type KomposeConvertOptions struct {
 ```
 
 <a name="Create"></a>
-### func [Create](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L88>)
+### func [Create](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L90>)
 
 ```go
 func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *KomposeConvertOptions
@@ -142,22 +146,37 @@ func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *Kompos
 Initialie Kompose options with sensible defaults
 
 <a name="KomposeConvertOptions.Convert"></a>
-### func \(KomposeConvertOptions\) [Convert](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L195>)
+### func \(KomposeConvertOptions\) [Convert](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L203>)
 
 ```go
 func (k KomposeConvertOptions) Convert() (interface{}, error)
 ```
 
+Converts a Docker Compose file described by k into a set of kubernetes manifests.
 
+<a name="KomposeConvertOptions.GenKomposePkgOpts"></a>
+### func \(KomposeConvertOptions\) [GenKomposePkgOpts](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L122>)
+
+```go
+func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions
+```
+
+Generates a ConvertOptions struct that kompose expects from our commented KomposeConvertOptions
+
+References:
+
+https://pkg.go.dev/github.com/kubernetes/kompose@v1.35.0/pkg/kobject#ConvertOptions
+
+https://github.com/kubernetes/kompose/blob/v1.35.0/pkg/app/app.go#L166
 
 <a name="KomposeConvertOptions.Validate"></a>
-### func \(KomposeConvertOptions\) [Validate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L184>)
+### func \(KomposeConvertOptions\) [Validate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L191>)
 
 ```go
 func (k KomposeConvertOptions) Validate() error
 ```
 
-
+Validates a set of options for converting a Kubernetes manifest to a Docker Compose file.
 
 <a name="Kr8Cluster"></a>
 ## type [Kr8Cluster](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L13-L16>)

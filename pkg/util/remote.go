@@ -7,8 +7,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// Fetch a git repo from a url and clone it to a destination directory
-// if the performFetch flag is false, it will log the command that would be run and return without doing anything
+// Fetch a git repo from a url and clone it to a destination directory.
+// If the performFetch flag is false, it will log the command that would be run and return without doing anything.
 func FetchRepoUrl(url string, destination string, performFetch bool) {
 	if !performFetch {
 		gitCommand := "git clone -- " + url + " " + destination

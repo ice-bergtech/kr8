@@ -75,12 +75,12 @@ var generateCmd = &cobra.Command{
 func generateCommand(cmd *cobra.Command, args []string) {
 	// get list of all clusters, render cluster level params for all of them
 	allClusterParams = make(map[string]string)
-	allClusters, err := util.GetClusters(rootConfig.ClusterDir)
+	allClusters, err := util.GetClusterFilenames(rootConfig.ClusterDir)
 	util.FatalErrorCheck(err, "Error getting list of clusters")
 	log.Debug().Msg("Found " + strconv.Itoa(len(allClusters)) + " clusters")
 
 	for _, c := range allClusters {
-		allClusterParams[c.Name] = jvm.RenderClusterParamsOnly(rootConfig.VMConfig, c.Name, "", false)
+		allClusterParams[c.Name] = jvm.JsonnetRenderClusterParamsOnly(rootConfig.VMConfig, c.Name, "", false)
 	}
 
 	var clusterList []string
@@ -188,11 +188,11 @@ func genProcessCluster(vmConfig types.VMConfig, clusterName string, p *ants.Pool
 	log.Debug().Str("cluster", clusterName).Msg("Process cluster")
 
 	// get list of components for cluster
-	params := util.GetClusterParams(rootConfig.ClusterDir, util.GetCluster(rootConfig.ClusterDir, clusterName))
-	clusterComponents := gjson.Parse(jvm.RenderJsonnet(vmConfig, params, "._components", true, "", "clustercomponents")).Map()
+	params := util.GetClusterParamsFilenames(rootConfig.ClusterDir, util.GetClusterPaths(rootConfig.ClusterDir, clusterName))
+	clusterComponents := gjson.Parse(jvm.JsonnetRenderFiles(vmConfig, params, "._components", true, "", "clustercomponents")).Map()
 
 	// get kr8 settings for cluster
-	kr8Spec, err := types.CreateClusterSpec(clusterName, gjson.Parse(jvm.RenderJsonnet(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")), rootConfig.BaseDir, cmdGenerateFlags.GenerateDir)
+	kr8Spec, err := types.CreateClusterSpec(clusterName, gjson.Parse(jvm.JsonnetRenderFiles(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")), rootConfig.BaseDir, cmdGenerateFlags.GenerateDir)
 	util.FatalErrorCheck(err, "Error creating kr8Spec")
 
 	// create cluster dir
@@ -217,7 +217,7 @@ func genProcessCluster(vmConfig types.VMConfig, clusterName string, p *ants.Pool
 	}
 
 	// render full params for cluster for all selected components
-	config := jvm.RenderClusterParams(vmConfig, kr8Spec.Name, compList, cmdGenerateFlags.ClusterParamsFile, false)
+	config := jvm.JsonnetRenderClusterParams(vmConfig, kr8Spec.Name, compList, cmdGenerateFlags.ClusterParamsFile, false)
 
 	var allconfig safeString
 
@@ -273,7 +273,7 @@ func genProcessComponent(vmconfig types.VMConfig, componentName string, kr8Spec 
 				// all component params are in config
 				allConfig.config = config
 			} else {
-				allConfig.config = jvm.RenderClusterParams(vmconfig, kr8Spec.Name, []string{}, cmdGenerateFlags.ClusterParamsFile, false)
+				allConfig.config = jvm.JsonnetRenderClusterParams(vmconfig, kr8Spec.Name, []string{}, cmdGenerateFlags.ClusterParamsFile, false)
 			}
 		}
 		vm.ExtCode("kr8_allparams", allConfig.config)

@@ -188,7 +188,8 @@ func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error {
 		Cluster:     types.Kr8Cluster{Name: cSpec.Name},
 		Components:  map[string]types.Kr8ClusterComponentRef{},
 	}
-	return util.WriteObjToJsonFile(filename, dstDir+"/"+cSpec.Name, clusterJson)
+	err, _ := util.WriteObjToJsonFile(filename, dstDir+"/"+cSpec.Name, clusterJson)
+	return err
 }
 
 // Generate default component kr8_spec values and store in params.jsonnet
@@ -224,7 +225,8 @@ func GenerateComponentJsonnet(componentOptions cmdInitOptions, dstDir string) er
 		break
 	}
 
-	return util.WriteObjToJsonFile("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
+	err, _ := util.WriteObjToJsonFile("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
+	return err
 }
 
 func GenerateLib(fetch bool, dstDir string) {

@@ -23,21 +23,27 @@ func Filter(vs []string, f func(string) bool) []string {
 // Fill with string to include and exclude, using kr8's special parsing
 type PathFilterOptions struct {
 	// Comma-separated list of include filters
-	// Filters can include regex filters using the "~" operator. For example, "name~^myregex$"
-	// Filters can include equality matches using the "=" operator. For example, "name=myvalue"
-	// Filters can include substring matches using the "=" operator. For example, "name=myvalue"
+	// Filters can include:
+	//
+	// regex filters using the "~" operator. For example, "name~^myregex$"
+	// equality matches using the "=" operator. For example, "name=myvalue"
+	// substring matches using the "=" operator. For example, "name=myvalue"
+	//
 	// If no operator is provided, it is treated as a substring match against the "name" field.
 	Includes string
-	// Comma-separated list of exclude filters
-	// Filters can include regex filters using the "~" operator. For example, "name~^myregex$"
-	// Filters can include equality matches using the "=" operator. For example, "name=myvalue"
-	// Filters can include substring matches using the "=" operator. For example, "name=myvalue"
+	// Comma-separated list of exclude filters.
+	// Filters can include:
+	//
+	// regex filters using the "~" operator. For example, "name~^myregex$"
+	// equality matches using the "=" operator. For example, "name=myvalue"
+	// substring matches using the "=" operator. For example, "name=myvalue"
+	//
 	// If no operator is provided, it is treated as a substring match against the "name" field.
 	Excludes string
-	// Comma separated cluster names
-	// Filters keys on exact match
+	// Comma separated cluster names.
+	// Filters keys on exact match.
 	Clusters string
-	// Comma separated component names
+	// Comma separated component names.
 	Components string
 }
 
@@ -60,6 +66,8 @@ func CheckObjectMatch(input gjson.Result, filterString string) bool {
 	return strings.Contains(input.Get("name").String(), filterString)
 }
 
+// Given a map of string, filter them based on the provided options.
+// The map value is parsed as a gjson result and then checked against the provided options.
 func FilterItems(input map[string]string, pf PathFilterOptions) []string {
 	if pf.Includes == "" && pf.Excludes == "" {
 		return []string{}
@@ -92,7 +100,7 @@ func FilterItems(input map[string]string, pf PathFilterOptions) []string {
 	return clusterList
 }
 
-// util.FatalErrorCheck is a helper function that logs an error and exits the program if the error is not nil.
+// Logs an error and exits the program if the error is not nil.
 // Saves 3 lines per use and centralizes fatal errors for rewriting
 func FatalErrorCheck(err error, message string) {
 	if err != nil {

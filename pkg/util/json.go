@@ -32,8 +32,8 @@ func Pretty(input string, colorOutput bool) string {
 	return string(formatted)
 }
 
-// colorize function from zerolog console.go file to replicate their coloring functionality.
-// https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389
+// Colorize function from zerolog console.go file to replicate their coloring functionality.
+// Source: https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389
 func Colorize(s interface{}, c int, disabled bool) string {
 	e := os.Getenv("NO_COLOR")
 	if e != "" || c == 0 {
@@ -46,8 +46,8 @@ func Colorize(s interface{}, c int, disabled bool) string {
 	return fmt.Sprintf("\x1b[%dm%v\x1b[0m", c, s)
 }
 
-// Print the jsonnet output in the specified format
-// allows for: yaml, stream, json
+// Print the jsonnet output in the specified format.
+// Acceptable formats are: yaml, stream, json
 func JsonnetPrint(output string, format string, color bool) {
 	switch format {
 	case "yaml":
@@ -98,15 +98,22 @@ func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, er
 	return formatter.Format("", input, opts)
 }
 
-// Write out a struct to a specified path and file
-func WriteObjToJsonFile(filename string, path string, objStruct interface{}) error {
-	FatalErrorCheck(os.MkdirAll(path, 0755), "error creating resource directory")
+// Write out a struct to a specified path and file.
+// If successful, returns what was written. If not successful, returns an error.
+func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (error, string) {
+	if err := os.MkdirAll(path, 0755); err != nil {
+		return err, "error creating resource directory"
+	}
 
-	jsonStr, errJ := json.MarshalIndent(objStruct, "", "  ")
-	FatalErrorCheck(errJ, "error marshalling component resource to json")
+	jsonStr, err := json.MarshalIndent(objStruct, "", "  ")
+	if err != nil {
+		return err, "error marshalling component resource to json"
+	}
 
-	jsonStrFormatted, errF := FormatJsonnetString(string(jsonStr))
-	FatalErrorCheck(errF, "error formatting component resource to json")
+	jsonStrFormatted, err := FormatJsonnetString(string(jsonStr))
+	if err != nil {
+		return err, "error formatting component resource to json"
+	}
 
-	return (os.WriteFile(path+"/"+filename, []byte(jsonStrFormatted), 0644))
+	return (os.WriteFile(path+"/"+filename, []byte(jsonStrFormatted), 0644)), jsonStrFormatted
 }

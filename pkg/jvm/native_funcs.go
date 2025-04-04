@@ -1,20 +1,3 @@
-package jvm
-
-import (
-	"bytes"
-	"encoding/json"
-	"regexp"
-	"text/template"
-
-	"github.com/Masterminds/sprig/v3"
-	jsonnet "github.com/google/go-jsonnet"
-	jsonnetAst "github.com/google/go-jsonnet/ast"
-	"github.com/grafana/tanka/pkg/helm"
-
-	types "github.com/ice-bergtech/kr8/pkg/types"
-)
-
-// Native Jsonnet funcs to add
 /*
 
 Much of this code is based on the kubecfg project: https://github.com/ksonnet/kubecfg
@@ -36,115 +19,148 @@ Copyright 2018 ksonnet
 
 */
 
-// Registers additional native functions in the jsonnet VM
-// These functions are used to extend the functionality of jsonnet
+package jvm
+
+import (
+	"bytes"
+	"encoding/json"
+	"regexp"
+	"text/template"
+
+	"github.com/Masterminds/sprig/v3"
+	jsonnet "github.com/google/go-jsonnet"
+	jsonnetAst "github.com/google/go-jsonnet/ast"
+	"github.com/grafana/tanka/pkg/helm"
+
+	types "github.com/ice-bergtech/kr8/pkg/types"
+)
+
+// Registers additional native functions in the jsonnet VM.
+// These functions are used to extend the functionality of jsonnet.
 // Adds on to functions part of the jsonnet stdlib: https://jsonnet.org/ref/stdlib.html
 func RegisterNativeFuncs(vm *jsonnet.VM) {
 	// Register the template function
-	vm.NativeFunction(&jsonnet.NativeFunction{
-		Name:   "template",
-		Params: []jsonnetAst.Identifier{"config", "str"},
-		Func:   nativeTemplate,
-	})
+	vm.NativeFunction(NativeSprigTemplate())
 
 	// Register the escapeStringRegex function
-	vm.NativeFunction(&jsonnet.NativeFunction{
-		Name:   "escapeStringRegex",
-		Params: []jsonnetAst.Identifier{"str"},
-		Func:   nativeRegexEscape,
-	})
+	vm.NativeFunction(NativeRegexEscape())
 
 	// Register the regexMatch function
-	vm.NativeFunction(&jsonnet.NativeFunction{
-		Name:   "regexMatch",
-		Params: []jsonnetAst.Identifier{"regex", "string"},
-		Func:   nativeRegexMatch,
-	})
+	vm.NativeFunction(NativeRegexMatch())
 
 	// Register the regexSubst function
-	vm.NativeFunction(&jsonnet.NativeFunction{
-		Name:   "regexSubst",
-		Params: []jsonnetAst.Identifier{"regex", "src", "repl"},
-		Func:   nativeRegexSubst,
-	})
+	vm.NativeFunction(NativeRegexSubst())
 
 	// Register the helm function
-	// Allows executing helm template to process a helm chart and make available to kr8 configuration
-	// Source: https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L23
-	vm.NativeFunction(helm.NativeFunc(helm.ExecHelm{}))
+	vm.NativeFunction(NativeHelmTemplate())
 
 	// Register the kompose function
-	vm.NativeFunction(&jsonnet.NativeFunction{
-		Name:   "kompose",
-		Params: []jsonnetAst.Identifier{"input", "komposeOpts"},
-		Func:   nativeKompose,
-	})
+	vm.NativeFunction(NativeKompose())
 
 }
 
-// Uses sprig to process passed in config data and template
+// Allows executing helm template to process a helm chart and make available to kr8 configuration.
+//
+// Source: https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L23
+func NativeHelmTemplate() *jsonnet.NativeFunction {
+	return helm.NativeFunc(helm.ExecHelm{})
+}
+
+// Uses sprig to process passed in config data and template.
+//
+// Sprig template guide: https://masterminds.github.io/sprig/
+//
 // Inputs: "config" "str"
-func nativeTemplate(args []interface{}) (res interface{}, err error) {
-	var config any
-	err = json.Unmarshal([]byte(args[0].(string)), config)
-	if err != nil {
-		return "", err
-	}
+func NativeSprigTemplate() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "template",
+		Params: []jsonnetAst.Identifier{"config", "str"},
+		Func: func(args []interface{}) (res interface{}, err error) {
+			var config any
+			err = json.Unmarshal([]byte(args[0].(string)), config)
+			if err != nil {
+				return "", err
+			}
 
-	input := []byte(args[1].(string))
-	tmpl, err := template.New("file").Funcs(sprig.FuncMap()).Parse(string(input))
-	if err != nil {
-		return "", err
-	}
+			input := []byte(args[1].(string))
+			tmpl, err := template.New("file").Funcs(sprig.FuncMap()).Parse(string(input))
+			if err != nil {
+				return "", err
+			}
 
-	var buff bytes.Buffer
-	err = tmpl.Execute(&buff, config)
-	return buff.String(), err
+			var buff bytes.Buffer
+			err = tmpl.Execute(&buff, config)
+			return buff.String(), err
+		}}
 }
 
 // Escapes a string for use in regex
+//
 // Inputs: "str"
-func nativeRegexEscape(args []interface{}) (res interface{}, err error) {
-	return regexp.QuoteMeta(args[0].(string)), nil
+func NativeRegexEscape() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "escapeStringRegex",
+		Params: []jsonnetAst.Identifier{"str"},
+		Func: func(args []interface{}) (res interface{}, err error) {
+			return regexp.QuoteMeta(args[0].(string)), nil
+		}}
 }
 
 // Matches a string against a regex pattern
+//
 // Inputs: "regex", "string"
-func nativeRegexMatch(args []interface{}) (res interface{}, err error) {
-	return regexp.MatchString(args[0].(string), args[1].(string))
+func NativeRegexMatch() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "regexMatch",
+		Params: []jsonnetAst.Identifier{"regex", "string"},
+		Func: func(args []interface{}) (res interface{}, err error) {
+			return regexp.MatchString(args[0].(string), args[1].(string))
+		}}
 }
 
 // Substitutes a regex pattern in a string with another string
+//
 // Inputs: "regex", "src", "repl"
-func nativeRegexSubst(args []interface{}) (res interface{}, err error) {
-	regex := args[0].(string)
-	src := args[1].(string)
-	repl := args[2].(string)
+func NativeRegexSubst() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "regexSubst",
+		Params: []jsonnetAst.Identifier{"regex", "src", "repl"},
+		Func: func(args []interface{}) (res interface{}, err error) {
+			regex := args[0].(string)
+			src := args[1].(string)
+			repl := args[2].(string)
 
-	r, err := regexp.Compile(regex)
-	if err != nil {
-		return "", err
-	}
-	return r.ReplaceAllString(src, repl), nil
+			r, err := regexp.Compile(regex)
+			if err != nil {
+				return "", err
+			}
+			return r.ReplaceAllString(src, repl), nil
+		}}
 }
 
 // Allows converting a docker-compose file string into kubernetes resources using kompose
+//
 // Source: https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
-// Inputs: "input filename", "outdir", "componentConfig"
-// Filename must be one of: “
-func nativeKompose(args []interface{}) (res interface{}, err error) {
-	input := args[0].(string)
-	outDir := args[1].(string)
-	var componentSpec types.Kr8ComponentJsonnet
-	if err := json.Unmarshal([]byte(args[2].(string)), componentSpec); err != nil {
-		return "", err
-	}
-	// Set the output controller ("deployment"|"daemonSet"|"replicationController")
-	// depType := "deployment"
+//
+// Filename must be in the format `[docker-]compose.ym[a]l`
+//
+// Inputs: `input filename`, `outdir`, `componentConfig`
+func NativeKompose() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "kompose",
+		Params: []jsonnetAst.Identifier{"input", "komposeOpts"},
+		Func: func(args []interface{}) (res interface{}, err error) {
+			input := args[0].(string)
+			outDir := args[1].(string)
+			var componentSpec types.Kr8ComponentJsonnet
+			if err := json.Unmarshal([]byte(args[2].(string)), &componentSpec); err != nil {
+				return "", err
+			}
 
-	options := types.Create([]string{input}, outDir, componentSpec)
-	if err := options.Validate(); err != nil {
-		return "", err
-	}
-	return options.Convert()
+			options := types.Create([]string{input}, outDir, componentSpec)
+			if err := options.Validate(); err != nil {
+				return "", err
+			}
+			return options.Convert()
+		}}
 }

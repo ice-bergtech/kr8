@@ -76,7 +76,7 @@ var getClustersCmd = &cobra.Command{
 	Long:  "Get all clusters defined in kr8 config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		clusters, err := util.GetClusters(rootConfig.ClusterDir)
+		clusters, err := util.GetClusterFilenames(rootConfig.ClusterDir)
 		util.FatalErrorCheck(err, "Error getting clusters")
 
 		if cmdGetFlags.NoTable {
@@ -113,14 +113,14 @@ var getComponentsCmd = &cobra.Command{
 
 		var params []string
 		if cmdGetFlags.Cluster != "" {
-			clusterPath := util.GetCluster(rootConfig.ClusterDir, cmdGetFlags.Cluster)
-			params = util.GetClusterParams(rootConfig.ClusterDir, clusterPath)
+			clusterPath := util.GetClusterPaths(rootConfig.ClusterDir, cmdGetFlags.Cluster)
+			params = util.GetClusterParamsFilenames(rootConfig.ClusterDir, clusterPath)
 		}
 		if cmdGetFlags.ClusterParams != "" {
 			params = append(params, cmdGetFlags.ClusterParams)
 		}
 
-		j := jvm.RenderJsonnet(rootConfig.VMConfig, params, "._components", true, "", "components")
+		j := jvm.JsonnetRenderFiles(rootConfig.VMConfig, params, "._components", true, "", "components")
 		if cmdGetFlags.ParamField != "" {
 			value := gjson.Get(j, cmdGetFlags.ParamField)
 			if value.String() == "" {
@@ -150,7 +150,7 @@ var getParamsCmd = &cobra.Command{
 			cList = append(cList, cmdGetFlags.Component)
 		}
 
-		params := jvm.RenderClusterParams(rootConfig.VMConfig, cmdGetFlags.Cluster, cList, cmdGetFlags.ClusterParams, true)
+		params := jvm.JsonnetRenderClusterParams(rootConfig.VMConfig, cmdGetFlags.Cluster, cList, cmdGetFlags.ClusterParams, true)
 
 		// if we're not filtering the output, just pretty print and finish
 		if cmdGetFlags.ParamField == "" {

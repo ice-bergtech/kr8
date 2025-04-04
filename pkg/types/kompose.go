@@ -7,7 +7,8 @@ import (
 	"github.com/kubernetes/kompose/pkg/kobject"
 )
 
-// A struct describing a compose file that will be processed by kompose to produce kubernetes manifests
+// A struct describing a compose file that will be processed by kompose to produce kubernetes manifests.
+//
 // Based on https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
 type KomposeConvertOptions struct {
 	// Kubernetes: Set the output controller ("deployment"|"daemonSet"|"replicationController")
@@ -16,7 +17,8 @@ type KomposeConvertOptions struct {
 	// The kubecfg (?) profile to use, can use multiple profiles
 	Profiles []string
 
-	// List of compose file filenames
+	// List of compose file filenames.
+	// Filenames should be in the format `[docker-]compose.ym[a]l`
 	InputFiles []string
 	// Specify a file name or directory to save objects to (if path does not exist, a file will be created)
 	OutFile string
@@ -111,9 +113,13 @@ func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *Kompos
 }
 
 // Generates a ConvertOptions struct that kompose expects from our commented KomposeConvertOptions
+//
+// References:
+//
 // https://pkg.go.dev/github.com/kubernetes/kompose@v1.35.0/pkg/kobject#ConvertOptions
-func (k KomposeConvertOptions) genKomposePkgOpts() *kobject.ConvertOptions {
-	// https://pkg.go.dev/github.com/kubernetes/kompose@v1.35.0/pkg/kobject#ConvertOptions
+//
+// https://github.com/kubernetes/kompose/blob/v1.35.0/pkg/app/app.go#L166
+func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions {
 	var resultOpts kobject.ConvertOptions
 
 	resultOpts.ToStdout = k.GenerateToStdout
@@ -181,6 +187,7 @@ func (k KomposeConvertOptions) genKomposePkgOpts() *kobject.ConvertOptions {
 	return &resultOpts
 }
 
+// Validates a set of options for converting a Kubernetes manifest to a Docker Compose file.
 func (k KomposeConvertOptions) Validate() error {
 	if k.OutFile == "" {
 		return fmt.Errorf("OutFile must be set")
@@ -189,9 +196,10 @@ func (k KomposeConvertOptions) Validate() error {
 		return fmt.Errorf("InputFiles must be set")
 	}
 	// Makes sure the input files are present and are named in a compose-file way
-	return kompose.ValidateComposeFile(k.genKomposePkgOpts())
+	return kompose.ValidateComposeFile(k.GenKomposePkgOpts())
 }
 
+// Converts a Docker Compose file described by k into a set of kubernetes manifests.
 func (k KomposeConvertOptions) Convert() (interface{}, error) {
-	return kompose.Convert(*k.genKomposePkgOpts())
+	return kompose.Convert(*k.GenKomposePkgOpts())
 }

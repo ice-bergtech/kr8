@@ -4,6 +4,8 @@
 import "github.com/ice-bergtech/kr8/pkg/util"
 ```
 
+Utility functions for directories and files
+
 ## Index
 
 - [func CalculateClusterIncludesExcludes\(input map\[string\]string, filters PathFilterOptions\) \[\]string](<#CalculateClusterIncludesExcludes>)
@@ -15,18 +17,18 @@ import "github.com/ice-bergtech/kr8/pkg/util"
 - [func FilterItems\(input map\[string\]string, pf PathFilterOptions\) \[\]string](<#FilterItems>)
 - [func FormatJsonnetString\(input string\) \(string, error\)](<#FormatJsonnetString>)
 - [func FormatJsonnetStringCustom\(input string, opts formatter.Options\) \(string, error\)](<#FormatJsonnetStringCustom>)
-- [func GetCluster\(searchDir string, clusterName string\) string](<#GetCluster>)
-- [func GetClusterParams\(basePath string, targetPath string\) \[\]string](<#GetClusterParams>)
-- [func GetClusters\(searchDir string\) \(\[\]types.Kr8Cluster, error\)](<#GetClusters>)
+- [func GetClusterFilenames\(searchDir string\) \(\[\]types.Kr8Cluster, error\)](<#GetClusterFilenames>)
+- [func GetClusterParamsFilenames\(basePath string, targetPath string\) \[\]string](<#GetClusterParamsFilenames>)
+- [func GetClusterPaths\(searchDir string, clusterName string\) string](<#GetClusterPaths>)
 - [func GetDefaultFormatOptions\(\) formatter.Options](<#GetDefaultFormatOptions>)
 - [func JsonnetPrint\(output string, format string, color bool\)](<#JsonnetPrint>)
 - [func Pretty\(input string, colorOutput bool\) string](<#Pretty>)
-- [func WriteObjToJsonFile\(filename string, path string, objStruct interface\{\}\) error](<#WriteObjToJsonFile>)
+- [func WriteObjToJsonFile\(filename string, path string, objStruct interface\{\}\) \(error, string\)](<#WriteObjToJsonFile>)
 - [type PathFilterOptions](<#PathFilterOptions>)
 
 
 <a name="CalculateClusterIncludesExcludes"></a>
-## func [CalculateClusterIncludesExcludes](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L105>)
+## func [CalculateClusterIncludesExcludes](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L113>)
 
 ```go
 func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string
@@ -35,7 +37,7 @@ func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilte
 Using the allClusterParams variable and command flags to create a list of clusters to generate Clusters can be filtered with "=" for equality or "\~" for regex match
 
 <a name="CheckObjectMatch"></a>
-## func [CheckObjectMatch](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L46>)
+## func [CheckObjectMatch](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L52>)
 
 ```go
 func CheckObjectMatch(input gjson.Result, filterString string) bool
@@ -50,16 +52,16 @@ Checks if a input object matches a filter string. The filter string can be an eq
 func Colorize(s interface{}, c int, disabled bool) string
 ```
 
-colorize function from zerolog console.go file to replicate their coloring functionality. https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389
+Colorize function from zerolog console.go file to replicate their coloring functionality. Source: https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389
 
 <a name="FatalErrorCheck"></a>
-## func [FatalErrorCheck](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L97>)
+## func [FatalErrorCheck](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L105>)
 
 ```go
 func FatalErrorCheck(err error, message string)
 ```
 
-util.FatalErrorCheck is a helper function that logs an error and exits the program if the error is not nil. Saves 3 lines per use and centralizes fatal errors for rewriting
+Logs an error and exits the program if the error is not nil. Saves 3 lines per use and centralizes fatal errors for rewriting
 
 <a name="FetchRepoUrl"></a>
 ## func [FetchRepoUrl](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/remote.go#L12>)
@@ -68,7 +70,7 @@ util.FatalErrorCheck is a helper function that logs an error and exits the progr
 func FetchRepoUrl(url string, destination string, performFetch bool)
 ```
 
-Fetch a git repo from a url and clone it to a destination directory if the performFetch flag is false, it will log the command that would be run and return without doing anything
+Fetch a git repo from a url and clone it to a destination directory. If the performFetch flag is false, it will log the command that would be run and return without doing anything.
 
 <a name="Filter"></a>
 ## func [Filter](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L13>)
@@ -80,13 +82,13 @@ func Filter(vs []string, f func(string) bool) []string
 Filter returns a new slice containing only the elements that satisfy the predicate function. From https://gobyexample.com/collection-functions
 
 <a name="FilterItems"></a>
-## func [FilterItems](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L63>)
+## func [FilterItems](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L71>)
 
 ```go
 func FilterItems(input map[string]string, pf PathFilterOptions) []string
 ```
 
-
+Given a map of string, filter them based on the provided options. The map value is parsed as a gjson result and then checked against the provided options.
 
 <a name="FormatJsonnetString"></a>
 ## func [FormatJsonnetString](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L92>)
@@ -106,32 +108,32 @@ func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, er
 
 Formats a jsonnet string using custom options
 
-<a name="GetCluster"></a>
-## func [GetCluster](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/directories.go#L43>)
+<a name="GetClusterFilenames"></a>
+## func [GetClusterFilenames](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/directories.go#L16>)
 
 ```go
-func GetCluster(searchDir string, clusterName string) string
+func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error)
 ```
 
+Get a list of cluster from within a directory. Walks the directory tree, creating a types.Kr8Cluster for each cluster.jsonnet file found.
 
-
-<a name="GetClusterParams"></a>
-## func [GetClusterParams](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/directories.go#L67>)
+<a name="GetClusterParamsFilenames"></a>
+## func [GetClusterParamsFilenames](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/directories.go#L74>)
 
 ```go
-func GetClusterParams(basePath string, targetPath string) []string
+func GetClusterParamsFilenames(basePath string, targetPath string) []string
 ```
 
+Get all cluster parameters within a directory. Walks through the directory hierarchy and returns all paths to \`params.jsonnet\` files.
 
-
-<a name="GetClusters"></a>
-## func [GetClusters](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/directories.go#L13>)
+<a name="GetClusterPaths"></a>
+## func [GetClusterPaths](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/directories.go#L48>)
 
 ```go
-func GetClusters(searchDir string) ([]types.Kr8Cluster, error)
+func GetClusterPaths(searchDir string, clusterName string) string
 ```
 
-
+Get a specific cluster within a directory by name. Returns the path to the cluster.
 
 <a name="GetDefaultFormatOptions"></a>
 ## func [GetDefaultFormatOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L75>)
@@ -149,7 +151,7 @@ Configures the default options for the jsonnet formatter
 func JsonnetPrint(output string, format string, color bool)
 ```
 
-Print the jsonnet output in the specified format allows for: yaml, stream, json
+Print the jsonnet output in the specified format. Acceptable formats are: yaml, stream, json
 
 <a name="Pretty"></a>
 ## func [Pretty](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L17>)
@@ -161,37 +163,43 @@ func Pretty(input string, colorOutput bool) string
 Pretty formats the input jsonnet string with indentation and optional color output.
 
 <a name="WriteObjToJsonFile"></a>
-## func [WriteObjToJsonFile](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L102>)
+## func [WriteObjToJsonFile](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L103>)
 
 ```go
-func WriteObjToJsonFile(filename string, path string, objStruct interface{}) error
+func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (error, string)
 ```
 
-Write out a struct to a specified path and file
+Write out a struct to a specified path and file. If successful, returns what was written. If not successful, returns an error.
 
 <a name="PathFilterOptions"></a>
-## type [PathFilterOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L24-L42>)
+## type [PathFilterOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L24-L48>)
 
 Fill with string to include and exclude, using kr8's special parsing
 
 ```go
 type PathFilterOptions struct {
     // Comma-separated list of include filters
-    // Filters can include regex filters using the "~" operator. For example, "name~^myregex$"
-    // Filters can include equality matches using the "=" operator. For example, "name=myvalue"
-    // Filters can include substring matches using the "=" operator. For example, "name=myvalue"
+    // Filters can include:
+    //
+    // regex filters using the "~" operator. For example, "name~^myregex$"
+    // equality matches using the "=" operator. For example, "name=myvalue"
+    // substring matches using the "=" operator. For example, "name=myvalue"
+    //
     // If no operator is provided, it is treated as a substring match against the "name" field.
     Includes string
-    // Comma-separated list of exclude filters
-    // Filters can include regex filters using the "~" operator. For example, "name~^myregex$"
-    // Filters can include equality matches using the "=" operator. For example, "name=myvalue"
-    // Filters can include substring matches using the "=" operator. For example, "name=myvalue"
+    // Comma-separated list of exclude filters.
+    // Filters can include:
+    //
+    // regex filters using the "~" operator. For example, "name~^myregex$"
+    // equality matches using the "=" operator. For example, "name=myvalue"
+    // substring matches using the "=" operator. For example, "name=myvalue"
+    //
     // If no operator is provided, it is treated as a substring match against the "name" field.
     Excludes string
-    // Comma separated cluster names
-    // Filters keys on exact match
+    // Comma separated cluster names.
+    // Filters keys on exact match.
     Clusters string
-    // Comma separated component names
+    // Comma separated component names.
     Components string
 }
 ```
