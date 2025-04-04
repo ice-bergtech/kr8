@@ -1,8 +1,9 @@
 package types
 
 import (
-	"encoding/json"
 	"fmt"
+
+	"encoding/json"
 
 	kompose "github.com/kubernetes/kompose/pkg/app"
 	"github.com/kubernetes/kompose/pkg/kobject"
@@ -15,6 +16,10 @@ import (
 	"github.com/kubernetes/kompose/pkg/transformer"
 	"github.com/kubernetes/kompose/pkg/transformer/kubernetes"
 	"github.com/kubernetes/kompose/pkg/transformer/openshift"
+
+	"k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 )
 
 // A struct describing a compose file that will be processed by kompose to produce kubernetes manifests.
@@ -211,83 +216,12 @@ func (k KomposeConvertOptions) Validate() error {
 
 // Converts a Docker Compose file described by k into a set of kubernetes manifests.
 func (k KomposeConvertOptions) Convert() (interface{}, error) {
-	return Convert(*k.GenKomposePkgOpts())
+	return convertComposeToK8s(*k.GenKomposePkgOpts())
 }
 
 // Convert transforms docker compose or dab file to k8s objects
-func Convert(opt kobject.ConvertOptions) (interface{}, error) {
-	// loader parses input from file into komposeObject.
-	l, err := loader.GetLoader("compose")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	komposeObject := kobject.KomposeObject{
-		ServiceConfigs: make(map[string]kobject.ServiceConfig),
-	}
-	komposeObject, err = l.LoadFile(opt.InputFiles, opt.Profiles)
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-
-	komposeObject.Namespace = opt.Namespace
-
-	// Get the directory of the compose file
-	workDir, err := transformer.GetComposeFileDir(opt.InputFiles)
-	if err != nil {
-		log.Fatalf("Unable to get compose file directory: %s", err)
-	}
-
-	// convert env_file from absolute to relative path
-	for _, service := range komposeObject.ServiceConfigs {
-		if len(service.EnvFile) <= 0 {
-			continue
-		}
-		for i, envFile := range service.EnvFile {
-			if !filepath.IsAbs(envFile) {
-				continue
-			}
-
-			relPath, err := filepath.Rel(workDir, envFile)
-			if err != nil {
-				log.Fatalf(err.Error())
-			}
-
-			service.EnvFile[i] = filepath.ToSlash(relPath)
-		}
-	}
-
-	// Get a transformer that maps komposeObject to provider's primitives
-	t := getTransformer(opt)
-
-	// Do the transformation
-	objects, err := t.Transform(komposeObject, opt)
-
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-
-	list := []interface{}{}
-	for _, obj := range objects {
-		jsonBytes, err := json.Marshal(obj)
-		list = append(list, string(jsonBytes))
-		if err != nil {
-			log.Fatalf("Failed to marshal object to JSON: %v", err)
-		}
-		//fmt.Println(string(jsonBytes))
-	}
-
-	result := make(map[string]interface{})
-	result["objects"] = list
-	return result, nil
-
-	// // Print output
-	// err = kubernetes.PrintList(objects, opt)
-	// if err != nil {
-	// 	log.Fatalf(err.Error())
-	// }
-	// return objects, err
-}
+//
+// Based on https://github.com/kubernetes/kompose/blob/main/pkg/app/app.go#L209
 
 // Convenience method to return the appropriate Transformer based on
 // what provider we are using.
@@ -302,4 +236,52 @@ func getTransformer(opt kobject.ConvertOptions) transformer.Transformer {
 		t = &openshift.OpenShift{Kubernetes: kubernetes.Kubernetes{Opt: opt}}
 	}
 	return t
+}
+
+func convertComposeToK8s(opt kobject.ConvertOptions) ([]interface{}, error) {
+	loader, err := loader.GetLoader("compose")
+	if err != nil {
+		return nil, err
+	}
+	t := getTransformer(opt)
+
+	// Load the docker-compose file
+	objects, err := loader.LoadFile(opt.InputFiles, []string{})
+	if err != nil {
+		return nil, err
+	}
+
+	// Transform the loaded objects into Kubernetes objects
+	k8sObjects, err := t.Transform(objects, opt)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the Kubernetes objects to a format that Jsonnet can use
+	//var result []map[string]interface{}
+	var result []interface{}
+	// Create a Scheme
+	scheme := runtime.NewScheme()
+	_ = v1.AddToScheme(scheme)
+
+	// Create a JSON serializer
+	jsonSerializer := sjson.NewSerializerWithOptions(
+		sjson.SimpleMetaFactory{}, scheme, scheme,
+		sjson.SerializerOptions{Yaml: false, Pretty: false, Strict: false},
+	)
+	for _, obj := range k8sObjects {
+		jsonObj, err := runtime.Encode(jsonSerializer, obj)
+		if err != nil {
+			return nil, err
+		}
+
+		var mapObj map[string]interface{}
+		if err := json.Unmarshal(jsonObj, &mapObj); err != nil {
+			return nil, err
+		}
+
+		result = append(result, mapObj)
+	}
+
+	return result, nil
 }
