@@ -24,6 +24,7 @@ package jvm
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"regexp"
 	"text/template"
 
@@ -31,6 +32,8 @@ import (
 	jsonnet "github.com/google/go-jsonnet"
 	jsonnetAst "github.com/google/go-jsonnet/ast"
 	"github.com/grafana/tanka/pkg/helm"
+	"github.com/rs/zerolog/log"
+	"k8s.io/apimachinery/pkg/runtime"
 
 	types "github.com/ice-bergtech/kr8/pkg/types"
 )
@@ -142,9 +145,9 @@ func NativeRegexSubst() *jsonnet.NativeFunction {
 //
 // Source: https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
 //
-// Filename must be in the format `[docker-]compose.ym[a]l`
+// Files in the directory must be in the format `[docker-]compose.ym[a]l`
 //
-// Inputs: `input filename`, `outdir`, `componentConfig`
+// Inputs: `inPath`, `outPath`, `opts`
 func NativeKompose() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "kompose",
