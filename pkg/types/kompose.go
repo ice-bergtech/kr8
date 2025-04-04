@@ -1,17 +1,11 @@
 package types
 
 import (
-	"fmt"
-
 	"encoding/json"
+	"fmt"
 
 	kompose "github.com/kubernetes/kompose/pkg/app"
 	"github.com/kubernetes/kompose/pkg/kobject"
-
-	"path/filepath"
-
-	log "github.com/sirupsen/logrus"
-
 	"github.com/kubernetes/kompose/pkg/loader"
 	"github.com/kubernetes/kompose/pkg/transformer"
 	"github.com/kubernetes/kompose/pkg/transformer/kubernetes"
@@ -110,7 +104,7 @@ func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *Kompos
 		Namespace:   cmp.Namespace,
 
 		ImagePush:    false,
-		GenerateJSON: true,
+		GenerateJSON: false,
 		GenerateYaml: false,
 
 		EmptyVols:       false,
@@ -219,10 +213,6 @@ func (k KomposeConvertOptions) Convert() (interface{}, error) {
 	return convertComposeToK8s(*k.GenKomposePkgOpts())
 }
 
-// Convert transforms docker compose or dab file to k8s objects
-//
-// Based on https://github.com/kubernetes/kompose/blob/main/pkg/app/app.go#L209
-
 // Convenience method to return the appropriate Transformer based on
 // what provider we are using.
 func getTransformer(opt kobject.ConvertOptions) transformer.Transformer {
@@ -238,6 +228,9 @@ func getTransformer(opt kobject.ConvertOptions) transformer.Transformer {
 	return t
 }
 
+// Convert transforms docker compose or dab file to k8s objects
+//
+// Based on https://github.com/kubernetes/kompose/blob/main/pkg/app/app.go#L209
 func convertComposeToK8s(opt kobject.ConvertOptions) ([]interface{}, error) {
 	loader, err := loader.GetLoader("compose")
 	if err != nil {
