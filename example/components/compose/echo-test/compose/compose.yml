@@ -1,0 +1,18 @@
+services:
+
+  http-echo:
+    image: hashicorp/http-echo
+    # restart: unless-stopped
+    command: "-text=http-echo"
+    expose:
+      - 5678
+  test:
+    image: hashicorp/http-echo
+    command: "-text=test 1"
+    expose:
+      - 5678
+  test2:
+    image: hashicorp/http-echo
+    command: "-listen=:8080 -text='hello world test2'"
+    expose:
+      - 8080
