@@ -33,7 +33,7 @@ kr8 init repo [flags] dir
   -i, --interactive            Initialize a resource interactivly
   -J, --jpath stringArray      Directories to add to jsonnet include path. Repeat arg for multiple directories
   -L, --loglevel string        set log level (default "info")
-      --parallel int           parallelism - defaults to GOMAXPROCS (default 32)
+      --parallel int           parallelism - defaults to runtime.GOMAXPROCS(0) (default -1)
 ```
 
 ### SEE ALSO

@@ -62,7 +62,7 @@ func init() {
 	RootCmd.PersistentFlags().BoolVar(&rootConfig.Color, "color", true, "enable colorized output (default). Set to false to disable")
 	RootCmd.PersistentFlags().StringArrayVarP(&rootConfig.VMConfig.Jpaths, "jpath", "J", nil, "Directories to add to jsonnet include path. Repeat arg for multiple directories")
 	RootCmd.PersistentFlags().StringSliceVar(&rootConfig.VMConfig.ExtVars, "ext-str-file", nil, "Set jsonnet extvar from file contents")
-	RootCmd.PersistentFlags().IntVarP(&rootConfig.Parallel, "parallel", "", runtime.GOMAXPROCS(0), "parallelism - defaults to GOMAXPROCS")
+	RootCmd.PersistentFlags().IntVarP(&rootConfig.Parallel, "parallel", "", -1, "parallelism - defaults to runtime.GOMAXPROCS(0)")
 	RootCmd.PersistentFlags().StringVarP(&rootConfig.ConfigFile, "config", "", "", "A config file with kr8 configuration")
 }
 
@@ -91,6 +91,10 @@ func initConfig() {
 		default:
 			log.Fatal().Msg("invalid log level: " + rootConfig.LogLevel)
 		}
+	}
+
+	if rootConfig.Parallel == -1 {
+		rootConfig.Parallel = runtime.GOMAXPROCS(0)
 	}
 
 	viper.SetConfigName(".kr8") // name of config file (without extension)
