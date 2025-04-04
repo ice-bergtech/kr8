@@ -1,0 +1,50 @@
+{
+  "kind": "Deployment",
+  "apiVersion": "apps/v1",
+  "metadata": {
+    "name": "http-echo",
+    "namespace": "echo-test",
+    "creationTimestamp": null,
+    "labels": {
+      "io.kompose.service": "http-echo"
+    }
+  },
+  "spec": {
+    "replicas": 1,
+    "selector": {
+      "matchLabels": {
+        "io.kompose.service": "http-echo"
+      }
+    },
+    "template": {
+      "metadata": {
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.network/compose-default": "true",
+          "io.kompose.service": "http-echo"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "http-echo",
+            "image": "hashicorp/http-echo",
+            "args": [
+              "-text=http-echo"
+            ],
+            "ports": [
+              {
+                "containerPort": 5678,
+                "protocol": "TCP"
+              }
+            ],
+            "resources": {}
+          }
+        ],
+        "restartPolicy": "Always"
+      }
+    },
+    "strategy": {}
+  },
+  "status": {}
+}

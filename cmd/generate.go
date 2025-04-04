@@ -247,6 +247,7 @@ func genProcessComponent(vmconfig types.VMConfig, componentName string, kr8Spec 
 
 	// it's faster to create this VM for each component, rather than re-use
 	vm, _ := jvm.JsonnetVM(vmconfig)
+	jvm.RegisterNativeFuncs(vm)
 	vm.ExtCode("kr8_cluster", "std.prune("+config+"._cluster)")
 	//vm.ExtCode("kr8_components", "std.prune("+config+"._components)")
 	if kr8Spec.PostProcessor != "" {

@@ -1,0 +1,29 @@
+{
+  "kind": "NetworkPolicy",
+  "apiVersion": "networking.k8s.io/v1",
+  "metadata": {
+    "name": "compose-default",
+    "namespace": "echo-test",
+    "creationTimestamp": null
+  },
+  "spec": {
+    "podSelector": {
+      "matchLabels": {
+        "io.kompose.network/compose-default": "true"
+      }
+    },
+    "ingress": [
+      {
+        "from": [
+          {
+            "podSelector": {
+              "matchLabels": {
+                "io.kompose.network/compose-default": "true"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

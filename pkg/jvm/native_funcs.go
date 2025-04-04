@@ -25,6 +25,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"path/filepath"
 	"regexp"
 	"text/template"
 
@@ -32,8 +33,8 @@ import (
 	jsonnet "github.com/google/go-jsonnet"
 	jsonnetAst "github.com/google/go-jsonnet/ast"
 	"github.com/grafana/tanka/pkg/helm"
+
 	"github.com/rs/zerolog/log"
-	"k8s.io/apimachinery/pkg/runtime"
 
 	types "github.com/ice-bergtech/kr8/pkg/types"
 )
@@ -147,23 +148,78 @@ func NativeRegexSubst() *jsonnet.NativeFunction {
 //
 // Files in the directory must be in the format `[docker-]compose.ym[a]l`
 //
-// Inputs: `inPath`, `outPath`, `opts`
+// Inputs: `inFile`, `outPath`, `opts`
 func NativeKompose() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
-		Name:   "kompose",
-		Params: []jsonnetAst.Identifier{"input", "komposeOpts"},
-		Func: func(args []interface{}) (res interface{}, err error) {
-			input := args[0].(string)
-			outDir := args[1].(string)
-			var componentSpec types.Kr8ComponentJsonnet
-			if err := json.Unmarshal([]byte(args[2].(string)), &componentSpec); err != nil {
+		Name:   "komposeFile",
+		Params: jsonnetAst.Identifiers{"inFile", "outPath", "opts"},
+		Func: func(args []interface{}) (interface{}, error) {
+			inFile, ok := args[0].(string)
+			log.Debug().Msg("inFile: " + inFile)
+			if !ok {
+				return nil, fmt.Errorf("first argument 'inFile' must be of 'string' type, got '%T' instead", args[0])
+			}
+
+			outPath, ok := args[1].(string)
+			log.Debug().Msg("outPath: " + outPath)
+			if !ok {
+				return nil, fmt.Errorf("second argument 'outPath' must be of 'string' type, got '%T' instead", args[1])
+			}
+
+			opts, err := parseOpts(args[2])
+			if err != nil {
 				return "", err
 			}
 
-			options := types.Create([]string{input}, outDir, componentSpec)
+			root := filepath.Dir(opts.CalledFrom)
+
+			options := types.Create([]string{root + "/" + inFile}, root+"/"+outPath, *opts)
 			if err := options.Validate(); err != nil {
 				return "", err
 			}
-			return options.Convert()
-		}}
+			//var result []string
+			// render resources
+			list, _ := options.Convert()
+			//thing := runtime.NewSerializer(runtime.CodecFactory{CodecForVersion: runtime.NewCodecForInternalVersion})
+
+			// //thing.Encode(list, &bytes)
+			// for _, i := range list.([]runtime.Object) {
+			// 	converter := conversion.NewConverter(conversion.DefaultNameFunc)
+			// 	var bytes string
+			// 	converter.Convert(&i, &result, nil)
+			// 	// 	// var bytes bytes.Buffer
+			// 	// 	// runtime.NewEn
+			// 	// 	// kSerialize.NewEncoder(&bytes, nil).Encode(i)
+			// 	// bytes, err := json.Unmarshal(i)
+			// 	// if err != nil {
+			// 	// 	log.Error().Err(err).Msg("Error marshalling runtime object to string")
+			// 	// }
+			// 	result = append(result, bytes)
+			// }
+			return list, nil
+		},
+	}
+}
+
+func parseOpts(data interface{}) (*types.Kr8ComponentJsonnet, error) {
+	c, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+
+	opts := types.Kr8ComponentJsonnet{}
+
+	if err := json.Unmarshal(c, &opts); err != nil {
+		return nil, err
+	}
+
+	// Charts are only allowed at relative paths. Use conf.CalledFrom to find the callers directory
+	if opts.Namespace == "" {
+		return nil, fmt.Errorf("kompose: 'opts.Namespace' is unset or empty.")
+	}
+	if opts.CalledFrom == "" {
+		return nil, fmt.Errorf("kompose: 'opts.CalledFrom' is unset or empty.")
+	}
+
+	return &opts, nil
 }

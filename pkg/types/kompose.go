@@ -1,10 +1,20 @@
 package types
 
 import (
+	"encoding/json"
 	"fmt"
 
 	kompose "github.com/kubernetes/kompose/pkg/app"
 	"github.com/kubernetes/kompose/pkg/kobject"
+
+	"path/filepath"
+
+	log "github.com/sirupsen/logrus"
+
+	"github.com/kubernetes/kompose/pkg/loader"
+	"github.com/kubernetes/kompose/pkg/transformer"
+	"github.com/kubernetes/kompose/pkg/transformer/kubernetes"
+	"github.com/kubernetes/kompose/pkg/transformer/openshift"
 )
 
 // A struct describing a compose file that will be processed by kompose to produce kubernetes manifests.
@@ -201,5 +211,95 @@ func (k KomposeConvertOptions) Validate() error {
 
 // Converts a Docker Compose file described by k into a set of kubernetes manifests.
 func (k KomposeConvertOptions) Convert() (interface{}, error) {
-	return kompose.Convert(*k.GenKomposePkgOpts())
+	return Convert(*k.GenKomposePkgOpts())
+}
+
+// Convert transforms docker compose or dab file to k8s objects
+func Convert(opt kobject.ConvertOptions) (interface{}, error) {
+	// loader parses input from file into komposeObject.
+	l, err := loader.GetLoader("compose")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	komposeObject := kobject.KomposeObject{
+		ServiceConfigs: make(map[string]kobject.ServiceConfig),
+	}
+	komposeObject, err = l.LoadFile(opt.InputFiles, opt.Profiles)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+
+	komposeObject.Namespace = opt.Namespace
+
+	// Get the directory of the compose file
+	workDir, err := transformer.GetComposeFileDir(opt.InputFiles)
+	if err != nil {
+		log.Fatalf("Unable to get compose file directory: %s", err)
+	}
+
+	// convert env_file from absolute to relative path
+	for _, service := range komposeObject.ServiceConfigs {
+		if len(service.EnvFile) <= 0 {
+			continue
+		}
+		for i, envFile := range service.EnvFile {
+			if !filepath.IsAbs(envFile) {
+				continue
+			}
+
+			relPath, err := filepath.Rel(workDir, envFile)
+			if err != nil {
+				log.Fatalf(err.Error())
+			}
+
+			service.EnvFile[i] = filepath.ToSlash(relPath)
+		}
+	}
+
+	// Get a transformer that maps komposeObject to provider's primitives
+	t := getTransformer(opt)
+
+	// Do the transformation
+	objects, err := t.Transform(komposeObject, opt)
+
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+
+	list := []interface{}{}
+	for _, obj := range objects {
+		jsonBytes, err := json.Marshal(obj)
+		list = append(list, string(jsonBytes))
+		if err != nil {
+			log.Fatalf("Failed to marshal object to JSON: %v", err)
+		}
+		//fmt.Println(string(jsonBytes))
+	}
+
+	result := make(map[string]interface{})
+	result["objects"] = list
+	return result, nil
+
+	// // Print output
+	// err = kubernetes.PrintList(objects, opt)
+	// if err != nil {
+	// 	log.Fatalf(err.Error())
+	// }
+	// return objects, err
+}
+
+// Convenience method to return the appropriate Transformer based on
+// what provider we are using.
+func getTransformer(opt kobject.ConvertOptions) transformer.Transformer {
+	var t transformer.Transformer
+	if opt.Provider == "kubernetes" {
+		// Create/Init new Kubernetes object with CLI opts
+		t = &kubernetes.Kubernetes{Opt: opt}
+	} else {
+		// Create/Init new OpenShift object that is initialized with a newly
+		// created Kubernetes object. Openshift inherits from Kubernetes
+		t = &openshift.OpenShift{Kubernetes: kubernetes.Kubernetes{Opt: opt}}
+	}
+	return t
 }

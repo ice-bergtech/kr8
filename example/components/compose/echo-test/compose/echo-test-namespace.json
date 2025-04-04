@@ -1,0 +1,11 @@
+{
+  "kind": "Namespace",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "echo-test",
+    "namespace": "echo-test",
+    "creationTimestamp": null
+  },
+  "spec": {},
+  "status": {}
+}

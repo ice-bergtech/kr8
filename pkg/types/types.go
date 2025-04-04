@@ -88,6 +88,9 @@ type Kr8ComponentJsonnet struct {
 	ReleaseName string `json:"release_name"`
 	// Component version string (optional)
 	Version string `json:"version"`
+	// Relative directory where the component's resources are located (required).
+	// Usually std.thisFile.
+	CalledFrom string `json:"called_from"`
 }
 
 // The kr8_spec object in a cluster config file

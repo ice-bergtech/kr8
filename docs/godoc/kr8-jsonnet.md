@@ -68,7 +68,7 @@ func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error)
 Create a Jsonnet VM to run commands in
 
 <a name="NativeHelmTemplate"></a>
-## func [NativeHelmTemplate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jvm/native_funcs.go#L65>)
+## func [NativeHelmTemplate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jvm/native_funcs.go#L69>)
 
 ```go
 func NativeHelmTemplate() *jsonnet.NativeFunction
@@ -79,7 +79,7 @@ Allows executing helm template to process a helm chart and make available to kr8
 Source: https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L23
 
 <a name="NativeKompose"></a>
-## func [NativeKompose](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jvm/native_funcs.go#L148>)
+## func [NativeKompose](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jvm/native_funcs.go#L152>)
 
 ```go
 func NativeKompose() *jsonnet.NativeFunction
@@ -89,12 +89,12 @@ Allows converting a docker\-compose file string into kubernetes resources using 
 
 Source: https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
 
-Filename must be in the format \`\[docker\-\]compose.ym\[a\]l\`
+Files in the directory must be in the format \`\[docker\-\]compose.ym\[a\]l\`
 
-Inputs: \`input filename\`, \`outdir\`, \`componentConfig\`
+Inputs: \`inFile\`, \`outPath\`, \`opts\`
 
 <a name="NativeRegexEscape"></a>
-## func [NativeRegexEscape](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jvm/native_funcs.go#L100>)
+## func [NativeRegexEscape](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jvm/native_funcs.go#L104>)
 
 ```go
 func NativeRegexEscape() *jsonnet.NativeFunction
@@ -105,7 +105,7 @@ Escapes a string for use in regex
 Inputs: "str"
 
 <a name="NativeRegexMatch"></a>
-## func [NativeRegexMatch](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jvm/native_funcs.go#L112>)
+## func [NativeRegexMatch](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jvm/native_funcs.go#L116>)
 
 ```go
 func NativeRegexMatch() *jsonnet.NativeFunction
@@ -116,7 +116,7 @@ Matches a string against a regex pattern
 Inputs: "regex", "string"
 
 <a name="NativeRegexSubst"></a>
-## func [NativeRegexSubst](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jvm/native_funcs.go#L124>)
+## func [NativeRegexSubst](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jvm/native_funcs.go#L128>)
 
 ```go
 func NativeRegexSubst() *jsonnet.NativeFunction
@@ -127,7 +127,7 @@ Substitutes a regex pattern in a string with another string
 Inputs: "regex", "src", "repl"
 
 <a name="NativeSprigTemplate"></a>
-## func [NativeSprigTemplate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jvm/native_funcs.go#L74>)
+## func [NativeSprigTemplate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jvm/native_funcs.go#L78>)
 
 ```go
 func NativeSprigTemplate() *jsonnet.NativeFunction
@@ -140,7 +140,7 @@ Sprig template guide: https://masterminds.github.io/sprig/
 Inputs: "config" "str"
 
 <a name="RegisterNativeFuncs"></a>
-## func [RegisterNativeFuncs](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jvm/native_funcs.go#L41>)
+## func [RegisterNativeFuncs](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jvm/native_funcs.go#L45>)
 
 ```go
 func RegisterNativeFuncs(vm *jsonnet.VM)
