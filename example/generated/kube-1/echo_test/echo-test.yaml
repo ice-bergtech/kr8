@@ -1,9 +1,169 @@
-- '{"kind":"Service","apiVersion":"v1","metadata":{"name":"http-echo","namespace":"echo-test","creationTimestamp":null,"labels":{"io.kompose.service":"http-echo"}},"spec":{"ports":[{"name":"5678","port":5678,"targetPort":5678}],"selector":{"io.kompose.service":"http-echo"}},"status":{"loadBalancer":{}}}'
-- '{"kind":"Service","apiVersion":"v1","metadata":{"name":"test","namespace":"echo-test","creationTimestamp":null,"labels":{"io.kompose.service":"test"}},"spec":{"ports":[{"name":"5678","port":5678,"targetPort":5678}],"selector":{"io.kompose.service":"test"}},"status":{"loadBalancer":{}}}'
-- '{"kind":"Service","apiVersion":"v1","metadata":{"name":"test2","namespace":"echo-test","creationTimestamp":null,"labels":{"io.kompose.service":"test2"}},"spec":{"ports":[{"name":"8080","port":8080,"targetPort":8080}],"selector":{"io.kompose.service":"test2"}},"status":{"loadBalancer":{}}}'
-- '{"kind":"Namespace","apiVersion":"v1","metadata":{"name":"echo-test","namespace":"echo-test","creationTimestamp":null},"spec":{},"status":{}}'
-- '{"kind":"Deployment","apiVersion":"apps/v1","metadata":{"name":"http-echo","namespace":"echo-test","creationTimestamp":null,"labels":{"io.kompose.service":"http-echo"}},"spec":{"replicas":1,"selector":{"matchLabels":{"io.kompose.service":"http-echo"}},"template":{"metadata":{"creationTimestamp":null,"labels":{"io.kompose.network/compose-default":"true","io.kompose.service":"http-echo"}},"spec":{"containers":[{"name":"http-echo","image":"hashicorp/http-echo","args":["-text=http-echo"],"ports":[{"containerPort":5678,"protocol":"TCP"}],"resources":{}}],"restartPolicy":"Always"}},"strategy":{}},"status":{}}'
-- '{"kind":"NetworkPolicy","apiVersion":"networking.k8s.io/v1","metadata":{"name":"compose-default","namespace":"echo-test","creationTimestamp":null},"spec":{"podSelector":{"matchLabels":{"io.kompose.network/compose-default":"true"}},"ingress":[{"from":[{"podSelector":{"matchLabels":{"io.kompose.network/compose-default":"true"}}}]}]}}'
-- '{"kind":"Deployment","apiVersion":"apps/v1","metadata":{"name":"test","namespace":"echo-test","creationTimestamp":null,"labels":{"io.kompose.service":"test"}},"spec":{"replicas":1,"selector":{"matchLabels":{"io.kompose.service":"test"}},"template":{"metadata":{"creationTimestamp":null,"labels":{"io.kompose.network/compose-default":"true","io.kompose.service":"test"}},"spec":{"containers":[{"name":"test","image":"hashicorp/http-echo","args":["-text=test","1"],"ports":[{"containerPort":5678,"protocol":"TCP"}],"resources":{}}],"restartPolicy":"Always"}},"strategy":{}},"status":{}}'
-- '{"kind":"Deployment","apiVersion":"apps/v1","metadata":{"name":"test2","namespace":"echo-test","creationTimestamp":null,"labels":{"io.kompose.service":"test2"}},"spec":{"replicas":1,"selector":{"matchLabels":{"io.kompose.service":"test2"}},"template":{"metadata":{"creationTimestamp":null,"labels":{"io.kompose.network/compose-default":"true","io.kompose.service":"test2"}},"spec":{"containers":[{"name":"test2","image":"hashicorp/http-echo","args":["-listen=:8080","-text=hello
-  world test2"],"ports":[{"containerPort":8080,"protocol":"TCP"}],"resources":{}}],"restartPolicy":"Always"}},"strategy":{}},"status":{}}'
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: http-echo
+  name: http-echo
+spec:
+  ports:
+  - name: "5678"
+    port: 5678
+    targetPort: 5678
+  selector:
+    io.kompose.service: http-echo
+status:
+  loadBalancer: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: test
+  name: test
+spec:
+  ports:
+  - name: "5678"
+    port: 5678
+    targetPort: 5678
+  selector:
+    io.kompose.service: test
+status:
+  loadBalancer: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: test2
+  name: test2
+spec:
+  ports:
+  - name: "8080"
+    port: 8080
+    targetPort: 8080
+  selector:
+    io.kompose.service: test2
+status:
+  loadBalancer: {}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: http-echo
+  name: http-echo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: http-echo
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.network/compose-default: "true"
+        io.kompose.service: http-echo
+    spec:
+      containers:
+      - args:
+        - -text=http-echo
+        image: hashicorp/http-echo
+        name: http-echo
+        ports:
+        - containerPort: 5678
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+status: {}
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  creationTimestamp: null
+  name: compose-default
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          io.kompose.network/compose-default: "true"
+  podSelector:
+    matchLabels:
+      io.kompose.network/compose-default: "true"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: test
+  name: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: test
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.network/compose-default: "true"
+        io.kompose.service: test
+    spec:
+      containers:
+      - args:
+        - -text=test
+        - "1"
+        image: hashicorp/http-echo
+        name: test
+        ports:
+        - containerPort: 5678
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+status: {}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: test2
+  name: test2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: test2
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.network/compose-default: "true"
+        io.kompose.service: test2
+    spec:
+      containers:
+      - args:
+        - -listen=:8080
+        - -text=hello world test2
+        image: hashicorp/http-echo
+        name: test2
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+status: {}
