@@ -1,0 +1,131 @@
+version: '2'
+run:
+  go: '1.23'
+
+linters:
+  # https://golangci-lint.run/usage/linters/
+  enable:
+    # defaults
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    # More
+    - asasalint
+    - asciicheck
+    - bidichk
+    - copyloopvar
+    - cyclop
+    - decorder
+    - dogsled
+    - dupl
+    - dupword
+    - err113
+    - errchkjson
+    - errname
+    - errorlint
+    - exhaustive
+    - exhaustruct
+    - exptostd
+    - fatcontext
+    - funlen
+    - gocheckcompilerdirectives
+    - gochecknoglobals
+    #- gochecknoinits
+    - gochecksumtype
+    - gocognit
+    - goconst
+    - gocritic
+    - godot
+    - godox
+    - goheader
+    - goprintffuncname
+    - gosec
+    - grouper
+    - iface
+    - importas
+    - inamedparam
+    - interfacebloat
+    - intrange
+    - ireturn
+    - lll
+    - loggercheck
+    - maintidx
+    - makezero
+    - mirror
+    - misspell
+    - mnd
+    - musttag
+    - nakedret
+    - nestif
+    - nilerr
+    - nilnesserr
+    - nilnil
+    - nlreturn
+    - nonamedreturns
+    - perfsprint
+    - prealloc
+    - predeclared
+    - reassign
+    - recvcheck
+    - sloglint
+    - tagalign
+    - tagliatelle
+    - unconvert
+    - unparam
+    - usestdlibvars
+    - varnamelen
+    - wastedassign
+    - whitespace
+    - wrapcheck
+    - zerologlint
+  settings:
+    mnd:
+      ignored-numbers:
+        - '2'
+        - '0600'
+        - '0750'
+    errcheck:
+      exclude-functions:
+        - '(*os.File).Close'
+    tagliatelle:
+      case:
+        use-field-name: false
+        ignored-fields:
+          # Component params.jsonnet fields
+          - 'kr8_spec'
+          - 'release_name'
+          - 'called_from'
+          # Component kr8_spec fields
+          - 'enable_kr8_allparams'
+          - 'enable_kr8_allclusters'
+          - 'disable_output_clean'
+          # Component Includes fields
+          - 'dest_dir'
+          - 'dest_name'
+          - 'dest_ext'
+          # Cluster jsonnet file fields
+          - '_kr8_spec'
+          - '_cluster'
+          - '_components'
+          # Cluster _kr8_spec fields
+          - 'generate_dir'
+          - 'generate_short_names'
+          - 'prune_params'
+          # Cluster jsonnet vm config
+          - 'base_dir'
+          - 'ext_str_file'
+
+output:
+  formats:
+    tab:
+      path: "./docs/lint/kr8-linting.txt"
+      colors: false
+  path-prefix: "kr8"
+  show-stats: true
+  sort-order:
+    - linter
+    - file
+    - severity
+

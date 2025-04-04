@@ -5,12 +5,20 @@ tasks:
     cmds:
       - task: build
 
+  setup:
+    desc: 'Instal dev tools'
+    cmds:
+      # https://golangci-lint.run/welcome/install/
+      - brew install golangci-lint
+      - brew upgrade golangci-lint
+
   test:
     desc: Tesk kr8 for your local system
     aliases:
       - t
     cmds:
       - go test
+      - golangci-lint run
       - task: build
       - task: test-package
 
