@@ -9,19 +9,20 @@ import (
 
 // Fetch a git repo from a url and clone it to a destination directory.
 // If the performFetch flag is false, it will log the command that would be run and return without doing anything.
-func FetchRepoUrl(url string, destination string, performFetch bool) {
+func FetchRepoUrl(url string, destination string, performFetch bool) error {
 	if !performFetch {
 		gitCommand := "git clone -- " + url + " " + destination
 		cleanupCmd := "rm -rf \"" + destination + "/.git\""
 		log.Info().Msg("Fetch disabled. Would have ran: ")
 		log.Info().Msg("`" + gitCommand + "`")
 		log.Info().Msg("`" + cleanupCmd + "`")
-		return
+
+		return nil
 	}
 
 	// Get the current working directory
 	pwd, err := os.Getwd()
-	FatalErrorCheck(err, "Error getting working directory")
+	FatalErrorCheck("Error getting working directory", err)
 
 	// Download the skeletion directory
 	log.Debug().Msg("Downloading skeleton repo from git::" + url)
@@ -32,11 +33,12 @@ func FetchRepoUrl(url string, destination string, performFetch bool) {
 		Mode: getter.ClientModeAny,
 	}
 
-	FatalErrorCheck(client.Get(), "Error getting repo")
+	FatalErrorCheck("Error getting repo", client.Get())
 
 	// Check for .git folder
 	if _, err := os.Stat(destination + "/.git"); !os.IsNotExist(err) {
 		log.Debug().Msg("Removing .git directory")
-		os.RemoveAll(destination + "/.git")
+		FatalErrorCheck("Error removing .git directory", os.RemoveAll(destination+"/.git"))
 	}
+	return nil
 }

@@ -8,7 +8,7 @@ import (
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
-// Kr8InitOptions defines the options used by the init subcommands
+// Kr8InitOptions defines the options used by the init subcommands.
 type Kr8InitOptions struct {
 	// URL to fetch the skeleton directory from
 	InitUrl string
@@ -32,17 +32,20 @@ func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error {
 		Cluster:     types.Kr8Cluster{Name: cSpec.Name},
 		Components:  map[string]types.Kr8ClusterComponentRef{},
 	}
-	err, _ := util.WriteObjToJsonFile(filename, dstDir+"/"+cSpec.Name, clusterJson)
+	_, err := util.WriteObjToJsonFile(filename, dstDir+"/"+cSpec.Name, clusterJson)
+
 	return err
 }
 
-// Generate default component kr8_spec values and store in params.jsonnet
+// Generate default component kr8_spec values and store in params.jsonnet.
 // Based on the type:
+//
 // jsonnet: create a component.jsonnet file and reference it from the params.jsonnet file
+//
 // yml: leave a note in the params.jsonnet file about where and how the yml files can be referenced
+//
 // chart: generate a simple taskfile that handles vendoring the chart data
 func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) error {
-
 	compJson := types.Kr8ComponentJsonnet{
 		Kr8Spec: types.Kr8ComponentSpec{
 			Kr8_allparams:         false,
@@ -69,20 +72,18 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 		break
 	}
 
-	err, _ := util.WriteObjToJsonFile("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
+	_, err := util.WriteObjToJsonFile("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
+
 	return err
 }
 
-func GenerateLib(fetch bool, dstDir string) {
-	util.FatalErrorCheck(os.MkdirAll(dstDir, 0755), "error creating lib directory")
+func GenerateLib(fetch bool, dstDir string) error {
+	util.FatalErrorCheck("error creating lib directory", os.MkdirAll(dstDir, 0750))
 	util.FetchRepoUrl("https://github.com/kube-libsonnet/kube-libsonnet.git", dstDir+"/klib", fetch)
+	return nil
 }
 
-func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) {
-	type templateVars struct {
-		Cmd     Kr8InitOptions
-		Cluster types.Kr8ClusterSpec
-	}
+func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) error {
 	var fetch string
 	if cmdOptions.Fetch {
 		fetch = "true"
@@ -124,5 +125,5 @@ func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.
 		"Generated using [kr8+](https://github.com/ice-bergtech/kr8)",
 	}, "\n")
 
-	os.WriteFile(dstDir+"/Readme.md", []byte(readmeTemplate), 0644)
+	return os.WriteFile(dstDir+"/Readme.md", []byte(readmeTemplate), 0644)
 }

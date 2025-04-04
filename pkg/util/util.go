@@ -17,10 +17,11 @@ func Filter(vs []string, f func(string) bool) []string {
 			vsf = append(vsf, v)
 		}
 	}
+
 	return vsf
 }
 
-// Fill with string to include and exclude, using kr8's special parsing
+// Fill with string to include and exclude, using kr8's special parsing.
 type PathFilterOptions struct {
 	// Comma-separated list of include filters
 	// Filters can include:
@@ -51,14 +52,15 @@ type PathFilterOptions struct {
 // The filter string can be an equality match or a regex match.
 func CheckObjectMatch(input gjson.Result, filterString string) bool {
 	// equality match
-	kv := strings.SplitN(filterString, "=", 2)
-	if len(kv) == 2 {
-		return input.Get(kv[0]).String() == kv[1]
+	args := strings.SplitN(filterString, "=", 2)
+	if len(args) == 2 {
+		return input.Get(args[0]).String() == args[1]
 	}
 	// regex match
-	kv = strings.SplitN(filterString, "~", 2)
-	if len(kv) == 2 {
-		matched, _ := regexp.MatchString(kv[1], input.Get(kv[0]).String())
+	args = strings.SplitN(filterString, "~", 2)
+	if len(args) == 2 {
+		matched, _ := regexp.MatchString(args[1], input.Get(args[0]).String())
+		// Found a match, return
 		return matched
 	}
 
@@ -70,6 +72,7 @@ func CheckObjectMatch(input gjson.Result, filterString string) bool {
 // The map value is parsed as a gjson result and then checked against the provided options.
 func FilterItems(input map[string]string, pf PathFilterOptions) []string {
 	if pf.Includes == "" && pf.Excludes == "" {
+		// Exit hatch
 		return []string{}
 	}
 	var clusterList []string
@@ -97,20 +100,22 @@ func FilterItems(input map[string]string, pf PathFilterOptions) []string {
 			}
 		}
 	}
+
 	return clusterList
 }
 
 // Logs an error and exits the program if the error is not nil.
-// Saves 3 lines per use and centralizes fatal errors for rewriting
-func FatalErrorCheck(err error, message string) {
+// Saves 3 lines per use and centralizes fatal errors for rewriting.
+func FatalErrorCheck(message string, err error) {
 	if err != nil {
 		log.Fatal().Err(err).Msg(message)
 	}
 }
 
-// Using the allClusterParams variable and command flags to create a list of clusters to generate
-// Clusters can be filtered with "=" for equality or "~" for regex match
+// Using the allClusterParams variable and command flags to create a list of clusters to generate.
+// Clusters can be filtered with "=" for equality or "~" for regex match.
 func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string {
+	// Defer to using clusters if set
 	if filters.Clusters != "" {
 		var clusterList []string
 		// all clusters
@@ -120,7 +125,9 @@ func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilte
 				clusterList = append(clusterList, val)
 			}
 		}
+
 		return clusterList
 	}
+
 	return FilterItems(input, filters)
 }
