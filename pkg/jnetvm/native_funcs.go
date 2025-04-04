@@ -19,7 +19,7 @@ Copyright 2018 ksonnet
 
 */
 
-package jvm
+package jnetvm
 
 import (
 	"bytes"
@@ -42,25 +42,24 @@ import (
 // Registers additional native functions in the jsonnet VM.
 // These functions are used to extend the functionality of jsonnet.
 // Adds on to functions part of the jsonnet stdlib: https://jsonnet.org/ref/stdlib.html
-func RegisterNativeFuncs(vm *jsonnet.VM) {
+func RegisterNativeFuncs(jvm *jsonnet.VM) {
 	// Register the template function
-	vm.NativeFunction(NativeSprigTemplate())
+	jvm.NativeFunction(NativeSprigTemplate())
 
 	// Register the escapeStringRegex function
-	vm.NativeFunction(NativeRegexEscape())
+	jvm.NativeFunction(NativeRegexEscape())
 
 	// Register the regexMatch function
-	vm.NativeFunction(NativeRegexMatch())
+	jvm.NativeFunction(NativeRegexMatch())
 
 	// Register the regexSubst function
-	vm.NativeFunction(NativeRegexSubst())
+	jvm.NativeFunction(NativeRegexSubst())
 
 	// Register the helm function
-	vm.NativeFunction(NativeHelmTemplate())
+	jvm.NativeFunction(NativeHelmTemplate())
 
 	// Register the kompose function
-	vm.NativeFunction(NativeKompose())
-
+	jvm.NativeFunction(NativeKompose())
 }
 
 // Allows executing helm template to process a helm chart and make available to kr8 configuration.
@@ -79,9 +78,9 @@ func NativeSprigTemplate() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "template",
 		Params: []jsonnetAst.Identifier{"config", "str"},
-		Func: func(args []interface{}) (res interface{}, err error) {
+		Func: func(args []interface{}) (interface{}, error) {
 			var config any
-			err = json.Unmarshal([]byte(args[0].(string)), config)
+			err := json.Unmarshal([]byte(args[0].(string)), config)
 			if err != nil {
 				return "", err
 			}
@@ -94,6 +93,7 @@ func NativeSprigTemplate() *jsonnet.NativeFunction {
 
 			var buff bytes.Buffer
 			err = tmpl.Execute(&buff, config)
+
 			return buff.String(), err
 		}}
 }
@@ -105,7 +105,7 @@ func NativeRegexEscape() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "escapeStringRegex",
 		Params: []jsonnetAst.Identifier{"str"},
-		Func: func(args []interface{}) (res interface{}, err error) {
+		Func: func(args []interface{}) (interface{}, error) {
 			return regexp.QuoteMeta(args[0].(string)), nil
 		}}
 }
@@ -117,7 +117,7 @@ func NativeRegexMatch() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "regexMatch",
 		Params: []jsonnetAst.Identifier{"regex", "string"},
-		Func: func(args []interface{}) (res interface{}, err error) {
+		Func: func(args []interface{}) (interface{}, error) {
 			return regexp.MatchString(args[0].(string), args[1].(string))
 		}}
 }
@@ -129,7 +129,7 @@ func NativeRegexSubst() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "regexSubst",
 		Params: []jsonnetAst.Identifier{"regex", "src", "repl"},
-		Func: func(args []interface{}) (res interface{}, err error) {
+		Func: func(args []interface{}) (interface{}, error) {
 			regex := args[0].(string)
 			src := args[1].(string)
 			repl := args[2].(string)
@@ -138,6 +138,7 @@ func NativeRegexSubst() *jsonnet.NativeFunction {
 			if err != nil {
 				return "", err
 			}
+
 			return r.ReplaceAllString(src, repl), nil
 		}}
 }
@@ -154,15 +155,15 @@ func NativeKompose() *jsonnet.NativeFunction {
 		Name:   "komposeFile",
 		Params: jsonnetAst.Identifiers{"inFile", "outPath", "opts"},
 		Func: func(args []interface{}) (interface{}, error) {
-			inFile, ok := args[0].(string)
+			inFile, argOk := args[0].(string)
 			log.Debug().Msg("inFile: " + inFile)
-			if !ok {
+			if !argOk {
 				return nil, fmt.Errorf("first argument 'inFile' must be of 'string' type, got '%T' instead", args[0])
 			}
 
-			outPath, ok := args[1].(string)
+			outPath, argOk := args[1].(string)
 			log.Debug().Msg("outPath: " + outPath)
-			if !ok {
+			if !argOk {
 				return nil, fmt.Errorf("second argument 'outPath' must be of 'string' type, got '%T' instead", args[1])
 			}
 
@@ -177,39 +178,21 @@ func NativeKompose() *jsonnet.NativeFunction {
 			if err := options.Validate(); err != nil {
 				return "", err
 			}
-			//var result []string
-			// render resources
-			list, _ := options.Convert()
-			//thing := runtime.NewSerializer(runtime.CodecFactory{CodecForVersion: runtime.NewCodecForInternalVersion})
 
-			// //thing.Encode(list, &bytes)
-			// for _, i := range list.([]runtime.Object) {
-			// 	converter := conversion.NewConverter(conversion.DefaultNameFunc)
-			// 	var bytes string
-			// 	converter.Convert(&i, &result, nil)
-			// 	// 	// var bytes bytes.Buffer
-			// 	// 	// runtime.NewEn
-			// 	// 	// kSerialize.NewEncoder(&bytes, nil).Encode(i)
-			// 	// bytes, err := json.Unmarshal(i)
-			// 	// if err != nil {
-			// 	// 	log.Error().Err(err).Msg("Error marshalling runtime object to string")
-			// 	// }
-			// 	result = append(result, bytes)
-			// }
-			return list, nil
+			return options.Convert()
 		},
 	}
 }
 
 func parseOpts(data interface{}) (*types.Kr8ComponentJsonnet, error) {
-	c, err := json.Marshal(data)
+	component, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
 
 	opts := types.Kr8ComponentJsonnet{}
 
-	if err := json.Unmarshal(c, &opts); err != nil {
+	if err := json.Unmarshal(component, &opts); err != nil {
 		return nil, err
 	}
 
