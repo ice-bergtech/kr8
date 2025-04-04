@@ -15,7 +15,11 @@ import (
 )
 
 func CobraDocs() {
-	err := doc.GenMarkdownTree(cmd.RootCmd, "./cmd")
+	err := os.Mkdir("cmd", 0755)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = doc.GenMarkdownTree(cmd.RootCmd, "./cmd")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -26,30 +30,39 @@ func GoMarkDoc() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	err = os.Mkdir("godoc", 0755)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	os.Mkdir("godoc", 0755)
-
 	docfiles := map[string]string{
 		"../cmd":          "kr8-cmd.md",
-		"../pkg/jvm":      "kr8-jsonnet.md",
+		"../pkg/jnetvm":   "kr8-jsonnet.md",
 		"../pkg/types":    "kr8-types.md",
 		"../pkg/util":     "kr8-util.md",
 		"../pkg/kr8_init": "kr8-init.md",
 	}
 
-	for k, v := range docfiles {
-		buildPkg, err := build.ImportDir(k, build.ImportComment)
+	for pkgPath, pkgDoc := range docfiles {
+		buildPkg, err := build.ImportDir(pkgPath, build.ImportComment)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		log := logger.New(logger.DebugLevel)
-		pkg, err := lang.NewPackageFromBuild(log, buildPkg)
+		logger := logger.New(logger.DebugLevel)
+		pkg, err := lang.NewPackageFromBuild(logger, buildPkg)
+		if err != nil {
+			log.Fatal(err)
+		}
 		output, err := out.Package(pkg)
-		os.WriteFile("godoc/"+v, []byte(output), 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = os.WriteFile("godoc/"+pkgDoc, []byte(output), 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 

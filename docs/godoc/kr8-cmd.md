@@ -30,7 +30,7 @@ var FormatCmd = &cobra.Command{
     Run: func(cmd *cobra.Command, args []string) {
         // First get a list of all files in the base directory and subdirectories. Ignore .git directories.
         var fileList []string
-        filepath.Walk(RootConfig.BaseDir, func(path string, info fs.FileInfo, err error) error {
+        err := filepath.Walk(RootConfig.BaseDir, func(path string, info fs.FileInfo, err error) error {
             if info.IsDir() {
                 if info.Name() == ".git" {
                     return filepath.SkipDir
@@ -40,6 +40,7 @@ var FormatCmd = &cobra.Command{
             fileList = append(fileList, path)
             return nil
         })
+        util.FatalErrorCheck("Error walking the path "+RootConfig.BaseDir, err)
 
         fileList = util.Filter(fileList, func(s string) bool {
             var result bool
@@ -67,30 +68,30 @@ var FormatCmd = &cobra.Command{
         log.Debug().Msg("Filtered file list: " + fmt.Sprintf("%v", fileList))
         log.Debug().Msg("Formatting files...")
 
-        var wg sync.WaitGroup
+        var waitGroup sync.WaitGroup
         parallel, err := cmd.Flags().GetInt("parallel")
-        util.FatalErrorCheck(err, "Error getting parallel flag")
+        util.FatalErrorCheck("Error getting parallel flag", err)
         log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
         ants_file, _ := ants.NewPool(parallel)
         for _, filename := range fileList {
-            wg.Add(1)
+            waitGroup.Add(1)
             _ = ants_file.Submit(func() {
-                defer wg.Done()
+                defer waitGroup.Done()
                 var bytes []byte
-                bytes, err = os.ReadFile(filename)
+                bytes, err = os.ReadFile(filepath.Clean(filename))
                 output, err := formatter.Format(filename, string(bytes), util.GetDefaultFormatOptions())
                 if err != nil {
                     fmt.Fprintln(os.Stderr, err.Error())
                     return
                 }
-                err = os.WriteFile(filename, []byte(output), 0755)
+                err = os.WriteFile(filepath.Clean(filename), []byte(output), 0600)
                 if err != nil {
                     fmt.Fprintln(os.Stderr, err.Error())
                     return
                 }
             })
         }
-        wg.Wait()
+        waitGroup.Wait()
     },
 }
 ```
@@ -118,7 +119,7 @@ var GetClustersCmd = &cobra.Command{
     Run: func(cmd *cobra.Command, args []string) {
 
         clusters, err := util.GetClusterFilenames(RootConfig.ClusterDir)
-        util.FatalErrorCheck(err, "Error getting clusters")
+        util.FatalErrorCheck("Error getting clusters", err)
 
         if cmdGetFlags.NoTable {
             for _, c := range clusters {
@@ -175,17 +176,17 @@ var GetComponentsCmd = &cobra.Command{
             params = append(params, cmdGetFlags.ClusterParams)
         }
 
-        j := jvm.JsonnetRenderFiles(RootConfig.VMConfig, params, "._components", true, "", "components")
+        jvm := jnetvm.JsonnetRenderFiles(RootConfig.VMConfig, params, "._components", true, "", "components")
         if cmdGetFlags.ParamField != "" {
-            value := gjson.Get(j, cmdGetFlags.ParamField)
+            value := gjson.Get(jvm, cmdGetFlags.ParamField)
             if value.String() == "" {
                 log.Fatal().Msg("Error getting param: " + cmdGetFlags.ParamField)
             } else {
-                formatted := util.Pretty(j, RootConfig.Color)
+                formatted := util.Pretty(jvm, RootConfig.Color)
                 fmt.Println(formatted)
             }
         } else {
-            formatted := util.Pretty(j, RootConfig.Color)
+            formatted := util.Pretty(jvm, RootConfig.Color)
             fmt.Println(formatted)
         }
     },
@@ -209,7 +210,13 @@ var GetParamsCmd = &cobra.Command{
             cList = append(cList, cmdGetFlags.Component)
         }
 
-        params := jvm.JsonnetRenderClusterParams(RootConfig.VMConfig, cmdGetFlags.Cluster, cList, cmdGetFlags.ClusterParams, true)
+        params := jnetvm.JsonnetRenderClusterParams(
+            RootConfig.VMConfig,
+            cmdGetFlags.Cluster,
+            cList,
+            cmdGetFlags.ClusterParams,
+            true,
+        )
 
         if cmdGetFlags.ParamField == "" {
             if cmdGetFlags.Component != "" {
@@ -282,7 +289,7 @@ var InitClusterCmd = &cobra.Command{
             survey.AskOne(prompt, &cSpec.PostProcessor)
         }
 
-        util.FatalErrorCheck(kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterDir), "Error generating cluster jsonnet file")
+        util.FatalErrorCheck("Error generating cluster jsonnet file", kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterDir))
     },
 }
 ```
@@ -332,7 +339,19 @@ var InitComponentCmd = &cobra.Command{
 }
 ```
 
-<a name="InitRepoCmd"></a>
+<a name="InitRepoCmd"></a>Initializes a new kr8 configuration repository
+
+Directory tree:
+
+```
+components/
+
+clusters/
+
+lib/
+
+generated/
+```
 
 ```go
 var InitRepoCmd = &cobra.Command{
@@ -367,10 +386,10 @@ and initialize a git repo so you can get started`,
             ClusterDir:         "clusters",
             Name:               cmdInitFlags.ClusterName,
         }
-        kr8init.GenerateClusterJsonnet(clusterOptions, outDir+"/clusters")
-        kr8init.GenerateComponentJsonnet(cmdInitOptions, outDir+"/components")
-        kr8init.GenerateLib(cmdInitFlags.Fetch, outDir+"/lib")
-        kr8init.GenerateReadme(outDir, cmdInitOptions, clusterOptions)
+        util.FatalErrorCheck("Issue creating cluster.jsonnet", kr8init.GenerateClusterJsonnet(clusterOptions, outDir+"/clusters"))
+        util.FatalErrorCheck("Issue creating example component.jsonnet", kr8init.GenerateComponentJsonnet(cmdInitOptions, outDir+"/components"))
+        util.FatalErrorCheck("Issue creating lib folder", kr8init.GenerateLib(cmdInitFlags.Fetch, outDir+"/lib"))
+        util.FatalErrorCheck("Issue creating Readme.md", kr8init.GenerateReadme(outDir, cmdInitOptions, clusterOptions))
     },
 }
 ```
@@ -424,27 +443,27 @@ var RenderHelmCmd = &cobra.Command{
         jsa := [][]byte{}
         for {
             bytes, err := decoder.Read()
-            if err == io.EOF {
+            if errors.Is(err, io.EOF) {
                 break
             } else if err != nil {
-                util.FatalErrorCheck(err, "Error decoding decoding yaml stream")
+                util.FatalErrorCheck("Error decoding yaml stream", err)
             }
             if len(bytes) == 0 {
                 continue
             }
             jsonData, err := yaml.ToJSON(bytes)
-            util.FatalErrorCheck(err, "Error converting yaml to JSON")
+            util.FatalErrorCheck("Error converting yaml to JSON", err)
             if string(jsonData) == "null" {
 
                 continue
             }
             _, _, err = unstructured.UnstructuredJSONScheme.Decode(jsonData, nil, nil)
-            util.FatalErrorCheck(err, "Error handling unstructured JSON")
+            util.FatalErrorCheck("Error handling unstructured JSON", err)
             jsa = append(jsa, jsonData)
         }
         for _, j := range jsa {
             out, err := goyaml.JSONToYAML(j)
-            util.FatalErrorCheck(err, "Error encoding JSON to YAML")
+            util.FatalErrorCheck("Error encoding JSON to YAML", err)
             fmt.Println("---")
             fmt.Println(string(out))
         }
@@ -462,7 +481,7 @@ var RenderJsonnetCmd = &cobra.Command{
 
     Args: cobra.MinimumNArgs(1),
     Run: func(cmd *cobra.Command, args []string) {
-        for _, f := range args {
+        for _, fileName := range args {
             jvm.JsonnetRender(
                 types.CmdJsonnetOptions{
                     Prune:         cmdRenderFlags.Prune,
@@ -470,7 +489,7 @@ var RenderJsonnetCmd = &cobra.Command{
                     Cluster:       cmdRenderFlags.Cluster,
                     Component:     cmdRenderFlags.ComponentName,
                     Format:        cmdRenderFlags.Format,
-                }, f, RootConfig.VMConfig)
+                }, fileName, RootConfig.VMConfig)
         }
     },
 }
@@ -521,7 +540,7 @@ func Execute(version string)
 Execute adds all child commands to the root command sets flags appropriately. This is called by main.main\(\). It only needs to happen once to the rootCmd.
 
 <a name="GenerateCommand"></a>
-## func [GenerateCommand](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L75>)
+## func [GenerateCommand](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L88>)
 
 ```go
 func GenerateCommand(cmd *cobra.Command, args []string)
@@ -530,7 +549,7 @@ func GenerateCommand(cmd *cobra.Command, args []string)
 This function will generate the components for each cluster in parallel It uses a wait group to ensure that all clusters have been processed before exiting.
 
 <a name="InitConfig"></a>
-## func [InitConfig](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L80>)
+## func [InitConfig](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L98>)
 
 ```go
 func InitConfig()
@@ -541,27 +560,28 @@ InitConfig reads in config file and ENV variables if set.
 <a name="CmdGenerateOptions"></a>
 ## type [CmdGenerateOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L43-L50>)
 
-stores the options for the 'generate' command.
+Stores the options for the 'generate' command.
 
 ```go
 type CmdGenerateOptions struct {
-    // ClusterParamsFile is a string that stores the path to the cluster params file
+    // Stores the path to the cluster params file
     ClusterParamsFile string
-    // GenerateDir is a string that stores the output directory for generated files
+    // Stores the output directory for generated files
     GenerateDir string
-    // Filters is a PathFilterOptions struct that stores the filters to apply to clusters and components when generating files
+    // Stores the filters to apply to clusters and components when generating files
     Filters util.PathFilterOptions
 }
 ```
 
 <a name="CmdGetOptions"></a>
-## type [CmdGetOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/get.go#L38-L51>)
+## type [CmdGetOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/get.go#L38-L52>)
 
 Holds the options for the get command.
 
 ```go
 type CmdGetOptions struct {
-    // ClusterParams provides a way to provide cluster params as a single file. This can be combined with --cluster to override the cluster.
+    // ClusterParams provides a way to provide cluster params as a single file.
+    // This can be combined with --cluster to override the cluster.
     ClusterParams string
     // If true, just prints result instead of placing in table
     NoTable bool
@@ -577,7 +597,7 @@ type CmdGetOptions struct {
 ```
 
 <a name="CmdRenderOptions"></a>
-## type [CmdRenderOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/render.go#L21-L32>)
+## type [CmdRenderOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/render.go#L23-L34>)
 
 Contains parameters for the kr8 render command
 
