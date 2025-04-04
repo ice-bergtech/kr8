@@ -27,11 +27,11 @@ type KomposeConvertOptions struct {
 	// Generate resource files into YAML format
 	GenerateYaml bool
 	// Spaces length to indent generated yaml files
-	YAMLIndent int
+	GenerateYAMLIndent int
 	// Generate resource files into JSON format
 	GenerateJSON bool
 	// Print converted objects to stdout
-	ToStdout bool
+	GenerateToStdout bool
 
 	// Set the type of build ("local"|"build-config"(OpenShift only)|"none")
 	Build string
@@ -49,7 +49,7 @@ type KomposeConvertOptions struct {
 	// Specify the size of pvc storage requests in the generated resource spec
 	PVCRequestSize string
 	// Specify whether to generate network policies or not
-	GenerateNetworkPolicies bool
+	NetworkPolicies bool
 
 	// Create multiple containers grouped by 'kompose.service.group' label
 	MultipleContainerMode bool
@@ -66,22 +66,22 @@ type KomposeConvertOptions struct {
 	Server string
 
 	// OpenShift: ??
-	CreateDeploymentConfig bool
+	OSCreateDeploymentConfig bool
 	// Openshift: Specify source repository for buildconfig (default remote origin)
-	BuildRepo string
+	OSBuildRepo string
 	// Openshift: Use an insecure Docker repository for OpenShift ImageStream
-	InsecureRepository bool
+	OSInsecureRepository bool
 	// Openshift: Specify repository branch to use for buildconfig (default master)
-	BuildBranch string
+	OSBuildBranch string
 
 	// Whether to push built docker image to remote registry.
-	PushImage bool
+	ImagePush bool
 	// Command used to build to image.  Used with PushCommand
-	BuildCommand string
+	ImageBuildCommand string
 	// Command used to push image
-	PushCommand string
+	ImagePushCommand string
 	// Specify registry for pushing image, which will override registry from image name
-	PushImageRegistry string
+	ImagePushRegistry string
 }
 
 // Initialie Kompose options with sensible defaults
@@ -92,21 +92,21 @@ func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *Kompos
 		Replicas:    1,
 		Namespace:   cmp.Namespace,
 
-		PushImage:    false,
+		ImagePush:    false,
 		GenerateJSON: true,
 		GenerateYaml: false,
 
-		EmptyVols:               false,
-		PVCRequestSize:          "100m",
-		SecretsAsFiles:          true,
-		GenerateNetworkPolicies: true,
+		EmptyVols:       false,
+		PVCRequestSize:  "100m",
+		SecretsAsFiles:  true,
+		NetworkPolicies: true,
 
-		Provider:   "kubernetes",
-		Build:      "local",
-		InputFiles: inputFiles,
-		OutFile:    outDir,
-		YAMLIndent: 2,
-		ToStdout:   false,
+		Provider:           "kubernetes",
+		Build:              "local",
+		InputFiles:         inputFiles,
+		OutFile:            outDir,
+		GenerateYAMLIndent: 2,
+		GenerateToStdout:   false,
 	}
 }
 
@@ -116,7 +116,7 @@ func (k KomposeConvertOptions) genKomposePkgOpts() *kobject.ConvertOptions {
 	// https://pkg.go.dev/github.com/kubernetes/kompose@v1.35.0/pkg/kobject#ConvertOptions
 	var resultOpts kobject.ConvertOptions
 
-	resultOpts.ToStdout = k.ToStdout
+	resultOpts.ToStdout = k.GenerateToStdout
 
 	resultOpts.InputFiles = k.InputFiles
 	resultOpts.Profiles = []string{}
@@ -138,13 +138,13 @@ func (k KomposeConvertOptions) genKomposePkgOpts() *kobject.ConvertOptions {
 			resultOpts.CreateD = true
 		}
 	} else if k.Provider == "openshift" {
-		resultOpts.CreateDeploymentConfig = k.CreateDeploymentConfig
-		resultOpts.BuildRepo = k.BuildRepo
-		resultOpts.BuildBranch = k.BuildBranch
+		resultOpts.CreateDeploymentConfig = k.OSCreateDeploymentConfig
+		resultOpts.BuildRepo = k.OSBuildRepo
+		resultOpts.BuildBranch = k.OSBuildBranch
 	}
 
-	resultOpts.PushImage = k.PushImage
-	resultOpts.PushImageRegistry = k.PushImageRegistry
+	resultOpts.PushImage = k.ImagePush
+	resultOpts.PushImageRegistry = k.ImagePushRegistry
 
 	resultOpts.CreateChart = k.CreateChart
 	resultOpts.GenerateYaml = k.GenerateYaml
@@ -154,7 +154,7 @@ func (k KomposeConvertOptions) genKomposePkgOpts() *kobject.ConvertOptions {
 	resultOpts.Volumes = k.Volumes
 	resultOpts.PVCRequestSize = k.PVCRequestSize
 
-	resultOpts.InsecureRepository = k.InsecureRepository
+	resultOpts.InsecureRepository = k.OSInsecureRepository
 	resultOpts.Replicas = k.Replicas
 	resultOpts.InputFiles = k.InputFiles
 	resultOpts.OutFile = k.OutFile
@@ -162,12 +162,12 @@ func (k KomposeConvertOptions) genKomposePkgOpts() *kobject.ConvertOptions {
 	resultOpts.Namespace = k.Namespace
 	resultOpts.Controller = k.Controller
 
-	resultOpts.BuildCommand = k.BuildCommand
-	resultOpts.PushCommand = k.PushCommand
+	resultOpts.BuildCommand = k.ImageBuildCommand
+	resultOpts.PushCommand = k.ImagePushCommand
 
 	resultOpts.Server = k.Server
 
-	resultOpts.YAMLIndent = k.YAMLIndent
+	resultOpts.YAMLIndent = k.GenerateYAMLIndent
 
 	resultOpts.WithKomposeAnnotation = k.WithKomposeAnnotation
 
@@ -176,7 +176,7 @@ func (k KomposeConvertOptions) genKomposePkgOpts() *kobject.ConvertOptions {
 	resultOpts.ServiceGroupName = k.ServiceGroupName
 
 	resultOpts.SecretsAsFiles = k.SecretsAsFiles
-	resultOpts.GenerateNetworkPolicies = k.GenerateNetworkPolicies
+	resultOpts.GenerateNetworkPolicies = k.NetworkPolicies
 
 	return &resultOpts
 }
