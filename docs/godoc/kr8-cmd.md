@@ -386,10 +386,22 @@ and initialize a git repo so you can get started`,
             ClusterDir:         "clusters",
             Name:               cmdInitFlags.ClusterName,
         }
-        util.FatalErrorCheck("Issue creating cluster.jsonnet", kr8init.GenerateClusterJsonnet(clusterOptions, outDir+"/clusters"))
-        util.FatalErrorCheck("Issue creating example component.jsonnet", kr8init.GenerateComponentJsonnet(cmdInitOptions, outDir+"/components"))
-        util.FatalErrorCheck("Issue creating lib folder", kr8init.GenerateLib(cmdInitFlags.Fetch, outDir+"/lib"))
-        util.FatalErrorCheck("Issue creating Readme.md", kr8init.GenerateReadme(outDir, cmdInitOptions, clusterOptions))
+        util.FatalErrorCheck(
+            "Issue creating cluster.jsonnet",
+            kr8init.GenerateClusterJsonnet(clusterOptions, outDir+"/clusters"),
+        )
+        util.FatalErrorCheck(
+            "Issue creating example component.jsonnet",
+            kr8init.GenerateComponentJsonnet(cmdInitOptions, outDir+"/components"),
+        )
+        util.FatalErrorCheck(
+            "Issue creating lib folder",
+            kr8init.GenerateLib(cmdInitFlags.Fetch, outDir+"/lib"),
+        )
+        util.FatalErrorCheck(
+            "Issue creating Readme.md",
+            kr8init.GenerateReadme(outDir, cmdInitOptions, clusterOptions),
+        )
     },
 }
 ```

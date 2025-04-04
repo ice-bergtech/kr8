@@ -3,6 +3,7 @@ package main
 //go:generate go run ./docs.go
 
 import (
+	"errors"
 	"go/build"
 	"log"
 	"os"
@@ -15,8 +16,8 @@ import (
 )
 
 func CobraDocs() {
-	err := os.Mkdir("cmd", 0755)
-	if err != nil {
+	err := os.Mkdir("cmd", 0750)
+	if err != nil && !errors.Is(err, os.ErrExist) {
 		log.Fatal(err)
 	}
 	err = doc.GenMarkdownTree(cmd.RootCmd, "./cmd")
@@ -31,8 +32,8 @@ func GoMarkDoc() {
 		log.Fatal(err)
 	}
 
-	err = os.Mkdir("godoc", 0755)
-	if err != nil {
+	err = os.Mkdir("godoc", 0750)
+	if err != nil && !errors.Is(err, os.ErrExist) {
 		log.Fatal(err)
 	}
 
@@ -59,7 +60,7 @@ func GoMarkDoc() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		err = os.WriteFile("godoc/"+pkgDoc, []byte(output), 0644)
+		err = os.WriteFile("godoc/"+pkgDoc, []byte(output), 0600)
 		if err != nil {
 			log.Fatal(err)
 		}

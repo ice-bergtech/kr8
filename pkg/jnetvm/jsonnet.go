@@ -76,12 +76,11 @@ func JsonnetRenderFiles(
 	source string,
 ) string {
 	// copy the slice so that we don't unitentionally modify the original
-	jsonnetPaths := make([]string, len(files[:0]))
-	copy(jsonnetPaths, files[:0])
+	jsonnetPaths := make([]string, len(files))
 
 	// range through the files
-	for _, s := range files {
-		jsonnetPaths = append(jsonnetPaths, fmt.Sprintf("(import '%s')", s))
+	for idx, s := range files {
+		jsonnetPaths[idx] = fmt.Sprintf("(import '%s')", s)
 	}
 
 	// Create a JSonnet VM

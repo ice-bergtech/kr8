@@ -23,7 +23,7 @@ Package jvm contains the jsonnet rendering logic.
 
 
 <a name="JsonnetRender"></a>
-## func [JsonnetRender](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L116>)
+## func [JsonnetRender](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L115>)
 
 ```go
 func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmConfig types.VMConfig)
@@ -32,7 +32,7 @@ func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmC
 Renders a jsonnet file with the specified options.
 
 <a name="JsonnetRenderClusterParams"></a>
-## func [JsonnetRenderClusterParams](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L180-L186>)
+## func [JsonnetRenderClusterParams](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L179-L185>)
 
 ```go
 func JsonnetRenderClusterParams(vmconfig types.VMConfig, clusterName string, componentNames []string, clusterParams string, prune bool) string
@@ -41,7 +41,7 @@ func JsonnetRenderClusterParams(vmconfig types.VMConfig, clusterName string, com
 Render cluster params, merged with one or more component's parameters. Empty componentName list renders all component parameters.
 
 <a name="JsonnetRenderClusterParamsOnly"></a>
-## func [JsonnetRenderClusterParamsOnly](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L159-L164>)
+## func [JsonnetRenderClusterParamsOnly](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L158-L163>)
 
 ```go
 func JsonnetRenderClusterParamsOnly(vmconfig types.VMConfig, clusterName string, clusterParams string, prune bool) string

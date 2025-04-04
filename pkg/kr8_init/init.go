@@ -125,5 +125,5 @@ func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.
 		"Generated using [kr8+](https://github.com/ice-bergtech/kr8)",
 	}, "\n")
 
-	return os.WriteFile(dstDir+"/Readme.md", []byte(readmeTemplate), 0644)
+	return os.WriteFile(dstDir+"/Readme.md", []byte(readmeTemplate), 0600)
 }
