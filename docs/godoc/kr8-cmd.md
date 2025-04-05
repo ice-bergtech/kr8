@@ -7,8 +7,9 @@ import "github.com/ice-bergtech/kr8/cmd"
 ## Index
 
 - [Variables](<#variables>)
-- [func Execute\(version string\)](<#Execute>)
+- [func Execute\(ver string\)](<#Execute>)
 - [func GenerateCommand\(cmd \*cobra.Command, args \[\]string\)](<#GenerateCommand>)
+- [func GetClusterParams\(\) map\[string\]string](<#GetClusterParams>)
 - [func InitConfig\(\)](<#InitConfig>)
 - [type CmdGenerateOptions](<#CmdGenerateOptions>)
 - [type CmdGetOptions](<#CmdGetOptions>)
@@ -530,12 +531,6 @@ var RootCmd = &cobra.Command{
 }
 ```
 
-<a name="Version"></a>exported Version variable.
-
-```go
-var Version string
-```
-
 <a name="VersionCmd"></a>Print out versions of packages in use. Chore\(\) \- Updated manually.
 
 ```go
@@ -544,7 +539,7 @@ var VersionCmd = &cobra.Command{
     Short: "Return the current version of kr8",
     Long:  `return the current version of kr8`,
     Run: func(cmd *cobra.Command, args []string) {
-        fmt.Println(RootCmd.Use + " Plus Version: " + Version)
+        fmt.Println(RootCmd.Use + " Plus Version: " + version)
         fmt.Println("jsonnet: github.com/google/go-jsonnet v0.20.0")
         fmt.Println("yml: github.com/ghodss/yaml v1.0.0")
         fmt.Println("template: github.com/Masterminds/sprig/v3 v3.2.3")
@@ -558,19 +553,28 @@ var VersionCmd = &cobra.Command{
 ## func [Execute](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L33>)
 
 ```go
-func Execute(version string)
+func Execute(ver string)
 ```
 
 Execute adds all child commands to the root command sets flags appropriately. This is called by main.main\(\). It only needs to happen once to the rootCmd.
 
 <a name="GenerateCommand"></a>
-## func [GenerateCommand](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L87>)
+## func [GenerateCommand](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L97>)
 
 ```go
 func GenerateCommand(cmd *cobra.Command, args []string)
 ```
 
 This function will generate the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.
+
+<a name="GetClusterParams"></a>
+## func [GetClusterParams](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L81>)
+
+```go
+func GetClusterParams() map[string]string
+```
+
+
 
 <a name="InitConfig"></a>
 ## func [InitConfig](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L99>)
@@ -582,7 +586,7 @@ func InitConfig()
 InitConfig reads in config file and ENV variables if set.
 
 <a name="CmdGenerateOptions"></a>
-## type [CmdGenerateOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L42-L49>)
+## type [CmdGenerateOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L38-L45>)
 
 Stores the options for the 'generate' command.
 
