@@ -7,10 +7,15 @@ import "github.com/ice-bergtech/kr8/cmd"
 ## Index
 
 - [Variables](<#variables>)
+- [func CheckIfUpdateNeeded\(outFile string, outStr string\) bool](<#CheckIfUpdateNeeded>)
+- [func CleanOutputDir\(outputFileMap map\[string\]bool, componentOutputDir string\)](<#CleanOutputDir>)
+- [func ConfigureLogger\(debug bool\)](<#ConfigureLogger>)
 - [func Execute\(ver string\)](<#Execute>)
 - [func GenerateCommand\(cmd \*cobra.Command, args \[\]string\)](<#GenerateCommand>)
+- [func GenerateIncludesFiles\(includesFiles \[\]interface\{\}, kr8Spec types.Kr8ClusterSpec, config string, componentName string, compPath string, componentOutputDir string, jvm \*jsonnet.VM\) map\[string\]bool](<#GenerateIncludesFiles>)
 - [func GetClusterParams\(\) map\[string\]string](<#GetClusterParams>)
 - [func InitConfig\(\)](<#InitConfig>)
+- [func ProcessFile\(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm \*jsonnet.VM\) string](<#ProcessFile>)
 - [type CmdGenerateOptions](<#CmdGenerateOptions>)
 - [type CmdGetOptions](<#CmdGetOptions>)
 - [type CmdRenderOptions](<#CmdRenderOptions>)
@@ -272,28 +277,28 @@ var InitClusterCmd = &cobra.Command{
                 Default: cmdInitFlags.ClusterName,
                 Help:    "Distinct name for the cluster",
             }
-            survey.AskOne(prompt, &cSpec.Name)
+            util.FatalErrorCheck("Invalid cluster name", survey.AskOne(prompt, &cSpec.Name))
 
             prompt = &survey.Input{
                 Message: "Set the cluster configuration directory",
                 Default: RootConfig.ClusterDir,
                 Help:    "Set the root directory for the new cluster",
             }
-            survey.AskOne(prompt, &cSpec.ClusterDir)
+            util.FatalErrorCheck("Invalid cluster directory", survey.AskOne(prompt, &cSpec.ClusterDir))
 
             promptB := &survey.Confirm{
                 Message: "Generate short names for output file names?",
                 Default: cSpec.GenerateShortNames,
-                Help:    "",
+                Help:    "Shortens component names and file structure",
             }
-            survey.AskOne(promptB, &cSpec.GenerateShortNames)
+            util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.GenerateShortNames))
 
             promptB = &survey.Confirm{
                 Message: "Prune component parameters?",
                 Default: cSpec.PruneParams,
                 Help:    "This removes empty and null parameters from configuration",
             }
-            survey.AskOne(promptB, &cSpec.PruneParams)
+            util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.PruneParams))
         }
 
         util.FatalErrorCheck("Error generating cluster jsonnet file", kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterDir))
@@ -343,22 +348,26 @@ var InitComponentCmd = &cobra.Command{
                 Help:    "Select the type of component you want to create",
                 Default: "jsonnet",
                 Description: func(value string, index int) string {
-                    if value == "jsonnet" {
+                    switch value {
+                    case "jsonnet":
                         return "Use a Jsonnet file to describe the component resources"
-                    } else if value == "yml" {
+                    case "yml":
                         return "Use a yml (docker-compose) file to describe the component resources"
-                    } else if value == "tpl" {
+                    case "tpl":
                         return "Use a template file to describe the component resources"
-                    } else if value == "chart" {
+                    case "chart":
                         return "Use a Helm chart to describe the component resources"
+                    default:
+                        return ""
                     }
-
-                    return ""
                 },
             }
             util.FatalErrorCheck("Invalid component type", survey.AskOne(promptS, &cmdInitFlags.ComponentType))
         }
-        kr8init.GenerateComponentJsonnet(cmdInitFlags, RootConfig.ComponentDir)
+        util.FatalErrorCheck(
+            "Error generating component jsonnet",
+            kr8init.GenerateComponentJsonnet(cmdInitFlags, RootConfig.ComponentDir),
+        )
     },
 }
 ```
@@ -405,6 +414,7 @@ and initialize a git repo so you can get started`,
             ComponentName: "example-component",
             ComponentType: "jsonnet",
             Interactive:   false,
+            Fetch:         false,
         }
         clusterOptions := types.Kr8ClusterSpec{
             PostProcessor:      "",
@@ -529,6 +539,7 @@ var RenderJsonnetCmd = &cobra.Command{
                     Cluster:       cmdRenderFlags.Cluster,
                     Component:     cmdRenderFlags.ComponentName,
                     Format:        cmdRenderFlags.Format,
+                    Color:         false,
                 }, fileName, RootConfig.VMConfig)
         }
     },
@@ -564,6 +575,33 @@ var VersionCmd = &cobra.Command{
 }
 ```
 
+<a name="CheckIfUpdateNeeded"></a>
+## func [CheckIfUpdateNeeded](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L599>)
+
+```go
+func CheckIfUpdateNeeded(outFile string, outStr string) bool
+```
+
+Check if a file needs updating based on its current contents and the new contents.
+
+<a name="CleanOutputDir"></a>
+## func [CleanOutputDir](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L483>)
+
+```go
+func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string)
+```
+
+
+
+<a name="ConfigureLogger"></a>
+## func [ConfigureLogger](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L98>)
+
+```go
+func ConfigureLogger(debug bool)
+```
+
+
+
 <a name="Execute"></a>
 ## func [Execute](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L33>)
 
@@ -582,6 +620,15 @@ func GenerateCommand(cmd *cobra.Command, args []string)
 
 This function will generate the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.
 
+<a name="GenerateIncludesFiles"></a>
+## func [GenerateIncludesFiles](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L433-L441>)
+
+```go
+func GenerateIncludesFiles(includesFiles []interface{}, kr8Spec types.Kr8ClusterSpec, config string, componentName string, compPath string, componentOutputDir string, jvm *jsonnet.VM) map[string]bool
+```
+
+
+
 <a name="GetClusterParams"></a>
 ## func [GetClusterParams](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L81>)
 
@@ -592,13 +639,28 @@ func GetClusterParams() map[string]string
 
 
 <a name="InitConfig"></a>
-## func [InitConfig](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L99>)
+## func [InitConfig](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L137>)
 
 ```go
 func InitConfig()
 ```
 
 InitConfig reads in config file and ENV variables if set.
+
+<a name="ProcessFile"></a>
+## func [ProcessFile](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L552-L560>)
+
+```go
+func ProcessFile(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm *jsonnet.VM) string
+```
+
+Process an includes file. Based on the extension, it will process it differently.
+
+.jsonnet: Imported and processed using jsonnet VM.
+
+.yml, .yaml: Imported and processed through native function ParseYaml.
+
+.tpl, .tmpl: Processed using component config and Sprig templating.
 
 <a name="CmdGenerateOptions"></a>
 ## type [CmdGenerateOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L38-L45>)

@@ -14,7 +14,7 @@ Utility functions for directories and files
 - [func FatalErrorCheck\(message string, err error\)](<#FatalErrorCheck>)
 - [func FetchRepoUrl\(url string, destination string, performFetch bool\) error](<#FetchRepoUrl>)
 - [func Filter\(vs \[\]string, f func\(string\) bool\) \[\]string](<#Filter>)
-- [func FilterItems\(input map\[string\]string, pf PathFilterOptions\) \[\]string](<#FilterItems>)
+- [func FilterItems\(input map\[string\]string, pfilter PathFilterOptions\) \[\]string](<#FilterItems>)
 - [func FormatJsonnetString\(input string\) \(string, error\)](<#FormatJsonnetString>)
 - [func FormatJsonnetStringCustom\(input string, opts formatter.Options\) \(string, error\)](<#FormatJsonnetStringCustom>)
 - [func GetClusterFilenames\(searchDir string\) \(\[\]types.Kr8Cluster, error\)](<#GetClusterFilenames>)
@@ -28,7 +28,7 @@ Utility functions for directories and files
 
 
 <a name="CalculateClusterIncludesExcludes"></a>
-## func [CalculateClusterIncludesExcludes](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L117>)
+## func [CalculateClusterIncludesExcludes](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L115>)
 
 ```go
 func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string
@@ -55,7 +55,7 @@ func Colorize(input interface{}, colorNum int, disabled bool) string
 Colorize function from zerolog console.go file to replicate their coloring functionality. Source: https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389
 
 <a name="FatalErrorCheck"></a>
-## func [FatalErrorCheck](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L109>)
+## func [FatalErrorCheck](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L107>)
 
 ```go
 func FatalErrorCheck(message string, err error)
@@ -85,7 +85,7 @@ Filter returns a new slice containing only the elements that satisfy the predica
 ## func [FilterItems](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L73>)
 
 ```go
-func FilterItems(input map[string]string, pf PathFilterOptions) []string
+func FilterItems(input map[string]string, pfilter PathFilterOptions) []string
 ```
 
 Given a map of string, filter them based on the provided options. The map value is parsed as a gjson result and then checked against the provided options.

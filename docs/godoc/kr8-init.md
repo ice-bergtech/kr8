@@ -23,7 +23,7 @@ func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error
 Generate a cluster.jsonnet file based on the provided Kr8ClusterSpec and store it in the specified directory.
 
 <a name="GenerateComponentJsonnet"></a>
-## func [GenerateComponentJsonnet](<https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L48>)
+## func [GenerateComponentJsonnet](<https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L49>)
 
 ```go
 func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) error
@@ -38,7 +38,7 @@ yml: leave a note in the params.jsonnet file about where and how the yml files c
 chart: generate a simple taskfile that handles vendoring the chart data
 
 <a name="GenerateLib"></a>
-## func [GenerateLib](<https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L80>)
+## func [GenerateLib](<https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L96>)
 
 ```go
 func GenerateLib(fetch bool, dstDir string) error
@@ -47,7 +47,7 @@ func GenerateLib(fetch bool, dstDir string) error
 
 
 <a name="GenerateReadme"></a>
-## func [GenerateReadme](<https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L86>)
+## func [GenerateReadme](<https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L102>)
 
 ```go
 func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) error
