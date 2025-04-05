@@ -17,8 +17,8 @@ import (
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
-// exported Version variable.
-var Version string
+// exported version variable.
+var version string
 
 // RootCmd represents the base command when called without any subcommands.
 var RootCmd = &cobra.Command{
@@ -30,8 +30,8 @@ var RootCmd = &cobra.Command{
 
 // Execute adds all child commands to the root command sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute(version string) {
-	Version = version
+func Execute(ver string) {
+	version = ver
 	if err := RootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(-1)
