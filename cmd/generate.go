@@ -34,10 +34,6 @@ type safeString struct {
 	config string
 }
 
-var (
-	allClusterParams map[string]string
-)
-
 // Stores the options for the 'generate' command.
 type CmdGenerateOptions struct {
 	// Stores the path to the cluster params file
@@ -82,11 +78,9 @@ var GenerateCmd = &cobra.Command{
 	Run:  GenerateCommand,
 }
 
-// This function will generate the components for each cluster in parallel.
-// It uses a wait group to ensure that all clusters have been processed before exiting.
-func GenerateCommand(cmd *cobra.Command, args []string) {
+func GetClusterParams() map[string]string {
 	// get list of all clusters, render cluster level params for all of them
-	allClusterParams = make(map[string]string)
+	allClusterParams := make(map[string]string)
 	allClusters, err := util.GetClusterFilenames(RootConfig.ClusterDir)
 	util.FatalErrorCheck("Error getting list of clusters", err)
 	log.Debug().Msg("Found " + strconv.Itoa(len(allClusters)) + " clusters")
@@ -94,6 +88,15 @@ func GenerateCommand(cmd *cobra.Command, args []string) {
 	for _, c := range allClusters {
 		allClusterParams[c.Name] = jnetvm.JsonnetRenderClusterParamsOnly(RootConfig.VMConfig, c.Name, "", false)
 	}
+
+	return allClusterParams
+}
+
+// This function will generate the components for each cluster in parallel.
+// It uses a wait group to ensure that all clusters have been processed before exiting.
+func GenerateCommand(cmd *cobra.Command, args []string) {
+	// get list of all clusters, render cluster level params for all of them
+	allClusterParams := GetClusterParams()
 
 	var clusterList []string
 	// Filter out and cluster or components we don't want to generate
@@ -340,9 +343,8 @@ func genProcessComponent(
 	// add kr8_allclusters extcode with every cluster's cluster level params
 	if compSpec.Kr8_allclusters {
 		// combine all the cluster params into a single object indexed by cluster name
-		var allClusterParamsObject string
-		allClusterParamsObject = "{ "
-		for cl, clp := range allClusterParams {
+		allClusterParamsObject := "{ "
+		for cl, clp := range GetClusterParams() {
 			allClusterParamsObject = allClusterParamsObject + "'" + cl + "': " + clp + ","
 		}
 		allClusterParamsObject += "}"
