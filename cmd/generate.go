@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -27,7 +26,7 @@ import (
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
-// safeString is a thread-safe string that can be used to store and retrieve configuration data
+// A thread-safe string that can be used to store and retrieve configuration data.
 type safeString struct {
 	// mu is a mutex that ensures thread-safe access to the struct field
 	mu sync.Mutex
@@ -83,7 +82,7 @@ var GenerateCmd = &cobra.Command{
 	Run:  GenerateCommand,
 }
 
-// This function will generate the components for each cluster in parallel
+// This function will generate the components for each cluster in parallel.
 // It uses a wait group to ensure that all clusters have been processed before exiting.
 func GenerateCommand(cmd *cobra.Command, args []string) {
 	// get list of all clusters, render cluster level params for all of them
@@ -122,9 +121,9 @@ func GenerateCommand(cmd *cobra.Command, args []string) {
 	waitGroup.Wait()
 }
 
-// Only processes specified component if it's defined in the cluster
-// Processes components in string sorted order
-// Sorts out orphaned, generated components directories
+// Only processes specified component if it's defined in the cluster.
+// Processes components in string sorted order.
+// Sorts out orphaned, generated components directories.
 func buildComponentList(
 	generatedCompList []string,
 	clusterComponents map[string]gjson.Result,
@@ -141,12 +140,14 @@ func buildComponentList(
 		for _, filterStr := range strings.Split(cmdGenerateFlags.Filters.Components, ",") {
 			listFilterComp := util.Filter(generatedCompList, func(s string) bool {
 				r, _ := regexp.MatchString("^"+filterStr+"$", s)
+
 				return r
 			})
 			currentCompRefList = append(currentCompRefList, listFilterComp...)
 
 			listFilterCluster := util.Filter(maps.Keys(clusterComponents), func(s string) bool {
 				r, _ := regexp.MatchString("^"+filterStr+"$", s)
+
 				return r
 			})
 			compList = append(compList, listFilterCluster...)
@@ -155,17 +156,18 @@ func buildComponentList(
 	sort.Strings(compList)
 
 	// cleanup components that are no longer referenced
-	for _, e := range currentCompRefList {
-		if _, found := clusterComponents[e]; !found {
-			delComp := filepath.Join(clusterDir, e)
+	for _, component := range currentCompRefList {
+		if _, found := clusterComponents[component]; !found {
+			delComp := filepath.Join(clusterDir, component)
 			if err := os.RemoveAll(delComp); err != nil {
-				log.Error().Msg("Issue deleting generated for component " + e)
+				log.Error().Msg("Issue deleting generated for component " + component)
 			}
 			log.Info().Str("cluster", clusterName).
-				Str("component", e).
+				Str("component", component).
 				Msg("Deleting generated for component")
 		}
 	}
+
 	return compList
 }
 
@@ -188,6 +190,7 @@ func processJsonnet(jvm *jsonnet.VM, input string, snippetFilename string) (stri
 		}
 		outStr += string(buf)
 	}
+
 	return outStr, nil
 }
 
@@ -208,6 +211,7 @@ func processTemplate(filename string, data map[string]gjson.Result) (string, err
 	if err = tmpl.Execute(&buffer, data); err != nil {
 		return "Error executing templating", err
 	}
+
 	return buffer.String(), nil
 }
 
@@ -248,7 +252,8 @@ func genProcessCluster(vmConfig types.VMConfig, clusterName string, pool *ants.P
 	// determine list of components to process
 	compList := buildComponentList(generatedCompList, clusterComponents, kr8Spec.ClusterDir, kr8Spec.Name)
 
-	if len(compList) == 0 { // this needs to be moved so purging above works first
+	// this needs to be moved so purging above works first
+	if len(compList) == 0 {
 		return
 	}
 
@@ -357,7 +362,7 @@ func genProcessComponent(
 	for key, val := range compSpec.ExtFiles {
 		filePath := filepath.Join(RootConfig.BaseDir, compPath, val)
 		if !strings.HasPrefix(filePath, RootConfig.BaseDir) {
-			util.FatalErrorCheck("Invalid file path", errors.New("file path must be within the base directory"))
+			util.FatalErrorCheck("Invalid file path", os.ErrNotExist)
 		}
 		extFile, err := os.ReadFile(filepath.Clean(filePath))
 		util.FatalErrorCheck("Error importing extfiles item", err)
@@ -487,7 +492,7 @@ func processIncludesFile(
 		// Pass component config as data for the template
 		outStr, err = processTemplate(inputFile, gjson.Get(config, componentName).Map())
 	default:
-		outStr, err = "", errors.New("unsupported file extension")
+		outStr, err = "", os.ErrInvalid
 	}
 	if err != nil {
 		log.Fatal().Str("cluster", kr8Spec.Name).

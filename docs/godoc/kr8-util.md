@@ -64,7 +64,7 @@ func FatalErrorCheck(message string, err error)
 Logs an error and exits the program if the error is not nil. Saves 3 lines per use and centralizes fatal errors for rewriting.
 
 <a name="FetchRepoUrl"></a>
-## func [FetchRepoUrl](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/remote.go#L12>)
+## func [FetchRepoUrl](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/remote.go#L13>)
 
 ```go
 func FetchRepoUrl(url string, destination string, performFetch bool) error

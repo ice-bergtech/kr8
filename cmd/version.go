@@ -6,8 +6,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Print out versions of packages in use
-// Bug() - Updated manually
+// Print out versions of packages in use.
+// Chore() - Updated manually.
 var VersionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Return the current version of kr8",

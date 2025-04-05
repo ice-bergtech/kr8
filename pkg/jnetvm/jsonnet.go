@@ -63,6 +63,7 @@ func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error) {
 		}
 		jvm.ExtVar(args[0], string(v))
 	}
+
 	return jvm, nil
 }
 

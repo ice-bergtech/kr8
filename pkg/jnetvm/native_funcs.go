@@ -70,10 +70,9 @@ func NativeHelmTemplate() *jsonnet.NativeFunction {
 }
 
 // Uses sprig to process passed in config data and template.
+// Sprig template guide: https://masterminds.github.io/sprig/ .
 //
-// Sprig template guide: https://masterminds.github.io/sprig/
-//
-// Inputs: "config" "str"
+// Inputs: "config" "str".
 func NativeSprigTemplate() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "template",
@@ -98,9 +97,9 @@ func NativeSprigTemplate() *jsonnet.NativeFunction {
 		}}
 }
 
-// Escapes a string for use in regex
+// Escapes a string for use in regex.
 //
-// Inputs: "str"
+// Inputs: "str".
 func NativeRegexEscape() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "escapeStringRegex",
@@ -110,9 +109,9 @@ func NativeRegexEscape() *jsonnet.NativeFunction {
 		}}
 }
 
-// Matches a string against a regex pattern
+// Matches a string against a regex pattern.
 //
-// Inputs: "regex", "string"
+// Inputs: "regex", "string".
 func NativeRegexMatch() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "regexMatch",
@@ -122,9 +121,9 @@ func NativeRegexMatch() *jsonnet.NativeFunction {
 		}}
 }
 
-// Substitutes a regex pattern in a string with another string
+// Substitutes a regex pattern in a string with another string.
 //
-// Inputs: "regex", "src", "repl"
+// Inputs: "regex", "src", "repl".
 func NativeRegexSubst() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "regexSubst",
@@ -143,13 +142,12 @@ func NativeRegexSubst() *jsonnet.NativeFunction {
 		}}
 }
 
-// Allows converting a docker-compose file string into kubernetes resources using kompose
+// Allows converting a docker-compose file string into kubernetes resources using kompose.
+// Files in the directory must be in the format `[docker-]compose.ym[a]l`.
 //
 // Source: https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
 //
-// Files in the directory must be in the format `[docker-]compose.ym[a]l`
-//
-// Inputs: `inFile`, `outPath`, `opts`
+// Inputs: `inFile`, `outPath`, `opts`.
 func NativeKompose() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "komposeFile",
@@ -158,13 +156,19 @@ func NativeKompose() *jsonnet.NativeFunction {
 			inFile, argOk := args[0].(string)
 			log.Debug().Msg("inFile: " + inFile)
 			if !argOk {
-				return nil, fmt.Errorf("first argument 'inFile' must be of 'string' type, got '%T' instead", args[0])
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'inFile' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
 			}
 
 			outPath, argOk := args[1].(string)
 			log.Debug().Msg("outPath: " + outPath)
 			if !argOk {
-				return nil, fmt.Errorf("second argument 'outPath' must be of 'string' type, got '%T' instead", args[1])
+				return nil, jsonnet.RuntimeError{
+					Msg:        "second argument 'outPath' must be of 'string' type, got " + fmt.Sprintf("%T", args[1]),
+					StackTrace: nil,
+				}
 			}
 
 			opts, err := parseOpts(args[2])
@@ -196,12 +200,18 @@ func parseOpts(data interface{}) (*types.Kr8ComponentJsonnet, error) {
 		return nil, err
 	}
 
-	// Charts are only allowed at relative paths. Use conf.CalledFrom to find the callers directory
+	// Charts are only allowed at relative paths. Use conf.CalledFrom to find the callers directory.
 	if opts.Namespace == "" {
-		return nil, fmt.Errorf("kompose: 'opts.Namespace' is unset or empty.")
+		return nil, jsonnet.RuntimeError{
+			Msg:        "kompose: 'opts.namespace' is unset or empty.",
+			StackTrace: nil,
+		}
 	}
 	if opts.CalledFrom == "" {
-		return nil, fmt.Errorf("kompose: 'opts.CalledFrom' is unset or empty.")
+		return nil, jsonnet.RuntimeError{
+			Msg:        "kompose: 'opts.called_from' is unset or empty.",
+			StackTrace: nil,
+		}
 	}
 
 	return &opts, nil

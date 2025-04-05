@@ -35,9 +35,11 @@ var FormatCmd = &cobra.Command{
                 if info.Name() == ".git" {
                     return filepath.SkipDir
                 }
+
                 return nil
             }
             fileList = append(fileList, path)
+
             return nil
         })
         util.FatalErrorCheck("Error walking the path "+RootConfig.BaseDir, err)
@@ -51,6 +53,7 @@ var FormatCmd = &cobra.Command{
                 }
                 result = result || t
             }
+
             return result
         })
 
@@ -63,6 +66,7 @@ var FormatCmd = &cobra.Command{
                 }
                 result = result || t
             }
+
             return !result
         })
         log.Debug().Msg("Filtered file list: " + fmt.Sprintf("%v", fileList))
@@ -82,11 +86,13 @@ var FormatCmd = &cobra.Command{
                 output, err := formatter.Format(filename, string(bytes), util.GetDefaultFormatOptions())
                 if err != nil {
                     fmt.Fprintln(os.Stderr, err.Error())
+
                     return
                 }
                 err = os.WriteFile(filepath.Clean(filename), []byte(output), 0600)
                 if err != nil {
                     fmt.Fprintln(os.Stderr, err.Error())
+
                     return
                 }
             })
@@ -125,6 +131,7 @@ var GetClustersCmd = &cobra.Command{
             for _, c := range clusters {
                 println(c.Name + ": " + c.Path)
             }
+
             return
         }
 
@@ -144,7 +151,7 @@ var GetClustersCmd = &cobra.Command{
 }
 ```
 
-<a name="GetCmd"></a>GetCmd represents the get command
+<a name="GetCmd"></a>GetCmd represents the get command.
 
 ```go
 var GetCmd = &cobra.Command{
@@ -225,6 +232,7 @@ var GetParamsCmd = &cobra.Command{
             } else {
                 fmt.Println(util.Pretty(params, RootConfig.Color))
             }
+
             return
         }
 
@@ -294,7 +302,7 @@ var InitClusterCmd = &cobra.Command{
 }
 ```
 
-<a name="InitCmd"></a>InitCmd represents the init command
+<a name="InitCmd"></a>InitCmd represents the command. Various subcommands are available to initialize different components of kr8.
 
 ```go
 var InitCmd = &cobra.Command{
@@ -320,19 +328,19 @@ var InitComponentCmd = &cobra.Command{
                 Message: "Enter component name",
                 Default: cmdInitFlags.ComponentName,
             }
-            survey.AskOne(prompt, &cmdInitFlags.ComponentName)
+            util.FatalErrorCheck("Invalid component name", survey.AskOne(prompt, &cmdInitFlags.ComponentName))
 
             prompt = &survey.Input{
                 Message: "Enter component directory",
                 Default: RootConfig.ComponentDir,
             }
-            survey.AskOne(prompt, &RootConfig.ComponentDir)
+            util.FatalErrorCheck("Invalid component directory", survey.AskOne(prompt, &RootConfig.ComponentDir))
 
             promptS := &survey.Select{
                 Message: "Select component type",
                 Options: []string{"jsonnet", "yml", "tpl", "chart"},
             }
-            survey.AskOne(promptS, &cmdInitFlags.ComponentType)
+            util.FatalErrorCheck("Invalid component type", survey.AskOne(promptS, &cmdInitFlags.ComponentType))
         }
         kr8init.GenerateComponentJsonnet(cmdInitFlags, RootConfig.ComponentDir)
     },
@@ -367,7 +375,11 @@ and initialize a git repo so you can get started`,
         outDir := args[len(args)-1]
         log.Debug().Msg("Initializing kr8 config repo in " + outDir)
         if cmdInitFlags.InitUrl != "" {
-            util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, cmdInitFlags.Fetch)
+            util.FatalErrorCheck(
+                "Issue fetching repo",
+                util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, cmdInitFlags.Fetch),
+            )
+
             return
         }
 
@@ -507,7 +519,7 @@ var RenderJsonnetCmd = &cobra.Command{
 }
 ```
 
-<a name="RootCmd"></a>RootCmd represents the base command when called without any subcommands
+<a name="RootCmd"></a>RootCmd represents the base command when called without any subcommands.
 
 ```go
 var RootCmd = &cobra.Command{
@@ -518,13 +530,13 @@ var RootCmd = &cobra.Command{
 }
 ```
 
-<a name="Version"></a>exported Version variable
+<a name="Version"></a>exported Version variable.
 
 ```go
 var Version string
 ```
 
-<a name="VersionCmd"></a>Print out versions of packages in use Bug\(\) \- Updated manually
+<a name="VersionCmd"></a>Print out versions of packages in use. Chore\(\) \- Updated manually.
 
 ```go
 var VersionCmd = &cobra.Command{
@@ -543,7 +555,7 @@ var VersionCmd = &cobra.Command{
 ```
 
 <a name="Execute"></a>
-## func [Execute](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L32>)
+## func [Execute](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L33>)
 
 ```go
 func Execute(version string)
@@ -552,16 +564,16 @@ func Execute(version string)
 Execute adds all child commands to the root command sets flags appropriately. This is called by main.main\(\). It only needs to happen once to the rootCmd.
 
 <a name="GenerateCommand"></a>
-## func [GenerateCommand](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L88>)
+## func [GenerateCommand](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L87>)
 
 ```go
 func GenerateCommand(cmd *cobra.Command, args []string)
 ```
 
-This function will generate the components for each cluster in parallel It uses a wait group to ensure that all clusters have been processed before exiting.
+This function will generate the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.
 
 <a name="InitConfig"></a>
-## func [InitConfig](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L98>)
+## func [InitConfig](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L99>)
 
 ```go
 func InitConfig()
@@ -570,7 +582,7 @@ func InitConfig()
 InitConfig reads in config file and ENV variables if set.
 
 <a name="CmdGenerateOptions"></a>
-## type [CmdGenerateOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L43-L50>)
+## type [CmdGenerateOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L42-L49>)
 
 Stores the options for the 'generate' command.
 
@@ -611,7 +623,7 @@ type CmdGetOptions struct {
 <a name="CmdRenderOptions"></a>
 ## type [CmdRenderOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/render.go#L23-L34>)
 
-Contains parameters for the kr8 render command
+Contains parameters for the kr8 render command.
 
 ```go
 type CmdRenderOptions struct {
@@ -629,9 +641,9 @@ type CmdRenderOptions struct {
 ```
 
 <a name="CmdRootOptions"></a>
-## type [CmdRootOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L41-L60>)
+## type [CmdRootOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L42-L61>)
 
-Default options that are available to all commands
+Default options that are available to all commands.
 
 ```go
 type CmdRootOptions struct {

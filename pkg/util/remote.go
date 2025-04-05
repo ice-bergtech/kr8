@@ -41,5 +41,6 @@ func FetchRepoUrl(url string, destination string, performFetch bool) error {
 		log.Debug().Msg("Removing .git directory")
 		FatalErrorCheck("Error removing .git directory", os.RemoveAll(destination+"/.git"))
 	}
+
 	return nil
 }

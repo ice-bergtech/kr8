@@ -48,9 +48,11 @@ var FormatCmd = &cobra.Command{
 				if info.Name() == ".git" {
 					return filepath.SkipDir
 				}
+
 				return nil
 			}
 			fileList = append(fileList, path)
+
 			return nil
 		})
 		util.FatalErrorCheck("Error walking the path "+RootConfig.BaseDir, err)
@@ -64,6 +66,7 @@ var FormatCmd = &cobra.Command{
 				}
 				result = result || t
 			}
+
 			return result
 		})
 
@@ -76,6 +79,7 @@ var FormatCmd = &cobra.Command{
 				}
 				result = result || t
 			}
+
 			return !result
 		})
 		log.Debug().Msg("Filtered file list: " + fmt.Sprintf("%v", fileList))
@@ -95,11 +99,13 @@ var FormatCmd = &cobra.Command{
 				output, err := formatter.Format(filename, string(bytes), util.GetDefaultFormatOptions())
 				if err != nil {
 					fmt.Fprintln(os.Stderr, err.Error())
+
 					return
 				}
 				err = os.WriteFile(filepath.Clean(filename), []byte(output), 0600)
 				if err != nil {
 					fmt.Fprintln(os.Stderr, err.Error())
+
 					return
 				}
 			})

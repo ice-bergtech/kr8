@@ -27,7 +27,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// GetCmd represents the get command
+// GetCmd represents the get command.
 var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Display one or many kr8 resources",
@@ -96,6 +96,7 @@ var GetClustersCmd = &cobra.Command{
 			for _, c := range clusters {
 				println(c.Name + ": " + c.Path)
 			}
+
 			return
 		}
 
@@ -179,6 +180,7 @@ var GetParamsCmd = &cobra.Command{
 			} else {
 				fmt.Println(util.Pretty(params, RootConfig.Color))
 			}
+
 			return
 		}
 

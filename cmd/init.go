@@ -42,7 +42,8 @@ func init() {
 		"Component type, one of: [`jsonnet`, `yml`, `chart`]")
 }
 
-// InitCmd represents the init command
+// InitCmd represents the command.
+// Various subcommands are available to initialize different components of kr8.
 var InitCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize kr8 config repos, components and clusters",
@@ -125,7 +126,11 @@ and initialize a git repo so you can get started`,
 		outDir := args[len(args)-1]
 		log.Debug().Msg("Initializing kr8 config repo in " + outDir)
 		if cmdInitFlags.InitUrl != "" {
-			util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, cmdInitFlags.Fetch)
+			util.FatalErrorCheck(
+				"Issue fetching repo",
+				util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, cmdInitFlags.Fetch),
+			)
+
 			return
 		}
 		// struct for component and clusters
@@ -174,19 +179,19 @@ var InitComponentCmd = &cobra.Command{
 				Message: "Enter component name",
 				Default: cmdInitFlags.ComponentName,
 			}
-			survey.AskOne(prompt, &cmdInitFlags.ComponentName)
+			util.FatalErrorCheck("Invalid component name", survey.AskOne(prompt, &cmdInitFlags.ComponentName))
 
 			prompt = &survey.Input{
 				Message: "Enter component directory",
 				Default: RootConfig.ComponentDir,
 			}
-			survey.AskOne(prompt, &RootConfig.ComponentDir)
+			util.FatalErrorCheck("Invalid component directory", survey.AskOne(prompt, &RootConfig.ComponentDir))
 
 			promptS := &survey.Select{
 				Message: "Select component type",
 				Options: []string{"jsonnet", "yml", "tpl", "chart"},
 			}
-			survey.AskOne(promptS, &cmdInitFlags.ComponentType)
+			util.FatalErrorCheck("Invalid component type", survey.AskOne(promptS, &cmdInitFlags.ComponentType))
 		}
 		kr8init.GenerateComponentJsonnet(cmdInitFlags, RootConfig.ComponentDir)
 	},

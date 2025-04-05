@@ -79,8 +79,8 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 
 func GenerateLib(fetch bool, dstDir string) error {
 	util.FatalErrorCheck("error creating lib directory", os.MkdirAll(dstDir, 0750))
-	util.FetchRepoUrl("https://github.com/kube-libsonnet/kube-libsonnet.git", dstDir+"/klib", fetch)
-	return nil
+
+	return util.FetchRepoUrl("https://github.com/kube-libsonnet/kube-libsonnet.git", dstDir+"/klib", fetch)
 }
 
 func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) error {

@@ -2,8 +2,8 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 
+	"github.com/google/go-jsonnet"
 	kompose "github.com/kubernetes/kompose/pkg/app"
 	"github.com/kubernetes/kompose/pkg/kobject"
 	"github.com/kubernetes/kompose/pkg/loader"
@@ -11,7 +11,7 @@ import (
 	"github.com/kubernetes/kompose/pkg/transformer/kubernetes"
 	"github.com/kubernetes/kompose/pkg/transformer/openshift"
 
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 )
@@ -194,10 +194,10 @@ func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions {
 // Validates a set of options for converting a Kubernetes manifest to a Docker Compose file.
 func (k KomposeConvertOptions) Validate() error {
 	if k.OutFile == "" {
-		return fmt.Errorf("OutFile must be set")
+		return jsonnet.RuntimeError{Msg: "OutFile must be set"}
 	}
 	if len(k.InputFiles) == 0 {
-		return fmt.Errorf("InputFiles must be set")
+		return jsonnet.RuntimeError{Msg: "InputFiles must be set"}
 	}
 	// Makes sure the input files are present and are named in a compose-file way
 	return kompose.ValidateComposeFile(k.GenKomposePkgOpts())

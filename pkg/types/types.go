@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -65,7 +66,7 @@ func CreateClusterSpec(
 		clGenerateDir = spec.Get("generate_dir").String()
 	}
 	if clGenerateDir == "" {
-		return Kr8ClusterSpec{}, fmt.Errorf("_kr8_spec.generate_dir must be set in parameters or passed as generate-dir flag")
+		return Kr8ClusterSpec{}, errors.New("_kr8_spec.generate_dir must be set in parameters or passed as generate-dir flag")
 	}
 	// if generateDir does not start with /, then it goes in baseDir
 	if !strings.HasPrefix(clGenerateDir, "/") {

@@ -17,10 +17,10 @@ import (
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
-// exported Version variable
+// exported Version variable.
 var Version string
 
-// RootCmd represents the base command when called without any subcommands
+// RootCmd represents the base command when called without any subcommands.
 var RootCmd = &cobra.Command{
 	Use:   "kr8",
 	Short: "Kubernetes config parameter framework",
@@ -38,7 +38,7 @@ func Execute(version string) {
 	}
 }
 
-// Default options that are available to all commands
+// Default options that are available to all commands.
 type CmdRootOptions struct {
 	// kr8 config base directory
 	BaseDir string
@@ -97,7 +97,8 @@ func init() {
 
 // InitConfig reads in config file and ENV variables if set.
 func InitConfig() {
-	if RootConfig.ConfigFile != "" { // enable ability to specify config file via flag
+	// enable ability to specify config file via flag
+	if RootConfig.ConfigFile != "" {
 		viper.SetConfigFile(RootConfig.ConfigFile)
 	}
 
@@ -146,7 +147,8 @@ func InitConfig() {
 				colorRed := 31
 				colorBold := 1
 				s := strings.ReplaceAll(strings.ReplaceAll(strings.TrimRight(err.(string), "\\n"), "\\t", " "), "\\n", " |")
-				return util.Colorize(util.Colorize(fmt.Sprintf("%s", s), colorBold, !RootConfig.Color), colorRed, !RootConfig.Color)
+
+				return util.Colorize(util.Colorize(s, colorBold, !RootConfig.Color), colorRed, !RootConfig.Color)
 			},
 		},
 	)
