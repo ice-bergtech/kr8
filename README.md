@@ -39,7 +39,7 @@ kr8+ is not designed to be a tool to help you install and deploy applications.
 It's specifically designed to manage and maintain configuration for the cluster level services.
 For more information, see the [components](docs/components) section.
 
-In order to use kr8+, you'll need a configuration repository to go with this binary. 
+In order to use kr8+, you'll need a configuration repository to go with this binary.
 See the [example](./example/) directory for more information.
 
 ## Concepts & Tools
@@ -75,8 +75,18 @@ See the [Components](docs/concepts/components.md) documentation.
 
 ### Jsonnet
 
-All configuration for kr8+ is written in [Jsonnet](https://jsonnet.org/). 
+All configuration for kr8+ is written in [Jsonnet](https://jsonnet.org/).
 Jsonnet was chosen because it allows us to use code for configuration, while staying as close to JSON as possible.
+
+### Further Information
+
+* [Command Documentation](docs/cmd/kr8.md)
+* kr8+
+  * [Concepts](docs/concepts/overview.md)
+  * [Managing Clusters](concepts/clusters.md)
+  * [Creating Components](concepts/components.md)
+  * [Native Functions](docs/components/nativefuncs.md)
+* [Code Documentation](docs/godoc)
 
 ## Development
 
@@ -117,10 +127,10 @@ task build-snapshot
 
 ### Build Troubleshooting
 
-1. Dependencies download fail: There is a big number of reasons this could fail but the most important might be:
+* Dependencies download fail: There is a big number of reasons this could fail but the most important might be:
    * Networking problems: Check your connection to: github.com, golang.org and k8s.io.
    * Disk space: If no space is available on the disk, this step might fail.
-2. The comand `go build` does not start the build:
+* The comand `go build` does not start the build:
    * Confirm you are in the correct project directory
    * Make sure your go installation works: `go --version`
 

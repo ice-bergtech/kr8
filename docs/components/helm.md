@@ -1,6 +1,7 @@
 # Helm
 
-kr8 can render helm charts locally and inject parameters as helm values. This provides a great degree of flexibility when installing components into clusters.
+kr8 can render helm charts locally and inject parameters as helm values.
+This provides a great degree of flexibility when installing components into clusters.
 
 ## Taskfile
 
@@ -25,7 +26,8 @@ tasks:
 
 ## Params
 
-The `params.jsonnet` for a helm chart directory should include the helm values you want to use. Here's an example:
+The `params.jsonnet` for a helm chart directory should include the helm values you want to use.
+Here's an example:
 
 ```jsonnet
 {
@@ -41,7 +43,9 @@ The `params.jsonnet` for a helm chart directory should include the helm values y
 
 ## Values file
 
-A values file is a required file for a helm component. The name of the file must be `componentname-values.jsonnet` (for example: cert-manager-values.jsonnet). It's content would be something like this:
+A values file is a required file for a helm component.
+The name of the file must be `componentname-values.jsonnet` (for example: cert-manager-values.jsonnet).
+It's content would be something like this:
 
 ```jsonnet
 local config = std.extVar('kr8');
@@ -61,7 +65,8 @@ You can also optionally set the values for the helm chart in here, this would lo
 
 There are certain situations where a configuration option is not available for a helm chart, for example, you might want to add an argument that hasn't quite made it into the helm chart yet, or add something like [pod affinity](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity) where it isn't actually a value option in a helm chart.
 
-kr8 helps you in this situation by providing a mechanism to patch a helm chart. You need to use the `helm-render-with-patch` helper and provide a `patches.jsonnet` in the component directory.
+kr8+ helps you in this situation by providing a mechanism to patch a helm chart.
+You need to use the `helm-render-with-patch` helper and provide a `patches.jsonnet` in the component directory.
 
 Here's an example `patches.jsonnet` for [external-dns](https://github.com/kubernetes-incubator/external-dns)
 

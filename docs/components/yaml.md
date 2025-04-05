@@ -1,10 +1,13 @@
 # YAML Component
 
-kr8 can use a static k8s manifest as a source input. You can then manipulate the structure of that YAML using Jsonnet. kr8 takes care of the heavy lifting for you.
+kr8+ can use a static k8s manifest as a source input.
+You can then manipulate the structure of that YAML using Jsonnet.
+kr8+ takes care of the heavy lifting for you.
 
 ## Taskfile
 
-You'll need a taskfile that downloads the original manifests for you in the `fetch` task. Here's an example:
+You'll need a taskfile that downloads the original manifests for you in the `fetch` task.
+Here's an example:
 
 ```yaml
 
@@ -40,7 +43,9 @@ You'll notice in the taskfile above that this line:
 KR8_JSONNET_ARGS='--ext-str-file inputMetricsServerDeploy=vendored/metrics-server-deployment.yaml' kr8-helpers jsonnet-render metrics-server-deployment.jsonnet
 ```
 
-References one of the files in vendored. This give us the ability to modify this file. Here's how the jsonnet looks:
+References one of the files in vendored.
+This give us the ability to modify this file.
+Here's how the jsonnet looks:
 
 ```jsonnet
 local helpers = import 'helpers.libsonnet';

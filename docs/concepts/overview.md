@@ -1,6 +1,6 @@
 # Concepts
 
-kr8 has two main concepts you should be aware of before you get started:
+kr8+ has two main concepts you should be aware of before you get started:
 
   - [components](components.md) - one or more application packaged together
   - [clusters](clusters.md) - a deployment environment, organized as a tree of configuration
