@@ -1,5 +1,6 @@
 /*
-This code was originally copied almost verbatim from the kubecfg project: https://github.com/ksonnet/kubecfg -> https://github.com/kubecfg/kubecfg
+This code was originally copied almost verbatim from the kubecfg project:
+	https://github.com/ksonnet/kubecfg -> https://github.com/kubecfg/kubecfg
 
 Copyright 2018 ksonnet
 
