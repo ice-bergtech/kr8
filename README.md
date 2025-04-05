@@ -10,6 +10,8 @@ kr8+ is a very opinionated tool used for rendering [jsonnet](http://jsonnet.org)
 
 It has been designed to work as a simple configuration management framework, allowing operators to specify configurations at different cluster context levels to generate component manifests across multiple clusters.
 
+Once installed, 99% percent of your usage will be running `kr8 generate`.
+
 Kr8+ is `pre-1.0`.
 This means that breaking changes will still happen from time to time, but it's stable enough for both scripting and interactive use.
 
