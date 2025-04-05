@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -118,6 +117,58 @@ type Kr8ComponentSpec struct {
 	Includes []interface{} `json:"includes"`
 }
 
+// Extract jsonnet extVar defintions from spec.
+func extractExtFiles(spec gjson.Result) map[string]string {
+	result := make(map[string]string)
+	for k, v := range spec.Get("extfiles").Map() {
+		if v.Type == gjson.String {
+			result[k] = v.String()
+		}
+	}
+
+	return result
+}
+
+// Extract jsonnet lib paths from spec.
+func extractJpaths(spec gjson.Result) []string {
+	jPathsInput := spec.Get("jpaths").Array()
+	jPathsOutput := make([]string, len(jPathsInput))
+	for i, p := range jPathsInput {
+		jPathsOutput[i] = p.String()
+	}
+
+	return jPathsOutput
+}
+
+// Extract jsonnet includes filenames or objects from spec.
+func extractIncludes(spec gjson.Result) []interface{} {
+	incl := spec.Get("includes")
+	includes := make([]interface{}, len(incl.Array()))
+	for idx, item := range incl.Array() {
+		switch item.Type {
+		case gjson.JSON:
+			var include Kr8ComponentSpecIncludeObject
+			err := json.Unmarshal([]byte(item.String()), &include)
+			if err != nil {
+				log.Info().Msg("Error unmarshalling include object: " + item.String() + " skipping.")
+
+				continue
+			}
+			includes[idx] = include
+		case gjson.String:
+			includes[idx] = item.String()
+		case gjson.True:
+		case gjson.False:
+		case gjson.Number:
+		case gjson.Null:
+		default:
+			log.Fatal().Msg("Includes list item is not a string or json object")
+		}
+	}
+
+	return includes
+}
+
 // Extracts a component spec from a jsonnet object.
 func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
 	specM := spec.Map()
@@ -130,39 +181,9 @@ func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
 		Kr8_allparams:         spec.Get("enable_kr8_allparams").Bool(),
 		Kr8_allclusters:       spec.Get("enable_kr8_allclusters").Bool(),
 		DisableOutputDirClean: spec.Get("disable_output_clean").Bool(),
-		ExtFiles:              ExtFileVar{},
-		JPaths:                []string{},
-		Includes:              []interface{}{},
-	}
-
-	for k, v := range spec.Get("extfiles").Map() {
-		if v.Type == gjson.String {
-			componentSpec.ExtFiles[k] = v.String()
-		}
-	}
-
-	jPaths := spec.Get("jpaths").Array()
-	componentSpec.JPaths = make([]string, len(jPaths))
-	for i, p := range jPaths {
-		componentSpec.JPaths[i] = p.String()
-	}
-
-	incl := spec.Get("includes")
-	componentSpec.Includes = make([]interface{}, len(incl.Array()))
-	for idx, item := range incl.Array() {
-		switch item.Type {
-		case gjson.JSON:
-			var include Kr8ComponentSpecIncludeObject
-			err := json.Unmarshal([]byte(item.String()), &include)
-			if err != nil {
-				return componentSpec, fmt.Errorf("error unmarshalling includes: %w", err)
-			}
-			componentSpec.Includes[idx] = include
-		case gjson.String:
-			componentSpec.Includes[idx] = item.String()
-		default:
-			log.Fatal().Msg("Includes list item is not a string or json object")
-		}
+		ExtFiles:              extractExtFiles(spec),
+		JPaths:                extractJpaths(spec),
+		Includes:              extractIncludes(spec),
 	}
 
 	return componentSpec, nil

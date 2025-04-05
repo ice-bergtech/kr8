@@ -1,2 +1,1 @@
-kr8/pkg/types/types.go:153:3  exhaustive  missing cases in switch of type gjson.Type: gjson.Null, gjson.False, gjson.Number, gjson.True
-kr8/cmd/generate.go:286:1     gocognit    cognitive complexity 37 of func `genProcessComponent` is high (> 30)
+kr8/cmd/generate.go:286:1  gocognit  cognitive complexity 37 of func `genProcessComponent` is high (> 30)
