@@ -302,6 +302,7 @@ func genProcessComponent(
 	jvm, _ := jnetvm.JsonnetVM(vmconfig)
 	jnetvm.RegisterNativeFuncs(jvm)
 	jvm.ExtCode("kr8_cluster", "std.prune("+config+"._cluster)")
+
 	// vm.ExtCode("kr8_components", "std.prune("+config+"._components)")
 	if kr8Spec.PostProcessor != "" {
 		jvm.ExtCode("process", kr8Spec.PostProcessor)
@@ -320,38 +321,85 @@ func genProcessComponent(
 	// add kr8_allparams extcode with all component params in the cluster
 	if compSpec.Kr8_allparams {
 		// include full render of all component params
-		allConfig.mu.Lock()
-		if allConfig.config == "" {
-			// only do this if we have not already cached it and don't already have it stored
-			if cmdGenerateFlags.Filters.Components == "" {
-				// all component params are in config
-				allConfig.config = config
-			} else {
-				allConfig.config = jnetvm.JsonnetRenderClusterParams(
-					vmconfig,
-					kr8Spec.Name,
-					[]string{},
-					cmdGenerateFlags.ClusterParamsFile,
-					false,
-				)
-			}
-		}
-		jvm.ExtCode("kr8_allparams", allConfig.config)
-		allConfig.mu.Unlock()
+		// only do this if we have not already cached it and don't already have it stored
+		getAllComponentParamsThreadsafe(allConfig, config, vmconfig, kr8Spec, jvm)
 	}
 
 	// add kr8_allclusters extcode with every cluster's cluster level params
 	if compSpec.Kr8_allclusters {
-		// combine all the cluster params into a single object indexed by cluster name
-		allClusterParamsObject := "{ "
-		for cl, clp := range GetClusterParams() {
-			allClusterParamsObject = allClusterParamsObject + "'" + cl + "': " + clp + ","
-		}
-		allClusterParamsObject += "}"
-		jvm.ExtCode("kr8_allclusters", allClusterParamsObject)
+		getAllClusterParams(jvm)
 	}
 
 	// jPathResults always includes base lib. Add jpaths from spec if set
+	loadJPathsIntoVM(compSpec, compPath, jvm)
+
+	// file imports
+	loadExtFilesIntoVars(compSpec, compPath, kr8Spec, componentName, jvm)
+
+	componentOutputDir := filepath.Join(kr8Spec.ClusterDir, componentName)
+	// create component dir if needed
+	if _, err := os.Stat(componentOutputDir); os.IsNotExist(err) {
+		err := os.MkdirAll(componentOutputDir, 0750)
+		util.FatalErrorCheck("Error creating component directory", err)
+	}
+
+	// generate each included file
+	outputFileMap := GenerateIncludesFiles(
+		compSpec.Includes,
+		kr8Spec,
+		config,
+		componentName,
+		compPath,
+		componentOutputDir,
+		jvm,
+	)
+
+	// purge any yaml files in the output dir that were not generated
+	if !compSpec.DisableOutputDirClean {
+		CleanOutputDir(outputFileMap, componentOutputDir)
+	}
+}
+
+// combine all the cluster params into a single object indexed by cluster name.
+func getAllClusterParams(jvm *jsonnet.VM) {
+	allClusterParamsObject := "{ "
+	for cl, clp := range GetClusterParams() {
+		allClusterParamsObject = allClusterParamsObject + "'" + cl + "': " + clp + ","
+	}
+	allClusterParamsObject += "}"
+	jvm.ExtCode("kr8_allclusters", allClusterParamsObject)
+}
+
+// Include full render of all component params for cluster.
+// Only do this if we have not already cached it and don't already have it stored.
+func getAllComponentParamsThreadsafe(
+	allConfig *safeString,
+	config string,
+	vmconfig types.VMConfig,
+	kr8Spec types.Kr8ClusterSpec,
+	jvm *jsonnet.VM,
+) {
+	allConfig.mu.Lock()
+	if allConfig.config == "" {
+		if cmdGenerateFlags.Filters.Components == "" {
+			allConfig.config = config
+		} else {
+			allConfig.config = jnetvm.JsonnetRenderClusterParams(
+				vmconfig,
+				kr8Spec.Name,
+				[]string{},
+				cmdGenerateFlags.ClusterParamsFile,
+				false,
+			)
+		}
+	}
+	jvm.ExtCode("kr8_allparams", allConfig.config)
+	allConfig.mu.Unlock()
+}
+
+// jPathResults always includes base lib.
+// Adds jpaths from spec if set.
+func loadJPathsIntoVM(compSpec types.Kr8ComponentSpec, compPath string, jvm *jsonnet.VM) {
 	jPathResults := []string{filepath.Join(RootConfig.BaseDir, "lib")}
 	for _, jPath := range compSpec.JPaths {
 		jPathResults = append(jPathResults, filepath.Join(RootConfig.BaseDir, compPath, jPath))
@@ -359,8 +407,15 @@ func genProcessComponent(
 	jvm.Importer(&jsonnet.FileImporter{
 		JPaths: jPathResults,
 	})
+}
 
-	// file imports
+func loadExtFilesIntoVars(
+	compSpec types.Kr8ComponentSpec,
+	compPath string,
+	kr8Spec types.Kr8ClusterSpec,
+	componentName string,
+	jvm *jsonnet.VM,
+) {
 	for key, val := range compSpec.ExtFiles {
 		filePath := filepath.Join(RootConfig.BaseDir, compPath, val)
 		if !strings.HasPrefix(filePath, RootConfig.BaseDir) {
@@ -373,24 +428,25 @@ func genProcessComponent(
 			Msg("Extfile: " + key + "=" + val)
 		jvm.ExtVar(key, string(extFile))
 	}
+}
 
-	componentOutputDir := filepath.Join(kr8Spec.ClusterDir, componentName)
-	// create component dir if needed
-	if _, err := os.Stat(componentOutputDir); os.IsNotExist(err) {
-		err := os.MkdirAll(componentOutputDir, 0750)
-		util.FatalErrorCheck("Error creating component directory", err)
-	}
-
-	incInfo := types.Kr8ComponentSpecIncludeObject{
-		DestExt:  "yaml",
-		DestDir:  "",
-		DestName: "",
-		File:     "",
-	}
-
+func GenerateIncludesFiles(
+	includesFiles []interface{},
+	kr8Spec types.Kr8ClusterSpec,
+	config string,
+	componentName string,
+	compPath string,
+	componentOutputDir string,
+	jvm *jsonnet.VM,
+) map[string]bool {
 	outputFileMap := make(map[string]bool)
-	// generate each included file
-	for _, include := range compSpec.Includes {
+	for _, include := range includesFiles {
+		incInfo := types.Kr8ComponentSpecIncludeObject{
+			DestExt:  "yaml",
+			DestDir:  "",
+			DestName: "",
+			File:     "",
+		}
 		switch val := include.(type) {
 		case string:
 			fileName := val
@@ -421,28 +477,27 @@ func genProcessComponent(
 		processIncludesFile(jvm, config, kr8Spec, componentName, compPath, componentOutputDir, incInfo, outputFileMap)
 	}
 
-	// purge any yaml files in the output dir that were not generated
-	if !compSpec.DisableOutputDirClean {
-		// clean component dir
-		d, err := os.Open(filepath.Clean(componentOutputDir))
-		util.FatalErrorCheck("", err)
-		// Lifetime of function
-		defer d.Close()
-		names, err := d.Readdirnames(-1)
-		util.FatalErrorCheck("", err)
-		for _, name := range names {
-			if _, ok := outputFileMap[name]; ok {
-				// file is managed
-				continue
-			}
-			if filepath.Ext(name) == ".yaml" {
-				delFile := filepath.Join(componentOutputDir, name)
-				err = os.RemoveAll(delFile)
-				util.FatalErrorCheck("", err)
-				log.Debug().Str("cluster", kr8Spec.Name).
-					Str("component", componentName).
-					Msg("Deleted: " + delFile)
-			}
+	return outputFileMap
+}
+
+func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) {
+	// clean component dir
+	d, err := os.Open(filepath.Clean(componentOutputDir))
+	util.FatalErrorCheck("", err)
+	// Lifetime of function
+	defer d.Close()
+	names, err := d.Readdirnames(-1)
+	util.FatalErrorCheck("", err)
+	for _, name := range names {
+		if _, ok := outputFileMap[name]; ok {
+			// file is managed
+			continue
+		}
+		if filepath.Ext(name) == ".yaml" {
+			delFile := filepath.Join(componentOutputDir, name)
+			err = os.RemoveAll(delFile)
+			util.FatalErrorCheck("", err)
+			log.Debug().Msg("Deleted: " + delFile)
 		}
 	}
 }

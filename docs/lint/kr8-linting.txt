@@ -1,1 +1,0 @@
-kr8/cmd/generate.go:286:1  gocognit  cognitive complexity 37 of func `genProcessComponent` is high (> 30)
