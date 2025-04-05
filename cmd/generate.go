@@ -385,6 +385,7 @@ func genProcessComponent(
 		DestExt:  "yaml",
 		DestDir:  "",
 		DestName: "",
+		File:     "",
 	}
 
 	outputFileMap := make(map[string]bool)
@@ -455,8 +456,6 @@ func processIncludesFile(
 	incInfo types.Kr8ComponentSpecIncludeObject,
 	outputFileMap map[string]bool,
 ) {
-	file_extension := filepath.Ext(incInfo.File)
-
 	// ensure this directory exists
 	outputDir := componentOutputDir
 	if incInfo.DestDir != "" {
@@ -472,9 +471,42 @@ func processIncludesFile(
 	// remember output filename for purging files
 	outputFileMap[incInfo.DestName+"."+incInfo.DestExt] = true
 
+	outStr := ProcessFile(inputFile, outputFile, kr8Spec, componentName, config, incInfo, jvm)
+
+	log.Debug().Str("cluster", kr8Spec.Name).Str("component", componentName).Msg("Checking if file needs updating...")
+
+	// only write file if it does not exist, or the generated contents does not match what is on disk
+	if CheckIfUpdateNeeded(outputFile, outStr) {
+		f, err := os.Create(outputFile)
+		util.FatalErrorCheck("Error creating file", err)
+		_, err = f.WriteString(outStr)
+		util.FatalErrorCheck("Error writing to file", err)
+		util.FatalErrorCheck("Error closing file", f.Close())
+	}
+}
+
+// Process an includes file.
+// Based on the extension, it will process it differently.
+//
+// .jsonnet: Imported and processed using jsonnet VM.
+//
+// .yml, .yaml: Imported and processed through native function ParseYaml.
+//
+// .tpl, .tmpl: Processed using component config and Sprig templating.
+func ProcessFile(
+	inputFile string,
+	outputFile string,
+	kr8Spec types.Kr8ClusterSpec,
+	componentName string,
+	config string,
+	incInfo types.Kr8ComponentSpecIncludeObject,
+	jvm *jsonnet.VM,
+) string {
 	log.Debug().Str("cluster", kr8Spec.Name).
 		Str("component", componentName).
 		Msg("Process file: " + inputFile + " -> " + outputFile)
+
+	file_extension := filepath.Ext(incInfo.File)
 
 	var input string
 	var outStr string
@@ -504,28 +536,24 @@ func processIncludesFile(
 			Msg(outStr)
 	}
 
-	// only write file if it does not exist, or the generated contents does not match what is on disk
+	return outStr
+}
+
+// Check if a file needs updating based on its current contents and the new contents.
+func CheckIfUpdateNeeded(outFile string, outStr string) bool {
 	var updateNeeded bool
-	if _, err := os.Stat(outputFile); os.IsNotExist(err) {
-		log.Debug().Str("cluster", kr8Spec.Name).
-			Str("component", componentName).
-			Msg("Creating " + outputFile)
+	outFile = filepath.Clean(outFile)
+	if _, err := os.Stat(outFile); os.IsNotExist(err) {
+		log.Debug().Msg("Creating " + outFile)
 		updateNeeded = true
 	} else {
-		currentContents, err := os.ReadFile(outputFile)
+		currentContents, err := os.ReadFile(outFile)
 		util.FatalErrorCheck("Error reading file", err)
 		if string(currentContents) != outStr {
 			updateNeeded = true
-			log.Debug().Str("cluster", kr8Spec.Name).
-				Str("component", componentName).
-				Msg("Updating: " + outputFile)
+			log.Debug().Msg("Updating: " + outFile)
 		}
 	}
-	if updateNeeded {
-		f, err := os.Create(outputFile)
-		util.FatalErrorCheck("Error creating file", err)
-		_, err = f.WriteString(outStr)
-		util.FatalErrorCheck("Error writing to file", err)
-		util.FatalErrorCheck("Error closing file", f.Close())
-	}
+
+	return updateNeeded
 }
