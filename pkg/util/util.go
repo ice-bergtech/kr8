@@ -70,34 +70,32 @@ func CheckObjectMatch(input gjson.Result, filterString string) bool {
 
 // Given a map of string, filter them based on the provided options.
 // The map value is parsed as a gjson result and then checked against the provided options.
-func FilterItems(input map[string]string, pf PathFilterOptions) []string {
-	if pf.Includes == "" && pf.Excludes == "" {
+func FilterItems(input map[string]string, pfilter PathFilterOptions) []string {
+	if pfilter.Includes == "" && pfilter.Excludes == "" {
 		// Exit hatch
 		return []string{}
 	}
 	var clusterList []string
 	for c := range input {
-		if pf.Includes != "" || pf.Excludes != "" {
-			gjResult := gjson.Parse(input[c])
-			// filter on cluster parameters, passed in gjson path notation with either
-			// "=" for equality or "~" for regex match
-			include := false
-			for _, b := range strings.Split(pf.Includes, ",") {
-				include = include || CheckObjectMatch(gjResult, b)
-			}
-			if !include {
-				continue
-			}
-			// filter on cluster parameters, passed in gjson path notation with either
-			// "=" for equality or "~" for regex match
-			var exclude bool
-			exclude = false
-			for _, b := range strings.Split(pf.Excludes, ",") {
-				exclude = exclude || CheckObjectMatch(gjResult, b)
-			}
-			if exclude {
-				continue
-			}
+		gjResult := gjson.Parse(input[c])
+		// filter on cluster parameters, passed in gjson path notation with either
+		// "=" for equality or "~" for regex match
+		include := false
+		for _, b := range strings.Split(pfilter.Includes, ",") {
+			include = include || CheckObjectMatch(gjResult, b)
+		}
+		if !include {
+			continue
+		}
+		// filter on cluster parameters, passed in gjson path notation with either
+		// "=" for equality or "~" for regex match
+		var exclude bool
+		exclude = false
+		for _, b := range strings.Split(pfilter.Excludes, ",") {
+			exclude = exclude || CheckObjectMatch(gjResult, b)
+		}
+		if exclude {
+			continue
 		}
 	}
 

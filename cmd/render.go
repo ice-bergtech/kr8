@@ -80,6 +80,7 @@ var RenderJsonnetCmd = &cobra.Command{
 					Cluster:       cmdRenderFlags.Cluster,
 					Component:     cmdRenderFlags.ComponentName,
 					Format:        cmdRenderFlags.Format,
+					Color:         false,
 				}, fileName, RootConfig.VMConfig)
 		}
 	},

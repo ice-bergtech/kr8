@@ -95,14 +95,8 @@ func init() {
 		"A config file with kr8 configuration")
 }
 
-// InitConfig reads in config file and ENV variables if set.
-func InitConfig() {
-	// enable ability to specify config file via flag
-	if RootConfig.ConfigFile != "" {
-		viper.SetConfigFile(RootConfig.ConfigFile)
-	}
-
-	if RootConfig.Debug {
+func ConfigureLogger(debug bool) {
+	if debug {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	} else {
 		switch RootConfig.LogLevel {
@@ -123,21 +117,6 @@ func InitConfig() {
 		}
 	}
 
-	if RootConfig.Parallel == -1 {
-		RootConfig.Parallel = runtime.GOMAXPROCS(0)
-	}
-
-	viper.SetConfigName(".kr8") // name of config file (without extension)
-	viper.AddConfigPath(".")
-	viper.AddConfigPath("$HOME") // adding home directory as first search path
-	viper.SetEnvPrefix("KR8")
-	viper.AutomaticEnv() // read in environment variables that match
-
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		log.Debug().Msg("Using config file:" + viper.ConfigFileUsed())
-	}
-
 	log.Logger = log.Output(
 		zerolog.ConsoleWriter{
 			Out:     os.Stderr,
@@ -152,6 +131,30 @@ func InitConfig() {
 			},
 		},
 	)
+}
+
+// InitConfig reads in config file and ENV variables if set.
+func InitConfig() {
+	ConfigureLogger(RootConfig.Debug)
+	// enable ability to specify config file via flag
+	if RootConfig.ConfigFile != "" {
+		viper.SetConfigFile(RootConfig.ConfigFile)
+	}
+
+	if RootConfig.Parallel == -1 {
+		RootConfig.Parallel = runtime.GOMAXPROCS(0)
+	}
+
+	viper.SetConfigName(".kr8") // name of config file (without extension)
+	viper.AddConfigPath(".")
+	viper.AddConfigPath("$HOME") // adding home directory as first search path
+	viper.SetEnvPrefix("KR8")
+	viper.AutomaticEnv() // read in environment variables that match
+
+	// If a config file is found, read it in.
+	if err := viper.ReadInConfig(); err == nil {
+		log.Debug().Msg("Using config file:" + viper.ConfigFileUsed())
+	}
 
 	// Setup configuration defaults
 	log.Debug().Msg("Using base directory: " + RootConfig.BaseDir)
