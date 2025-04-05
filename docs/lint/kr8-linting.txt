@@ -1,75 +1,34 @@
-kr8/cmd/generate.go:446:1              cyclop            calculated cyclomatic complexity for function processIncludesFile is 13, max is 10
-kr8/cmd/root.go:99:1                   cyclop            calculated cyclomatic complexity for function InitConfig is 14, max is 10
-kr8/pkg/util/util.go:73:1              cyclop            calculated cyclomatic complexity for function FilterItems is 12, max is 10
-kr8/pkg/types/types.go:69:28           err113            do not define dynamic errors, use wrapped static errors instead: "errors.New(\"_kr8_spec.generate_dir must be set in parameters or passed as generate-dir flag\")"
-kr8/cmd/init.go:74:17                  errcheck          Error return value of `survey.AskOne` is not checked
-kr8/cmd/init.go:80:17                  errcheck          Error return value of `survey.AskOne` is not checked
-kr8/cmd/init.go:86:17                  errcheck          Error return value of `survey.AskOne` is not checked
-kr8/cmd/init.go:196:35                 errcheck          Error return value of `kr8init.GenerateComponentJsonnet` is not checked
-kr8/cmd/format.go:37:18                exhaustruct       cobra.Command is missing fields Aliases, SuggestFor, GroupID, Example, ValidArgs, ValidArgsFunction, ArgAliases, BashCompletionFunction, Deprecated, Annotations, Version, PersistentPreRun, PersistentPreRunE, PreRun, PreRunE, RunE, PostRun, PostRunE, PersistentPostRun, PersistentPostRunE, FParseErrWhitelist, CompletionOptions, TraverseChildren, Hidden, SilenceErrors, SilenceUsage, DisableFlagParsing, DisableAutoGenTag, DisableFlagsInUseLine, DisableSuggestions, SuggestionsMinimumDistance
-kr8/cmd/generate.go:76:20              exhaustruct       cobra.Command is missing fields Aliases, SuggestFor, GroupID, Example, ValidArgs, ValidArgsFunction, ArgAliases, BashCompletionFunction, Deprecated, Annotations, Version, PersistentPreRun, PersistentPreRunE, PreRun, PreRunE, RunE, PostRun, PostRunE, PersistentPostRun, PersistentPostRunE, FParseErrWhitelist, CompletionOptions, TraverseChildren, Hidden, SilenceErrors, SilenceUsage, DisableFlagParsing, DisableAutoGenTag, DisableFlagsInUseLine, DisableSuggestions, SuggestionsMinimumDistance
-kr8/cmd/generate.go:382:13             exhaustruct       types.Kr8ComponentSpecIncludeObject is missing field File
-kr8/cmd/get.go:31:15                   exhaustruct       cobra.Command is missing fields Aliases, SuggestFor, GroupID, Example, ValidArgs, ValidArgsFunction, Args, ArgAliases, BashCompletionFunction, Deprecated, Annotations, Version, PersistentPreRun, PersistentPreRunE, PreRun, PreRunE, Run, RunE, PostRun, PostRunE, PersistentPostRun, PersistentPostRunE, FParseErrWhitelist, CompletionOptions, TraverseChildren, Hidden, SilenceErrors, SilenceUsage, DisableFlagParsing, DisableAutoGenTag, DisableFlagsInUseLine, DisableSuggestions, SuggestionsMinimumDistance
-kr8/cmd/get.go:86:23                   exhaustruct       cobra.Command is missing fields Aliases, SuggestFor, GroupID, Example, ValidArgs, ValidArgsFunction, Args, ArgAliases, BashCompletionFunction, Deprecated, Annotations, Version, PersistentPreRun, PersistentPreRunE, PreRun, PreRunE, RunE, PostRun, PostRunE, PersistentPostRun, PersistentPostRunE, FParseErrWhitelist, CompletionOptions, TraverseChildren, Hidden, SilenceErrors, SilenceUsage, DisableFlagParsing, DisableAutoGenTag, DisableFlagsInUseLine, DisableSuggestions, SuggestionsMinimumDistance
-kr8/cmd/get.go:118:25                  exhaustruct       cobra.Command is missing fields Aliases, SuggestFor, GroupID, Example, ValidArgs, ValidArgsFunction, Args, ArgAliases, BashCompletionFunction, Deprecated, Annotations, Version, PersistentPreRun, PersistentPreRunE, PreRun, PreRunE, RunE, PostRun, PostRunE, PersistentPostRun, PersistentPostRunE, FParseErrWhitelist, CompletionOptions, TraverseChildren, Hidden, SilenceErrors, SilenceUsage, DisableFlagParsing, DisableAutoGenTag, DisableFlagsInUseLine, DisableSuggestions, SuggestionsMinimumDistance
-kr8/cmd/get.go:153:21                  exhaustruct       cobra.Command is missing fields Aliases, SuggestFor, GroupID, Example, ValidArgs, ValidArgsFunction, Args, ArgAliases, BashCompletionFunction, Deprecated, Annotations, Version, PersistentPreRun, PersistentPreRunE, PreRun, PreRunE, RunE, PostRun, PostRunE, PersistentPostRun, PersistentPostRunE, FParseErrWhitelist, CompletionOptions, TraverseChildren, Hidden, SilenceErrors, SilenceUsage, DisableFlagParsing, DisableAutoGenTag, DisableFlagsInUseLine, DisableSuggestions, SuggestionsMinimumDistance
-kr8/cmd/init.go:47:16                  exhaustruct       cobra.Command is missing fields Aliases, SuggestFor, GroupID, Example, ValidArgs, ValidArgsFunction, Args, ArgAliases, BashCompletionFunction, Deprecated, Annotations, Version, PersistentPreRun, PersistentPreRunE, PreRun, PreRunE, Run, RunE, PostRun, PostRunE, PersistentPostRun, PersistentPostRunE, FParseErrWhitelist, CompletionOptions, TraverseChildren, Hidden, SilenceErrors, SilenceUsage, DisableFlagParsing, DisableAutoGenTag, DisableFlagsInUseLine, DisableSuggestions, SuggestionsMinimumDistance
-kr8/cmd/init.go:70:15                  exhaustruct       survey.Input is missing fields Renderer, Help, Suggest
-kr8/cmd/init.go:76:14                  exhaustruct       survey.Input is missing fields Renderer, Help, Suggest
-kr8/cmd/init.go:82:16                  exhaustruct       survey.Confirm is missing fields Renderer, Help
-kr8/cmd/init.go:88:15                  exhaustruct       survey.Confirm is missing fields Renderer, Help
-kr8/cmd/init.go:94:14                  exhaustruct       survey.Input is missing fields Renderer, Help, Suggest
-kr8/cmd/init.go:116:20                 exhaustruct       cobra.Command is missing fields Aliases, SuggestFor, GroupID, Example, ValidArgs, ValidArgsFunction, ArgAliases, BashCompletionFunction, Deprecated, Annotations, Version, PersistentPreRun, PersistentPreRunE, PreRun, PreRunE, RunE, PostRun, PostRunE, PersistentPostRun, PersistentPostRunE, FParseErrWhitelist, CompletionOptions, TraverseChildren, Hidden, SilenceErrors, SilenceUsage, DisableFlagParsing, DisableAutoGenTag, DisableFlagsInUseLine, DisableSuggestions, SuggestionsMinimumDistance
-kr8/cmd/init.go:137:21                 exhaustruct       kr8init.Kr8InitOptions is missing field Fetch
-kr8/cmd/init.go:190:16                 exhaustruct       survey.Select is missing fields Renderer, Default, Help, PageSize, VimMode, FilterMessage, Filter, Description
-kr8/cmd/jsonnet.go:11:19               exhaustruct       cobra.Command is missing fields Aliases, SuggestFor, GroupID, Example, ValidArgs, ValidArgsFunction, Args, ArgAliases, BashCompletionFunction, Deprecated, Annotations, Version, PersistentPreRun, PersistentPreRunE, PreRun, PreRunE, Run, RunE, PostRun, PostRunE, PersistentPostRun, PersistentPostRunE, FParseErrWhitelist, CompletionOptions, TraverseChildren, Hidden, SilenceErrors, SilenceUsage, DisableFlagParsing, DisableAutoGenTag, DisableFlagsInUseLine, DisableSuggestions, SuggestionsMinimumDistance
-kr8/cmd/render.go:77:5                 exhaustruct       types.CmdJsonnetOptions is missing field Color
-kr8/cmd/root.go:142:3                  exhaustruct       zerolog.ConsoleWriter is missing fields TimeFormat, TimeLocation, PartsOrder, PartsExclude, FieldsOrder, FieldsExclude, FormatTimestamp, FormatLevel, FormatCaller, FormatMessage, FormatFieldName, FormatFieldValue, FormatErrFieldName, FormatExtra, FormatPrepare
-kr8/pkg/jnetvm/native_funcs.go:197:10  exhaustruct       types.Kr8ComponentJsonnet is missing fields Kr8Spec, Namespace, ReleaseName, Version, CalledFrom
-kr8/pkg/kr8_init/init.go:32:16         exhaustruct       types.Kr8Cluster is missing field Path
-kr8/pkg/kr8_init/init.go:49:14         exhaustruct       types.Kr8ComponentJsonnet is missing field CalledFrom
-kr8/pkg/kr8_init/init.go:66:65         exhaustruct       types.Kr8ComponentSpecIncludeObject is missing fields DestDir, DestExt
-kr8/pkg/kr8_init/init.go:68:65         exhaustruct       types.Kr8ComponentSpecIncludeObject is missing field DestName
-kr8/pkg/types/kompose.go:100:10        exhaustruct       types.KomposeConvertOptions is missing fields Profiles, WithKomposeAnnotation, Volumes, MultipleContainerMode, ServiceGroupMode, ServiceGroupName, StoreManifest, Server, OSCreateDeploymentConfig, OSBuildRepo, OSInsecureRepository, OSBuildBranch, ImageBuildCommand, ImagePushCommand, ImagePushRegistry
-kr8/pkg/types/kompose.go:133:16        exhaustruct       kobject.ConvertOptions is missing fields CreateD, CreateRC, CreateDS, CreateDeploymentConfig, BuildRepo, BuildBranch, Build, IsDeploymentFlag, IsDaemonSetFlag, IsReplicationControllerFlag, IsReplicaSetFlag, IsDeploymentConfigFlag, IsNamespaceFlag
-kr8/pkg/types/kompose.go:197:10        exhaustruct       jsonnet.RuntimeError is missing field StackTrace
-kr8/pkg/types/kompose.go:200:10        exhaustruct       jsonnet.RuntimeError is missing field StackTrace
-kr8/pkg/util/remote.go:30:13           exhaustruct       getter.Client is missing fields Ctx, Umask, Detectors, Decompressors, Getters, Dir, ProgressListener, Insecure, DisableSymlinks, Options
-kr8/cmd/generate.go:22:2               exptostd          Import statement 'golang.org/x/exp/maps' can be replaced by 'maps'
-kr8/cmd/generate.go:104:17             exptostd          golang.org/x/exp/maps.Keys() can be replaced by slices.AppendSeq(make([]T, 0, len(data)), maps.Keys(data))
-kr8/cmd/generate.go:137:14             exptostd          golang.org/x/exp/maps.Keys() can be replaced by slices.AppendSeq(make([]T, 0, len(data)), maps.Keys(data))
-kr8/pkg/jnetvm/jsonnet.go:29:2         exptostd          Import statement 'golang.org/x/exp/maps' can be replaced by 'maps'
-kr8/pkg/jnetvm/jsonnet.go:210:23       exptostd          golang.org/x/exp/maps.Keys() can be replaced by slices.AppendSeq(make([]T, 0, len(data)), maps.Keys(data))
-kr8/cmd/format.go:21:5                 gochecknoglobals  cmdFormatFlags is a global variable
-kr8/cmd/generate.go:38:2               gochecknoglobals  allClusterParams is a global variable
-kr8/cmd/generate.go:51:5               gochecknoglobals  cmdGenerateFlags is a global variable
-kr8/cmd/get.go:54:5                    gochecknoglobals  cmdGetFlags is a global variable
-kr8/cmd/init.go:12:5                   gochecknoglobals  cmdInitFlags is a global variable
-kr8/cmd/jsonnet.go:30:5                gochecknoglobals  cmdFlagsJsonnet is a global variable
-kr8/cmd/render.go:37:5                 gochecknoglobals  cmdRenderFlags is a global variable
-kr8/cmd/root.go:21:5                   gochecknoglobals  Version is a global variable
-kr8/cmd/root.go:63:5                   gochecknoglobals  RootConfig is a global variable
-kr8/cmd/generate.go:283:1              gocognit          cognitive complexity 37 of func `genProcessComponent` is high (> 30)
-kr8/cmd/generate.go:391:3              gocritic          typeSwitchVar: 2 cases can benefit from type switch with assignment
-kr8/pkg/types/kompose.go:213:1         ireturn           getTransformer returns interface (github.com/kubernetes/kompose/pkg/transformer.Transformer)
-kr8/cmd/generate.go:394:15             staticcheck       S1034(related information): could eliminate this type assertion
-kr8/cmd/generate.go:401:14             staticcheck       S1034(related information): could eliminate this type assertion
-kr8/pkg/types/kompose.go:173:2         staticcheck       QF1003: could use tagged switch on k.Provider
-kr8/pkg/types/types.go:154:3           staticcheck       QF1003: could use tagged switch on item.Type
-kr8/pkg/types/types.go:24:29           tagliatelle       json(camel): got '_kr8_spec' want 'kr8Spec'
-kr8/pkg/types/types.go:26:21           tagliatelle       json(camel): got '_cluster' want 'cluster'
-kr8/pkg/types/types.go:28:47           tagliatelle       json(camel): got '_components' want 'components'
-kr8/pkg/types/types.go:46:21           tagliatelle       json(camel): got 'generate_dir' want 'generateDir'
-kr8/pkg/types/types.go:48:26           tagliatelle       json(camel): got 'generate_short_names' want 'generateShortNames'
-kr8/pkg/types/types.go:50:19           tagliatelle       json(camel): got 'prune_params' want 'pruneParams'
-kr8/pkg/types/types.go:93:27           tagliatelle       json(camel): got 'kr8_spec' want 'kr8Spec'
-kr8/pkg/types/types.go:97:21           tagliatelle       json(camel): got 'release_name' want 'releaseName'
-kr8/pkg/types/types.go:102:20          tagliatelle       json(camel): got 'called_from' want 'calledFrom'
-kr8/pkg/types/types.go:109:21          tagliatelle       json(camel): got 'enable_kr8_allparams' want 'enableKr8Allparams'
-kr8/pkg/types/types.go:111:23          tagliatelle       json(camel): got 'enable_kr8_allclusters' want 'enableKr8Allclusters'
-kr8/pkg/types/types.go:113:29          tagliatelle       json(camel): got 'disable_output_clean' want 'disableOutputClean'
-kr8/pkg/types/types.go:188:17          tagliatelle       json(camel): got 'dest_dir' want 'destDir'
-kr8/pkg/types/types.go:190:18          tagliatelle       json(camel): got 'dest_name' want 'destName'
-kr8/pkg/types/types.go:192:17          tagliatelle       json(camel): got 'dest_ext' want 'destExt'
-kr8/pkg/types/types.go:210:19          tagliatelle       yaml(camel): got 'ext_str_files' want 'extStrFiles'
-kr8/pkg/types/types.go:212:17          tagliatelle       yaml(camel): got 'base_dir' want 'baseDir'
+kr8/cmd/generate.go:448:1              cyclop       calculated cyclomatic complexity for function processIncludesFile is 13, max is 10
+kr8/cmd/root.go:99:1                   cyclop       calculated cyclomatic complexity for function InitConfig is 14, max is 10
+kr8/pkg/util/util.go:73:1              cyclop       calculated cyclomatic complexity for function FilterItems is 12, max is 10
+kr8/cmd/init.go:74:17                  errcheck     Error return value of `survey.AskOne` is not checked
+kr8/cmd/init.go:80:17                  errcheck     Error return value of `survey.AskOne` is not checked
+kr8/cmd/init.go:86:17                  errcheck     Error return value of `survey.AskOne` is not checked
+kr8/cmd/init.go:196:35                 errcheck     Error return value of `kr8init.GenerateComponentJsonnet` is not checked
+kr8/cmd/generate.go:384:13             exhaustruct  types.Kr8ComponentSpecIncludeObject is missing field File
+kr8/cmd/init.go:70:15                  exhaustruct  survey.Input is missing fields Renderer, Help, Suggest
+kr8/cmd/init.go:76:14                  exhaustruct  survey.Input is missing fields Renderer, Help, Suggest
+kr8/cmd/init.go:82:16                  exhaustruct  survey.Confirm is missing fields Renderer, Help
+kr8/cmd/init.go:88:15                  exhaustruct  survey.Confirm is missing fields Renderer, Help
+kr8/cmd/init.go:94:14                  exhaustruct  survey.Input is missing fields Renderer, Help, Suggest
+kr8/cmd/init.go:137:21                 exhaustruct  kr8init.Kr8InitOptions is missing field Fetch
+kr8/cmd/init.go:190:16                 exhaustruct  survey.Select is missing fields Renderer, Default, Help, PageSize, VimMode, FilterMessage, Filter, Description
+kr8/cmd/render.go:77:5                 exhaustruct  types.CmdJsonnetOptions is missing field Color
+kr8/cmd/root.go:142:3                  exhaustruct  zerolog.ConsoleWriter is missing fields TimeFormat, TimeLocation, PartsOrder, PartsExclude, FieldsOrder, FieldsExclude, FormatTimestamp, FormatLevel, FormatCaller, FormatMessage, FormatFieldName, FormatFieldValue, FormatErrFieldName, FormatExtra, FormatPrepare
+kr8/pkg/jnetvm/native_funcs.go:197:10  exhaustruct  types.Kr8ComponentJsonnet is missing fields Kr8Spec, Namespace, ReleaseName, Version, CalledFrom
+kr8/pkg/kr8_init/init.go:32:16         exhaustruct  types.Kr8Cluster is missing field Path
+kr8/pkg/kr8_init/init.go:49:14         exhaustruct  types.Kr8ComponentJsonnet is missing field CalledFrom
+kr8/pkg/kr8_init/init.go:66:65         exhaustruct  types.Kr8ComponentSpecIncludeObject is missing fields DestDir, DestExt
+kr8/pkg/kr8_init/init.go:68:65         exhaustruct  types.Kr8ComponentSpecIncludeObject is missing field DestName
+kr8/pkg/types/kompose.go:100:10        exhaustruct  types.KomposeConvertOptions is missing fields Profiles, WithKomposeAnnotation, Volumes, MultipleContainerMode, ServiceGroupMode, ServiceGroupName, StoreManifest, Server, OSCreateDeploymentConfig, OSBuildRepo, OSInsecureRepository, OSBuildBranch, ImageBuildCommand, ImagePushCommand, ImagePushRegistry
+kr8/pkg/types/kompose.go:133:16        exhaustruct  kobject.ConvertOptions is missing fields CreateD, CreateRC, CreateDS, CreateDeploymentConfig, BuildRepo, BuildBranch, Build, IsDeploymentFlag, IsDaemonSetFlag, IsReplicationControllerFlag, IsReplicaSetFlag, IsDeploymentConfigFlag, IsNamespaceFlag
+kr8/pkg/types/kompose.go:197:10        exhaustruct  jsonnet.RuntimeError is missing field StackTrace
+kr8/pkg/types/kompose.go:200:10        exhaustruct  jsonnet.RuntimeError is missing field StackTrace
+kr8/pkg/util/remote.go:30:13           exhaustruct  getter.Client is missing fields Ctx, Umask, Detectors, Decompressors, Getters, Dir, ProgressListener, Insecure, DisableSymlinks, Options
+kr8/cmd/generate.go:286:1              gocognit     cognitive complexity 37 of func `genProcessComponent` is high (> 30)
+kr8/cmd/generate.go:393:3              gocritic     typeSwitchVar: 2 cases can benefit from type switch with assignment
+kr8/pkg/types/kompose.go:213:1         ireturn      getTransformer returns interface (github.com/kubernetes/kompose/pkg/transformer.Transformer)
+kr8/cmd/generate.go:396:15             staticcheck  S1034(related information): could eliminate this type assertion
+kr8/cmd/generate.go:403:14             staticcheck  S1034(related information): could eliminate this type assertion
+kr8/pkg/types/kompose.go:173:2         staticcheck  QF1003: could use tagged switch on k.Provider
+kr8/pkg/types/types.go:153:3           staticcheck  QF1003: could use tagged switch on item.Type

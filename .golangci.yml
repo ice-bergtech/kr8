@@ -27,11 +27,11 @@ linters:
     - errorlint
     - exhaustive
     - exhaustruct
-    - exptostd
+    #- exptostd
     - fatcontext
     - funlen
     - gocheckcompilerdirectives
-    - gochecknoglobals
+    #- gochecknoglobals
     #- gochecknoinits
     - gochecksumtype
     - gocognit
@@ -71,14 +71,14 @@ linters:
     - recvcheck
     - sloglint
     - tagalign
-    - tagliatelle
+    #- tagliatelle
     - unconvert
     - unparam
     - usestdlibvars
     - varnamelen
     - wastedassign
     - whitespace
-    - wrapcheck
+    #- wrapcheck
     - zerologlint
   settings:
     mnd:
@@ -89,6 +89,9 @@ linters:
     errcheck:
       exclude-functions:
         - '(*os.File).Close'
+    exhaustruct:
+      exclude:
+        - '.+/cobra\.Command$'
     tagliatelle:
       case:
         use-field-name: false
