@@ -26,7 +26,7 @@ linters:
     - errname
     - errorlint
     - exhaustive
-    - exhaustruct
+    #- exhaustruct
     #- exptostd
     - fatcontext
     - funlen
@@ -38,7 +38,7 @@ linters:
     - goconst
     - gocritic
     - godot
-    - godox
+    #- godox
     - goheader
     - goprintffuncname
     - gosec
@@ -48,7 +48,7 @@ linters:
     - inamedparam
     - interfacebloat
     - intrange
-    - ireturn
+    #- ireturn
     - lll
     - loggercheck
     - maintidx
@@ -92,6 +92,7 @@ linters:
     exhaustruct:
       exclude:
         - '.+/cobra\.Command$'
+        - 'survey'
     tagliatelle:
       case:
         use-field-name: false

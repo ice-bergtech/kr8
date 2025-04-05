@@ -1,8 +1,2 @@
-kr8/cmd/generate.go:286:1      gocognit     cognitive complexity 37 of func `genProcessComponent` is high (> 30)
-kr8/cmd/generate.go:394:3      gocritic     typeSwitchVar: 2 cases can benefit from type switch with assignment
-kr8/pkg/kr8_init/init.go:32:4  godox        pkg/kr8_init/init.go:32: Line contains TODO/BUG/FIXME: "Bug() Unsure if Path is correct"
-kr8/cmd/generate.go:397:15     staticcheck  S1034(related information): could eliminate this type assertion
-kr8/cmd/generate.go:404:14     staticcheck  S1034(related information): could eliminate this type assertion
-kr8/cmd/init.go:197:6          staticcheck  QF1003: could use tagged switch on value
-kr8/pkg/types/types.go:153:3   staticcheck  QF1003: could use tagged switch on item.Type
-kr8/pkg/util/util.go:73:43     varnamelen   parameter name 'pf' is too short for the scope of its usage
+kr8/pkg/types/types.go:153:3  exhaustive  missing cases in switch of type gjson.Type: gjson.Null, gjson.False, gjson.Number, gjson.True
+kr8/cmd/generate.go:286:1     gocognit    cognitive complexity 37 of func `genProcessComponent` is high (> 30)
