@@ -13,35 +13,43 @@ var cmdInitFlags kr8init.Kr8InitOptions
 
 func init() {
 	RootCmd.AddCommand(InitCmd)
-	InitCmd.PersistentFlags().BoolVarP(&cmdInitFlags.Interactive, "interactive", "i", false, "Initialize a resource interactivly")
+	InitCmd.PersistentFlags().BoolVarP(&cmdInitFlags.Interactive,
+		"interactive", "i", false,
+		"Initialize a resource interactivly")
 
 	InitCmd.AddCommand(InitRepoCmd)
-	InitRepoCmd.PersistentFlags().StringVar(&cmdInitFlags.InitUrl, "url", "", "Source of skeleton directory to create repo from")
-	InitRepoCmd.Flags().StringVarP(&cmdInitFlags.ClusterName, "name", "o", "cluster-tpl", "Cluster name")
-	InitRepoCmd.PersistentFlags().BoolVarP(&cmdInitFlags.Fetch, "fetch", "f", false, "Fetch remote resources")
+	InitRepoCmd.PersistentFlags().StringVar(&cmdInitFlags.InitUrl,
+		"url", "",
+		"Source of skeleton directory to create repo from")
+	InitRepoCmd.Flags().StringVarP(&cmdInitFlags.ClusterName,
+		"name", "o", "cluster-tpl",
+		"Cluster name")
+	InitRepoCmd.PersistentFlags().BoolVarP(&cmdInitFlags.Fetch,
+		"fetch", "f", false,
+		"Fetch remote resources")
 
 	InitCmd.AddCommand(InitClusterCmd)
-	InitClusterCmd.Flags().StringVarP(&cmdInitFlags.ClusterName, "name", "o", "cluster-tpl", "Cluster name")
+	InitClusterCmd.Flags().StringVarP(&cmdInitFlags.ClusterName,
+		"name", "o", "cluster-tpl",
+		"Cluster name")
 
 	InitCmd.AddCommand(InitComponentCmd)
-	InitComponentCmd.Flags().StringVarP(&cmdInitFlags.ComponentName, "name", "o", "component-tpl", "Component name")
-	InitComponentCmd.Flags().StringVarP(&cmdInitFlags.ComponentType, "type", "t", "jsonnet", "Component type, one of: [`jsonnet`, `yml`, `chart`]")
-
+	InitComponentCmd.Flags().StringVarP(&cmdInitFlags.ComponentName,
+		"name", "o", "component-tpl",
+		"Component name")
+	InitComponentCmd.Flags().StringVarP(&cmdInitFlags.ComponentType,
+		"type", "t", "jsonnet",
+		"Component type, one of: [`jsonnet`, `yml`, `chart`]")
 }
 
-// InitCmd represents the init command
+// InitCmd represents the command.
+// Various subcommands are available to initialize different components of kr8.
 var InitCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize kr8 config repos, components and clusters",
 	Long: `kr8 requires specific directories and exists for its config to work.
 This init command helps in creating directory structure for repos, clusters and 
 components`,
-	//Run: func(cmd *cobra.Command, args []string) {},
-	// Directory tree:
-	//   components/
-	//   clusters/
-	//   lib/
-	//   generated/
 }
 
 var InitClusterCmd = &cobra.Command{
@@ -62,38 +70,47 @@ var InitClusterCmd = &cobra.Command{
 			prompt := &survey.Input{
 				Message: "Set the cluster name",
 				Default: cmdInitFlags.ClusterName,
+				Help:    "Distinct name for the cluster",
 			}
-			survey.AskOne(prompt, &cSpec.Name)
+			util.FatalErrorCheck("Invalid cluster name", survey.AskOne(prompt, &cSpec.Name))
 
 			prompt = &survey.Input{
 				Message: "Set the cluster configuration directory",
 				Default: RootConfig.ClusterDir,
+				Help:    "Set the root directory for the new cluster",
 			}
-			survey.AskOne(prompt, &cSpec.ClusterDir)
+			util.FatalErrorCheck("Invalid cluster directory", survey.AskOne(prompt, &cSpec.ClusterDir))
 
 			promptB := &survey.Confirm{
 				Message: "Generate short names for output file names?",
 				Default: cSpec.GenerateShortNames,
+				Help:    "Shortens component names and file structure",
 			}
-			survey.AskOne(promptB, &cSpec.GenerateShortNames)
+			util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.GenerateShortNames))
 
 			promptB = &survey.Confirm{
 				Message: "Prune component parameters?",
 				Default: cSpec.PruneParams,
+				Help:    "This removes empty and null parameters from configuration",
 			}
-			survey.AskOne(promptB, &cSpec.PruneParams)
-
-			prompt = &survey.Input{
-				Message: "Set the cluster spec post-processor",
-				Default: cSpec.PostProcessor,
-			}
-			survey.AskOne(prompt, &cSpec.PostProcessor)
+			util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.PruneParams))
 		}
 		// Generate the jsonnet file based on the config
-		util.FatalErrorCheck(kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterDir), "Error generating cluster jsonnet file")
+		util.FatalErrorCheck("Error generating cluster jsonnet file", kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterDir))
 	},
 }
 
+// Initializes a new kr8 configuration repository
+//
+// Directory tree:
+//
+//	components/
+//
+//	clusters/
+//
+//	lib/
+//
+//	generated/
 var InitRepoCmd = &cobra.Command{
 	Use:   "repo [flags] dir",
 	Args:  cobra.MinimumNArgs(1),
@@ -107,7 +124,11 @@ and initialize a git repo so you can get started`,
 		outDir := args[len(args)-1]
 		log.Debug().Msg("Initializing kr8 config repo in " + outDir)
 		if cmdInitFlags.InitUrl != "" {
-			util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, cmdInitFlags.Fetch)
+			util.FatalErrorCheck(
+				"Issue fetching repo",
+				util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, cmdInitFlags.Fetch),
+			)
+
 			return
 		}
 		// struct for component and clusters
@@ -117,6 +138,7 @@ and initialize a git repo so you can get started`,
 			ComponentName: "example-component",
 			ComponentType: "jsonnet",
 			Interactive:   false,
+			Fetch:         false,
 		}
 		clusterOptions := types.Kr8ClusterSpec{
 			PostProcessor:      "",
@@ -126,10 +148,22 @@ and initialize a git repo so you can get started`,
 			ClusterDir:         "clusters",
 			Name:               cmdInitFlags.ClusterName,
 		}
-		kr8init.GenerateClusterJsonnet(clusterOptions, outDir+"/clusters")
-		kr8init.GenerateComponentJsonnet(cmdInitOptions, outDir+"/components")
-		kr8init.GenerateLib(cmdInitFlags.Fetch, outDir+"/lib")
-		kr8init.GenerateReadme(outDir, cmdInitOptions, clusterOptions)
+		util.FatalErrorCheck(
+			"Issue creating cluster.jsonnet",
+			kr8init.GenerateClusterJsonnet(clusterOptions, outDir+"/clusters"),
+		)
+		util.FatalErrorCheck(
+			"Issue creating example component.jsonnet",
+			kr8init.GenerateComponentJsonnet(cmdInitOptions, outDir+"/components"),
+		)
+		util.FatalErrorCheck(
+			"Issue creating lib folder",
+			kr8init.GenerateLib(cmdInitFlags.Fetch, outDir+"/lib"),
+		)
+		util.FatalErrorCheck(
+			"Issue creating Readme.md",
+			kr8init.GenerateReadme(outDir, cmdInitOptions, clusterOptions),
+		)
 	},
 }
 
@@ -143,21 +177,42 @@ var InitComponentCmd = &cobra.Command{
 			prompt := &survey.Input{
 				Message: "Enter component name",
 				Default: cmdInitFlags.ComponentName,
+				Help:    "Enter the name of the component you want to create",
 			}
-			survey.AskOne(prompt, &cmdInitFlags.ComponentName)
+			util.FatalErrorCheck("Invalid component name", survey.AskOne(prompt, &cmdInitFlags.ComponentName))
 
 			prompt = &survey.Input{
 				Message: "Enter component directory",
 				Default: RootConfig.ComponentDir,
+				Help:    "Enter the directory where you want to create the component",
 			}
-			survey.AskOne(prompt, &RootConfig.ComponentDir)
+			util.FatalErrorCheck("Invalid component directory", survey.AskOne(prompt, &RootConfig.ComponentDir))
 
 			promptS := &survey.Select{
 				Message: "Select component type",
 				Options: []string{"jsonnet", "yml", "tpl", "chart"},
+				Help:    "Select the type of component you want to create",
+				Default: "jsonnet",
+				Description: func(value string, index int) string {
+					switch value {
+					case "jsonnet":
+						return "Use a Jsonnet file to describe the component resources"
+					case "yml":
+						return "Use a yml (docker-compose) file to describe the component resources"
+					case "tpl":
+						return "Use a template file to describe the component resources"
+					case "chart":
+						return "Use a Helm chart to describe the component resources"
+					default:
+						return ""
+					}
+				},
 			}
-			survey.AskOne(promptS, &cmdInitFlags.ComponentType)
+			util.FatalErrorCheck("Invalid component type", survey.AskOne(promptS, &cmdInitFlags.ComponentType))
 		}
-		kr8init.GenerateComponentJsonnet(cmdInitFlags, RootConfig.ComponentDir)
+		util.FatalErrorCheck(
+			"Error generating component jsonnet",
+			kr8init.GenerateComponentJsonnet(cmdInitFlags, RootConfig.ComponentDir),
+		)
 	},
 }

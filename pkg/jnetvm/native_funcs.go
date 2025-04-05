@@ -19,7 +19,7 @@ Copyright 2018 ksonnet
 
 */
 
-package jvm
+package jnetvm
 
 import (
 	"bytes"
@@ -42,25 +42,24 @@ import (
 // Registers additional native functions in the jsonnet VM.
 // These functions are used to extend the functionality of jsonnet.
 // Adds on to functions part of the jsonnet stdlib: https://jsonnet.org/ref/stdlib.html
-func RegisterNativeFuncs(vm *jsonnet.VM) {
+func RegisterNativeFuncs(jvm *jsonnet.VM) {
 	// Register the template function
-	vm.NativeFunction(NativeSprigTemplate())
+	jvm.NativeFunction(NativeSprigTemplate())
 
 	// Register the escapeStringRegex function
-	vm.NativeFunction(NativeRegexEscape())
+	jvm.NativeFunction(NativeRegexEscape())
 
 	// Register the regexMatch function
-	vm.NativeFunction(NativeRegexMatch())
+	jvm.NativeFunction(NativeRegexMatch())
 
 	// Register the regexSubst function
-	vm.NativeFunction(NativeRegexSubst())
+	jvm.NativeFunction(NativeRegexSubst())
 
 	// Register the helm function
-	vm.NativeFunction(NativeHelmTemplate())
+	jvm.NativeFunction(NativeHelmTemplate())
 
 	// Register the kompose function
-	vm.NativeFunction(NativeKompose())
-
+	jvm.NativeFunction(NativeKompose())
 }
 
 // Allows executing helm template to process a helm chart and make available to kr8 configuration.
@@ -71,17 +70,16 @@ func NativeHelmTemplate() *jsonnet.NativeFunction {
 }
 
 // Uses sprig to process passed in config data and template.
+// Sprig template guide: https://masterminds.github.io/sprig/ .
 //
-// Sprig template guide: https://masterminds.github.io/sprig/
-//
-// Inputs: "config" "str"
+// Inputs: "config" "str".
 func NativeSprigTemplate() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "template",
 		Params: []jsonnetAst.Identifier{"config", "str"},
-		Func: func(args []interface{}) (res interface{}, err error) {
+		Func: func(args []interface{}) (interface{}, error) {
 			var config any
-			err = json.Unmarshal([]byte(args[0].(string)), config)
+			err := json.Unmarshal([]byte(args[0].(string)), config)
 			if err != nil {
 				return "", err
 			}
@@ -94,42 +92,43 @@ func NativeSprigTemplate() *jsonnet.NativeFunction {
 
 			var buff bytes.Buffer
 			err = tmpl.Execute(&buff, config)
+
 			return buff.String(), err
 		}}
 }
 
-// Escapes a string for use in regex
+// Escapes a string for use in regex.
 //
-// Inputs: "str"
+// Inputs: "str".
 func NativeRegexEscape() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "escapeStringRegex",
 		Params: []jsonnetAst.Identifier{"str"},
-		Func: func(args []interface{}) (res interface{}, err error) {
+		Func: func(args []interface{}) (interface{}, error) {
 			return regexp.QuoteMeta(args[0].(string)), nil
 		}}
 }
 
-// Matches a string against a regex pattern
+// Matches a string against a regex pattern.
 //
-// Inputs: "regex", "string"
+// Inputs: "regex", "string".
 func NativeRegexMatch() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "regexMatch",
 		Params: []jsonnetAst.Identifier{"regex", "string"},
-		Func: func(args []interface{}) (res interface{}, err error) {
+		Func: func(args []interface{}) (interface{}, error) {
 			return regexp.MatchString(args[0].(string), args[1].(string))
 		}}
 }
 
-// Substitutes a regex pattern in a string with another string
+// Substitutes a regex pattern in a string with another string.
 //
-// Inputs: "regex", "src", "repl"
+// Inputs: "regex", "src", "repl".
 func NativeRegexSubst() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "regexSubst",
 		Params: []jsonnetAst.Identifier{"regex", "src", "repl"},
-		Func: func(args []interface{}) (res interface{}, err error) {
+		Func: func(args []interface{}) (interface{}, error) {
 			regex := args[0].(string)
 			src := args[1].(string)
 			repl := args[2].(string)
@@ -138,32 +137,38 @@ func NativeRegexSubst() *jsonnet.NativeFunction {
 			if err != nil {
 				return "", err
 			}
+
 			return r.ReplaceAllString(src, repl), nil
 		}}
 }
 
-// Allows converting a docker-compose file string into kubernetes resources using kompose
+// Allows converting a docker-compose file string into kubernetes resources using kompose.
+// Files in the directory must be in the format `[docker-]compose.ym[a]l`.
 //
 // Source: https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
 //
-// Files in the directory must be in the format `[docker-]compose.ym[a]l`
-//
-// Inputs: `inFile`, `outPath`, `opts`
+// Inputs: `inFile`, `outPath`, `opts`.
 func NativeKompose() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "komposeFile",
 		Params: jsonnetAst.Identifiers{"inFile", "outPath", "opts"},
 		Func: func(args []interface{}) (interface{}, error) {
-			inFile, ok := args[0].(string)
+			inFile, argOk := args[0].(string)
 			log.Debug().Msg("inFile: " + inFile)
-			if !ok {
-				return nil, fmt.Errorf("first argument 'inFile' must be of 'string' type, got '%T' instead", args[0])
+			if !argOk {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'inFile' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
 			}
 
-			outPath, ok := args[1].(string)
+			outPath, argOk := args[1].(string)
 			log.Debug().Msg("outPath: " + outPath)
-			if !ok {
-				return nil, fmt.Errorf("second argument 'outPath' must be of 'string' type, got '%T' instead", args[1])
+			if !argOk {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "second argument 'outPath' must be of 'string' type, got " + fmt.Sprintf("%T", args[1]),
+					StackTrace: nil,
+				}
 			}
 
 			opts, err := parseOpts(args[2])
@@ -173,52 +178,40 @@ func NativeKompose() *jsonnet.NativeFunction {
 
 			root := filepath.Dir(opts.CalledFrom)
 
-			options := types.Create([]string{root + "/" + inFile}, root+"/"+outPath, *opts)
+			options := types.Create([]string{filepath.Join(root, inFile)}, root+"/"+outPath, *opts)
 			if err := options.Validate(); err != nil {
 				return "", err
 			}
-			//var result []string
-			// render resources
-			list, _ := options.Convert()
-			//thing := runtime.NewSerializer(runtime.CodecFactory{CodecForVersion: runtime.NewCodecForInternalVersion})
 
-			// //thing.Encode(list, &bytes)
-			// for _, i := range list.([]runtime.Object) {
-			// 	converter := conversion.NewConverter(conversion.DefaultNameFunc)
-			// 	var bytes string
-			// 	converter.Convert(&i, &result, nil)
-			// 	// 	// var bytes bytes.Buffer
-			// 	// 	// runtime.NewEn
-			// 	// 	// kSerialize.NewEncoder(&bytes, nil).Encode(i)
-			// 	// bytes, err := json.Unmarshal(i)
-			// 	// if err != nil {
-			// 	// 	log.Error().Err(err).Msg("Error marshalling runtime object to string")
-			// 	// }
-			// 	result = append(result, bytes)
-			// }
-			return list, nil
+			return options.Convert()
 		},
 	}
 }
 
 func parseOpts(data interface{}) (*types.Kr8ComponentJsonnet, error) {
-	c, err := json.Marshal(data)
+	component, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
 
 	opts := types.Kr8ComponentJsonnet{}
 
-	if err := json.Unmarshal(c, &opts); err != nil {
+	if err := json.Unmarshal(component, &opts); err != nil {
 		return nil, err
 	}
 
-	// Charts are only allowed at relative paths. Use conf.CalledFrom to find the callers directory
+	// Charts are only allowed at relative paths. Use conf.CalledFrom to find the callers directory.
 	if opts.Namespace == "" {
-		return nil, fmt.Errorf("kompose: 'opts.Namespace' is unset or empty.")
+		return nil, jsonnet.RuntimeError{
+			Msg:        "kompose: 'opts.namespace' is unset or empty.",
+			StackTrace: nil,
+		}
 	}
 	if opts.CalledFrom == "" {
-		return nil, fmt.Errorf("kompose: 'opts.CalledFrom' is unset or empty.")
+		return nil, jsonnet.RuntimeError{
+			Msg:        "kompose: 'opts.called_from' is unset or empty.",
+			StackTrace: nil,
+		}
 	}
 
 	return &opts, nil

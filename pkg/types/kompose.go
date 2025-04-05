@@ -2,8 +2,8 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 
+	"github.com/google/go-jsonnet"
 	kompose "github.com/kubernetes/kompose/pkg/app"
 	"github.com/kubernetes/kompose/pkg/kobject"
 	"github.com/kubernetes/kompose/pkg/loader"
@@ -11,7 +11,7 @@ import (
 	"github.com/kubernetes/kompose/pkg/transformer/kubernetes"
 	"github.com/kubernetes/kompose/pkg/transformer/openshift"
 
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 )
@@ -95,7 +95,7 @@ type KomposeConvertOptions struct {
 	ImagePushRegistry string
 }
 
-// Initialie Kompose options with sensible defaults
+// Initialie Kompose options with sensible defaults.
 func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *KomposeConvertOptions {
 	return &KomposeConvertOptions{
 		CreateChart: false,
@@ -129,69 +129,64 @@ func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *Kompos
 //
 // https://github.com/kubernetes/kompose/blob/v1.35.0/pkg/app/app.go#L166
 func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions {
-	var resultOpts kobject.ConvertOptions
+	isKube := k.Provider == "kubernetes"
 
-	resultOpts.ToStdout = k.GenerateToStdout
+	// Initialize te result options with sensible defaults
+	resultOpts := kobject.ConvertOptions{
+		ToStdout:   k.GenerateToStdout,
+		InputFiles: k.InputFiles,
+		Profiles:   []string{},
+		Namespace:  k.Namespace,
+		Provider:   k.Provider,
 
-	resultOpts.InputFiles = k.InputFiles
-	resultOpts.Profiles = []string{}
-	resultOpts.Namespace = k.Namespace
-	resultOpts.Provider = k.Provider
+		PushImage:         k.ImagePush,
+		PushImageRegistry: k.ImagePushRegistry,
 
-	// https://github.com/kubernetes/kompose/blob/v1.35.0/pkg/app/app.go#L166
-	if k.Provider == "kubernetes" {
-		if k.Controller == "deployment" {
-			resultOpts.CreateD = true
-			resultOpts.IsDeploymentFlag = true
-		} else if k.Controller == "daemonSet" {
-			resultOpts.CreateDS = true
-			resultOpts.IsDaemonSetFlag = true
-		} else if k.Controller == "replicationController" {
-			resultOpts.CreateRC = true
-			resultOpts.IsReplicationControllerFlag = true
-		} else {
-			resultOpts.CreateD = true
-		}
-	} else if k.Provider == "openshift" {
-		resultOpts.CreateDeploymentConfig = k.OSCreateDeploymentConfig
-		resultOpts.BuildRepo = k.OSBuildRepo
-		resultOpts.BuildBranch = k.OSBuildBranch
+		CreateChart:    k.CreateChart,
+		GenerateYaml:   k.GenerateYaml,
+		GenerateJSON:   k.GenerateJSON,
+		StoreManifest:  k.StoreManifest,
+		EmptyVols:      k.EmptyVols,
+		Volumes:        k.Volumes,
+		PVCRequestSize: k.PVCRequestSize,
+
+		InsecureRepository: k.OSInsecureRepository,
+		Replicas:           k.Replicas,
+		OutFile:            k.OutFile,
+		Controller:         k.Controller,
+
+		BuildCommand: k.ImageBuildCommand,
+		PushCommand:  k.ImagePushCommand,
+
+		Server: k.Server,
+
+		YAMLIndent: k.GenerateYAMLIndent,
+
+		WithKomposeAnnotation: k.WithKomposeAnnotation,
+
+		MultipleContainerMode: k.MultipleContainerMode,
+		ServiceGroupMode:      k.ServiceGroupMode,
+		ServiceGroupName:      k.ServiceGroupName,
+
+		SecretsAsFiles:          k.SecretsAsFiles,
+		GenerateNetworkPolicies: k.NetworkPolicies,
+		// https://github.com/kubernetes/kompose/blob/v1.35.0/pkg/app/app.go#L166
+
+		// deployment
+		CreateD:          k.Controller == "deployment" && isKube,
+		IsDeploymentFlag: k.Controller == "deployment" && isKube,
+		// daemon sets
+		CreateDS:        k.Controller == "daemonSet" && isKube,
+		IsDaemonSetFlag: k.Controller == "daemonSet" && isKube,
+		// replication controller
+		CreateRC:                    k.Controller == "replicationController" && isKube,
+		IsReplicationControllerFlag: k.Controller == "replicationController" && isKube,
+
+		// Openshift specific params
+		CreateDeploymentConfig: k.OSCreateDeploymentConfig && !isKube,
+		BuildRepo:              k.OSBuildRepo,
+		BuildBranch:            k.OSBuildBranch,
 	}
-
-	resultOpts.PushImage = k.ImagePush
-	resultOpts.PushImageRegistry = k.ImagePushRegistry
-
-	resultOpts.CreateChart = k.CreateChart
-	resultOpts.GenerateYaml = k.GenerateYaml
-	resultOpts.GenerateJSON = k.GenerateJSON
-	resultOpts.StoreManifest = k.StoreManifest
-	resultOpts.EmptyVols = k.EmptyVols
-	resultOpts.Volumes = k.Volumes
-	resultOpts.PVCRequestSize = k.PVCRequestSize
-
-	resultOpts.InsecureRepository = k.OSInsecureRepository
-	resultOpts.Replicas = k.Replicas
-	resultOpts.InputFiles = k.InputFiles
-	resultOpts.OutFile = k.OutFile
-	resultOpts.Provider = k.Provider
-	resultOpts.Namespace = k.Namespace
-	resultOpts.Controller = k.Controller
-
-	resultOpts.BuildCommand = k.ImageBuildCommand
-	resultOpts.PushCommand = k.ImagePushCommand
-
-	resultOpts.Server = k.Server
-
-	resultOpts.YAMLIndent = k.GenerateYAMLIndent
-
-	resultOpts.WithKomposeAnnotation = k.WithKomposeAnnotation
-
-	resultOpts.MultipleContainerMode = k.MultipleContainerMode
-	resultOpts.ServiceGroupMode = k.ServiceGroupMode
-	resultOpts.ServiceGroupName = k.ServiceGroupName
-
-	resultOpts.SecretsAsFiles = k.SecretsAsFiles
-	resultOpts.GenerateNetworkPolicies = k.NetworkPolicies
 
 	return &resultOpts
 }
@@ -199,10 +194,10 @@ func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions {
 // Validates a set of options for converting a Kubernetes manifest to a Docker Compose file.
 func (k KomposeConvertOptions) Validate() error {
 	if k.OutFile == "" {
-		return fmt.Errorf("OutFile must be set")
+		return jsonnet.RuntimeError{Msg: "OutFile must be set"}
 	}
 	if len(k.InputFiles) == 0 {
-		return fmt.Errorf("InputFiles must be set")
+		return jsonnet.RuntimeError{Msg: "InputFiles must be set"}
 	}
 	// Makes sure the input files are present and are named in a compose-file way
 	return kompose.ValidateComposeFile(k.GenKomposePkgOpts())
@@ -216,16 +211,17 @@ func (k KomposeConvertOptions) Convert() (interface{}, error) {
 // Convenience method to return the appropriate Transformer based on
 // what provider we are using.
 func getTransformer(opt kobject.ConvertOptions) transformer.Transformer {
-	var t transformer.Transformer
+	var tfmr transformer.Transformer
 	if opt.Provider == "kubernetes" {
 		// Create/Init new Kubernetes object with CLI opts
-		t = &kubernetes.Kubernetes{Opt: opt}
+		tfmr = &kubernetes.Kubernetes{Opt: opt}
 	} else {
 		// Create/Init new OpenShift object that is initialized with a newly
 		// created Kubernetes object. Openshift inherits from Kubernetes
-		t = &openshift.OpenShift{Kubernetes: kubernetes.Kubernetes{Opt: opt}}
+		tfmr = &openshift.OpenShift{Kubernetes: kubernetes.Kubernetes{Opt: opt}}
 	}
-	return t
+
+	return tfmr
 }
 
 // Convert transforms docker compose or dab file to k8s objects
@@ -236,7 +232,7 @@ func convertComposeToK8s(opt kobject.ConvertOptions) ([]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	t := getTransformer(opt)
+	tfmr := getTransformer(opt)
 
 	// Load the docker-compose file
 	objects, err := loader.LoadFile(opt.InputFiles, []string{})
@@ -245,14 +241,11 @@ func convertComposeToK8s(opt kobject.ConvertOptions) ([]interface{}, error) {
 	}
 
 	// Transform the loaded objects into Kubernetes objects
-	k8sObjects, err := t.Transform(objects, opt)
+	k8sObjects, err := tfmr.Transform(objects, opt)
 	if err != nil {
 		return nil, err
 	}
 
-	// Convert the Kubernetes objects to a format that Jsonnet can use
-	//var result []map[string]interface{}
-	var result []interface{}
 	// Create a Scheme
 	scheme := runtime.NewScheme()
 	_ = v1.AddToScheme(scheme)
@@ -262,7 +255,9 @@ func convertComposeToK8s(opt kobject.ConvertOptions) ([]interface{}, error) {
 		sjson.SimpleMetaFactory{}, scheme, scheme,
 		sjson.SerializerOptions{Yaml: false, Pretty: false, Strict: false},
 	)
-	for _, obj := range k8sObjects {
+	// Convert the Kubernetes objects to a format that Jsonnet can use
+	result := make([]interface{}, len(k8sObjects))
+	for idx, obj := range k8sObjects {
 		jsonObj, err := runtime.Encode(jsonSerializer, obj)
 		if err != nil {
 			return nil, err
@@ -273,7 +268,7 @@ func convertComposeToK8s(opt kobject.ConvertOptions) ([]interface{}, error) {
 			return nil, err
 		}
 
-		result = append(result, mapObj)
+		result[idx] = mapObj
 	}
 
 	return result, nil

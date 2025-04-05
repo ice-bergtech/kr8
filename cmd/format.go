@@ -17,13 +17,21 @@ import (
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
-// Contains the paths to include and exclude for a format command
+// Contains the paths to include and exclude for a format command.
 var cmdFormatFlags util.PathFilterOptions
 
 func init() {
 	RootCmd.AddCommand(FormatCmd)
-	FormatCmd.Flags().StringVarP(&cmdFormatFlags.Includes, "clincludes", "i", "", "filter included cluster by including clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
-	FormatCmd.Flags().StringVarP(&cmdFormatFlags.Excludes, "clexcludes", "x", "", "filter included cluster by excluding clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)")
+	FormatCmd.Flags().StringVarP(&cmdFormatFlags.Includes,
+		"clincludes", "i", "",
+		"filter included cluster by including clusters with matching cluster parameters -"+
+			" comma separate list of key/value conditions separated by = or ~ (for regex match)",
+	)
+	FormatCmd.Flags().StringVarP(&cmdFormatFlags.Excludes,
+		"clexcludes", "x", "",
+		"filter included cluster by excluding clusters with matching cluster parameters -"+
+			" comma separate list of key/value conditions separated by = or ~ (for regex match)",
+	)
 }
 
 var FormatCmd = &cobra.Command{
@@ -35,16 +43,19 @@ var FormatCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// First get a list of all files in the base directory and subdirectories. Ignore .git directories.
 		var fileList []string
-		filepath.Walk(RootConfig.BaseDir, func(path string, info fs.FileInfo, err error) error {
+		err := filepath.Walk(RootConfig.BaseDir, func(path string, info fs.FileInfo, err error) error {
 			if info.IsDir() {
 				if info.Name() == ".git" {
 					return filepath.SkipDir
 				}
+
 				return nil
 			}
 			fileList = append(fileList, path)
+
 			return nil
 		})
+		util.FatalErrorCheck("Error walking the path "+RootConfig.BaseDir, err)
 
 		fileList = util.Filter(fileList, func(s string) bool {
 			var result bool
@@ -55,6 +66,7 @@ var FormatCmd = &cobra.Command{
 				}
 				result = result || t
 			}
+
 			return result
 		})
 
@@ -67,34 +79,37 @@ var FormatCmd = &cobra.Command{
 				}
 				result = result || t
 			}
+
 			return !result
 		})
 		log.Debug().Msg("Filtered file list: " + fmt.Sprintf("%v", fileList))
 		log.Debug().Msg("Formatting files...")
 
-		var wg sync.WaitGroup
+		var waitGroup sync.WaitGroup
 		parallel, err := cmd.Flags().GetInt("parallel")
-		util.FatalErrorCheck(err, "Error getting parallel flag")
+		util.FatalErrorCheck("Error getting parallel flag", err)
 		log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
 		ants_file, _ := ants.NewPool(parallel)
 		for _, filename := range fileList {
-			wg.Add(1)
+			waitGroup.Add(1)
 			_ = ants_file.Submit(func() {
-				defer wg.Done()
+				defer waitGroup.Done()
 				var bytes []byte
-				bytes, err = os.ReadFile(filename)
+				bytes, err = os.ReadFile(filepath.Clean(filename))
 				output, err := formatter.Format(filename, string(bytes), util.GetDefaultFormatOptions())
 				if err != nil {
 					fmt.Fprintln(os.Stderr, err.Error())
+
 					return
 				}
-				err = os.WriteFile(filename, []byte(output), 0755)
+				err = os.WriteFile(filepath.Clean(filename), []byte(output), 0600)
 				if err != nil {
 					fmt.Fprintln(os.Stderr, err.Error())
+
 					return
 				}
 			})
 		}
-		wg.Wait()
+		waitGroup.Wait()
 	},
 }

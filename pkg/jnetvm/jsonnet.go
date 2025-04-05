@@ -17,7 +17,7 @@ limitations under the License.
 */
 
 // Package jvm contains the jsonnet rendering logic.
-package jvm
+package jnetvm
 
 import (
 	"encoding/json"
@@ -36,51 +36,58 @@ import (
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
-// Create a Jsonnet VM to run commands in
+// Create a Jsonnet VM to run commands in.
 func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error) {
-	vm := jsonnet.MakeVM()
-	RegisterNativeFuncs(vm)
+	jvm := jsonnet.MakeVM()
+	RegisterNativeFuncs(jvm)
 
 	// always add lib directory in base directory to path
-	jpath := []string{vmconfig.BaseDir + "/lib"}
+	jpath := []string{filepath.Join(vmconfig.BaseDir, "lib")}
 
 	jpath = append(jpath, filepath.SplitList(os.Getenv("KR8_JPATH"))...)
 	jpathArgs := vmconfig.Jpaths
 	jpath = append(jpath, jpathArgs...)
 
-	vm.Importer(&jsonnet.FileImporter{
+	jvm.Importer(&jsonnet.FileImporter{
 		JPaths: jpath,
 	})
 
 	for _, extvar := range vmconfig.ExtVars {
-		kv := strings.SplitN(extvar, "=", 2)
-		if len(kv) != 2 {
+		args := strings.SplitN(extvar, "=", 2)
+		if len(args) != 2 {
 			log.Fatal().Str("ext-str-file", extvar).Msg("Failed to parse. Missing '=' in parameter`")
 		}
-		v, err := os.ReadFile(kv[1])
+		v, err := os.ReadFile(args[1])
 		if err != nil {
 			panic(err)
 		}
-		vm.ExtVar(kv[0], string(v))
+		jvm.ExtVar(args[0], string(v))
 	}
-	return vm, nil
+
+	return jvm, nil
 }
 
-// Takes a list of jsonnet files and imports each one and mixes them with "+"
-func JsonnetRenderFiles(vmConfig types.VMConfig, files []string, param string, prune bool, prepend string, source string) string {
-
+// Takes a list of jsonnet files and imports each one.
+// Formats the string for jsonnet using "+".
+func JsonnetRenderFiles(
+	vmConfig types.VMConfig,
+	files []string,
+	param string,
+	prune bool,
+	prepend string,
+	source string,
+) string {
 	// copy the slice so that we don't unitentionally modify the original
-	jsonnetPaths := make([]string, len(files[:0]))
-	copy(jsonnetPaths, files[:0])
+	jsonnetPaths := make([]string, len(files))
 
 	// range through the files
-	for _, s := range files {
-		jsonnetPaths = append(jsonnetPaths, fmt.Sprintf("(import '%s')", s))
+	for idx, s := range files {
+		jsonnetPaths[idx] = fmt.Sprintf("(import '%s')", s)
 	}
 
 	// Create a JSonnet VM
-	vm, err := JsonnetVM(vmConfig)
-	util.FatalErrorCheck(err, "Error creating jsonnet VM")
+	jvm, err := JsonnetVM(vmConfig)
+	util.FatalErrorCheck("Error creating jsonnet VM", err)
 
 	// Join the slices into a jsonnet compat string. Prepend code from "prepend" variable, if set.
 	var jsonnetImport string
@@ -100,11 +107,10 @@ func JsonnetRenderFiles(vmConfig types.VMConfig, files []string, param string, p
 	}
 
 	// render the jsonnet
-	out, err := vm.EvaluateAnonymousSnippet(source, jsonnetImport)
-	util.FatalErrorCheck(err, "Error evaluating jsonnet snippet")
+	out, err := jvm.EvaluateAnonymousSnippet(source, jsonnetImport)
+	util.FatalErrorCheck("Error evaluating jsonnet snippet", err)
 
 	return out
-
 }
 
 // Renders a jsonnet file with the specified options.
@@ -115,15 +121,21 @@ func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmC
 	}
 
 	// Render the cluster parameters
-	config := JsonnetRenderClusterParams(vmConfig, cmdFlagsJsonnet.Cluster, []string{cmdFlagsJsonnet.Component}, cmdFlagsJsonnet.ClusterParams, false)
+	config := JsonnetRenderClusterParams(
+		vmConfig,
+		cmdFlagsJsonnet.Cluster,
+		[]string{cmdFlagsJsonnet.Component},
+		cmdFlagsJsonnet.ClusterParams,
+		false,
+	)
 
 	// Create a new VM instance
-	vm, _ := JsonnetVM(vmConfig)
+	jvm, _ := JsonnetVM(vmConfig)
 	// Setup kr8 config as external vars
-	vm.ExtCode("kr8_cluster", "std.prune("+config+"._cluster)")
-	vm.ExtCode("kr8_components", "std.prune("+config+"._components)")
-	vm.ExtCode("kr8", "std.prune("+config+"."+cmdFlagsJsonnet.Component+")")
-	vm.ExtCode("kr8_unpruned", config+"."+cmdFlagsJsonnet.Component)
+	jvm.ExtCode("kr8_cluster", "std.prune("+config+"._cluster)")
+	jvm.ExtCode("kr8_components", "std.prune("+config+"._components)")
+	jvm.ExtCode("kr8", "std.prune("+config+"."+cmdFlagsJsonnet.Component+")")
+	jvm.ExtCode("kr8_unpruned", config+"."+cmdFlagsJsonnet.Component)
 
 	var input string
 	// If pruning is enabled, prune the input before rendering
@@ -138,14 +150,19 @@ func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmC
 	// Evaluate the jsonnet snippet and print the result
 	// This is where the magic happens! The jsonnet code is evaluated and the result is stored
 	//
-	j, err := vm.EvaluateAnonymousSnippet("file", input)
-	util.FatalErrorCheck(err, "Error evaluating jsonnet snippet")
+	j, err := jvm.EvaluateAnonymousSnippet("file", input)
+	util.FatalErrorCheck("Error evaluating jsonnet snippet", err)
 
 	util.JsonnetPrint(j, cmdFlagsJsonnet.Format, cmdFlagsJsonnet.Color)
 }
 
-// Only render cluster params (_cluster), without components
-func JsonnetRenderClusterParamsOnly(vmconfig types.VMConfig, clusterName string, clusterParams string, prune bool) string {
+// Only render cluster params (_cluster), without components.
+func JsonnetRenderClusterParamsOnly(
+	vmconfig types.VMConfig,
+	clusterName string,
+	clusterParams string,
+	prune bool,
+) string {
 	var params []string
 	if clusterName != "" {
 		clusterPath := util.GetClusterPaths(vmconfig.BaseDir, clusterName)
@@ -159,8 +176,15 @@ func JsonnetRenderClusterParamsOnly(vmconfig types.VMConfig, clusterName string,
 	return renderedParams
 }
 
-// Render cluster params, merged with one or more component's parameters. Empty componentName list renders all component parameters
-func JsonnetRenderClusterParams(vmconfig types.VMConfig, clusterName string, componentNames []string, clusterParams string, prune bool) string {
+// Render cluster params, merged with one or more component's parameters.
+// Empty componentName list renders all component parameters.
+func JsonnetRenderClusterParams(
+	vmconfig types.VMConfig,
+	clusterName string,
+	componentNames []string,
+	clusterParams string,
+	prune bool,
+) string {
 	if clusterName == "" && clusterParams == "" {
 		log.Fatal().Msg("Please specify a --cluster name and/or --clusterparams")
 	}
@@ -180,7 +204,7 @@ func JsonnetRenderClusterParams(vmconfig types.VMConfig, clusterName string, com
 
 	compString := gjson.Get(compParams, "_components")
 	err := json.Unmarshal([]byte(compString.String()), &componentMap)
-	util.FatalErrorCheck(err, "failed to parse component map")
+	util.FatalErrorCheck("failed to parse component map", err)
 	componentDefaultsMerged := "{"
 
 	listComponentKeys := maps.Keys(componentMap)
@@ -191,13 +215,13 @@ func JsonnetRenderClusterParams(vmconfig types.VMConfig, clusterName string, com
 	// all components
 	for _, key := range listComponentKeys {
 		if value, ok := componentMap[key]; ok {
-			path := vmconfig.BaseDir + "/" + value.Path + "/params.jsonnet"
-			fileC, err := os.ReadFile(path)
-			util.FatalErrorCheck(err, "Error reading file "+path)
-			componentDefaultsMerged = componentDefaultsMerged + fmt.Sprintf("'%s': %s,", key, string(fileC))
+			path := filepath.Join(vmconfig.BaseDir, value.Path, "params.jsonnet")
+			fileC, err := os.ReadFile(filepath.Clean(path))
+			util.FatalErrorCheck("Error reading file "+path, err)
+			componentDefaultsMerged += fmt.Sprintf("'%s': %s,", key, string(fileC))
 		}
 	}
-	componentDefaultsMerged = componentDefaultsMerged + "}"
+	componentDefaultsMerged += "}"
 
 	compParams = JsonnetRenderFiles(vmconfig, params, "", prune, componentDefaultsMerged, "componentparams")
 

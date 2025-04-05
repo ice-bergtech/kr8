@@ -7,9 +7,15 @@ import "github.com/ice-bergtech/kr8/cmd"
 ## Index
 
 - [Variables](<#variables>)
-- [func Execute\(version string\)](<#Execute>)
+- [func CheckIfUpdateNeeded\(outFile string, outStr string\) bool](<#CheckIfUpdateNeeded>)
+- [func CleanOutputDir\(outputFileMap map\[string\]bool, componentOutputDir string\)](<#CleanOutputDir>)
+- [func ConfigureLogger\(debug bool\)](<#ConfigureLogger>)
+- [func Execute\(ver string\)](<#Execute>)
 - [func GenerateCommand\(cmd \*cobra.Command, args \[\]string\)](<#GenerateCommand>)
+- [func GenerateIncludesFiles\(includesFiles \[\]interface\{\}, kr8Spec types.Kr8ClusterSpec, config string, componentName string, compPath string, componentOutputDir string, jvm \*jsonnet.VM\) map\[string\]bool](<#GenerateIncludesFiles>)
+- [func GetClusterParams\(\) map\[string\]string](<#GetClusterParams>)
 - [func InitConfig\(\)](<#InitConfig>)
+- [func ProcessFile\(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm \*jsonnet.VM\) string](<#ProcessFile>)
 - [type CmdGenerateOptions](<#CmdGenerateOptions>)
 - [type CmdGetOptions](<#CmdGetOptions>)
 - [type CmdRenderOptions](<#CmdRenderOptions>)
@@ -30,16 +36,19 @@ var FormatCmd = &cobra.Command{
     Run: func(cmd *cobra.Command, args []string) {
         // First get a list of all files in the base directory and subdirectories. Ignore .git directories.
         var fileList []string
-        filepath.Walk(RootConfig.BaseDir, func(path string, info fs.FileInfo, err error) error {
+        err := filepath.Walk(RootConfig.BaseDir, func(path string, info fs.FileInfo, err error) error {
             if info.IsDir() {
                 if info.Name() == ".git" {
                     return filepath.SkipDir
                 }
+
                 return nil
             }
             fileList = append(fileList, path)
+
             return nil
         })
+        util.FatalErrorCheck("Error walking the path "+RootConfig.BaseDir, err)
 
         fileList = util.Filter(fileList, func(s string) bool {
             var result bool
@@ -50,6 +59,7 @@ var FormatCmd = &cobra.Command{
                 }
                 result = result || t
             }
+
             return result
         })
 
@@ -62,35 +72,38 @@ var FormatCmd = &cobra.Command{
                 }
                 result = result || t
             }
+
             return !result
         })
         log.Debug().Msg("Filtered file list: " + fmt.Sprintf("%v", fileList))
         log.Debug().Msg("Formatting files...")
 
-        var wg sync.WaitGroup
+        var waitGroup sync.WaitGroup
         parallel, err := cmd.Flags().GetInt("parallel")
-        util.FatalErrorCheck(err, "Error getting parallel flag")
+        util.FatalErrorCheck("Error getting parallel flag", err)
         log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
         ants_file, _ := ants.NewPool(parallel)
         for _, filename := range fileList {
-            wg.Add(1)
+            waitGroup.Add(1)
             _ = ants_file.Submit(func() {
-                defer wg.Done()
+                defer waitGroup.Done()
                 var bytes []byte
-                bytes, err = os.ReadFile(filename)
+                bytes, err = os.ReadFile(filepath.Clean(filename))
                 output, err := formatter.Format(filename, string(bytes), util.GetDefaultFormatOptions())
                 if err != nil {
                     fmt.Fprintln(os.Stderr, err.Error())
+
                     return
                 }
-                err = os.WriteFile(filename, []byte(output), 0755)
+                err = os.WriteFile(filepath.Clean(filename), []byte(output), 0600)
                 if err != nil {
                     fmt.Fprintln(os.Stderr, err.Error())
+
                     return
                 }
             })
         }
-        wg.Wait()
+        waitGroup.Wait()
     },
 }
 ```
@@ -118,12 +131,13 @@ var GetClustersCmd = &cobra.Command{
     Run: func(cmd *cobra.Command, args []string) {
 
         clusters, err := util.GetClusterFilenames(RootConfig.ClusterDir)
-        util.FatalErrorCheck(err, "Error getting clusters")
+        util.FatalErrorCheck("Error getting clusters", err)
 
         if cmdGetFlags.NoTable {
             for _, c := range clusters {
                 println(c.Name + ": " + c.Path)
             }
+
             return
         }
 
@@ -143,7 +157,7 @@ var GetClustersCmd = &cobra.Command{
 }
 ```
 
-<a name="GetCmd"></a>GetCmd represents the get command
+<a name="GetCmd"></a>GetCmd represents the get command.
 
 ```go
 var GetCmd = &cobra.Command{
@@ -175,17 +189,17 @@ var GetComponentsCmd = &cobra.Command{
             params = append(params, cmdGetFlags.ClusterParams)
         }
 
-        j := jvm.JsonnetRenderFiles(RootConfig.VMConfig, params, "._components", true, "", "components")
+        jvm := jnetvm.JsonnetRenderFiles(RootConfig.VMConfig, params, "._components", true, "", "components")
         if cmdGetFlags.ParamField != "" {
-            value := gjson.Get(j, cmdGetFlags.ParamField)
+            value := gjson.Get(jvm, cmdGetFlags.ParamField)
             if value.String() == "" {
                 log.Fatal().Msg("Error getting param: " + cmdGetFlags.ParamField)
             } else {
-                formatted := util.Pretty(j, RootConfig.Color)
+                formatted := util.Pretty(jvm, RootConfig.Color)
                 fmt.Println(formatted)
             }
         } else {
-            formatted := util.Pretty(j, RootConfig.Color)
+            formatted := util.Pretty(jvm, RootConfig.Color)
             fmt.Println(formatted)
         }
     },
@@ -209,7 +223,13 @@ var GetParamsCmd = &cobra.Command{
             cList = append(cList, cmdGetFlags.Component)
         }
 
-        params := jvm.JsonnetRenderClusterParams(RootConfig.VMConfig, cmdGetFlags.Cluster, cList, cmdGetFlags.ClusterParams, true)
+        params := jnetvm.JsonnetRenderClusterParams(
+            RootConfig.VMConfig,
+            cmdGetFlags.Cluster,
+            cList,
+            cmdGetFlags.ClusterParams,
+            true,
+        )
 
         if cmdGetFlags.ParamField == "" {
             if cmdGetFlags.Component != "" {
@@ -218,6 +238,7 @@ var GetParamsCmd = &cobra.Command{
             } else {
                 fmt.Println(util.Pretty(params, RootConfig.Color))
             }
+
             return
         }
 
@@ -254,40 +275,38 @@ var InitClusterCmd = &cobra.Command{
             prompt := &survey.Input{
                 Message: "Set the cluster name",
                 Default: cmdInitFlags.ClusterName,
+                Help:    "Distinct name for the cluster",
             }
-            survey.AskOne(prompt, &cSpec.Name)
+            util.FatalErrorCheck("Invalid cluster name", survey.AskOne(prompt, &cSpec.Name))
 
             prompt = &survey.Input{
                 Message: "Set the cluster configuration directory",
                 Default: RootConfig.ClusterDir,
+                Help:    "Set the root directory for the new cluster",
             }
-            survey.AskOne(prompt, &cSpec.ClusterDir)
+            util.FatalErrorCheck("Invalid cluster directory", survey.AskOne(prompt, &cSpec.ClusterDir))
 
             promptB := &survey.Confirm{
                 Message: "Generate short names for output file names?",
                 Default: cSpec.GenerateShortNames,
+                Help:    "Shortens component names and file structure",
             }
-            survey.AskOne(promptB, &cSpec.GenerateShortNames)
+            util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.GenerateShortNames))
 
             promptB = &survey.Confirm{
                 Message: "Prune component parameters?",
                 Default: cSpec.PruneParams,
+                Help:    "This removes empty and null parameters from configuration",
             }
-            survey.AskOne(promptB, &cSpec.PruneParams)
-
-            prompt = &survey.Input{
-                Message: "Set the cluster spec post-processor",
-                Default: cSpec.PostProcessor,
-            }
-            survey.AskOne(prompt, &cSpec.PostProcessor)
+            util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.PruneParams))
         }
 
-        util.FatalErrorCheck(kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterDir), "Error generating cluster jsonnet file")
+        util.FatalErrorCheck("Error generating cluster jsonnet file", kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterDir))
     },
 }
 ```
 
-<a name="InitCmd"></a>InitCmd represents the init command
+<a name="InitCmd"></a>InitCmd represents the command. Various subcommands are available to initialize different components of kr8.
 
 ```go
 var InitCmd = &cobra.Command{
@@ -312,27 +331,60 @@ var InitComponentCmd = &cobra.Command{
             prompt := &survey.Input{
                 Message: "Enter component name",
                 Default: cmdInitFlags.ComponentName,
+                Help:    "Enter the name of the component you want to create",
             }
-            survey.AskOne(prompt, &cmdInitFlags.ComponentName)
+            util.FatalErrorCheck("Invalid component name", survey.AskOne(prompt, &cmdInitFlags.ComponentName))
 
             prompt = &survey.Input{
                 Message: "Enter component directory",
                 Default: RootConfig.ComponentDir,
+                Help:    "Enter the directory where you want to create the component",
             }
-            survey.AskOne(prompt, &RootConfig.ComponentDir)
+            util.FatalErrorCheck("Invalid component directory", survey.AskOne(prompt, &RootConfig.ComponentDir))
 
             promptS := &survey.Select{
                 Message: "Select component type",
                 Options: []string{"jsonnet", "yml", "tpl", "chart"},
+                Help:    "Select the type of component you want to create",
+                Default: "jsonnet",
+                Description: func(value string, index int) string {
+                    switch value {
+                    case "jsonnet":
+                        return "Use a Jsonnet file to describe the component resources"
+                    case "yml":
+                        return "Use a yml (docker-compose) file to describe the component resources"
+                    case "tpl":
+                        return "Use a template file to describe the component resources"
+                    case "chart":
+                        return "Use a Helm chart to describe the component resources"
+                    default:
+                        return ""
+                    }
+                },
             }
-            survey.AskOne(promptS, &cmdInitFlags.ComponentType)
+            util.FatalErrorCheck("Invalid component type", survey.AskOne(promptS, &cmdInitFlags.ComponentType))
         }
-        kr8init.GenerateComponentJsonnet(cmdInitFlags, RootConfig.ComponentDir)
+        util.FatalErrorCheck(
+            "Error generating component jsonnet",
+            kr8init.GenerateComponentJsonnet(cmdInitFlags, RootConfig.ComponentDir),
+        )
     },
 }
 ```
 
-<a name="InitRepoCmd"></a>
+<a name="InitRepoCmd"></a>Initializes a new kr8 configuration repository
+
+Directory tree:
+
+```
+components/
+
+clusters/
+
+lib/
+
+generated/
+```
 
 ```go
 var InitRepoCmd = &cobra.Command{
@@ -348,7 +400,11 @@ and initialize a git repo so you can get started`,
         outDir := args[len(args)-1]
         log.Debug().Msg("Initializing kr8 config repo in " + outDir)
         if cmdInitFlags.InitUrl != "" {
-            util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, cmdInitFlags.Fetch)
+            util.FatalErrorCheck(
+                "Issue fetching repo",
+                util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, cmdInitFlags.Fetch),
+            )
+
             return
         }
 
@@ -358,6 +414,7 @@ and initialize a git repo so you can get started`,
             ComponentName: "example-component",
             ComponentType: "jsonnet",
             Interactive:   false,
+            Fetch:         false,
         }
         clusterOptions := types.Kr8ClusterSpec{
             PostProcessor:      "",
@@ -367,10 +424,22 @@ and initialize a git repo so you can get started`,
             ClusterDir:         "clusters",
             Name:               cmdInitFlags.ClusterName,
         }
-        kr8init.GenerateClusterJsonnet(clusterOptions, outDir+"/clusters")
-        kr8init.GenerateComponentJsonnet(cmdInitOptions, outDir+"/components")
-        kr8init.GenerateLib(cmdInitFlags.Fetch, outDir+"/lib")
-        kr8init.GenerateReadme(outDir, cmdInitOptions, clusterOptions)
+        util.FatalErrorCheck(
+            "Issue creating cluster.jsonnet",
+            kr8init.GenerateClusterJsonnet(clusterOptions, outDir+"/clusters"),
+        )
+        util.FatalErrorCheck(
+            "Issue creating example component.jsonnet",
+            kr8init.GenerateComponentJsonnet(cmdInitOptions, outDir+"/components"),
+        )
+        util.FatalErrorCheck(
+            "Issue creating lib folder",
+            kr8init.GenerateLib(cmdInitFlags.Fetch, outDir+"/lib"),
+        )
+        util.FatalErrorCheck(
+            "Issue creating Readme.md",
+            kr8init.GenerateReadme(outDir, cmdInitOptions, clusterOptions),
+        )
     },
 }
 ```
@@ -424,27 +493,27 @@ var RenderHelmCmd = &cobra.Command{
         jsa := [][]byte{}
         for {
             bytes, err := decoder.Read()
-            if err == io.EOF {
+            if errors.Is(err, io.EOF) {
                 break
             } else if err != nil {
-                util.FatalErrorCheck(err, "Error decoding decoding yaml stream")
+                util.FatalErrorCheck("Error decoding yaml stream", err)
             }
             if len(bytes) == 0 {
                 continue
             }
             jsonData, err := yaml.ToJSON(bytes)
-            util.FatalErrorCheck(err, "Error converting yaml to JSON")
+            util.FatalErrorCheck("Error converting yaml to JSON", err)
             if string(jsonData) == "null" {
 
                 continue
             }
             _, _, err = unstructured.UnstructuredJSONScheme.Decode(jsonData, nil, nil)
-            util.FatalErrorCheck(err, "Error handling unstructured JSON")
+            util.FatalErrorCheck("Error handling unstructured JSON", err)
             jsa = append(jsa, jsonData)
         }
         for _, j := range jsa {
             out, err := goyaml.JSONToYAML(j)
-            util.FatalErrorCheck(err, "Error encoding JSON to YAML")
+            util.FatalErrorCheck("Error encoding JSON to YAML", err)
             fmt.Println("---")
             fmt.Println(string(out))
         }
@@ -462,7 +531,7 @@ var RenderJsonnetCmd = &cobra.Command{
 
     Args: cobra.MinimumNArgs(1),
     Run: func(cmd *cobra.Command, args []string) {
-        for _, f := range args {
+        for _, fileName := range args {
             jvm.JsonnetRender(
                 types.CmdJsonnetOptions{
                     Prune:         cmdRenderFlags.Prune,
@@ -470,13 +539,14 @@ var RenderJsonnetCmd = &cobra.Command{
                     Cluster:       cmdRenderFlags.Cluster,
                     Component:     cmdRenderFlags.ComponentName,
                     Format:        cmdRenderFlags.Format,
-                }, f, RootConfig.VMConfig)
+                    Color:         false,
+                }, fileName, RootConfig.VMConfig)
         }
     },
 }
 ```
 
-<a name="RootCmd"></a>RootCmd represents the base command when called without any subcommands
+<a name="RootCmd"></a>RootCmd represents the base command when called without any subcommands.
 
 ```go
 var RootCmd = &cobra.Command{
@@ -487,13 +557,7 @@ var RootCmd = &cobra.Command{
 }
 ```
 
-<a name="Version"></a>exported Version variable
-
-```go
-var Version string
-```
-
-<a name="VersionCmd"></a>Print out versions of packages in use Bug\(\) \- Updated manually
+<a name="VersionCmd"></a>Print out versions of packages in use. Chore\(\) \- Updated manually.
 
 ```go
 var VersionCmd = &cobra.Command{
@@ -501,7 +565,7 @@ var VersionCmd = &cobra.Command{
     Short: "Return the current version of kr8",
     Long:  `return the current version of kr8`,
     Run: func(cmd *cobra.Command, args []string) {
-        fmt.Println(RootCmd.Use + " Plus Version: " + Version)
+        fmt.Println(RootCmd.Use + " Plus Version: " + version)
         fmt.Println("jsonnet: github.com/google/go-jsonnet v0.20.0")
         fmt.Println("yml: github.com/ghodss/yaml v1.0.0")
         fmt.Println("template: github.com/Masterminds/sprig/v3 v3.2.3")
@@ -511,26 +575,71 @@ var VersionCmd = &cobra.Command{
 }
 ```
 
-<a name="Execute"></a>
-## func [Execute](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L32>)
+<a name="CheckIfUpdateNeeded"></a>
+## func [CheckIfUpdateNeeded](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L599>)
 
 ```go
-func Execute(version string)
+func CheckIfUpdateNeeded(outFile string, outStr string) bool
+```
+
+Check if a file needs updating based on its current contents and the new contents.
+
+<a name="CleanOutputDir"></a>
+## func [CleanOutputDir](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L483>)
+
+```go
+func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string)
+```
+
+
+
+<a name="ConfigureLogger"></a>
+## func [ConfigureLogger](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L98>)
+
+```go
+func ConfigureLogger(debug bool)
+```
+
+
+
+<a name="Execute"></a>
+## func [Execute](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L33>)
+
+```go
+func Execute(ver string)
 ```
 
 Execute adds all child commands to the root command sets flags appropriately. This is called by main.main\(\). It only needs to happen once to the rootCmd.
 
 <a name="GenerateCommand"></a>
-## func [GenerateCommand](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L75>)
+## func [GenerateCommand](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L97>)
 
 ```go
 func GenerateCommand(cmd *cobra.Command, args []string)
 ```
 
-This function will generate the components for each cluster in parallel It uses a wait group to ensure that all clusters have been processed before exiting.
+This function will generate the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.
+
+<a name="GenerateIncludesFiles"></a>
+## func [GenerateIncludesFiles](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L433-L441>)
+
+```go
+func GenerateIncludesFiles(includesFiles []interface{}, kr8Spec types.Kr8ClusterSpec, config string, componentName string, compPath string, componentOutputDir string, jvm *jsonnet.VM) map[string]bool
+```
+
+
+
+<a name="GetClusterParams"></a>
+## func [GetClusterParams](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L81>)
+
+```go
+func GetClusterParams() map[string]string
+```
+
+
 
 <a name="InitConfig"></a>
-## func [InitConfig](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L80>)
+## func [InitConfig](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L137>)
 
 ```go
 func InitConfig()
@@ -538,30 +647,46 @@ func InitConfig()
 
 InitConfig reads in config file and ENV variables if set.
 
-<a name="CmdGenerateOptions"></a>
-## type [CmdGenerateOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L43-L50>)
+<a name="ProcessFile"></a>
+## func [ProcessFile](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L552-L560>)
 
-stores the options for the 'generate' command.
+```go
+func ProcessFile(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm *jsonnet.VM) string
+```
+
+Process an includes file. Based on the extension, it will process it differently.
+
+.jsonnet: Imported and processed using jsonnet VM.
+
+.yml, .yaml: Imported and processed through native function ParseYaml.
+
+.tpl, .tmpl: Processed using component config and Sprig templating.
+
+<a name="CmdGenerateOptions"></a>
+## type [CmdGenerateOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L38-L45>)
+
+Stores the options for the 'generate' command.
 
 ```go
 type CmdGenerateOptions struct {
-    // ClusterParamsFile is a string that stores the path to the cluster params file
+    // Stores the path to the cluster params file
     ClusterParamsFile string
-    // GenerateDir is a string that stores the output directory for generated files
+    // Stores the output directory for generated files
     GenerateDir string
-    // Filters is a PathFilterOptions struct that stores the filters to apply to clusters and components when generating files
+    // Stores the filters to apply to clusters and components when generating files
     Filters util.PathFilterOptions
 }
 ```
 
 <a name="CmdGetOptions"></a>
-## type [CmdGetOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/get.go#L38-L51>)
+## type [CmdGetOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/get.go#L38-L52>)
 
 Holds the options for the get command.
 
 ```go
 type CmdGetOptions struct {
-    // ClusterParams provides a way to provide cluster params as a single file. This can be combined with --cluster to override the cluster.
+    // ClusterParams provides a way to provide cluster params as a single file.
+    // This can be combined with --cluster to override the cluster.
     ClusterParams string
     // If true, just prints result instead of placing in table
     NoTable bool
@@ -577,9 +702,9 @@ type CmdGetOptions struct {
 ```
 
 <a name="CmdRenderOptions"></a>
-## type [CmdRenderOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/render.go#L21-L32>)
+## type [CmdRenderOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/render.go#L23-L34>)
 
-Contains parameters for the kr8 render command
+Contains parameters for the kr8 render command.
 
 ```go
 type CmdRenderOptions struct {
@@ -597,9 +722,9 @@ type CmdRenderOptions struct {
 ```
 
 <a name="CmdRootOptions"></a>
-## type [CmdRootOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L41-L60>)
+## type [CmdRootOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L42-L61>)
 
-Default options that are available to all commands
+Default options that are available to all commands.
 
 ```go
 type CmdRootOptions struct {

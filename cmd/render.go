@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"errors"
+
 	goyaml "github.com/ghodss/yaml"
 	"github.com/spf13/cobra"
 
@@ -12,12 +14,12 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/util/yaml"
 
-	jvm "github.com/ice-bergtech/kr8/pkg/jvm"
+	jvm "github.com/ice-bergtech/kr8/pkg/jnetvm"
 	types "github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
-// Contains parameters for the kr8 render command
+// Contains parameters for the kr8 render command.
 type CmdRenderOptions struct {
 	// Prune null and empty objects from rendered json
 	Prune bool
@@ -31,18 +33,28 @@ type CmdRenderOptions struct {
 	Format string
 }
 
-// Stores the render command options
+// Stores the render command options.
 var cmdRenderFlags CmdRenderOptions
 
 func init() {
 	RootCmd.AddCommand(RenderCmd)
 
 	RenderCmd.AddCommand(RenderJsonnetCmd)
-	RenderJsonnetCmd.PersistentFlags().BoolVarP(&cmdRenderFlags.Prune, "prune", "", true, "Prune null and empty objects from rendered json")
-	RenderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.ClusterParams, "clusterparams", "p", "", "provide cluster params as single file - can be combined with --cluster to override cluster")
-	RenderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.ComponentName, "component", "c", "", "component to render params for")
-	RenderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.Cluster, "cluster", "C", "", "cluster to render params for")
-	RenderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.Format, "format", "F", "json", "Output format: json, yaml, stream")
+	RenderJsonnetCmd.PersistentFlags().BoolVarP(&cmdRenderFlags.Prune,
+		"prune", "", true,
+		"Prune null and empty objects from rendered json")
+	RenderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.ClusterParams,
+		"clusterparams", "p", "",
+		"provide cluster params as single file - can be combined with --cluster to override cluster")
+	RenderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.ComponentName,
+		"component", "c", "",
+		"component to render params for")
+	RenderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.Cluster,
+		"cluster", "C", "",
+		"cluster to render params for")
+	RenderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.Format,
+		"format", "F", "json",
+		"Output format: json, yaml, stream")
 
 	RenderCmd.AddCommand(RenderHelmCmd)
 }
@@ -60,7 +72,7 @@ var RenderJsonnetCmd = &cobra.Command{
 
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		for _, f := range args {
+		for _, fileName := range args {
 			jvm.JsonnetRender(
 				types.CmdJsonnetOptions{
 					Prune:         cmdRenderFlags.Prune,
@@ -68,7 +80,8 @@ var RenderJsonnetCmd = &cobra.Command{
 					Cluster:       cmdRenderFlags.Cluster,
 					Component:     cmdRenderFlags.ComponentName,
 					Format:        cmdRenderFlags.Format,
-				}, f, RootConfig.VMConfig)
+					Color:         false,
+				}, fileName, RootConfig.VMConfig)
 		}
 	},
 }
@@ -82,27 +95,27 @@ var RenderHelmCmd = &cobra.Command{
 		jsa := [][]byte{}
 		for {
 			bytes, err := decoder.Read()
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				break
 			} else if err != nil {
-				util.FatalErrorCheck(err, "Error decoding decoding yaml stream")
+				util.FatalErrorCheck("Error decoding yaml stream", err)
 			}
 			if len(bytes) == 0 {
 				continue
 			}
 			jsonData, err := yaml.ToJSON(bytes)
-			util.FatalErrorCheck(err, "Error converting yaml to JSON")
+			util.FatalErrorCheck("Error converting yaml to JSON", err)
 			if string(jsonData) == "null" {
 				// skip empty json
 				continue
 			}
 			_, _, err = unstructured.UnstructuredJSONScheme.Decode(jsonData, nil, nil)
-			util.FatalErrorCheck(err, "Error handling unstructured JSON")
+			util.FatalErrorCheck("Error handling unstructured JSON", err)
 			jsa = append(jsa, jsonData)
 		}
 		for _, j := range jsa {
 			out, err := goyaml.JSONToYAML(j)
-			util.FatalErrorCheck(err, "Error encoding JSON to YAML")
+			util.FatalErrorCheck("Error encoding JSON to YAML", err)
 			fmt.Println("---")
 			fmt.Println(string(out))
 		}

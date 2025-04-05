@@ -2,21 +2,21 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 )
 
-// An object that stores variables that can be referenced by components
+// An object that stores variables that can be referenced by components.
 type Kr8Cluster struct {
 	Name string `json:"name"`
 	Path string `json:"-"`
 }
 
-// The specification for a clusters.jsonnet file
-// This file contains configuration for clusters, including
+// The specification for a clusters.jsonnet file.
+// This describes configuration for a cluster that kr8 should process.
 type Kr8ClusterJsonnet struct {
 	// kr8 configuration for how to process the cluster
 	ClusterSpec Kr8ClusterSpec `json:"_kr8_spec"`
@@ -26,7 +26,8 @@ type Kr8ClusterJsonnet struct {
 	Components map[string]Kr8ClusterComponentRef `json:"_components"`
 }
 
-// A reference to a component folder that contains a params.jsonnet file. This is used in the cluster jsonnet file to reference components.
+// A reference to a component folder that contains a params.jsonnet file.
+// This is used in the cluster jsonnet file to reference components.
 type Kr8ClusterComponentRef struct {
 	// The path to a component folder that contains a params.jsonnet file
 	Path string `json:"path"`
@@ -49,23 +50,29 @@ type Kr8ClusterSpec struct {
 	ClusterDir string `json:"-"`
 }
 
-// This function creates a cluster spec from the given cluster name, spec, base directory, and generate directory override.
+// This function creates a Kr8ClusterSpec from passed params.
 // If genDirOverride is empty, the value of generate_dir from the spec is used.
-func CreateClusterSpec(clusterName string, spec gjson.Result, baseDir string, genDirOverride string) (Kr8ClusterSpec, error) {
+func CreateClusterSpec(
+	clusterName string,
+	spec gjson.Result,
+	baseDir string,
+	genDirOverride string,
+) (Kr8ClusterSpec, error) {
 	// First determine the value of generate_dir from the command line args or spec.
 	clGenerateDir := genDirOverride
 	if clGenerateDir == "" {
 		clGenerateDir = spec.Get("generate_dir").String()
 	}
 	if clGenerateDir == "" {
-		return Kr8ClusterSpec{}, fmt.Errorf("_kr8_spec.generate_dir must be set in parameters or passed as generate-dir flag")
+		log.Fatal().Msg("_kr8_spec.generate_dir must be set in parameters or passed as generate-dir flag")
 	}
 	// if generateDir does not start with /, then it goes in baseDir
 	if !strings.HasPrefix(clGenerateDir, "/") {
-		clGenerateDir = baseDir + "/" + clGenerateDir
+		clGenerateDir = filepath.Join(baseDir, clGenerateDir)
 	}
-	clusterDir := clGenerateDir + "/" + clusterName
+	clusterDir := filepath.Join(clGenerateDir, clusterName)
 	log.Debug().Str("cluster", clusterName).Msg("output directory: " + clusterDir)
+
 	return Kr8ClusterSpec{
 		PostProcessor:      spec.Get("postprocessor").String(),
 		GenerateDir:        clGenerateDir,
@@ -76,9 +83,9 @@ func CreateClusterSpec(clusterName string, spec gjson.Result, baseDir string, ge
 	}, nil
 }
 
-// The specification for component's params.jsonnet file
-// It contains all the configuration and variables used to generate component resources
-// This configuration is often modified from the cluster config to add cluster-specific configuration
+// The specification for component's params.jsonnet file.
+// It contains all the configuration and variables used to generate component resources.
+// This configuration is often modified from the cluster config to add cluster-specific configuration.
 type Kr8ComponentJsonnet struct {
 	// Component-specific configuration for how kr8 should process the component (required)
 	Kr8Spec Kr8ComponentSpec `json:"kr8_spec"`
@@ -93,8 +100,8 @@ type Kr8ComponentJsonnet struct {
 	CalledFrom string `json:"called_from"`
 }
 
-// The kr8_spec object in a cluster config file
-// This configures how kr8 processes the component
+// The kr8_spec object in a cluster config file.
+// This configures how kr8 processes the component.
 type Kr8ComponentSpec struct {
 	// If true, includes the parameters of the current cluster when generating this component
 	Kr8_allparams bool `json:"enable_kr8_allparams"`
@@ -110,6 +117,58 @@ type Kr8ComponentSpec struct {
 	Includes []interface{} `json:"includes"`
 }
 
+// Extract jsonnet extVar defintions from spec.
+func extractExtFiles(spec gjson.Result) map[string]string {
+	result := make(map[string]string)
+	for k, v := range spec.Get("extfiles").Map() {
+		if v.Type == gjson.String {
+			result[k] = v.String()
+		}
+	}
+
+	return result
+}
+
+// Extract jsonnet lib paths from spec.
+func extractJpaths(spec gjson.Result) []string {
+	jPathsInput := spec.Get("jpaths").Array()
+	jPathsOutput := make([]string, len(jPathsInput))
+	for i, p := range jPathsInput {
+		jPathsOutput[i] = p.String()
+	}
+
+	return jPathsOutput
+}
+
+// Extract jsonnet includes filenames or objects from spec.
+func extractIncludes(spec gjson.Result) []interface{} {
+	incl := spec.Get("includes")
+	includes := make([]interface{}, len(incl.Array()))
+	for idx, item := range incl.Array() {
+		switch item.Type {
+		case gjson.JSON:
+			var include Kr8ComponentSpecIncludeObject
+			err := json.Unmarshal([]byte(item.String()), &include)
+			if err != nil {
+				log.Info().Msg("Error unmarshalling include object: " + item.String() + " skipping.")
+
+				continue
+			}
+			includes[idx] = include
+		case gjson.String:
+			includes[idx] = item.String()
+		case gjson.True:
+		case gjson.False:
+		case gjson.Number:
+		case gjson.Null:
+		default:
+			log.Fatal().Msg("Includes list item is not a string or json object")
+		}
+	}
+
+	return includes
+}
+
 // Extracts a component spec from a jsonnet object.
 func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
 	specM := spec.Map()
@@ -122,55 +181,28 @@ func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
 		Kr8_allparams:         spec.Get("enable_kr8_allparams").Bool(),
 		Kr8_allclusters:       spec.Get("enable_kr8_allclusters").Bool(),
 		DisableOutputDirClean: spec.Get("disable_output_clean").Bool(),
-		ExtFiles:              ExtFileVar{},
-		JPaths:                []string{},
-		Includes:              []interface{}{},
-	}
-
-	for k, v := range spec.Get("extfiles").Map() {
-		if v.Type == gjson.String {
-			componentSpec.ExtFiles[k] = v.String()
-		}
-	}
-
-	jPaths := spec.Get("jpaths").Array()
-	componentSpec.JPaths = make([]string, len(jPaths))
-	for i, p := range jPaths {
-		componentSpec.JPaths[i] = p.String()
-	}
-
-	incl := spec.Get("includes")
-	componentSpec.Includes = make([]interface{}, len(incl.Array()))
-	for i, item := range incl.Array() {
-		if item.Type == gjson.JSON {
-			var include Kr8ComponentSpecIncludeObject
-			err := json.Unmarshal([]byte(item.String()), &include)
-			if err != nil {
-				return componentSpec, fmt.Errorf("error unmarshalling includes: %w", err)
-			}
-			componentSpec.Includes[i] = include
-		} else if item.Type == gjson.String {
-			componentSpec.Includes[i] = item.String()
-		}
+		ExtFiles:              extractExtFiles(spec),
+		JPaths:                extractJpaths(spec),
+		Includes:              extractIncludes(spec),
 	}
 
 	return componentSpec, nil
 }
 
-// Map of external files to load into jsonnet vm as external variables
-// Keys are the variable names, values are the paths to the files to load as strings into the jsonnet vm
-// To reference the variable in jsonnet code, use std.extvar("variable_name")
+// Map of external files to load into jsonnet vm as external variables.
+// Keys are the variable names, values are the paths to the files to load as strings into the jsonnet vm.
+// To reference the variable in jsonnet code, use std.extvar("variable_name").
 type ExtFileVar map[string]string
 
-// A struct describing an included file that will be processed to produce a file
+// A struct describing an included file that will be processed to produce a file.
 type Kr8ComponentSpecIncludeFile interface {
 	string
 	Kr8ComponentSpecIncludeObject
 }
 
-// An includes object which configures how kr8 includes an object
-// It allows configuring the included file's destination directory and file name
-// The input file will be processed differently depending on the filetype
+// An includes object which configures how kr8 includes an object.
+// It allows configuring the included file's destination directory and file name.
+// The input file will be processed differently depending on the filetype.
 type Kr8ComponentSpecIncludeObject struct {
 	// an input file to process
 	// accepted filetypes: .jsonnet .yml .yaml .tmpl .tpl
@@ -183,6 +215,7 @@ type Kr8ComponentSpecIncludeObject struct {
 	DestExt string `json:"dest_ext,omitempty"`
 }
 
+// Options for running the jsonnet command.
 type CmdJsonnetOptions struct {
 	Prune         bool
 	Cluster       string
@@ -192,7 +225,7 @@ type CmdJsonnetOptions struct {
 	Color         bool
 }
 
-// VMConfig describes configuration to initialize Jsonnet VM with
+// VMConfig describes configuration to initialize the Jsonnet VM with.
 type VMConfig struct {
 	// Jpaths is a list of paths to search for Jsonnet libraries (libsonnet files)
 	Jpaths []string `json:"jpath" yaml:"jpath"`
