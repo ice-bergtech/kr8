@@ -129,6 +129,8 @@ func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *Kompos
 //
 // https://github.com/kubernetes/kompose/blob/v1.35.0/pkg/app/app.go#L166
 func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions {
+	isKube := k.Provider == "kubernetes"
+
 	// Initialize te result options with sensible defaults
 	resultOpts := kobject.ConvertOptions{
 		ToStdout:   k.GenerateToStdout,
@@ -168,24 +170,22 @@ func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions {
 
 		SecretsAsFiles:          k.SecretsAsFiles,
 		GenerateNetworkPolicies: k.NetworkPolicies,
-	}
-	// https://github.com/kubernetes/kompose/blob/v1.35.0/pkg/app/app.go#L166
-	if k.Provider == "kubernetes" {
+		// https://github.com/kubernetes/kompose/blob/v1.35.0/pkg/app/app.go#L166
+
 		// deployment
-		resultOpts.CreateD = k.Controller == "deployment"
-		resultOpts.IsDeploymentFlag = resultOpts.CreateD
+		CreateD:          k.Controller == "deployment" && isKube,
+		IsDeploymentFlag: k.Controller == "deployment" && isKube,
 		// daemon sets
-		resultOpts.CreateDS = k.Controller == "daemonSet"
-		resultOpts.IsDaemonSetFlag = resultOpts.CreateDS
+		CreateDS:        k.Controller == "daemonSet" && isKube,
+		IsDaemonSetFlag: k.Controller == "daemonSet" && isKube,
 		// replication controller
-		resultOpts.CreateRC = k.Controller == "replicationController"
-		resultOpts.IsReplicationControllerFlag = resultOpts.CreateRC
-		// default to daemonset
-		resultOpts.CreateD = !resultOpts.CreateDS && !resultOpts.CreateRC
-	} else if k.Provider == "openshift" {
-		resultOpts.CreateDeploymentConfig = k.OSCreateDeploymentConfig
-		resultOpts.BuildRepo = k.OSBuildRepo
-		resultOpts.BuildBranch = k.OSBuildBranch
+		CreateRC:                    k.Controller == "replicationController" && isKube,
+		IsReplicationControllerFlag: k.Controller == "replicationController" && isKube,
+
+		// Openshift specific params
+		CreateDeploymentConfig: k.OSCreateDeploymentConfig && !isKube,
+		BuildRepo:              k.OSBuildRepo,
+		BuildBranch:            k.OSBuildBranch,
 	}
 
 	return &resultOpts

@@ -29,8 +29,9 @@ func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error {
 	filename := "cluster.jsonnet"
 	clusterJson := types.Kr8ClusterJsonnet{
 		ClusterSpec: cSpec,
-		Cluster:     types.Kr8Cluster{Name: cSpec.Name},
-		Components:  map[string]types.Kr8ClusterComponentRef{},
+		// Bug() Unsure if Path is correct
+		Cluster:    types.Kr8Cluster{Name: cSpec.Name, Path: cSpec.ClusterDir},
+		Components: map[string]types.Kr8ClusterComponentRef{},
 	}
 	_, err := util.WriteObjToJsonFile(filename, dstDir+"/"+cSpec.Name, clusterJson)
 
@@ -58,14 +59,29 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 		ReleaseName: strings.ReplaceAll(componentOptions.ComponentName, "_", "-"),
 		Namespace:   "Default",
 		Version:     "1.0.0",
+		CalledFrom:  ".",
 	}
 	switch componentOptions.ComponentType {
 	case "jsonnet":
 		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, "component.jsonnet")
 	case "yml":
-		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, types.Kr8ComponentSpecIncludeObject{File: "input.yml", DestName: "glhf"})
+		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes,
+			types.Kr8ComponentSpecIncludeObject{
+				File:     "input.yml",
+				DestDir:  "",
+				DestName: "glhf",
+				DestExt:  "yml",
+			},
+		)
 	case "tpl":
-		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, types.Kr8ComponentSpecIncludeObject{File: "README.tpl", DestDir: "docs", DestExt: "md"})
+		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes,
+			types.Kr8ComponentSpecIncludeObject{
+				File:     "README.tpl",
+				DestDir:  "docs",
+				DestName: "ReadMe",
+				DestExt:  "md",
+			},
+		)
 	case "chart":
 		break
 	default:
