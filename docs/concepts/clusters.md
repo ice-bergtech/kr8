@@ -23,11 +23,11 @@ clusters
         └── cluster.jsonnet
 ```
 
-The clusters are given names and then grouped together inside a directory tree. 
+The clusters are given names and then grouped together inside a directory tree.
 
 There are two jsonnet files you'll notice here:
 
- - `cluster.jsonnet` - this defines a named cluster, kr8 will stop going down through the directory tree when it finds this file
+ - `cluster.jsonnet` - this defines a named cluster, kr8+ will stop going down through the directory tree when it finds this file
  - `params.jsonnet` - this is a file which can have components and parameters defined for clustes lower down in the hierarchy. We'll go into more detail about this shortly.
 
 ## Components in clusters
@@ -46,7 +46,9 @@ Notice we're using the jsonnet `+` operator to make sure we're appending this to
 
 ## Cluster parameters
 
-Once you've initialized a component for a cluster, you can then start to override parameters for that component. You do this by simply defining a jsonnet key with the named parameters in it. Here's an example:
+Once you've initialized a component for a cluster, you can then start to override parameters for that component.
+You do this by simply defining a jsonnet key with the named parameters in it.
+Here's an example:
 
 ```jsonnet
 external_dns+: {
@@ -62,7 +64,9 @@ external_dns+: {
 
 ## Hierarchy System
 
-The hierarchy system is a very powerful part or kr8. It allows you to remove duplication of parameter and component definitions. Take the previous cluster layout as an example:
+The hierarchy system is a very powerful part or kr8+.
+It allows you to remove duplication of parameter and component definitions.
+Take the previous cluster layout as an example:
 
 ```
 clusters
@@ -78,7 +82,9 @@ clusters
         └── cluster.jsonnet
 ```
 
-You can use the hierarchy system to ensure you have components installed in all clusters. Let's assume we want to make sure that we want to install the `sealed_secrets` component in _all_ our clusters. We'd put it in this file:
+You can use the hierarchy system to ensure you have components installed in all clusters.
+Let's assume we want to make sure that we want to install the `sealed_secrets` component in _all_ our clusters.
+We'd put it in this file:
 
 ```
 clusters
@@ -94,7 +100,8 @@ clusters
         └── cluster.jsonnet
 ```
 
-Alongside that, let's assume all our production clusters are using the same external_dns domain name. We can define that like so:
+Alongside that, let's assume all our production clusters are using the same external_dns domain name.
+We can define that like so:
 
 ```
 clusters
@@ -110,13 +117,13 @@ clusters
         └── cluster.jsonnet
 ```
 
-kr8 will look for the smallest unit of configuration, so if you want one cluster to be slightly different inside a hierarchy unit, you can continue to override components and parameters inside a clusters' `cluster.jsonnet` file.
+kr8+ will look for the smallest unit of configuration, so if you want one cluster to be slightly different inside a hierarchy unit, you can continue to override components and parameters inside a clusters' `cluster.jsonnet` file.
 
 ---
 
 A cluster cluster configuration file will include:
 
-`_kr8_spec` Configuration parameters for kr8
+`_kr8_spec` Configuration parameters for kr8+
 | key                    | description | example     |
 | ---------------------- | ----------- | ----------- |
 | `generate_dir`         |             | 'generated' |

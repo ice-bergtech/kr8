@@ -1,10 +1,10 @@
 ## kr8 version
 
-Return the current version of kr8
+Return the current version of kr8+
 
 ### Synopsis
 
-return the current version of kr8
+return the current version of kr8+
 
 ```
 kr8 version [flags]

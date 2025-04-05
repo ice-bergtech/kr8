@@ -2,7 +2,9 @@
 
 A very simple component might just be a few lines of jsonnet.
 
-Consider the situation whereby you might have two clusters, one in AWS and one in DigitalOcean. You need to set a default storageclass. You could do this with jsonnet.
+Consider the situation whereby you might have two clusters, one in AWS and one in DigitalOcean.
+You need to set a default storageclass.
+You could do this with jsonnet.
 
 Your jsonnet component would look like this:
 
@@ -35,7 +37,8 @@ Notice we still add a fetch task which is an empty command
 
 ## Params
 
-As a reminder, every component requires a params file. We need to set a namespace for the component, even though it's a cluster level resource - namespace is a required paramater for kr8
+As a reminder, every component requires a params file.
+We need to set a namespace for the component, even though it's a cluster level resource - namespace is a required paramater for kr8+
 
 ```yaml
 {

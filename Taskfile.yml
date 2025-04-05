@@ -11,6 +11,23 @@ tasks:
       # https://golangci-lint.run/welcome/install/
       - brew install golangci-lint
       - brew upgrade golangci-lint
+      - task: setup-bats
+  
+  setup-bats:
+    desc: 'Install bats testing tools'
+    cmds:
+      - git clone https://github.com/bats-core/bats-core.git bats-test/bats
+      - git clone https://github.com/bats-core/bats-support.git bats-test/test_helper/bats-support
+      - git clone https://github.com/bats-core/bats-assert.git bats-test/test_helper/bats-assert
+
+  generate-bats-tests:
+    aliases:
+      - gt
+    dir: ./bats-test
+    env:
+      KR8: '../kr8'
+    cmds:
+      - ./GEN_ALL.sh
 
   test:
     desc: Tesk kr8 for your local system
@@ -31,15 +48,6 @@ tasks:
       KR8: '../kr8'
     cmds:
       - ./TEST_ALL.sh
-  
-  setup-tests:
-    aliases:
-      - st
-    dir: ./bats-test
-    env:
-      KR8: '../kr8'
-    cmds:
-      - ./GEN_ALL.sh
 
   build:
     desc: Build kr8 for your local system
@@ -57,18 +65,3 @@ tasks:
     cmds:
       - go generate ./docs
       - goreleaser release --snapshot --clean --skip=homebrew,docker
-
-  mkdocs:
-    desc: Install mkdocs
-    cmds:
-      - pipenv install mkdocs
-      - pipenv install mkdocs-material
-  web-local:
-    desc: Run the site locally
-    cmds:
-      - pipenv run mkdocs serve
-  web-deploy:
-    desc: Build website assets
-    cmds:
-      - pipenv run mkdocs build
-      - pipenv run mkdocs gh-deploy

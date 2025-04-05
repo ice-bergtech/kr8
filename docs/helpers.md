@@ -57,8 +57,3 @@ Example:
 ```bash
 kr8-helpers jk-render nginx.js
 ```
-
-
-
-
-

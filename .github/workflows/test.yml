@@ -31,9 +31,12 @@ jobs:
           go-version: 1.23.0
       - name: 🚧 Setup Bats
         uses: bats-core/bats-action@3.0.0
+      
+      # TODO: add back when there's go tests
+      # - name: 🧪 Run go tests
+      #   run: go test ./...
+      
       # Start of testing steps
-      - name: 🧪 Run go tests
-        run: go test ./...
       - name: 🧪 Run build
         run: go build
       # Start of bats tests
