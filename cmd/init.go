@@ -70,32 +70,30 @@ var InitClusterCmd = &cobra.Command{
 			prompt := &survey.Input{
 				Message: "Set the cluster name",
 				Default: cmdInitFlags.ClusterName,
+				Help:    "Distinct name for the cluster",
 			}
-			survey.AskOne(prompt, &cSpec.Name)
+			util.FatalErrorCheck("Invalid cluster name", survey.AskOne(prompt, &cSpec.Name))
 
 			prompt = &survey.Input{
 				Message: "Set the cluster configuration directory",
 				Default: RootConfig.ClusterDir,
+				Help:    "Set the root directory for the new cluster",
 			}
-			survey.AskOne(prompt, &cSpec.ClusterDir)
+			util.FatalErrorCheck("Invalid cluster directory", survey.AskOne(prompt, &cSpec.ClusterDir))
 
 			promptB := &survey.Confirm{
 				Message: "Generate short names for output file names?",
 				Default: cSpec.GenerateShortNames,
+				Help:    "Shortens component names and file structure",
 			}
-			survey.AskOne(promptB, &cSpec.GenerateShortNames)
+			util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.GenerateShortNames))
 
 			promptB = &survey.Confirm{
 				Message: "Prune component parameters?",
 				Default: cSpec.PruneParams,
+				Help:    "This removes empty and null parameters from configuration",
 			}
-			survey.AskOne(promptB, &cSpec.PruneParams)
-
-			prompt = &survey.Input{
-				Message: "Set the cluster spec post-processor",
-				Default: cSpec.PostProcessor,
-			}
-			survey.AskOne(prompt, &cSpec.PostProcessor)
+			util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.PruneParams))
 		}
 		// Generate the jsonnet file based on the config
 		util.FatalErrorCheck("Error generating cluster jsonnet file", kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterDir))
@@ -140,6 +138,7 @@ and initialize a git repo so you can get started`,
 			ComponentName: "example-component",
 			ComponentType: "jsonnet",
 			Interactive:   false,
+			Fetch:         false,
 		}
 		clusterOptions := types.Kr8ClusterSpec{
 			PostProcessor:      "",
@@ -178,21 +177,41 @@ var InitComponentCmd = &cobra.Command{
 			prompt := &survey.Input{
 				Message: "Enter component name",
 				Default: cmdInitFlags.ComponentName,
+				Help:    "Enter the name of the component you want to create",
 			}
 			util.FatalErrorCheck("Invalid component name", survey.AskOne(prompt, &cmdInitFlags.ComponentName))
 
 			prompt = &survey.Input{
 				Message: "Enter component directory",
 				Default: RootConfig.ComponentDir,
+				Help:    "Enter the directory where you want to create the component",
 			}
 			util.FatalErrorCheck("Invalid component directory", survey.AskOne(prompt, &RootConfig.ComponentDir))
 
 			promptS := &survey.Select{
 				Message: "Select component type",
 				Options: []string{"jsonnet", "yml", "tpl", "chart"},
+				Help:    "Select the type of component you want to create",
+				Default: "jsonnet",
+				Description: func(value string, index int) string {
+					if value == "jsonnet" {
+						return "Use a Jsonnet file to describe the component resources"
+					} else if value == "yml" {
+						return "Use a yml (docker-compose) file to describe the component resources"
+					} else if value == "tpl" {
+						return "Use a template file to describe the component resources"
+					} else if value == "chart" {
+						return "Use a Helm chart to describe the component resources"
+					}
+
+					return ""
+				},
 			}
 			util.FatalErrorCheck("Invalid component type", survey.AskOne(promptS, &cmdInitFlags.ComponentType))
 		}
-		kr8init.GenerateComponentJsonnet(cmdInitFlags, RootConfig.ComponentDir)
+		util.FatalErrorCheck(
+			"Error generating component jsonnet",
+			kr8init.GenerateComponentJsonnet(cmdInitFlags, RootConfig.ComponentDir),
+		)
 	},
 }
