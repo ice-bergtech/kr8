@@ -1,34 +1,8 @@
-kr8/cmd/generate.go:448:1              cyclop       calculated cyclomatic complexity for function processIncludesFile is 13, max is 10
-kr8/cmd/root.go:99:1                   cyclop       calculated cyclomatic complexity for function InitConfig is 14, max is 10
-kr8/pkg/util/util.go:73:1              cyclop       calculated cyclomatic complexity for function FilterItems is 12, max is 10
-kr8/cmd/init.go:74:17                  errcheck     Error return value of `survey.AskOne` is not checked
-kr8/cmd/init.go:80:17                  errcheck     Error return value of `survey.AskOne` is not checked
-kr8/cmd/init.go:86:17                  errcheck     Error return value of `survey.AskOne` is not checked
-kr8/cmd/init.go:196:35                 errcheck     Error return value of `kr8init.GenerateComponentJsonnet` is not checked
-kr8/cmd/generate.go:384:13             exhaustruct  types.Kr8ComponentSpecIncludeObject is missing field File
-kr8/cmd/init.go:70:15                  exhaustruct  survey.Input is missing fields Renderer, Help, Suggest
-kr8/cmd/init.go:76:14                  exhaustruct  survey.Input is missing fields Renderer, Help, Suggest
-kr8/cmd/init.go:82:16                  exhaustruct  survey.Confirm is missing fields Renderer, Help
-kr8/cmd/init.go:88:15                  exhaustruct  survey.Confirm is missing fields Renderer, Help
-kr8/cmd/init.go:94:14                  exhaustruct  survey.Input is missing fields Renderer, Help, Suggest
-kr8/cmd/init.go:137:21                 exhaustruct  kr8init.Kr8InitOptions is missing field Fetch
-kr8/cmd/init.go:190:16                 exhaustruct  survey.Select is missing fields Renderer, Default, Help, PageSize, VimMode, FilterMessage, Filter, Description
-kr8/cmd/render.go:77:5                 exhaustruct  types.CmdJsonnetOptions is missing field Color
-kr8/cmd/root.go:142:3                  exhaustruct  zerolog.ConsoleWriter is missing fields TimeFormat, TimeLocation, PartsOrder, PartsExclude, FieldsOrder, FieldsExclude, FormatTimestamp, FormatLevel, FormatCaller, FormatMessage, FormatFieldName, FormatFieldValue, FormatErrFieldName, FormatExtra, FormatPrepare
-kr8/pkg/jnetvm/native_funcs.go:197:10  exhaustruct  types.Kr8ComponentJsonnet is missing fields Kr8Spec, Namespace, ReleaseName, Version, CalledFrom
-kr8/pkg/kr8_init/init.go:32:16         exhaustruct  types.Kr8Cluster is missing field Path
-kr8/pkg/kr8_init/init.go:49:14         exhaustruct  types.Kr8ComponentJsonnet is missing field CalledFrom
-kr8/pkg/kr8_init/init.go:66:65         exhaustruct  types.Kr8ComponentSpecIncludeObject is missing fields DestDir, DestExt
-kr8/pkg/kr8_init/init.go:68:65         exhaustruct  types.Kr8ComponentSpecIncludeObject is missing field DestName
-kr8/pkg/types/kompose.go:100:10        exhaustruct  types.KomposeConvertOptions is missing fields Profiles, WithKomposeAnnotation, Volumes, MultipleContainerMode, ServiceGroupMode, ServiceGroupName, StoreManifest, Server, OSCreateDeploymentConfig, OSBuildRepo, OSInsecureRepository, OSBuildBranch, ImageBuildCommand, ImagePushCommand, ImagePushRegistry
-kr8/pkg/types/kompose.go:133:16        exhaustruct  kobject.ConvertOptions is missing fields CreateD, CreateRC, CreateDS, CreateDeploymentConfig, BuildRepo, BuildBranch, Build, IsDeploymentFlag, IsDaemonSetFlag, IsReplicationControllerFlag, IsReplicaSetFlag, IsDeploymentConfigFlag, IsNamespaceFlag
-kr8/pkg/types/kompose.go:197:10        exhaustruct  jsonnet.RuntimeError is missing field StackTrace
-kr8/pkg/types/kompose.go:200:10        exhaustruct  jsonnet.RuntimeError is missing field StackTrace
-kr8/pkg/util/remote.go:30:13           exhaustruct  getter.Client is missing fields Ctx, Umask, Detectors, Decompressors, Getters, Dir, ProgressListener, Insecure, DisableSymlinks, Options
-kr8/cmd/generate.go:286:1              gocognit     cognitive complexity 37 of func `genProcessComponent` is high (> 30)
-kr8/cmd/generate.go:393:3              gocritic     typeSwitchVar: 2 cases can benefit from type switch with assignment
-kr8/pkg/types/kompose.go:213:1         ireturn      getTransformer returns interface (github.com/kubernetes/kompose/pkg/transformer.Transformer)
-kr8/cmd/generate.go:396:15             staticcheck  S1034(related information): could eliminate this type assertion
-kr8/cmd/generate.go:403:14             staticcheck  S1034(related information): could eliminate this type assertion
-kr8/pkg/types/kompose.go:173:2         staticcheck  QF1003: could use tagged switch on k.Provider
-kr8/pkg/types/types.go:153:3           staticcheck  QF1003: could use tagged switch on item.Type
+kr8/cmd/generate.go:286:1      gocognit     cognitive complexity 37 of func `genProcessComponent` is high (> 30)
+kr8/cmd/generate.go:394:3      gocritic     typeSwitchVar: 2 cases can benefit from type switch with assignment
+kr8/pkg/kr8_init/init.go:32:4  godox        pkg/kr8_init/init.go:32: Line contains TODO/BUG/FIXME: "Bug() Unsure if Path is correct"
+kr8/cmd/generate.go:397:15     staticcheck  S1034(related information): could eliminate this type assertion
+kr8/cmd/generate.go:404:14     staticcheck  S1034(related information): could eliminate this type assertion
+kr8/cmd/init.go:197:6          staticcheck  QF1003: could use tagged switch on value
+kr8/pkg/types/types.go:153:3   staticcheck  QF1003: could use tagged switch on item.Type
+kr8/pkg/util/util.go:73:43     varnamelen   parameter name 'pf' is too short for the scope of its usage
