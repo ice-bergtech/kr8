@@ -391,17 +391,18 @@ func genProcessComponent(
 	outputFileMap := make(map[string]bool)
 	// generate each included file
 	for _, include := range compSpec.Includes {
-		switch include.(type) {
+		switch val := include.(type) {
 		case string:
+			fileName := val
 			incInfo = types.Kr8ComponentSpecIncludeObject{
-				File:     include.(string),
+				File:     fileName,
 				DestExt:  "yaml", // default to yaml ,
 				DestDir:  "",
 				DestName: "",
 			}
 		case types.Kr8ComponentSpecIncludeObject:
 			// include is a map with multiple fields
-			incInfo = include.(types.Kr8ComponentSpecIncludeObject)
+			incInfo = val
 		default:
 			log.Fatal().Msg("Invalid include type")
 		}

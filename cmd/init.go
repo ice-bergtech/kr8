@@ -194,17 +194,18 @@ var InitComponentCmd = &cobra.Command{
 				Help:    "Select the type of component you want to create",
 				Default: "jsonnet",
 				Description: func(value string, index int) string {
-					if value == "jsonnet" {
+					switch value {
+					case "jsonnet":
 						return "Use a Jsonnet file to describe the component resources"
-					} else if value == "yml" {
+					case "yml":
 						return "Use a yml (docker-compose) file to describe the component resources"
-					} else if value == "tpl" {
+					case "tpl":
 						return "Use a template file to describe the component resources"
-					} else if value == "chart" {
+					case "chart":
 						return "Use a Helm chart to describe the component resources"
+					default:
+						return ""
 					}
-
-					return ""
 				},
 			}
 			util.FatalErrorCheck("Invalid component type", survey.AskOne(promptS, &cmdInitFlags.ComponentType))

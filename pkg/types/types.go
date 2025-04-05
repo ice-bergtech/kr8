@@ -150,15 +150,18 @@ func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
 	incl := spec.Get("includes")
 	componentSpec.Includes = make([]interface{}, len(incl.Array()))
 	for idx, item := range incl.Array() {
-		if item.Type == gjson.JSON {
+		switch item.Type {
+		case gjson.JSON:
 			var include Kr8ComponentSpecIncludeObject
 			err := json.Unmarshal([]byte(item.String()), &include)
 			if err != nil {
 				return componentSpec, fmt.Errorf("error unmarshalling includes: %w", err)
 			}
 			componentSpec.Includes[idx] = include
-		} else if item.Type == gjson.String {
+		case gjson.String:
 			componentSpec.Includes[idx] = item.String()
+		default:
+			log.Fatal().Msg("Includes list item is not a string or json object")
 		}
 	}
 
