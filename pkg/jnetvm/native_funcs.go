@@ -66,14 +66,16 @@ func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction {
 		Name:   "help",
 		Params: []jsonnetAst.Identifier{},
 		Func: func(args []interface{}) (interface{}, error) {
-			result := "help : " + strings.Join(
+			result := "help: " + strings.Join(
 				[]string{
 					"Print out kr8 native funcion names and parameters.",
 					"Functions are called in the format:",
 					"`std.native('<function>')(<param1>, <param2>)`",
 				},
-				" ",
+				"\n",
 			) + "\n"
+			result += "\n" + "Available functions:\n"
+			result += "\n" + "------------------------\n"
 
 			for _, val := range allFuncs {
 				params := []string{}
@@ -81,7 +83,7 @@ func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction {
 					// Convert Identifier to string
 					params = append(params, fmt.Sprint(id))
 				}
-				result += val.Name + " : " + strings.Join(params, ", ") + "\n"
+				result += val.Name + ": ['" + strings.Join(params, "', '") + "']\n"
 			}
 
 			return result, nil
