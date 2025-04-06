@@ -277,3 +277,5 @@ spec:
     app.kubernetes.io/instance: external-dns
     app.kubernetes.io/name: external-dns
   type: ClusterIP
+
+---
