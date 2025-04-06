@@ -38,6 +38,8 @@ func RegisterNativeFuncs(jvm *jsonnet.VM) {
 
 	// Register the kompose function
 	jvm.NativeFunction(NativeKompose())
+
+	jvm.NativeFunction(NativeNetUrl())
 }
 
 // Allows executing helm template to process a helm chart and make available to kr8 configuration.
