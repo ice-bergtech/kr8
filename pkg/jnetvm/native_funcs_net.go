@@ -90,3 +90,118 @@ func NativeNetUrl() *jsonnet.NativeFunction {
 	}
 }
 
+type IPV4 struct {
+	IP           string
+	Mask         int
+	CIDR         string
+	Count        uint32
+	FirstAddress string
+	LastAddress  string
+	Broadcast    string
+	//Subnet       string
+}
+
+type IPV6 struct {
+	IP           string
+	NetMask      []byte
+	HostMask     []byte
+	CIDR         string
+	Count        uint128.Uint128
+	FirstAddress string
+	LastAddress  string
+	//Subnet       string
+}
+
+// net.IP tools
+// https://github.com/c-robinson/iplib
+func NativeNetIPInfo() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "netIPInfo",
+		Params: []jsonnetAst.Identifier{"rawIP"},
+		Func: func(args []interface{}) (interface{}, error) {
+			rawIP, ok := args[0].(string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			ipa := net.ParseIP(rawIP)
+			if ipa.To4() == nil {
+				mask := 128
+				if strings.Contains(rawIP, "/") {
+					parts := strings.Split(rawIP, "/")
+					var err error
+					mask, err = strconv.Atoi(parts[1])
+					if err != nil {
+						return nil, err
+					}
+				}
+				ipNet := iplib.NewNet6(ipa, mask, 128)
+
+				// ipv6 address
+				return &IPV6{
+					IP:           ipNet.IP().String(),
+					NetMask:      ipNet.Mask(),
+					HostMask:     ipNet.Hostmask,
+					CIDR:         ipNet.String(),
+					Count:        ipNet.Count(),
+					FirstAddress: ipNet.FirstAddress().String(),
+					LastAddress:  ipNet.LastAddress().String(),
+				}, nil
+			} else {
+				mask := 32
+				if strings.Contains(rawIP, "/") {
+					parts := strings.Split(rawIP, "/")
+					var err error
+					mask, err = strconv.Atoi(parts[1])
+					if err != nil {
+						return nil, err
+					}
+				}
+				ipNet := iplib.NewNet4(ipa, mask)
+
+				// ipv4 address
+				return &IPV4{
+					IP:           ipNet.IP().String(),
+					Mask:         mask,
+					Count:        ipNet.Count(),
+					FirstAddress: ipNet.FirstAddress().String(),
+					LastAddress:  ipNet.LastAddress().String(),
+					Broadcast:    ipNet.BroadcastAddress().String(),
+				}, nil
+			}
+		},
+	}
+}
+
+// TODO(): Compare two addresses
+
+// TODO(): Get delta of two addresses
+
+// TODO(): sort list of addresses
+
+// TODO(): increment and decrement addresses
+
+// TODO(): print bunary/hex of address
+
+// TODO(): convert address to addr.APRA DNS name
+
+// TODO(): expand ipv6 address
+
+// TODO(): map an ipv4 address to an ipv6 address space
+
+// TODO(): retrieve first and last usable addresses
+
+// TODO(): retrieve wildcard mask
+
+// TODO(): enumerate all or part of a netblock to []net.IP
+
+// TODO(): decrement or increment addresses within the boundaries of the netblock
+
+// TODO(): return the supernet of a netblock
+
+// TODO(): allocate subnets within the netblock
+
+// TODO(): return next- or previous-adjacent netblocks
