@@ -50,6 +50,13 @@ func RegisterNativeFuncs(jvm *jsonnet.VM) {
 	jvm.NativeFunction(NativeNetAddressIncBy())
 	jvm.NativeFunction(NativeNetAddressDec())
 	jvm.NativeFunction(NativeNetAddressDecBy())
+	jvm.NativeFunction(NativeNetAddressARPA())
+	jvm.NativeFunction(NativeNetAddressHex())
+	jvm.NativeFunction(NativeNetAddressBinary())
+	jvm.NativeFunction(NativeNetAddressNetsBetween())
+	jvm.NativeFunction(NativeNetAddressCalcSubnetsV4())
+	jvm.NativeFunction(NativeNetAddressCalcSubnetsV6())
+
 }
 
 // Allows executing helm template to process a helm chart and make available to kr8 configuration.

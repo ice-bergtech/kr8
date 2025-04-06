@@ -99,18 +99,16 @@ type IPV4 struct {
 	FirstAddress string
 	LastAddress  string
 	Broadcast    string
-	//Subnet       string
 }
 
 type IPV6 struct {
 	IP           string
-	NetMask      []byte
-	HostMask     []byte
+	NetMask      string
+	HostMask     string
 	CIDR         string
 	Count        uint128.Uint128
 	FirstAddress string
 	LastAddress  string
-	//Subnet       string
 }
 
 // net.IP tools
@@ -144,8 +142,8 @@ func NativeNetIPInfo() *jsonnet.NativeFunction {
 				// ipv6 address
 				return &IPV6{
 					IP:           ipNet.IP().String(),
-					NetMask:      ipNet.Mask(),
-					HostMask:     ipNet.Hostmask,
+					NetMask:      ipNet.Mask().String(),
+					HostMask:     ipNet.Hostmask.String(),
 					CIDR:         ipNet.String(),
 					Count:        ipNet.Count(),
 					FirstAddress: ipNet.FirstAddress().String(),
@@ -310,7 +308,7 @@ func NativeNetAddressIncBy() *jsonnet.NativeFunction {
 			count, ok := args[1].(uint32)
 			if !ok {
 				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'count' must be of 'uint32' type, got " + fmt.Sprintf("%T", args[0]),
+					Msg:        "second argument 'count' must be of 'uint32' type, got " + fmt.Sprintf("%T", args[0]),
 					StackTrace: nil,
 				}
 			}
@@ -358,7 +356,7 @@ func NativeNetAddressDecBy() *jsonnet.NativeFunction {
 			count, ok := args[1].(uint32)
 			if !ok {
 				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'count' must be of 'uint32' type, got " + fmt.Sprintf("%T", args[0]),
+					Msg:        "second argument 'count' must be of 'uint32' type, got " + fmt.Sprintf("%T", args[0]),
 					StackTrace: nil,
 				}
 			}
@@ -368,15 +366,179 @@ func NativeNetAddressDecBy() *jsonnet.NativeFunction {
 	}
 }
 
-// TODO(): print binary/hex of address
+// Convert address to addr.APRA DNS name.
+func NativeNetAddressARPA() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "netIPARPA",
+		Params: []jsonnetAst.Identifier{"rawIP"},
+		Func: func(args []interface{}) (interface{}, error) {
+			rawIP, ok := args[0].(string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
 
-// TODO(): convert address to addr.APRA DNS name
+			return iplib.IPToARPA(net.ParseIP(rawIP)), nil
+		},
+	}
+}
+
+// Return hex representation of address.
+// This is the default stringer format for v6 net.IP.
+func NativeNetAddressHex() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "netIPHex",
+		Params: []jsonnetAst.Identifier{"rawIP"},
+		Func: func(args []interface{}) (interface{}, error) {
+			rawIP, ok := args[0].(string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			return iplib.IPToHexString(net.ParseIP(rawIP)), nil
+		},
+	}
+}
+
+// Return binary string representation of address.
+// This is the default stringer format for v6 net.IP.
+func NativeNetAddressBinary() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "netIPBinary",
+		Params: []jsonnetAst.Identifier{"rawIP"},
+		Func: func(args []interface{}) (interface{}, error) {
+			rawIP, ok := args[0].(string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			return iplib.IPToBinaryString(net.ParseIP(rawIP)), nil
+		},
+	}
+}
+
+// Returns a slice of netblocks spanning the range between the two networks, inclusively.
+// Returns single-address netblocks if required.
+func NativeNetAddressNetsBetween() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "netIPNetsBetween",
+		Params: []jsonnetAst.Identifier{"ipNet", "otherIPNet"},
+		Func: func(args []interface{}) (interface{}, error) {
+			rawIP, ok := args[0].(string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'ipNet' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			otherIP, ok := args[1].(string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "second argument 'otherIPNet' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			netsBetween, err := iplib.AllNetsBetween(net.ParseIP(rawIP), net.ParseIP(otherIP))
+			if err != nil {
+				return nil, err
+			}
+
+			// Perform the Sort
+			sort.Sort(iplib.ByNet(netsBetween))
+
+			// Unmarshal into string list
+			result := make([]string, len(netsBetween))
+			for _, ipo := range netsBetween {
+				result = append(result, ipo.String())
+			}
+
+			return result, nil
+		},
+	}
+}
+
+// Return a list of networks of a given masklen that can be extracted from an IPv4 CIDR.
+// The mask provided must be a larger-integer than the current mask.
+// If set to 0 Subnet will carve the network in half
+func NativeNetAddressCalcSubnetsV4() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "netIPCalcSubnetsV4",
+		Params: []jsonnetAst.Identifier{"ip4Net", "masklen"},
+		Func: func(args []interface{}) (interface{}, error) {
+			rawIP, ok := args[0].(string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'ip4Net' must be of 'string' in CIDR notation type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			maskResult, ok := args[1].(int)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "second argument 'masklen' must be of 'int' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			// ipv4 address
+			return iplib.Net4FromStr(rawIP).Subnet(maskResult)
+		},
+	}
+}
+
+// Return a list of networks of a given masklen that can be extracted from an IPv6 CIDR.
+// The mask provided must be a larger-integer than the current mask.
+// If set to 0 Subnet will carve the network in half.
+// Hostmask must be provided if desired
+func NativeNetAddressCalcSubnetsV6() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "netIPCalcSubnetsV6",
+		Params: []jsonnetAst.Identifier{"ip6Net", "netMaskLen", "hostMaskLen"},
+		Func: func(args []interface{}) (interface{}, error) {
+			rawIP, ok := args[0].(string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'ip6Net' must be of 'string' in CIDR notation type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			netMask, ok := args[1].(int)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "second argument 'netMaskLen' must be of 'int' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			hostMask, ok := args[2].(int)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "third argument 'hostMaskLen' must be of 'int' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			// ipv6 address
+			return iplib.Net6FromStr(rawIP).Subnet(netMask, hostMask)
+		},
+	}
+}
 
 // TODO(): expand ipv6 address
 
 // TODO(): map an ipv4 address to an ipv6 address space
-
-// TODO(): retrieve first and last usable addresses
 
 // TODO(): retrieve wildcard mask
 
@@ -385,7 +547,5 @@ func NativeNetAddressDecBy() *jsonnet.NativeFunction {
 // TODO(): decrement or increment addresses within the boundaries of the netblock
 
 // TODO(): return the supernet of a netblock
-
-// TODO(): allocate subnets within the netblock
 
 // TODO(): return next- or previous-adjacent netblocks
