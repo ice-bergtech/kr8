@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"net/url"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -176,15 +177,198 @@ func NativeNetIPInfo() *jsonnet.NativeFunction {
 	}
 }
 
-// TODO(): Compare two addresses
+// Compare two addresses.
+//
+// 0 if a==b, -1 if a<b, 1 if a>b.
+func NativeNetAddressCompare() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "netIPCompare",
+		Params: []jsonnetAst.Identifier{"rawIP", "otherIP"},
+		Func: func(args []interface{}) (interface{}, error) {
+			rawIP, ok := args[0].(string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+			otherIP, ok := args[1].(string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "second argument 'otherIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
 
-// TODO(): Get delta of two addresses
+			ipa := net.ParseIP(rawIP)
+			ipb := net.ParseIP(otherIP)
 
-// TODO(): sort list of addresses
+			return iplib.CompareIPs(ipa, ipb), nil
+		},
+	}
+}
 
-// TODO(): increment and decrement addresses
+// Gets the delta of two addresses.
+// Takes two net.IP's as input and returns the difference between them up to the limit of uint32.
+func NativeNetAddressDelta() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "netIPDelta",
+		Params: []jsonnetAst.Identifier{"rawIP", "otherIP"},
+		Func: func(args []interface{}) (interface{}, error) {
+			rawIP, ok := args[0].(string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+			otherIP, ok := args[1].(string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "second argument 'otherIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
 
-// TODO(): print bunary/hex of address
+			ipa := net.ParseIP(rawIP)
+			ipb := net.ParseIP(otherIP)
+
+			return iplib.DeltaIP(ipa, ipb), nil
+		},
+	}
+}
+
+// Sort list of ip addresses.
+func NativeNetAddressSort() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "netIPDelta",
+		Params: []jsonnetAst.Identifier{"listIPs"},
+		Func: func(args []interface{}) (interface{}, error) {
+			listIPs, ok := args[0].([]string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'listIPs' must be of '[]string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			// Marshal items into a net.IP object
+			iplist := []net.IP{}
+			for _, ip := range listIPs {
+				iplist = append(iplist, net.ParseIP(ip))
+			}
+
+			// Perform the Sort
+			sort.Sort(iplib.ByIP(iplist))
+
+			// Unmarshal into string list
+			result := make([]string, len(iplist))
+			for _, ipo := range iplist {
+				result = append(result, ipo.String())
+			}
+
+			return result, nil
+		},
+	}
+}
+
+// NextIP returns a net.IP incremented by one from the input address
+// If you overflow the IP space it will return the all-ones address
+func NativeNetAddressInc() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "netIPInc",
+		Params: []jsonnetAst.Identifier{"rawIP"},
+		Func: func(args []interface{}) (interface{}, error) {
+			rawIP, ok := args[0].(string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			return iplib.NextIP(net.ParseIP(rawIP)), nil
+		},
+	}
+}
+
+// Returns a net.IP that is greater than the supplied net.IP by the supplied integer value.
+// If you overflow the IP space it will return the all-ones address
+func NativeNetAddressIncBy() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "netIPIncBy",
+		Params: []jsonnetAst.Identifier{"rawIP", "count"},
+		Func: func(args []interface{}) (interface{}, error) {
+			rawIP, ok := args[0].(string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			count, ok := args[1].(uint32)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'count' must be of 'uint32' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			return iplib.IncrementIPBy(net.ParseIP(rawIP), count), nil
+		},
+	}
+}
+
+// PreviousIP returns a net.IP decremented by one from the input address.
+// If you underflow the IP space it will return the zero address.
+func NativeNetAddressDec() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "netIPDec",
+		Params: []jsonnetAst.Identifier{"rawIP"},
+		Func: func(args []interface{}) (interface{}, error) {
+			rawIP, ok := args[0].(string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			return iplib.PreviousIP(net.ParseIP(rawIP)), nil
+		},
+	}
+}
+
+// Returns a net.IP that is lower than the supplied net.IP by the supplied integer value.
+// If you underflow the IP space it will return the zero address.
+func NativeNetAddressDecBy() *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "netIPDecBy",
+		Params: []jsonnetAst.Identifier{"rawIP", "count"},
+		Func: func(args []interface{}) (interface{}, error) {
+			rawIP, ok := args[0].(string)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			count, ok := args[1].(uint32)
+			if !ok {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "first argument 'count' must be of 'uint32' type, got " + fmt.Sprintf("%T", args[0]),
+					StackTrace: nil,
+				}
+			}
+
+			return iplib.DecrementIPBy(net.ParseIP(rawIP), count), nil
+		},
+	}
+}
+
+// TODO(): print binary/hex of address
 
 // TODO(): convert address to addr.APRA DNS name
 
