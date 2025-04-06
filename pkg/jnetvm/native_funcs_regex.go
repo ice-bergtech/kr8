@@ -33,7 +33,7 @@ import (
 // Inputs: "str".
 func NativeRegexEscape() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
-		Name:   "escapeStringRegex",
+		Name:   "regexEscapeString",
 		Params: []jsonnetAst.Identifier{"str"},
 		Func: func(args []interface{}) (interface{}, error) {
 			return regexp.QuoteMeta(args[0].(string)), nil

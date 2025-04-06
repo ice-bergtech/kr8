@@ -43,6 +43,8 @@ type NativeFuncURL struct {
 
 // Decode URL information from a string.
 // Based on https://github.com/lintnet/go-jsonnet-native-functions/blob/main/pkg/net/url/url.go
+//
+// Inputs: "rawURL"
 func NativeNetUrl() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "url",
@@ -113,6 +115,8 @@ type IPV6 struct {
 
 // net.IP tools
 // https://github.com/c-robinson/iplib
+//
+// Inputs: "rawIP"
 func NativeNetIPInfo() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPInfo",
@@ -208,6 +212,8 @@ func NativeNetAddressCompare() *jsonnet.NativeFunction {
 
 // Gets the delta of two addresses.
 // Takes two net.IP's as input and returns the difference between them up to the limit of uint32.
+//
+// Inputs: "rawIP, "otherIP"
 func NativeNetAddressDelta() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPDelta",
@@ -237,6 +243,8 @@ func NativeNetAddressDelta() *jsonnet.NativeFunction {
 }
 
 // Sort list of ip addresses.
+//
+// Inputs: "listIPs"
 func NativeNetAddressSort() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPDelta",
@@ -272,6 +280,8 @@ func NativeNetAddressSort() *jsonnet.NativeFunction {
 
 // NextIP returns a net.IP incremented by one from the input address
 // If you overflow the IP space it will return the all-ones address
+//
+// Inputs: "rawIP"
 func NativeNetAddressInc() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPInc",
@@ -292,6 +302,8 @@ func NativeNetAddressInc() *jsonnet.NativeFunction {
 
 // Returns a net.IP that is greater than the supplied net.IP by the supplied integer value.
 // If you overflow the IP space it will return the all-ones address
+//
+// Inputs: "rawIP", "count"
 func NativeNetAddressIncBy() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPIncBy",
@@ -320,6 +332,8 @@ func NativeNetAddressIncBy() *jsonnet.NativeFunction {
 
 // PreviousIP returns a net.IP decremented by one from the input address.
 // If you underflow the IP space it will return the zero address.
+//
+// Inputs: "rawIP"
 func NativeNetAddressDec() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPDec",
@@ -340,6 +354,8 @@ func NativeNetAddressDec() *jsonnet.NativeFunction {
 
 // Returns a net.IP that is lower than the supplied net.IP by the supplied integer value.
 // If you underflow the IP space it will return the zero address.
+//
+// Inputs: "rawIP", "count"
 func NativeNetAddressDecBy() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPDecBy",
@@ -367,6 +383,8 @@ func NativeNetAddressDecBy() *jsonnet.NativeFunction {
 }
 
 // Convert address to addr.APRA DNS name.
+//
+// Inputs: "rawIP"
 func NativeNetAddressARPA() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPARPA",
@@ -387,6 +405,8 @@ func NativeNetAddressARPA() *jsonnet.NativeFunction {
 
 // Return hex representation of address.
 // This is the default stringer format for v6 net.IP.
+//
+// Inputs: "rawIP"
 func NativeNetAddressHex() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPHex",
@@ -407,6 +427,8 @@ func NativeNetAddressHex() *jsonnet.NativeFunction {
 
 // Return binary string representation of address.
 // This is the default stringer format for v6 net.IP.
+//
+// Inputs: "rawIP"
 func NativeNetAddressBinary() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPBinary",
@@ -427,6 +449,8 @@ func NativeNetAddressBinary() *jsonnet.NativeFunction {
 
 // Returns a slice of netblocks spanning the range between the two networks, inclusively.
 // Returns single-address netblocks if required.
+//
+// Inputs: "ipNet", "otherIPNet"
 func NativeNetAddressNetsBetween() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPNetsBetween",
@@ -470,10 +494,12 @@ func NativeNetAddressNetsBetween() *jsonnet.NativeFunction {
 // Return a list of networks of a given masklen that can be extracted from an IPv4 CIDR.
 // The mask provided must be a larger-integer than the current mask.
 // If set to 0 Subnet will carve the network in half
+//
+// Inputs: "ip4Net", "maskLen"
 func NativeNetAddressCalcSubnetsV4() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPCalcSubnetsV4",
-		Params: []jsonnetAst.Identifier{"ip4Net", "masklen"},
+		Params: []jsonnetAst.Identifier{"ip4Net", "maskLen"},
 		Func: func(args []interface{}) (interface{}, error) {
 			rawIP, ok := args[0].(string)
 			if !ok {
@@ -486,7 +512,7 @@ func NativeNetAddressCalcSubnetsV4() *jsonnet.NativeFunction {
 			maskResult, ok := args[1].(int)
 			if !ok {
 				return nil, jsonnet.RuntimeError{
-					Msg:        "second argument 'masklen' must be of 'int' type, got " + fmt.Sprintf("%T", args[0]),
+					Msg:        "second argument 'maskLen' must be of 'int' type, got " + fmt.Sprintf("%T", args[0]),
 					StackTrace: nil,
 				}
 			}
@@ -501,6 +527,8 @@ func NativeNetAddressCalcSubnetsV4() *jsonnet.NativeFunction {
 // The mask provided must be a larger-integer than the current mask.
 // If set to 0 Subnet will carve the network in half.
 // Hostmask must be provided if desired
+//
+// Inputs: "ip6Net", "netMaskLen", "hostMaskLen"
 func NativeNetAddressCalcSubnetsV6() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPCalcSubnetsV6",
