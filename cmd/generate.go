@@ -185,13 +185,12 @@ func processJsonnet(jvm *jsonnet.VM, input string, snippetFilename string) (stri
 	var o []interface{}
 	var outStr string
 	util.FatalErrorCheck("Error unmarshalling jsonnet output to go slice", json.Unmarshal([]byte(jsonStr), &o))
-	for i, jObj := range o {
+	for _, jObj := range o {
 		buf, err := goyaml.Marshal(jObj)
 		util.FatalErrorCheck("Error marshalling jsonnet object to yaml", err)
-		if i > 0 {
-			outStr += "\n---\n"
-		}
 		outStr += string(buf)
+		// Place yml new document at end of each object
+		outStr += "\n---\n"
 	}
 
 	return outStr, nil
