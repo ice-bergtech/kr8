@@ -87,7 +87,7 @@ func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error)
 Create a Jsonnet VM to run commands in.
 
 <a name="NativeHelmTemplate"></a>
-## func [NativeHelmTemplate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L95>)
+## func [NativeHelmTemplate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L97>)
 
 ```go
 func NativeHelmTemplate() *jsonnet.NativeFunction
@@ -107,7 +107,7 @@ func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction
 
 
 <a name="NativeKompose"></a>
-## func [NativeKompose](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L142>)
+## func [NativeKompose](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L144>)
 
 ```go
 func NativeKompose() *jsonnet.NativeFunction
@@ -318,7 +318,7 @@ Substitutes a regex pattern in a string with another string.
 Inputs: "regex", "src", "repl".
 
 <a name="NativeSprigTemplate"></a>
-## func [NativeSprigTemplate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L103>)
+## func [NativeSprigTemplate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L105>)
 
 ```go
 func NativeSprigTemplate() *jsonnet.NativeFunction

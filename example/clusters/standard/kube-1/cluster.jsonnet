@@ -4,5 +4,6 @@
   },
   _components+: {
     echo_test: { path: "components/compose/echo-test" },
+    nativeFunc: { path: "components/nativeFunc"}
   },
 }
