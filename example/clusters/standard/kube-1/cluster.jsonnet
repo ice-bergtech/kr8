@@ -4,6 +4,6 @@
   },
   _components+: {
     echo_test: { path: "components/doc-concepts/echo-test" },
-    echo_test_compose: { path: "components/compose/echo-test-compose" },
+    echo_test_compose: { path: "components/doc-concepts/echo-test-compose" },
   },
 }
