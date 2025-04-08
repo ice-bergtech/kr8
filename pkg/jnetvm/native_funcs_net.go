@@ -155,6 +155,7 @@ func IPV4Info(rawIP string) (*IPV4, error) {
 	return &IPV4{
 		IP:           ipNet.IP().String(),
 		Mask:         mask,
+		CIDR:         ipNet.String(),
 		Count:        ipNet.Count(),
 		FirstAddress: ipNet.FirstAddress().String(),
 		LastAddress:  ipNet.LastAddress().String(),
@@ -371,16 +372,16 @@ func NativeNetAddressDecBy() *jsonnet.NativeFunction {
 		Name:   "netIPDecBy",
 		Params: []jsonnetAst.Identifier{"rawIP", "count"},
 		Func: func(args []interface{}) (interface{}, error) {
-			rawIP, ok := args[0].(string)
-			if !ok {
+			rawIP, varOk := args[0].(string)
+			if !varOk {
 				return nil, jsonnet.RuntimeError{
 					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
 					StackTrace: nil,
 				}
 			}
 
-			count, ok := args[1].(uint32)
-			if !ok {
+			count, varOk := args[1].(uint32)
+			if !varOk {
 				return nil, jsonnet.RuntimeError{
 					Msg:        "second argument 'count' must be of 'uint32' type, got " + fmt.Sprintf("%T", args[0]),
 					StackTrace: nil,
@@ -400,8 +401,8 @@ func NativeNetAddressARPA() *jsonnet.NativeFunction {
 		Name:   "netIPARPA",
 		Params: []jsonnetAst.Identifier{"rawIP"},
 		Func: func(args []interface{}) (interface{}, error) {
-			rawIP, ok := args[0].(string)
-			if !ok {
+			rawIP, varOk := args[0].(string)
+			if !varOk {
 				return nil, jsonnet.RuntimeError{
 					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
 					StackTrace: nil,
@@ -466,16 +467,16 @@ func NativeNetAddressNetsBetween() *jsonnet.NativeFunction {
 		Name:   "netIPNetsBetween",
 		Params: []jsonnetAst.Identifier{"ipNet", "otherIPNet"},
 		Func: func(args []interface{}) (interface{}, error) {
-			rawIP, ok := args[0].(string)
-			if !ok {
+			rawIP, varOk := args[0].(string)
+			if !varOk {
 				return nil, jsonnet.RuntimeError{
 					Msg:        "first argument 'ipNet' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
 					StackTrace: nil,
 				}
 			}
 
-			otherIP, ok := args[1].(string)
-			if !ok {
+			otherIP, varOk := args[1].(string)
+			if !varOk {
 				return nil, jsonnet.RuntimeError{
 					Msg:        "second argument 'otherIPNet' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
 					StackTrace: nil,
@@ -511,16 +512,16 @@ func NativeNetAddressCalcSubnetsV4() *jsonnet.NativeFunction {
 		Name:   "netIPCalcSubnetsV4",
 		Params: []jsonnetAst.Identifier{"ip4Net", "maskLen"},
 		Func: func(args []interface{}) (interface{}, error) {
-			rawIP, ok := args[0].(string)
-			if !ok {
+			rawIP, varOk := args[0].(string)
+			if !varOk {
 				return nil, jsonnet.RuntimeError{
 					Msg:        "first argument 'ip4Net' must be of 'string' in CIDR notation type, got " + fmt.Sprintf("%T", args[0]),
 					StackTrace: nil,
 				}
 			}
 
-			maskResult, ok := args[1].(int)
-			if !ok {
+			maskResult, varOk := args[1].(int)
+			if !varOk {
 				return nil, jsonnet.RuntimeError{
 					Msg:        "second argument 'maskLen' must be of 'int' type, got " + fmt.Sprintf("%T", args[0]),
 					StackTrace: nil,
@@ -544,24 +545,24 @@ func NativeNetAddressCalcSubnetsV6() *jsonnet.NativeFunction {
 		Name:   "netIPCalcSubnetsV6",
 		Params: []jsonnetAst.Identifier{"ip6Net", "netMaskLen", "hostMaskLen"},
 		Func: func(args []interface{}) (interface{}, error) {
-			rawIP, ok := args[0].(string)
-			if !ok {
+			rawIP, varOk := args[0].(string)
+			if !varOk {
 				return nil, jsonnet.RuntimeError{
 					Msg:        "first argument 'ip6Net' must be of 'string' in CIDR notation type, got " + fmt.Sprintf("%T", args[0]),
 					StackTrace: nil,
 				}
 			}
 
-			netMask, ok := args[1].(int)
-			if !ok {
+			netMask, varOk := args[1].(int)
+			if !varOk {
 				return nil, jsonnet.RuntimeError{
 					Msg:        "second argument 'netMaskLen' must be of 'int' type, got " + fmt.Sprintf("%T", args[0]),
 					StackTrace: nil,
 				}
 			}
 
-			hostMask, ok := args[2].(int)
-			if !ok {
+			hostMask, varOk := args[2].(int)
+			if !varOk {
 				return nil, jsonnet.RuntimeError{
 					Msg:        "third argument 'hostMaskLen' must be of 'int' type, got " + fmt.Sprintf("%T", args[0]),
 					StackTrace: nil,

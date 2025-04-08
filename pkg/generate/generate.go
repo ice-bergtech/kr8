@@ -159,24 +159,8 @@ func GenProcessComponent(
 	compSpec, _ := types.CreateComponentSpec(gjson.Get(config, componentName+".kr8_spec"))
 
 	// it's faster to create this VM for each component, rather than re-use
-	jvm, _ := jnetvm.JsonnetVM(vmconfig)
-	jnetvm.RegisterNativeFuncs(jvm)
-	jvm.ExtCode("kr8_cluster", "std.prune("+config+"._cluster)")
-
-	// vm.ExtCode("kr8_components", "std.prune("+config+"._components)")
-	if kr8Spec.PostProcessor != "" {
-		jvm.ExtCode("process", kr8Spec.PostProcessor)
-	} else {
-		// default postprocessor just copies input
-		jvm.ExtCode("process", "function(input) input")
-	}
-
-	// prune params if required
-	if kr8Spec.PruneParams {
-		jvm.ExtCode("kr8", "std.prune("+config+"."+componentName+")")
-	} else {
-		jvm.ExtCode("kr8", config+"."+componentName)
-	}
+	jvm, err := SetupJvmForComponent(vmconfig, config, kr8Spec, componentName)
+	util.FatalErrorCheck("Error setting up JVM for component", err)
 
 	// add kr8_allparams extcode with all component params in the cluster
 	if compSpec.Kr8_allparams {
@@ -221,6 +205,40 @@ func GenProcessComponent(
 	if !compSpec.DisableOutputDirClean {
 		CleanOutputDir(outputFileMap, componentOutputDir)
 	}
+}
+
+// This function sets up the JVM for a given component.
+// It registers native functions, sets up post-processing, and prunes parameters as required.
+// It's faster to create this VM for each component, rather than re-use.
+// Default postprocessor just copies input to output.
+func SetupJvmForComponent(
+	vmconfig types.VMConfig,
+	config string,
+	kr8Spec types.Kr8ClusterSpec,
+	componentName string,
+) (*jsonnet.VM, error) {
+	jvm, err := jnetvm.JsonnetVM(vmconfig)
+	if err != nil {
+		return nil, err
+	}
+	jnetvm.RegisterNativeFuncs(jvm)
+	jvm.ExtCode("kr8_cluster", "std.prune("+config+"._cluster)")
+
+	if kr8Spec.PostProcessor != "" {
+		jvm.ExtCode("process", kr8Spec.PostProcessor)
+	} else {
+		// Default PostProcessor passes input to output
+		jvm.ExtCode("process", "function(input) input")
+	}
+
+	// check if we should prune params
+	if kr8Spec.PruneParams {
+		jvm.ExtCode("kr8", "std.prune("+config+"."+componentName+")")
+	} else {
+		jvm.ExtCode("kr8", config+"."+componentName)
+	}
+
+	return jvm, nil
 }
 
 // combine all the cluster params into a single object indexed by cluster name.
@@ -510,9 +528,6 @@ func GenProcessCluster(
 		clusterdir,
 		util.GetClusterPaths(clusterdir, clusterName),
 	)
-	clusterComponents := gjson.Parse(
-		jnetvm.JsonnetRenderFiles(vmConfig, params, "._components", true, "", "clustercomponents"),
-	).Map()
 
 	// get kr8 settings for cluster
 	kr8Spec, err := types.CreateClusterSpec(clusterName, gjson.Parse(
@@ -522,27 +537,14 @@ func GenProcessCluster(
 	)
 	util.FatalErrorCheck("Error creating kr8Spec", err)
 
-	// create cluster dir
-	if _, err := os.Stat(kr8Spec.ClusterDir); os.IsNotExist(err) {
-		err = os.MkdirAll(kr8Spec.ClusterDir, 0750)
-		util.FatalErrorCheck("Error creating cluster generateDir", err)
-	}
+	generatedCompList := setupClusterGenerateDirs(kr8Spec)
 
-	// get list of current generated components directories
-	d, err := os.Open(kr8Spec.ClusterDir)
-	util.FatalErrorCheck("Error opening clusterDir", err)
-	defer d.Close()
-	read_all_dirs := -1
-	generatedCompList, err := d.Readdirnames(read_all_dirs)
-	util.FatalErrorCheck("Error reading directories", err)
+	clusterComponents := gjson.Parse(
+		jnetvm.JsonnetRenderFiles(vmConfig, params, "._components", true, "", "clustercomponents"),
+	).Map()
 
 	// determine list of components to process
 	compList := buildComponentList(generatedCompList, clusterComponents, kr8Spec.ClusterDir, kr8Spec.Name, filters)
-
-	// this needs to be moved so purging above works first
-	if len(compList) == 0 {
-		return
-	}
 
 	// render full params for cluster for all selected components
 	config := jnetvm.JsonnetRenderClusterParams(
@@ -565,4 +567,23 @@ func GenProcessCluster(
 		})
 	}
 	waitGroup.Wait()
+}
+
+func setupClusterGenerateDirs(kr8Spec types.Kr8ClusterSpec) []string {
+	// create cluster dir
+	if _, err := os.Stat(kr8Spec.ClusterDir); os.IsNotExist(err) {
+		err = os.MkdirAll(kr8Spec.ClusterDir, 0750)
+		util.FatalErrorCheck("Error creating cluster generateDir", err)
+	}
+
+	// get list of current generated components directories
+	d, err := os.Open(kr8Spec.ClusterDir)
+	util.FatalErrorCheck("Error opening clusterDir", err)
+	defer d.Close()
+
+	read_all_dirs := -1
+	generatedCompList, err := d.Readdirnames(read_all_dirs)
+	util.FatalErrorCheck("Error reading directories", err)
+
+	return generatedCompList
 }
