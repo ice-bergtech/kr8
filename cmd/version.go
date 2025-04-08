@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"runtime/debug"
 	"sort"
+	"strings"
 
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -23,9 +25,9 @@ func retrieveStamp(info *debug.BuildInfo) *Stamp {
 		switch setting.Key {
 		case "info.goVersion":
 			stamp.InfoGoVersion = setting.Value
-		case "info.goCompiler":
+		case "-compiler":
 			stamp.InfoGoCompiler = setting.Value
-		case "info.GOARCH":
+		case "GOARCH":
 			stamp.InfoGOARCH = setting.Value
 		case "GOOS":
 			stamp.InfoGOOS = setting.Value
@@ -40,19 +42,20 @@ func retrieveStamp(info *debug.BuildInfo) *Stamp {
 }
 
 func retrieveDepends(info *debug.BuildInfo) []string {
-	var name, ver string
+	var ver string
 
 	Depends := []string{}
 
 	filter := map[string]string{
-		"github.com/google/go-jsonnet":    "jsonnet",
-		"github.com/ghodss/yaml":          "yaml",
-		"github.com/grafana/tanka":        "helm",
-		"github.com/kubernetes/kompose":   "kompose",
+		"github.com/google/go-jsonnet":    "jsonnet ",
+		"github.com/ghodss/yaml":          "yaml    ",
+		"github.com/grafana/tanka":        "helm    ",
+		"github.com/kubernetes/kompose":   "kompose ",
 		"github.com/Masterminds/sprig/v3": "template",
 	}
 
 	for _, module := range info.Deps {
+		log.Debug().Msg(strings.Join([]string{module.Path, module.Version, module.Sum}, " "))
 		if _, ok := filter[module.Path]; !ok {
 			continue
 		}
@@ -62,7 +65,7 @@ func retrieveDepends(info *debug.BuildInfo) []string {
 		} else {
 			ver = module.Version
 		}
-		Depends = append(Depends, fmt.Sprintf("%s: %s %s", filter[module.Path], name, ver))
+		Depends = append(Depends, fmt.Sprintf("%s: %s %s", filter[module.Path], module.Path, ver))
 	}
 
 	sort.Strings(Depends)
@@ -87,7 +90,7 @@ var VersionCmd = &cobra.Command{
 		fmt.Printf("  Go version %s, GOOS %s, GOARCH %s\n", info.GoVersion, stamp.InfoGOOS, stamp.InfoGOARCH)
 		fmt.Print("  Dependencies:\n")
 		for _, mod := range retrieveDepends(info) {
-			fmt.Println("    %s\n", mod)
+			fmt.Printf("    %s\n", mod)
 		}
 
 	},

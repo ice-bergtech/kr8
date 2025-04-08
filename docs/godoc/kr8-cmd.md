@@ -573,7 +573,7 @@ var VersionCmd = &cobra.Command{
         fmt.Printf("  Go version %s, GOOS %s, GOARCH %s\n", info.GoVersion, stamp.InfoGOOS, stamp.InfoGOARCH)
         fmt.Print("  Dependencies:\n")
         for _, mod := range retrieveDepends(info) {
-            fmt.Println("    %s\n", mod)
+            fmt.Printf("    %s\n", mod)
         }
 
     },
@@ -710,7 +710,7 @@ var RootConfig CmdRootOptions
 ```
 
 <a name="Stamp"></a>
-## type [Stamp](<https://github.com/ice-bergtech/kr8/blob/main/cmd/version.go#L11-L18>)
+## type [Stamp](<https://github.com/ice-bergtech/kr8/blob/main/cmd/version.go#L13-L20>)
 
 
 
