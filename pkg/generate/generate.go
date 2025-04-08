@@ -1,8 +1,6 @@
 package generate
 
 import (
-	"bytes"
-	"encoding/json"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -10,10 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"text/template"
 
-	"github.com/Masterminds/sprig/v3"
-	goyaml "github.com/ghodss/yaml"
 	jsonnet "github.com/google/go-jsonnet"
 	"github.com/panjf2000/ants/v2"
 	"github.com/rs/zerolog/log"
@@ -98,49 +93,6 @@ func buildComponentList(
 	return compList
 }
 
-func processJsonnet(jvm *jsonnet.VM, input string, snippetFilename string) (string, error) {
-	jvm.ExtCode("input", input)
-	jsonStr, err := jvm.EvaluateAnonymousSnippet(snippetFilename, "std.extVar('process')(std.extVar('input'))")
-	if err != nil {
-		return "Error evaluating jsonnet snippet", err
-	}
-
-	// create output file contents in a string first, as a yaml stream
-	var o []interface{}
-	var outStr string
-	util.FatalErrorCheck("Error unmarshalling jsonnet output to go slice", json.Unmarshal([]byte(jsonStr), &o))
-	for _, jObj := range o {
-		buf, err := goyaml.Marshal(jObj)
-		util.FatalErrorCheck("Error marshalling jsonnet object to yaml", err)
-		outStr += string(buf)
-		// Place yml new document at end of each object
-		outStr += "\n---\n"
-	}
-
-	return outStr, nil
-}
-
-func processTemplate(filename string, data map[string]gjson.Result) (string, error) {
-	var tInput []byte
-	var tmpl *template.Template
-	var buffer bytes.Buffer
-	var err error
-
-	tInput, err = os.ReadFile(filepath.Clean(filename))
-	if err != nil {
-		return "Error loading template", err
-	}
-	tmpl, err = template.New("file").Funcs(sprig.FuncMap()).Parse(string(tInput))
-	if err != nil {
-		return "Error parsing template", err
-	}
-	if err = tmpl.Execute(&buffer, data); err != nil {
-		return "Error executing templating", err
-	}
-
-	return buffer.String(), nil
-}
-
 func GenProcessComponent(
 	vmconfig types.VMConfig,
 	componentName string,
@@ -207,40 +159,6 @@ func GenProcessComponent(
 	}
 }
 
-// This function sets up the JVM for a given component.
-// It registers native functions, sets up post-processing, and prunes parameters as required.
-// It's faster to create this VM for each component, rather than re-use.
-// Default postprocessor just copies input to output.
-func SetupJvmForComponent(
-	vmconfig types.VMConfig,
-	config string,
-	kr8Spec types.Kr8ClusterSpec,
-	componentName string,
-) (*jsonnet.VM, error) {
-	jvm, err := jnetvm.JsonnetVM(vmconfig)
-	if err != nil {
-		return nil, err
-	}
-	jnetvm.RegisterNativeFuncs(jvm)
-	jvm.ExtCode("kr8_cluster", "std.prune("+config+"._cluster)")
-
-	if kr8Spec.PostProcessor != "" {
-		jvm.ExtCode("process", kr8Spec.PostProcessor)
-	} else {
-		// Default PostProcessor passes input to output
-		jvm.ExtCode("process", "function(input) input")
-	}
-
-	// check if we should prune params
-	if kr8Spec.PruneParams {
-		jvm.ExtCode("kr8", "std.prune("+config+"."+componentName+")")
-	} else {
-		jvm.ExtCode("kr8", config+"."+componentName)
-	}
-
-	return jvm, nil
-}
-
 // combine all the cluster params into a single object indexed by cluster name.
 func getAllClusterParams(clusterDir string, vmconfig types.VMConfig, jvm *jsonnet.VM) {
 	allClusterParamsObject := "{ "
@@ -278,40 +196,6 @@ func getAllComponentParamsThreadsafe(
 	}
 	jvm.ExtCode("kr8_allparams", allConfig.config)
 	allConfig.mu.Unlock()
-}
-
-// jPathResults always includes base lib.
-// Adds jpaths from spec if set.
-func loadJPathsIntoVM(compSpec types.Kr8ComponentSpec, compPath string, baseDir string, jvm *jsonnet.VM) {
-	jPathResults := []string{filepath.Join(baseDir, "lib")}
-	for _, jPath := range compSpec.JPaths {
-		jPathResults = append(jPathResults, filepath.Join(baseDir, compPath, jPath))
-	}
-	jvm.Importer(&jsonnet.FileImporter{
-		JPaths: jPathResults,
-	})
-}
-
-func loadExtFilesIntoVars(
-	compSpec types.Kr8ComponentSpec,
-	compPath string,
-	kr8Spec types.Kr8ClusterSpec,
-	kr8Opts types.Kr8Opts,
-	componentName string,
-	jvm *jsonnet.VM,
-) {
-	for key, val := range compSpec.ExtFiles {
-		log.Debug().Str("cluster", kr8Spec.Name).
-			Str("component", componentName).
-			Msg("Extfile: " + key + "=" + val)
-		filePath := filepath.Join(kr8Opts.BaseDir, compPath, val)
-		if kr8Opts.BaseDir != "./" && !strings.HasPrefix(filePath, kr8Opts.BaseDir) {
-			util.FatalErrorCheck("Invalid file path: "+filePath, os.ErrNotExist)
-		}
-		extFile, err := os.ReadFile(filepath.Clean(filePath))
-		util.FatalErrorCheck("Error importing extfiles item", err)
-		jvm.ExtVar(key, string(extFile))
-	}
 }
 
 func GenerateIncludesFiles(
@@ -375,141 +259,6 @@ func GenerateIncludesFiles(
 	return outputFileMap
 }
 
-func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) {
-	// clean component dir
-	d, err := os.Open(filepath.Clean(componentOutputDir))
-	util.FatalErrorCheck("", err)
-	// Lifetime of function
-	defer d.Close()
-	names, err := d.Readdirnames(-1)
-	util.FatalErrorCheck("", err)
-	for _, name := range names {
-		if _, ok := outputFileMap[name]; ok {
-			// file is managed
-			continue
-		}
-		if filepath.Ext(name) == ".yaml" {
-			delFile := filepath.Join(componentOutputDir, name)
-			err = os.RemoveAll(delFile)
-			util.FatalErrorCheck("", err)
-			log.Debug().Msg("Deleted: " + delFile)
-		}
-	}
-}
-
-func processIncludesFile(
-	jvm *jsonnet.VM,
-	config string,
-	kr8Spec types.Kr8ClusterSpec,
-	kr8Opts types.Kr8Opts,
-	componentName string,
-	componentPath string,
-	componentOutputDir string,
-	incInfo types.Kr8ComponentSpecIncludeObject,
-	outputFileMap map[string]bool,
-) {
-	// ensure this directory exists
-	outputDir := componentOutputDir
-	if incInfo.DestDir != "" {
-		outputDir = filepath.Join(kr8Spec.ClusterDir, incInfo.DestDir)
-	}
-	if _, err := os.Stat(outputDir); os.IsNotExist(err) {
-		err = os.MkdirAll(outputDir, 0750)
-		util.FatalErrorCheck("Error creating alternate directory", err)
-	}
-	outputFile := filepath.Clean(filepath.Join(outputDir, incInfo.DestName+"."+incInfo.DestExt))
-	inputFile := filepath.Clean(filepath.Join(kr8Opts.BaseDir, componentPath, incInfo.File))
-
-	// remember output filename for purging files
-	outputFileMap[incInfo.DestName+"."+incInfo.DestExt] = true
-
-	outStr := ProcessFile(inputFile, outputFile, kr8Spec, componentName, config, incInfo, jvm)
-
-	log.Debug().Str("cluster", kr8Spec.Name).Str("component", componentName).Msg("Checking if file needs updating...")
-
-	// only write file if it does not exist, or the generated contents does not match what is on disk
-	if CheckIfUpdateNeeded(outputFile, outStr) {
-		f, err := os.Create(outputFile)
-		util.FatalErrorCheck("Error creating file", err)
-		_, err = f.WriteString(outStr)
-		util.FatalErrorCheck("Error writing to file", err)
-		util.FatalErrorCheck("Error closing file", f.Close())
-	}
-}
-
-// Process an includes file.
-// Based on the extension, it will process it differently.
-//
-// .jsonnet: Imported and processed using jsonnet VM.
-//
-// .yml, .yaml: Imported and processed through native function ParseYaml.
-//
-// .tpl, .tmpl: Processed using component config and Sprig templating.
-func ProcessFile(
-	inputFile string,
-	outputFile string,
-	kr8Spec types.Kr8ClusterSpec,
-	componentName string,
-	config string,
-	incInfo types.Kr8ComponentSpecIncludeObject,
-	jvm *jsonnet.VM,
-) string {
-	log.Debug().Str("cluster", kr8Spec.Name).
-		Str("component", componentName).
-		Msg("Process file: " + inputFile + " -> " + outputFile)
-
-	file_extension := filepath.Ext(incInfo.File)
-
-	var input string
-	var outStr string
-	var err error
-	switch file_extension {
-	case ".jsonnet":
-		// file is processed as an ExtCode input, so that we can postprocess it
-		// in the snippet
-		input = "( import '" + inputFile + "')"
-		outStr, err = processJsonnet(jvm, input, incInfo.File)
-	case ".yml":
-	case ".yaml":
-		input = "std.native('parseYaml')(importstr '" + inputFile + "')"
-		outStr, err = processJsonnet(jvm, input, incInfo.File)
-	case ".tmpl":
-	case ".tpl":
-		// Pass component config as data for the template
-		outStr, err = processTemplate(inputFile, gjson.Get(config, componentName).Map())
-	default:
-		outStr, err = "", os.ErrInvalid
-	}
-	if err != nil {
-		log.Fatal().Str("cluster", kr8Spec.Name).
-			Str("component", componentName).
-			Str("file", incInfo.File).
-			Err(err).
-			Msg(outStr)
-	}
-
-	return outStr
-}
-
-// Check if a file needs updating based on its current contents and the new contents.
-func CheckIfUpdateNeeded(outFile string, outStr string) bool {
-	var updateNeeded bool
-	outFile = filepath.Clean(outFile)
-	if _, err := os.Stat(outFile); os.IsNotExist(err) {
-		log.Debug().Msg("Creating " + outFile)
-		updateNeeded = true
-	} else {
-		currentContents, err := os.ReadFile(outFile)
-		util.FatalErrorCheck("Error reading file", err)
-		if string(currentContents) != outStr {
-			updateNeeded = true
-			log.Debug().Msg("Updating: " + outFile)
-		}
-	}
-
-	return updateNeeded
-}
-
 func GenProcessCluster(
 	clusterName string,
 	clusterdir string,
@@ -567,23 +316,4 @@ func GenProcessCluster(
 		})
 	}
 	waitGroup.Wait()
-}
-
-func setupClusterGenerateDirs(kr8Spec types.Kr8ClusterSpec) []string {
-	// create cluster dir
-	if _, err := os.Stat(kr8Spec.ClusterDir); os.IsNotExist(err) {
-		err = os.MkdirAll(kr8Spec.ClusterDir, 0750)
-		util.FatalErrorCheck("Error creating cluster generateDir", err)
-	}
-
-	// get list of current generated components directories
-	d, err := os.Open(kr8Spec.ClusterDir)
-	util.FatalErrorCheck("Error opening clusterDir", err)
-	defer d.Close()
-
-	read_all_dirs := -1
-	generatedCompList, err := d.Readdirnames(read_all_dirs)
-	util.FatalErrorCheck("Error reading directories", err)
-
-	return generatedCompList
 }
