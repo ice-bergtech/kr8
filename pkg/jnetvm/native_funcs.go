@@ -15,6 +15,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 
+	kompose_logger "github.com/sirupsen/logrus"
+
 	types "github.com/ice-bergtech/kr8/pkg/types"
 )
 
@@ -170,6 +172,10 @@ func NativeKompose() *jsonnet.NativeFunction {
 			}
 
 			root := filepath.Dir(opts.CalledFrom)
+
+			// ensure that the logger that kopmose uses is set to warn and above
+			kompose_logger.SetLevel(kompose_logger.WarnLevel)
+			// TODO: add logrus hook to capture and convert events to zerolog
 
 			options := types.Create([]string{filepath.Join(root, inFile)}, root+"/"+outPath, *opts)
 			if err := options.Validate(); err != nil {

@@ -576,7 +576,7 @@ var VersionCmd = &cobra.Command{
 ```
 
 <a name="CheckIfUpdateNeeded"></a>
-## func [CheckIfUpdateNeeded](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L605>)
+## func [CheckIfUpdateNeeded](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L599>)
 
 ```go
 func CheckIfUpdateNeeded(outFile string, outStr string) bool
@@ -585,7 +585,7 @@ func CheckIfUpdateNeeded(outFile string, outStr string) bool
 Check if a file needs updating based on its current contents and the new contents.
 
 <a name="CleanOutputDir"></a>
-## func [CleanOutputDir](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L489>)
+## func [CleanOutputDir](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L483>)
 
 ```go
 func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string)
@@ -621,7 +621,7 @@ func GenerateCommand(cmd *cobra.Command, args []string)
 This function will generate the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.
 
 <a name="GenerateIncludesFiles"></a>
-## func [GenerateIncludesFiles](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L439-L447>)
+## func [GenerateIncludesFiles](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L433-L441>)
 
 ```go
 func GenerateIncludesFiles(includesFiles []interface{}, kr8Spec types.Kr8ClusterSpec, config string, componentName string, compPath string, componentOutputDir string, jvm *jsonnet.VM) map[string]bool
@@ -648,7 +648,7 @@ func InitConfig()
 InitConfig reads in config file and ENV variables if set.
 
 <a name="ProcessFile"></a>
-## func [ProcessFile](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L558-L566>)
+## func [ProcessFile](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L552-L560>)
 
 ```go
 func ProcessFile(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm *jsonnet.VM) string
