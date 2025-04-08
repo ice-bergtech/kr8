@@ -33,7 +33,7 @@ type safeString struct {
 	config string
 }
 
-func GetClusterParams(clusterDir string, vm types.VMConfig) map[string]string {
+func GetClusterParams(clusterDir string, vmConfig types.VMConfig) map[string]string {
 	// get list of all clusters, render cluster level params for all of them
 	allClusterParams := make(map[string]string)
 	allClusters, err := util.GetClusterFilenames(clusterDir)
@@ -41,7 +41,7 @@ func GetClusterParams(clusterDir string, vm types.VMConfig) map[string]string {
 	log.Debug().Msg("Found " + strconv.Itoa(len(allClusters)) + " clusters")
 
 	for _, c := range allClusters {
-		allClusterParams[c.Name] = jnetvm.JsonnetRenderClusterParamsOnly(vm, c.Name, "", false)
+		allClusterParams[c.Name] = jnetvm.JsonnetRenderClusterParamsOnly(vmConfig, c.Name, "", false)
 	}
 
 	return allClusterParams
