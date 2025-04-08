@@ -89,16 +89,21 @@ func TestCreateClusterSpec(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			gotKr8ClusterSpec, err := CreateClusterSpec(tt.clusterName, tt.spec, tt.kr8Opts, tt.genDirOverride)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("CreateClusterSpec() error = %v, wantErr %v", err, tt.wantErr)
+	for _, testEntry := range tests {
+		t.Run(testEntry.name, func(t *testing.T) {
+			gotKr8ClusterSpec, err := CreateClusterSpec(
+				testEntry.clusterName,
+				testEntry.spec,
+				testEntry.kr8Opts,
+				testEntry.genDirOverride,
+			)
+			if (err != nil) != testEntry.wantErr {
+				t.Errorf("CreateClusterSpec() error = %v, wantErr %v", err, testEntry.wantErr)
 
 				return
 			}
-			if !reflect.DeepEqual(gotKr8ClusterSpec, tt.wantKr8ClusterSpec) {
-				t.Errorf("CreateClusterSpec() gotKr8ClusterSpec = %v, want %v", gotKr8ClusterSpec, tt.wantKr8ClusterSpec)
+			if !reflect.DeepEqual(gotKr8ClusterSpec, testEntry.wantKr8ClusterSpec) {
+				t.Errorf("CreateClusterSpec() gotKr8ClusterSpec = %v, want %v", gotKr8ClusterSpec, testEntry.wantKr8ClusterSpec)
 			}
 		})
 	}
