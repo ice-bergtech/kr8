@@ -294,7 +294,6 @@ func genProcessComponent(
 		Msg("Process component")
 
 	// get kr8_spec from component's params
-	compPath := filepath.Clean(gjson.Get(config, "_components."+componentName+".path").String())
 	compSpec, _ := types.CreateComponentSpec(gjson.Get(config, componentName+".kr8_spec"))
 
 	// it's faster to create this VM for each component, rather than re-use
@@ -328,6 +327,8 @@ func genProcessComponent(
 	if compSpec.Kr8_allclusters {
 		getAllClusterParams(jvm)
 	}
+
+	compPath := filepath.Clean(gjson.Get(config, "_components."+componentName+".path").String())
 
 	// jPathResults always includes base lib. Add jpaths from spec if set
 	loadJPathsIntoVM(compSpec, compPath, jvm)
