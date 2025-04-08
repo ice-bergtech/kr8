@@ -27,7 +27,7 @@ import "github.com/ice-bergtech/kr8/pkg/types"
 
 
 <a name="CmdJsonnetOptions"></a>
-## type [CmdJsonnetOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L219-L226>)
+## type [CmdJsonnetOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L223-L230>)
 
 Options for running the jsonnet command.
 
@@ -43,7 +43,7 @@ type CmdJsonnetOptions struct {
 ```
 
 <a name="ExtFileVar"></a>
-## type [ExtFileVar](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L195>)
+## type [ExtFileVar](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L199>)
 
 Map of external files to load into jsonnet vm as external variables. Keys are the variable names, values are the paths to the files to load as strings into the jsonnet vm. To reference the variable in jsonnet code, use std.extvar\("variable\_name"\).
 
@@ -293,7 +293,7 @@ type Kr8ComponentSpec struct {
 ```
 
 <a name="CreateComponentSpec"></a>
-### func [CreateComponentSpec](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L173>)
+### func [CreateComponentSpec](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L175>)
 
 ```go
 func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error)
@@ -302,7 +302,7 @@ func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error)
 Extracts a component spec from a jsonnet object.
 
 <a name="Kr8ComponentSpecIncludeFile"></a>
-## type [Kr8ComponentSpecIncludeFile](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L198-L201>)
+## type [Kr8ComponentSpecIncludeFile](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L202-L205>)
 
 A struct describing an included file that will be processed to produce a file.
 
@@ -314,7 +314,7 @@ type Kr8ComponentSpecIncludeFile interface {
 ```
 
 <a name="Kr8ComponentSpecIncludeObject"></a>
-## type [Kr8ComponentSpecIncludeObject](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L206-L216>)
+## type [Kr8ComponentSpecIncludeObject](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L210-L220>)
 
 An includes object which configures how kr8 includes an object. It allows configuring the included file's destination directory and file name. The input file will be processed differently depending on the filetype.
 
@@ -333,7 +333,7 @@ type Kr8ComponentSpecIncludeObject struct {
 ```
 
 <a name="VMConfig"></a>
-## type [VMConfig](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L229-L236>)
+## type [VMConfig](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L233-L240>)
 
 VMConfig describes configuration to initialize the Jsonnet VM with.
 
