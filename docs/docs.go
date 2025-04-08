@@ -43,6 +43,7 @@ func GoMarkDoc() {
 		"../pkg/types":    "kr8-types.md",
 		"../pkg/util":     "kr8-util.md",
 		"../pkg/kr8_init": "kr8-init.md",
+		"../pkg/generate": "kr8-generate.md",
 	}
 
 	for pkgPath, pkgDoc := range docfiles {
