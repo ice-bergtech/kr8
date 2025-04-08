@@ -10,11 +10,11 @@ tasks:
     aliases:
       - b
     cmds:
-      - kr8 generate
+      - ../kr8 generate
 
   build-debug:
     desc: Generate cluster configurations with kr8
     aliases:
       - bd
     cmds:
-      - kr8 generate --debug
+      - ../kr8 generate --debug

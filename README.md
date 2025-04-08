@@ -54,27 +54,6 @@ A typical repo that uses kr8+ will have the following parts:
 * Component Configurations
 * Jsonnet Libraries
 
-### Cluster Config
-
-A cluster is a Kubernetes cluster running in a cloud provider, datacenter or elsewhere.
-You will more than likely have multiple clusters across multiple environments and regions.
-
-See the [Clusters](docs/concepts/clusters.md) documentation.
-
-### Component
-
-A component is something you install in your cluster to make it function and work as you expect.
-Some examples of components might be:
-
-- cluster core resources: [cert-manager](https://github.com/jetstack/cert-manager) or [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets)
-- argo applications: generate argo cd applications for managing applying cluster configuration to live nodes
-- application: a single application that you want to run in your cluster. This is usually a web application, but it can also be a database, cron job, or documentation.
-
-Components are applications you want to run in your cluster.
-Components are generally applications you'd run in your cluster to make those applications function and work as expected.
-
-See the [Components](docs/concepts/components.md) documentation.
-
 ### Jsonnet
 
 All configuration for kr8+ is written in [Jsonnet](https://jsonnet.org/).

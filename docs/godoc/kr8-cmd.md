@@ -7,15 +7,10 @@ import "github.com/ice-bergtech/kr8/cmd"
 ## Index
 
 - [Variables](<#variables>)
-- [func CheckIfUpdateNeeded\(outFile string, outStr string\) bool](<#CheckIfUpdateNeeded>)
-- [func CleanOutputDir\(outputFileMap map\[string\]bool, componentOutputDir string\)](<#CleanOutputDir>)
 - [func ConfigureLogger\(debug bool\)](<#ConfigureLogger>)
 - [func Execute\(ver string\)](<#Execute>)
 - [func GenerateCommand\(cmd \*cobra.Command, args \[\]string\)](<#GenerateCommand>)
-- [func GenerateIncludesFiles\(includesFiles \[\]interface\{\}, kr8Spec types.Kr8ClusterSpec, config string, componentName string, compPath string, componentOutputDir string, jvm \*jsonnet.VM\) map\[string\]bool](<#GenerateIncludesFiles>)
-- [func GetClusterParams\(\) map\[string\]string](<#GetClusterParams>)
 - [func InitConfig\(\)](<#InitConfig>)
-- [func ProcessFile\(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm \*jsonnet.VM\) string](<#ProcessFile>)
 - [type CmdGenerateOptions](<#CmdGenerateOptions>)
 - [type CmdGetOptions](<#CmdGetOptions>)
 - [type CmdRenderOptions](<#CmdRenderOptions>)
@@ -264,11 +259,11 @@ var InitClusterCmd = &cobra.Command{
     Run: func(cmd *cobra.Command, args []string) {
         cSpec := types.Kr8ClusterSpec{
             Name:               cmdInitFlags.ClusterName,
-            ClusterDir:         RootConfig.ClusterDir,
             PostProcessor:      "function(input) input",
             GenerateDir:        "generated",
             GenerateShortNames: false,
             PruneParams:        false,
+            ClusterDir:         RootConfig.ClusterDir,
         }
 
         if cmdInitFlags.Interactive {
@@ -417,13 +412,14 @@ and initialize a git repo so you can get started`,
             Fetch:         false,
         }
         clusterOptions := types.Kr8ClusterSpec{
+            Name:               cmdInitFlags.ClusterName,
             PostProcessor:      "",
             GenerateDir:        "generated",
             GenerateShortNames: false,
             PruneParams:        false,
             ClusterDir:         "clusters",
-            Name:               cmdInitFlags.ClusterName,
         }
+
         util.FatalErrorCheck(
             "Issue creating cluster.jsonnet",
             kr8init.GenerateClusterJsonnet(clusterOptions, outDir+"/clusters"),
@@ -575,24 +571,6 @@ var VersionCmd = &cobra.Command{
 }
 ```
 
-<a name="CheckIfUpdateNeeded"></a>
-## func [CheckIfUpdateNeeded](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L599>)
-
-```go
-func CheckIfUpdateNeeded(outFile string, outStr string) bool
-```
-
-Check if a file needs updating based on its current contents and the new contents.
-
-<a name="CleanOutputDir"></a>
-## func [CleanOutputDir](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L483>)
-
-```go
-func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string)
-```
-
-
-
 <a name="ConfigureLogger"></a>
 ## func [ConfigureLogger](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L98>)
 
@@ -612,31 +590,13 @@ func Execute(ver string)
 Execute adds all child commands to the root command sets flags appropriately. This is called by main.main\(\). It only needs to happen once to the rootCmd.
 
 <a name="GenerateCommand"></a>
-## func [GenerateCommand](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L97>)
+## func [GenerateCommand](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L63>)
 
 ```go
 func GenerateCommand(cmd *cobra.Command, args []string)
 ```
 
 This function will generate the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.
-
-<a name="GenerateIncludesFiles"></a>
-## func [GenerateIncludesFiles](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L433-L441>)
-
-```go
-func GenerateIncludesFiles(includesFiles []interface{}, kr8Spec types.Kr8ClusterSpec, config string, componentName string, compPath string, componentOutputDir string, jvm *jsonnet.VM) map[string]bool
-```
-
-
-
-<a name="GetClusterParams"></a>
-## func [GetClusterParams](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L81>)
-
-```go
-func GetClusterParams() map[string]string
-```
-
-
 
 <a name="InitConfig"></a>
 ## func [InitConfig](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L137>)
@@ -647,23 +607,8 @@ func InitConfig()
 
 InitConfig reads in config file and ENV variables if set.
 
-<a name="ProcessFile"></a>
-## func [ProcessFile](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L552-L560>)
-
-```go
-func ProcessFile(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm *jsonnet.VM) string
-```
-
-Process an includes file. Based on the extension, it will process it differently.
-
-.jsonnet: Imported and processed using jsonnet VM.
-
-.yml, .yaml: Imported and processed through native function ParseYaml.
-
-.tpl, .tmpl: Processed using component config and Sprig templating.
-
 <a name="CmdGenerateOptions"></a>
-## type [CmdGenerateOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L38-L45>)
+## type [CmdGenerateOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L18-L25>)
 
 Stores the options for the 'generate' command.
 

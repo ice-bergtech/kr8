@@ -15,6 +15,15 @@ type Kr8Cluster struct {
 	Path string `json:"-"`
 }
 
+type Kr8Opts struct {
+	// Base directory of kr8 configuration
+	BaseDir string
+	// Directory where component definitions are stored
+	ComponentDir string
+	// Directory where cluster configurations are stored
+	ClusterDir string
+}
+
 // The specification for a clusters.jsonnet file.
 // This describes configuration for a cluster that kr8 should process.
 type Kr8ClusterJsonnet struct {
@@ -46,7 +55,7 @@ type Kr8ClusterSpec struct {
 	GenerateShortNames bool `json:"generate_short_names"`
 	// if this is true, we prune component parameters
 	PruneParams bool `json:"prune_params"`
-	// The root directory for the cluster. Default `clusters`
+	// Additional information used to process the cluster that is not stored with it.
 	ClusterDir string `json:"-"`
 }
 
@@ -55,7 +64,7 @@ type Kr8ClusterSpec struct {
 func CreateClusterSpec(
 	clusterName string,
 	spec gjson.Result,
-	baseDir string,
+	kr8Opts Kr8Opts,
 	genDirOverride string,
 ) (Kr8ClusterSpec, error) {
 	// First determine the value of generate_dir from the command line args or spec.
@@ -68,7 +77,7 @@ func CreateClusterSpec(
 	}
 	// if generateDir does not start with /, then it goes in baseDir
 	if !strings.HasPrefix(clGenerateDir, "/") {
-		clGenerateDir = filepath.Join(baseDir, clGenerateDir)
+		clGenerateDir = filepath.Join(kr8Opts.BaseDir, clGenerateDir)
 	}
 	clusterDir := filepath.Join(clGenerateDir, clusterName)
 	log.Debug().Str("cluster", clusterName).Msg("output directory: " + clusterDir)
@@ -176,6 +185,8 @@ func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
 	if len(specM) == 0 {
 		log.Fatal().Msg("Component has no `kr8_spec` object")
 	}
+
+	log.Debug().Msg("Component spec: " + spec.Str)
 
 	componentSpec := Kr8ComponentSpec{
 		Kr8_allparams:         spec.Get("enable_kr8_allparams").Bool(),

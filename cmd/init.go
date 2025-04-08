@@ -59,11 +59,11 @@ var InitClusterCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cSpec := types.Kr8ClusterSpec{
 			Name:               cmdInitFlags.ClusterName,
-			ClusterDir:         RootConfig.ClusterDir,
 			PostProcessor:      "function(input) input",
 			GenerateDir:        "generated",
 			GenerateShortNames: false,
 			PruneParams:        false,
+			ClusterDir:         RootConfig.ClusterDir,
 		}
 		// Get cluster name, path from user if not set
 		if cmdInitFlags.Interactive {
@@ -141,13 +141,14 @@ and initialize a git repo so you can get started`,
 			Fetch:         false,
 		}
 		clusterOptions := types.Kr8ClusterSpec{
+			Name:               cmdInitFlags.ClusterName,
 			PostProcessor:      "",
 			GenerateDir:        "generated",
 			GenerateShortNames: false,
 			PruneParams:        false,
 			ClusterDir:         "clusters",
-			Name:               cmdInitFlags.ClusterName,
 		}
+
 		util.FatalErrorCheck(
 			"Issue creating cluster.jsonnet",
 			kr8init.GenerateClusterJsonnet(clusterOptions, outDir+"/clusters"),

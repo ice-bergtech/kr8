@@ -1,24 +1,3 @@
-/*
-
-Much of this code is based on the kubecfg project: https://github.com/ksonnet/kubecfg
-Native funcs: https://github.com/kubecfg/kubecfg/blob/main/utils/nativefuncs.go
-
-Copyright 2018 ksonnet
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-
-*/
-
 package jnetvm
 
 import (
@@ -26,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
-	"regexp"
+	"strings"
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
@@ -36,6 +15,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 
+	kompose_logger "github.com/sirupsen/logrus"
+
 	types "github.com/ice-bergtech/kr8/pkg/types"
 )
 
@@ -43,23 +24,73 @@ import (
 // These functions are used to extend the functionality of jsonnet.
 // Adds on to functions part of the jsonnet stdlib: https://jsonnet.org/ref/stdlib.html
 func RegisterNativeFuncs(jvm *jsonnet.VM) {
-	// Register the template function
-	jvm.NativeFunction(NativeSprigTemplate())
+	listFuncs := []*jsonnet.NativeFunction{
+		// Process a helm template directory
+		NativeHelmTemplate(),
+		// Process a template file
+		NativeSprigTemplate(),
+		// Process a docker-compose file with kompose
+		NativeKompose(),
+		// Regex Functions
+		// Register the escapeStringRegex function
+		NativeRegexEscape(),
+		// Register the regexMatch function
+		NativeRegexMatch(),
+		// Register the regexSubst function
+		NativeRegexSubst(),
+		// IP helpers
+		NativeNetUrl(),
+		NativeNetIPInfo(),
+		NativeNetAddressCompare(),
+		NativeNetAddressDelta(),
+		NativeNetAddressSort(),
+		NativeNetAddressInc(),
+		NativeNetAddressIncBy(),
+		NativeNetAddressDec(),
+		NativeNetAddressDecBy(),
+		NativeNetAddressARPA(),
+		NativeNetAddressHex(),
+		NativeNetAddressBinary(),
+		NativeNetAddressNetsBetween(),
+		NativeNetAddressCalcSubnetsV4(),
+		NativeNetAddressCalcSubnetsV6(),
+	}
 
-	// Register the escapeStringRegex function
-	jvm.NativeFunction(NativeRegexEscape())
+	for _, nFunc := range listFuncs {
+		jvm.NativeFunction(nFunc)
+	}
+	// Add help function separately
+	jvm.NativeFunction(NativeHelp(listFuncs))
+}
 
-	// Register the regexMatch function
-	jvm.NativeFunction(NativeRegexMatch())
+func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction {
+	return &jsonnet.NativeFunction{
+		Name:   "help",
+		Params: []jsonnetAst.Identifier{},
+		Func: func(args []interface{}) (interface{}, error) {
+			result := "help: " + strings.Join(
+				[]string{
+					"Print out kr8 native funcion names and parameters.",
+					"Functions are called in the format:",
+					"`std.native('<function>')(<param1>, <param2>)`",
+				},
+				"\n",
+			) + "\n"
+			result += "\n" + "Available functions:\n"
+			result += "\n" + "------------------------\n"
 
-	// Register the regexSubst function
-	jvm.NativeFunction(NativeRegexSubst())
+			for _, val := range allFuncs {
+				params := []string{}
+				for _, id := range val.Params {
+					// Convert Identifier to string
+					params = append(params, fmt.Sprint(id))
+				}
+				result += val.Name + ": ['" + strings.Join(params, "', '") + "']\n"
+			}
 
-	// Register the helm function
-	jvm.NativeFunction(NativeHelmTemplate())
-
-	// Register the kompose function
-	jvm.NativeFunction(NativeKompose())
+			return result, nil
+		},
+	}
 }
 
 // Allows executing helm template to process a helm chart and make available to kr8 configuration.
@@ -72,11 +103,11 @@ func NativeHelmTemplate() *jsonnet.NativeFunction {
 // Uses sprig to process passed in config data and template.
 // Sprig template guide: https://masterminds.github.io/sprig/ .
 //
-// Inputs: "config" "str".
+// Inputs: "config" "templateStr".
 func NativeSprigTemplate() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "template",
-		Params: []jsonnetAst.Identifier{"config", "str"},
+		Params: []jsonnetAst.Identifier{"config", "templateStr"},
 		Func: func(args []interface{}) (interface{}, error) {
 			var config any
 			err := json.Unmarshal([]byte(args[0].(string)), config)
@@ -84,8 +115,17 @@ func NativeSprigTemplate() *jsonnet.NativeFunction {
 				return "", err
 			}
 
-			input := []byte(args[1].(string))
-			tmpl, err := template.New("file").Funcs(sprig.FuncMap()).Parse(string(input))
+			// templateStr is a string that contains the sprig template.
+			input, argOk := args[1].(string)
+			log.Debug().Msg("outPath: " + input)
+			if !argOk {
+				return nil, jsonnet.RuntimeError{
+					Msg:        "second argument 'templateStr' must be of 'string' type, got " + fmt.Sprintf("%T", args[1]),
+					StackTrace: nil,
+				}
+			}
+
+			tmpl, err := template.New("file").Funcs(sprig.FuncMap()).Parse(input)
 			if err != nil {
 				return "", err
 			}
@@ -94,51 +134,6 @@ func NativeSprigTemplate() *jsonnet.NativeFunction {
 			err = tmpl.Execute(&buff, config)
 
 			return buff.String(), err
-		}}
-}
-
-// Escapes a string for use in regex.
-//
-// Inputs: "str".
-func NativeRegexEscape() *jsonnet.NativeFunction {
-	return &jsonnet.NativeFunction{
-		Name:   "escapeStringRegex",
-		Params: []jsonnetAst.Identifier{"str"},
-		Func: func(args []interface{}) (interface{}, error) {
-			return regexp.QuoteMeta(args[0].(string)), nil
-		}}
-}
-
-// Matches a string against a regex pattern.
-//
-// Inputs: "regex", "string".
-func NativeRegexMatch() *jsonnet.NativeFunction {
-	return &jsonnet.NativeFunction{
-		Name:   "regexMatch",
-		Params: []jsonnetAst.Identifier{"regex", "string"},
-		Func: func(args []interface{}) (interface{}, error) {
-			return regexp.MatchString(args[0].(string), args[1].(string))
-		}}
-}
-
-// Substitutes a regex pattern in a string with another string.
-//
-// Inputs: "regex", "src", "repl".
-func NativeRegexSubst() *jsonnet.NativeFunction {
-	return &jsonnet.NativeFunction{
-		Name:   "regexSubst",
-		Params: []jsonnetAst.Identifier{"regex", "src", "repl"},
-		Func: func(args []interface{}) (interface{}, error) {
-			regex := args[0].(string)
-			src := args[1].(string)
-			repl := args[2].(string)
-
-			r, err := regexp.Compile(regex)
-			if err != nil {
-				return "", err
-			}
-
-			return r.ReplaceAllString(src, repl), nil
 		}}
 }
 
@@ -177,6 +172,10 @@ func NativeKompose() *jsonnet.NativeFunction {
 			}
 
 			root := filepath.Dir(opts.CalledFrom)
+
+			// ensure that the logger that kopmose uses is set to warn and above
+			kompose_logger.SetLevel(kompose_logger.WarnLevel)
+			// TODO: add logrus hook to capture and convert events to zerolog
 
 			options := types.Create([]string{filepath.Join(root, inFile)}, root+"/"+outPath, *opts)
 			if err := options.Validate(); err != nil {

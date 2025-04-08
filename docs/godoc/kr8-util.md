@@ -10,6 +10,7 @@ Utility functions for directories and files
 
 - [func CalculateClusterIncludesExcludes\(input map\[string\]string, filters PathFilterOptions\) \[\]string](<#CalculateClusterIncludesExcludes>)
 - [func CheckObjectMatch\(input gjson.Result, filterString string\) bool](<#CheckObjectMatch>)
+- [func CleanOutputDir\(outputFileMap map\[string\]bool, componentOutputDir string\)](<#CleanOutputDir>)
 - [func Colorize\(input interface\{\}, colorNum int, disabled bool\) string](<#Colorize>)
 - [func FatalErrorCheck\(message string, err error\)](<#FatalErrorCheck>)
 - [func FetchRepoUrl\(url string, destination string, performFetch bool\) error](<#FetchRepoUrl>)
@@ -44,6 +45,15 @@ func CheckObjectMatch(input gjson.Result, filterString string) bool
 ```
 
 Checks if a input object matches a filter string. The filter string can be an equality match or a regex match.
+
+<a name="CleanOutputDir"></a>
+## func [CleanOutputDir](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/directories.go#L111>)
+
+```go
+func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string)
+```
+
+
 
 <a name="Colorize"></a>
 ## func [Colorize](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L38>)

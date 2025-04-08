@@ -71,7 +71,7 @@ func init() {
 	RootCmd.PersistentFlags().StringVarP(&RootConfig.LogLevel,
 		"loglevel", "L", "info",
 		"set log level")
-	RootCmd.PersistentFlags().StringVarP(&RootConfig.BaseDir, "base", "B", ".", "kr8 config base directory")
+	RootCmd.PersistentFlags().StringVarP(&RootConfig.BaseDir, "base", "B", "./", "kr8 config base directory")
 	RootCmd.PersistentFlags().StringVarP(&RootConfig.ClusterDir,
 		"clusterdir", "D", "",
 		"kr8 cluster directory")

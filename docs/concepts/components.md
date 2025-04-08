@@ -1,7 +1,7 @@
 # Components
 
 A component is a deployable unit that you wish to install in one or more clusters.
-Components can be declared multiple times within a cluster, as long as they are named distinctly.
+Components can be declared multiple times within a cluster, as long as they are named distinctly when loaded.
 
 In a kr8+ project, components are defined in `./components` by default, or the directory specified by the `--componentdir`, `-X` flags.
 
@@ -143,3 +143,248 @@ tasks:
       GIT_COMMIT:
         sh: curl -s https://api.github.com/repos/asobti/kube-monkey/commits/master | jq .sha -r | xargs git rev-parse --short
 ```
+
+## Common Component Types
+
+### Jsonnet
+
+A very simple component might just be a few lines of jsonnet.
+
+Consider the situation whereby you might have two clusters, one in AWS and one in DigitalOcean.
+You need to set a default storageclass.
+You could do this with jsonnet.
+
+This example is located in [components/doc-conepts/jsonnetStorageClasses](../../example/components/doc-concepts/jsonnetStorageClasses/).
+
+Your jsonnet component would look like this:
+
+```bash
+components/doc-conepts/jsonnetStorageClasses
+├── params.jsonnet
+├── storageclasses.jsonnet
+```
+
+#### Params
+
+As a reminder, every component requires a params file.
+We need to set a namespace for the component, even though it's a cluster level resource - namespace is a required paramater for kr8+.
+We also need to tell kr8+ what files to include for the component:
+
+```yaml
+{
+  namespace: 'kube-system',
+  release_name: 'storageclasses',
+  kr8_spec: {
+    includes: [ "storageClasses.jsonnet" ],
+    extfiles: [
+      {"echoManifest": "./vendor/" + version}
+    ]
+  },
+}
+```
+
+#### Jsonnet Manifest
+
+Your jsonnet manifest looks like this:
+
+```jsonnet
+# a jsonnet external variable from kr8 that gets contains cluster-level configuration
+local kr8_cluster = std.extVar('kr8_cluster');
+
+# a jsonnet function for creating a storageclass
+local StorageClass(name, type, default=false) = {
+  apiVersion: 'storage.k8s.io/v1',
+  kind: 'StorageClass',
+  metadata: {
+    name: name,
+    annotations: {
+      'storageclass.kubernetes.io/is-default-class': if default then 'true' else 'false',
+    },
+  },
+  parameters: {
+    type: type,
+  },
+};
+
+# check the cluster configuration for a type, if it's AWS make a gp2 type storageclass
+if kr8_cluster.cluster_type == 'aws' then std.objectValues(
+  {
+    // default gp2 storage class, not tied to a zone
+    ebs_gp2: StorageClass('gp2', 'gp2', true) {},
+  }
+) else [] # don't make a storageclass if it's not AWS
+```
+
+
+### YAML Component
+
+kr8+ can use a static k8s manifest as a source input.
+You can then manipulate the structure of that YAML using Jsonnet.
+kr8+ takes care of the heavy lifting for you.
+
+This is useful when loading manifests from remote source, and you want to manipulate the mbefore deploying into a cluster.
+
+This example can be found here: [example/components/doc-concepts/echo-test/](../../example/components/doc-concepts/echo-test/)
+
+```bash
+components/doc-conepts/jsonnetStorageClasses
+├── Taskfile.yml
+├── params.jsonnet
+├── echo.jsonnet
+├── vendor
+    ├── {{.Version}}
+        ├── echo.yml
+```
+
+#### Taskfile
+
+You'll need a taskfile that downloads the original manifests for you in the `fetch` task.
+Here's an example:
+
+```yaml
+version: '3'
+
+vars:
+  VERSION:  v1.0.0
+
+tasks:
+  default:
+    cmds:
+      - task: fetch
+
+  fetch:
+    desc: "fetch component dependencies"
+    cmds:
+      - mkdir -p ./vendor/{{.VERSION}} && rm -rf ./vendor/{{.VERSION}}/*
+      - curl https://gist.github.com/alankrantas/63fab63fe14cec872b542eed31092fc6/raw/1b22a4d6f45b4de06bf23503aca85c4b4cd1d965/echo.yaml -o ./vendor/{{.VERSION}}/echo.yaml
+```
+
+#### Jsonnet
+
+References one of the files in vendored.
+This give us the ability to modify this file.
+Here's how the jsonnet looks:
+
+```jsonnet
+local helpers = import 'helpers.libsonnet';
+local parseYaml = std.native('parseYaml');
+# this must match the `ext-str-file` value in the taskfile
+# it imports those values with the variable name "deployment"
+local deployment = parseYaml(std.extVar('inputMetricsServerDeploy'));
+
+local args = [
+  "--kubelet-insecure-tls",
+  "--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname",
+]
+
+[
+  # drop all the secrets if they're found, we don't want to check them into git
+  if object.kind == 'Secret' then {} else object
+  for object in helpers.list(
+    helpers.named(deployment) + {
+      # grab kind deployment with name metrics-server, and add some more args
+      ['Deployment/kube-system/metrics-server']+: helpers.patchContainerNamed(
+        "metrics-server",
+        {
+          "args"+: args,
+        }
+      ),
+    }
+  )
+]
+
+```
+
+
+### Helm
+
+kr8 can render helm charts locally and inject parameters as helm values.
+This provides a great degree of flexibility when installing components into clusters.
+
+#### Taskfile
+
+An example taskfile for a helm chart might look like this:
+
+```yaml
+version: 3
+
+vars:
+  CHART_VER:  v0.8.1
+  CHART_NAME: cert-manager
+
+tasks:
+  fetch:
+    desc: "fetch component dependencies"
+    cmds:
+      - rm -fr charts vendored; mkdir charts vendored
+      # add the helm repo and fetch it locally into the charts directly
+      - helm fetch --repo https://charts.jetstack.io --untar --untardir ./charts --version "{{.CHART_VER}}" "{{.CHART_NAME}}"
+      - wget --quiet -N https://raw.githubusercontent.com/jetstack/cert-manager/release-0.8/deploy/manifests/00-crds.yaml -O - | grep -v ^# > vendored/00cert-manager-crd.yaml
+```
+
+#### Params
+
+The `params.jsonnet` for a helm chart directory should include the helm values you want to use.
+Here's an example:
+
+```jsonnet
+{
+  release_name: 'cert-manager',
+  namespace: 'cert-manager',
+  kubecfg_gc_enable: true,
+  kubecfg_update_args: '--validate=false',
+  helm_values: {
+    webhook: { enabled: false },  // this is a value for the helm chart
+  },
+}
+```
+
+#### Values file
+
+A values file is a required file for a helm component.
+The name of the file must be `componentname-values.jsonnet` (for example: cert-manager-values.jsonnet).
+It's content would be something like this:
+
+```jsonnet
+local config = std.extVar('kr8');
+
+if 'helm_values' in config then config.helm_values else {}
+```
+
+You can also optionally set the values for the helm chart in here, this would look something like this:
+
+```jsonnet
+{
+  replicaCount: 2
+}
+```
+
+#### Patches
+
+There are certain situations where a configuration option is not available for a helm chart, for example, you might want to add an argument that hasn't quite made it into the helm chart yet, or add something like [pod affinity](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity) where it isn't actually a value option in a helm chart.
+
+kr8+ helps you in this situation by providing a mechanism to patch a helm chart.
+You need to use the `helm-render-with-patch` helper and provide a `patches.jsonnet` in the component directory.
+
+Here's an example `patches.jsonnet` for [external-dns](https://github.com/kubernetes-incubator/external-dns)
+
+```jsonnet
+local apptio = import 'apptio.libsonnet';
+local helpers = import 'helpers.libsonnet';  // some helper functions
+local kube = import 'kube.libsonnet';
+local config = std.extVar('kr8'); // config is all the config from params.jsonnet
+
+// remove Secret objects and add a namespace
+[
+  for object in helpers.list(
+    // object list is converted to hash of named objects, then they can be modified by name
+    helpers.named(helpers.helmInput) + {
+      ['Deployment/' + config.release_name]+: helpers.patchContainer({
+        // Injects an extra arg, which wasn't originally in the helm chart
+        [if std.objectHas(config,'assumeRoleArn') then 'args']+: ['--aws-assume-role='+config.assumeRoleArn],
+      }),
+    },
+  )
+]
+```
+
