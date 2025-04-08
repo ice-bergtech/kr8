@@ -1,6 +1,7 @@
 {
   _cluster+: {
     name: 'docs-kube-1',
+    cluster_type: "aws",
   },
   _components+: {
     jsonnetStorageClasses: { path: "components/doc-concepts/jsonnetStorageClasses" },
