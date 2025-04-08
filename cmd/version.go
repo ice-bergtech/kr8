@@ -69,6 +69,7 @@ func retrieveDepends(info *debug.BuildInfo) []string {
 	}
 
 	sort.Strings(Depends)
+
 	return Depends
 }
 
