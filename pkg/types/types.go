@@ -127,7 +127,7 @@ type Kr8ComponentSpec struct {
 }
 
 // Extract jsonnet extVar defintions from spec.
-func extractExtFiles(spec gjson.Result) map[string]string {
+func ExtractExtFiles(spec gjson.Result) map[string]string {
 	result := make(map[string]string)
 	for k, v := range spec.Get("extfiles").Map() {
 		if v.Type == gjson.String {
@@ -139,7 +139,7 @@ func extractExtFiles(spec gjson.Result) map[string]string {
 }
 
 // Extract jsonnet lib paths from spec.
-func extractJpaths(spec gjson.Result) []string {
+func ExtractJpaths(spec gjson.Result) []string {
 	jPathsInput := spec.Get("jpaths").Array()
 	jPathsOutput := make([]string, len(jPathsInput))
 	for i, p := range jPathsInput {
@@ -150,7 +150,7 @@ func extractJpaths(spec gjson.Result) []string {
 }
 
 // Extract jsonnet includes filenames or objects from spec.
-func extractIncludes(spec gjson.Result) []interface{} {
+func ExtractIncludes(spec gjson.Result) []interface{} {
 	incl := spec.Get("includes")
 	includes := make([]interface{}, len(incl.Array()))
 	for idx, item := range incl.Array() {
@@ -192,9 +192,9 @@ func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
 		Kr8_allparams:         spec.Get("enable_kr8_allparams").Bool(),
 		Kr8_allclusters:       spec.Get("enable_kr8_allclusters").Bool(),
 		DisableOutputDirClean: spec.Get("disable_output_clean").Bool(),
-		ExtFiles:              extractExtFiles(spec),
-		JPaths:                extractJpaths(spec),
-		Includes:              extractIncludes(spec),
+		ExtFiles:              ExtractExtFiles(spec),
+		JPaths:                ExtractJpaths(spec),
+		Includes:              ExtractIncludes(spec),
 	}
 
 	return componentSpec, nil

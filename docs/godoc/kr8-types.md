@@ -6,6 +6,9 @@ import "github.com/ice-bergtech/kr8/pkg/types"
 
 ## Index
 
+- [func ExtractExtFiles\(spec gjson.Result\) map\[string\]string](<#ExtractExtFiles>)
+- [func ExtractIncludes\(spec gjson.Result\) \[\]interface\{\}](<#ExtractIncludes>)
+- [func ExtractJpaths\(spec gjson.Result\) \[\]string](<#ExtractJpaths>)
 - [type CmdJsonnetOptions](<#CmdJsonnetOptions>)
 - [type ExtFileVar](<#ExtFileVar>)
 - [type KomposeConvertOptions](<#KomposeConvertOptions>)
@@ -26,6 +29,33 @@ import "github.com/ice-bergtech/kr8/pkg/types"
 - [type Kr8Opts](<#Kr8Opts>)
 - [type VMConfig](<#VMConfig>)
 
+
+<a name="ExtractExtFiles"></a>
+## func [ExtractExtFiles](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L130>)
+
+```go
+func ExtractExtFiles(spec gjson.Result) map[string]string
+```
+
+Extract jsonnet extVar defintions from spec.
+
+<a name="ExtractIncludes"></a>
+## func [ExtractIncludes](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L153>)
+
+```go
+func ExtractIncludes(spec gjson.Result) []interface{}
+```
+
+Extract jsonnet includes filenames or objects from spec.
+
+<a name="ExtractJpaths"></a>
+## func [ExtractJpaths](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L142>)
+
+```go
+func ExtractJpaths(spec gjson.Result) []string
+```
+
+Extract jsonnet lib paths from spec.
 
 <a name="CmdJsonnetOptions"></a>
 ## type [CmdJsonnetOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L230-L237>)
