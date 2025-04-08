@@ -107,3 +107,25 @@ func GetClusterParamsFilenames(basePath string, targetPath string) []string {
 
 	return results
 }
+
+func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) {
+	// clean component dir
+	d, err := os.Open(filepath.Clean(componentOutputDir))
+	FatalErrorCheck("", err)
+	// Lifetime of function
+	defer d.Close()
+	names, err := d.Readdirnames(-1)
+	FatalErrorCheck("", err)
+	for _, name := range names {
+		if _, ok := outputFileMap[name]; ok {
+			// file is managed
+			continue
+		}
+		if filepath.Ext(name) == ".yaml" {
+			delFile := filepath.Join(componentOutputDir, name)
+			err = os.RemoveAll(delFile)
+			FatalErrorCheck("", err)
+			log.Debug().Msg("Deleted: " + delFile)
+		}
+	}
+}

@@ -1,0 +1,6 @@
+kr8/pkg/generate/generate.go:144:6        funlen      Function 'GenProcessComponent' is too long (65 > 60)
+kr8/pkg/generate/generate.go:495:6        funlen      Function 'GenProcessCluster' is too long (65 > 60)
+kr8/pkg/generate/generate.go:36:42        varnamelen  parameter name 'vm' is too short for the scope of its usage
+kr8/pkg/jnetvm/native_funcs_net.go:374:4  varnamelen  variable name 'ok' is too short for the scope of its usage
+kr8/pkg/jnetvm/native_funcs_net.go:514:4  varnamelen  variable name 'ok' is too short for the scope of its usage
+kr8/pkg/jnetvm/native_funcs_net.go:547:4  varnamelen  variable name 'ok' is too short for the scope of its usage
