@@ -177,6 +177,8 @@ func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
 		log.Fatal().Msg("Component has no `kr8_spec` object")
 	}
 
+	log.Debug().Msg("Component spec: " + spec.Str)
+
 	componentSpec := Kr8ComponentSpec{
 		Kr8_allparams:         spec.Get("enable_kr8_allparams").Bool(),
 		Kr8_allclusters:       spec.Get("enable_kr8_allclusters").Bool(),

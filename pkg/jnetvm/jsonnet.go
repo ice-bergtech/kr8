@@ -147,6 +147,8 @@ func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmC
 		input = "( import '" + filename + "')"
 	}
 
+	log.Debug().Msg("Processing file through jsonnet vm: " + input)
+
 	//
 	// Evaluate the jsonnet snippet and print the result
 	// This is where the magic happens! The jsonnet code is evaluated and the result is stored

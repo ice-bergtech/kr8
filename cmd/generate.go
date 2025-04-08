@@ -416,15 +416,15 @@ func loadExtFilesIntoVars(
 	jvm *jsonnet.VM,
 ) {
 	for key, val := range compSpec.ExtFiles {
-		filePath := filepath.Join(RootConfig.BaseDir, compPath, val)
-		if !strings.HasPrefix(filePath, RootConfig.BaseDir) {
-			util.FatalErrorCheck("Invalid file path", os.ErrNotExist)
-		}
-		extFile, err := os.ReadFile(filepath.Clean(filePath))
-		util.FatalErrorCheck("Error importing extfiles item", err)
 		log.Debug().Str("cluster", kr8Spec.Name).
 			Str("component", componentName).
 			Msg("Extfile: " + key + "=" + val)
+		filePath := filepath.Join(RootConfig.BaseDir, compPath, val)
+		if RootConfig.BaseDir != "./" && !strings.HasPrefix(filePath, RootConfig.BaseDir) {
+			util.FatalErrorCheck("Invalid file path: "+filePath, os.ErrNotExist)
+		}
+		extFile, err := os.ReadFile(filepath.Clean(filePath))
+		util.FatalErrorCheck("Error importing extfiles item", err)
 		jvm.ExtVar(key, string(extFile))
 	}
 }
