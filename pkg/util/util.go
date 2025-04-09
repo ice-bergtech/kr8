@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strings"
 
+	types "github.com/ice-bergtech/kr8/pkg/types"
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 )
@@ -108,6 +109,16 @@ func FatalErrorCheck(message string, err error) {
 	if err != nil {
 		log.Fatal().Err(err).Msg(message)
 	}
+}
+
+func GenErrorIfCheck(message string, err error) error {
+	if err != nil {
+		log.Error().Err(err).Msg(message)
+
+		return types.Kr8Error{Message: message, Value: err}
+	}
+
+	return nil
 }
 
 // Using the allClusterParams variable and command flags to create a list of clusters to generate.

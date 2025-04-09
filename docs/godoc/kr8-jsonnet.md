@@ -8,11 +8,12 @@ Package jvm contains the jsonnet rendering logic.
 
 ## Index
 
-- [func JsonnetRender\(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmConfig types.VMConfig\)](<#JsonnetRender>)
-- [func JsonnetRenderClusterParams\(vmconfig types.VMConfig, clusterName string, componentNames \[\]string, clusterParams string, prune bool\) string](<#JsonnetRenderClusterParams>)
-- [func JsonnetRenderClusterParamsOnly\(vmconfig types.VMConfig, clusterName string, clusterParams string, prune bool\) string](<#JsonnetRenderClusterParamsOnly>)
-- [func JsonnetRenderFiles\(vmConfig types.VMConfig, files \[\]string, param string, prune bool, prepend string, source string\) string](<#JsonnetRenderFiles>)
+- [func JsonnetRender\(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmConfig types.VMConfig\) error](<#JsonnetRender>)
+- [func JsonnetRenderClusterParams\(vmconfig types.VMConfig, clusterName string, componentNames \[\]string, clusterParams string, prune bool\) \(string, error\)](<#JsonnetRenderClusterParams>)
+- [func JsonnetRenderClusterParamsOnly\(vmconfig types.VMConfig, clusterName string, clusterParams string, prune bool\) \(string, error\)](<#JsonnetRenderClusterParamsOnly>)
+- [func JsonnetRenderFiles\(vmConfig types.VMConfig, files \[\]string, param string, prune bool, prepend string, source string\) \(string, error\)](<#JsonnetRenderFiles>)
 - [func JsonnetVM\(vmconfig types.VMConfig\) \(\*jsonnet.VM, error\)](<#JsonnetVM>)
+- [func MergeComponentDefaults\(componentMap map\[string\]types.Kr8ClusterComponentRef, componentNames \[\]string, vmconfig types.VMConfig\) \(string, error\)](<#MergeComponentDefaults>)
 - [func NativeHelmTemplate\(\) \*jsonnet.NativeFunction](<#NativeHelmTemplate>)
 - [func NativeHelp\(allFuncs \[\]\*jsonnet.NativeFunction\) \*jsonnet.NativeFunction](<#NativeHelp>)
 - [func NativeKompose\(\) \*jsonnet.NativeFunction](<#NativeKompose>)
@@ -44,28 +45,28 @@ Package jvm contains the jsonnet rendering logic.
 
 
 <a name="JsonnetRender"></a>
-## func [JsonnetRender](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L118>)
+## func [JsonnetRender](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L122>)
 
 ```go
-func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmConfig types.VMConfig)
+func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmConfig types.VMConfig) error
 ```
 
 Renders a jsonnet file with the specified options.
 
 <a name="JsonnetRenderClusterParams"></a>
-## func [JsonnetRenderClusterParams](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L184-L190>)
+## func [JsonnetRenderClusterParams](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L195-L201>)
 
 ```go
-func JsonnetRenderClusterParams(vmconfig types.VMConfig, clusterName string, componentNames []string, clusterParams string, prune bool) string
+func JsonnetRenderClusterParams(vmconfig types.VMConfig, clusterName string, componentNames []string, clusterParams string, prune bool) (string, error)
 ```
 
 Render cluster params, merged with one or more component's parameters. Empty componentName list renders all component parameters.
 
 <a name="JsonnetRenderClusterParamsOnly"></a>
-## func [JsonnetRenderClusterParamsOnly](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L163-L168>)
+## func [JsonnetRenderClusterParamsOnly](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L172-L177>)
 
 ```go
-func JsonnetRenderClusterParamsOnly(vmconfig types.VMConfig, clusterName string, clusterParams string, prune bool) string
+func JsonnetRenderClusterParamsOnly(vmconfig types.VMConfig, clusterName string, clusterParams string, prune bool) (string, error)
 ```
 
 Only render cluster params \(\_cluster\), without components.
@@ -74,7 +75,7 @@ Only render cluster params \(\_cluster\), without components.
 ## func [JsonnetRenderFiles](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L73-L80>)
 
 ```go
-func JsonnetRenderFiles(vmConfig types.VMConfig, files []string, param string, prune bool, prepend string, source string) string
+func JsonnetRenderFiles(vmConfig types.VMConfig, files []string, param string, prune bool, prepend string, source string) (string, error)
 ```
 
 Takes a list of jsonnet files and imports each one. Formats the string for jsonnet using "\+".
@@ -87,6 +88,15 @@ func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error)
 ```
 
 Create a Jsonnet VM to run commands in.
+
+<a name="MergeComponentDefaults"></a>
+## func [MergeComponentDefaults](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L240-L244>)
+
+```go
+func MergeComponentDefaults(componentMap map[string]types.Kr8ClusterComponentRef, componentNames []string, vmconfig types.VMConfig) (string, error)
+```
+
+
 
 <a name="NativeHelmTemplate"></a>
 ## func [NativeHelmTemplate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L99>)

@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	goyaml "github.com/ghodss/yaml"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
 	"bufio"
@@ -73,7 +74,7 @@ var RenderJsonnetCmd = &cobra.Command{
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, fileName := range args {
-			jvm.JsonnetRender(
+			err := jvm.JsonnetRender(
 				types.CmdJsonnetOptions{
 					Prune:         cmdRenderFlags.Prune,
 					ClusterParams: cmdRenderFlags.ClusterParams,
@@ -82,6 +83,9 @@ var RenderJsonnetCmd = &cobra.Command{
 					Format:        cmdRenderFlags.Format,
 					Color:         false,
 				}, fileName, RootConfig.VMConfig)
+			if err != nil {
+				log.Fatal().Str("filename", fileName).Err(err).Msg("error rendering jsonnet")
+			}
 		}
 	},
 }

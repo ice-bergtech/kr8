@@ -47,7 +47,7 @@ func GenerateLib(fetch bool, dstDir string) error
 
 
 <a name="GenerateReadme"></a>
-## func [GenerateReadme](<https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L102>)
+## func [GenerateReadme](<https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L104>)
 
 ```go
 func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) error

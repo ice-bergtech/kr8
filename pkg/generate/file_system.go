@@ -9,14 +9,18 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) {
+func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error {
 	// clean component dir
-	d, err := os.Open(filepath.Clean(componentOutputDir))
-	util.FatalErrorCheck("", err)
+	dir, err := os.Open(filepath.Clean(componentOutputDir))
+	if err := util.GenErrorIfCheck("", err); err != nil {
+		return err
+	}
 	// Lifetime of function
-	defer d.Close()
-	names, err := d.Readdirnames(-1)
-	util.FatalErrorCheck("", err)
+	defer dir.Close()
+	names, err := dir.Readdirnames(-1)
+	if err := util.GenErrorIfCheck("", err); err != nil {
+		return err
+	}
 	for _, name := range names {
 		if _, ok := outputFileMap[name]; ok {
 			// file is managed
@@ -25,46 +29,59 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) {
 		if filepath.Ext(name) == ".yaml" {
 			delFile := filepath.Join(componentOutputDir, name)
 			err = os.RemoveAll(delFile)
-			util.FatalErrorCheck("", err)
-			log.Debug().Msg("Deleted: " + delFile)
+			if err := util.GenErrorIfCheck("", err); err != nil {
+				return err
+			}
+			log.Debug().Msg("Deleted unmanaged file: " + delFile)
 		}
 	}
+
+	return nil
 }
 
-func setupClusterGenerateDirs(kr8Spec types.Kr8ClusterSpec) []string {
+func setupClusterGenerateDirs(kr8Spec types.Kr8ClusterSpec) ([]string, error) {
 	// create cluster dir
 	if _, err := os.Stat(kr8Spec.ClusterDir); os.IsNotExist(err) {
 		err = os.MkdirAll(kr8Spec.ClusterDir, 0750)
-		util.FatalErrorCheck("Error creating cluster generateDir", err)
-	}
-
-	// get list of current generated components directories
-	d, err := os.Open(kr8Spec.ClusterDir)
-	util.FatalErrorCheck("Error opening clusterDir", err)
-	defer d.Close()
-
-	read_all_dirs := -1
-	generatedCompList, err := d.Readdirnames(read_all_dirs)
-	util.FatalErrorCheck("Error reading directories", err)
-
-	return generatedCompList
-}
-
-// Check if a file needs updating based on its current contents and the new contents.
-func CheckIfUpdateNeeded(outFile string, outStr string) bool {
-	var updateNeeded bool
-	outFile = filepath.Clean(outFile)
-	if _, err := os.Stat(outFile); os.IsNotExist(err) {
-		log.Debug().Msg("Creating " + outFile)
-		updateNeeded = true
-	} else {
-		currentContents, err := os.ReadFile(outFile)
-		util.FatalErrorCheck("Error reading file", err)
-		if string(currentContents) != outStr {
-			updateNeeded = true
-			log.Debug().Msg("Updating: " + outFile)
+		if err := util.GenErrorIfCheck("Error creating cluster generateDir", err); err != nil {
+			return []string{}, err
 		}
 	}
 
-	return updateNeeded
+	// get list of current generated components directories
+	dir, err := os.Open(kr8Spec.ClusterDir)
+	if err := util.GenErrorIfCheck("Error opening clusterDir", err); err != nil {
+		return []string{}, err
+	}
+	defer dir.Close()
+
+	read_all_dirs := -1
+	generatedCompList, err := dir.Readdirnames(read_all_dirs)
+	if err := util.GenErrorIfCheck("Error reading directories", err); err != nil {
+		return []string{}, err
+	}
+
+	return generatedCompList, nil
+}
+
+// Check if a file needs updating based on its current contents and the new contents.
+func CheckIfUpdateNeeded(outFile string, outStr string) (bool, error) {
+	outFile = filepath.Clean(outFile)
+	if _, err := os.Stat(outFile); os.IsNotExist(err) {
+		log.Debug().Msg("File needs to be created: " + outFile)
+
+		return true, nil
+	}
+
+	currentContents, err := os.ReadFile(outFile)
+	if err := util.GenErrorIfCheck("Error reading file "+outFile, err); err != nil {
+		return false, err
+	}
+	if string(currentContents) != outStr {
+		log.Debug().Msg("File needs to be updated: " + outFile)
+
+		return true, nil
+	}
+
+	return false, nil
 }

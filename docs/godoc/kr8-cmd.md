@@ -178,24 +178,28 @@ var GetComponentsCmd = &cobra.Command{
 
         var params []string
         if cmdGetFlags.Cluster != "" {
-            clusterPath := util.GetClusterPaths(RootConfig.ClusterDir, cmdGetFlags.Cluster)
+            clusterPath, err := util.GetClusterPaths(RootConfig.ClusterDir, cmdGetFlags.Cluster)
+            util.FatalErrorCheck("error getting cluster path for "+cmdGetFlags.Cluster, err)
             params = util.GetClusterParamsFilenames(RootConfig.ClusterDir, clusterPath)
         }
         if cmdGetFlags.ClusterParams != "" {
             params = append(params, cmdGetFlags.ClusterParams)
         }
 
-        jvm := jnetvm.JsonnetRenderFiles(RootConfig.VMConfig, params, "._components", true, "", "components")
+        jvm, err := jnetvm.JsonnetRenderFiles(RootConfig.VMConfig, params, "._components", true, "", "components")
+        util.FatalErrorCheck("error rendering jsonnet files", err)
         if cmdGetFlags.ParamField != "" {
             value := gjson.Get(jvm, cmdGetFlags.ParamField)
             if value.String() == "" {
                 log.Fatal().Msg("Error getting param: " + cmdGetFlags.ParamField)
             } else {
-                formatted := util.Pretty(jvm, RootConfig.Color)
+                formatted, err := util.Pretty(jvm, RootConfig.Color)
+                util.FatalErrorCheck("error pretty printing jsonnet", err)
                 fmt.Println(formatted)
             }
         } else {
-            formatted := util.Pretty(jvm, RootConfig.Color)
+            formatted, err := util.Pretty(jvm, RootConfig.Color)
+            util.FatalErrorCheck("error pretty printing jsonnet", err)
             fmt.Println(formatted)
         }
     },
@@ -219,20 +223,25 @@ var GetParamsCmd = &cobra.Command{
             cList = append(cList, cmdGetFlags.Component)
         }
 
-        params := jnetvm.JsonnetRenderClusterParams(
+        params, err := jnetvm.JsonnetRenderClusterParams(
             RootConfig.VMConfig,
             cmdGetFlags.Cluster,
             cList,
             cmdGetFlags.ClusterParams,
             true,
         )
+        util.FatalErrorCheck("error rendering cluster params", err)
 
         if cmdGetFlags.ParamField == "" {
             if cmdGetFlags.Component != "" {
                 result := gjson.Get(params, cmdGetFlags.Component).String()
-                fmt.Println(util.Pretty(result, RootConfig.Color))
+                formatted, err := util.Pretty(result, RootConfig.Color)
+                util.FatalErrorCheck("error pretty printing jsonnet", err)
+                fmt.Println(formatted)
             } else {
-                fmt.Println(util.Pretty(params, RootConfig.Color))
+                formatted, err := util.Pretty(params, RootConfig.Color)
+                util.FatalErrorCheck("error pretty printing jsonnet", err)
+                fmt.Println(formatted)
             }
 
             return
@@ -462,7 +471,10 @@ var JsonnetRenderCmd = &cobra.Command{
     Args: cobra.MinimumNArgs(1),
     Run: func(cmd *cobra.Command, args []string) {
         for _, f := range args {
-            jvm.JsonnetRender(cmdFlagsJsonnet, f, RootConfig.VMConfig)
+            err := jvm.JsonnetRender(cmdFlagsJsonnet, f, RootConfig.VMConfig)
+            if err != nil {
+                log.Fatal().Str("file", f).Err(err).Msg("error rendering jsonnet file")
+            }
         }
     },
 }
@@ -529,7 +541,7 @@ var RenderJsonnetCmd = &cobra.Command{
     Args: cobra.MinimumNArgs(1),
     Run: func(cmd *cobra.Command, args []string) {
         for _, fileName := range args {
-            jvm.JsonnetRender(
+            err := jvm.JsonnetRender(
                 types.CmdJsonnetOptions{
                     Prune:         cmdRenderFlags.Prune,
                     ClusterParams: cmdRenderFlags.ClusterParams,
@@ -538,6 +550,9 @@ var RenderJsonnetCmd = &cobra.Command{
                     Format:        cmdRenderFlags.Format,
                     Color:         false,
                 }, fileName, RootConfig.VMConfig)
+            if err != nil {
+                log.Fatal().Str("filename", fileName).Err(err).Msg("error rendering jsonnet")
+            }
         }
     },
 }
@@ -565,7 +580,7 @@ var VersionCmd = &cobra.Command{
         fmt.Println(RootCmd.Use + "+ Version: " + version)
         info, ok := debug.ReadBuildInfo()
         if !ok {
-            panic("Could not read build info")
+            log.Fatal().Msg("could not read build info")
         }
         stamp := retrieveStamp(info)
         fmt.Printf("  Built with %s on %s\n", stamp.InfoGoCompiler, stamp.InfoBuildTime)
@@ -656,7 +671,7 @@ type CmdGetOptions struct {
 ```
 
 <a name="CmdRenderOptions"></a>
-## type [CmdRenderOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/render.go#L23-L34>)
+## type [CmdRenderOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/render.go#L24-L35>)
 
 Contains parameters for the kr8 render command.
 

@@ -5,19 +5,19 @@ import (
 	"fmt"
 	"os"
 
-	formatter "github.com/google/go-jsonnet/formatter"
-
 	"github.com/fatih/color"
 	goyaml "github.com/ghodss/yaml"
+	formatter "github.com/google/go-jsonnet/formatter"
 	"github.com/hokaccha/go-prettyjson"
-	"github.com/rs/zerolog/log"
+
+	types "github.com/ice-bergtech/kr8/pkg/types"
 )
 
 // Pretty formats the input jsonnet string with indentation and optional color output.
-func Pretty(input string, colorOutput bool) string {
+func Pretty(input string, colorOutput bool) (string, error) {
 	if input == "" {
 		// escape hatch for empty input
-		return ""
+		return "", nil
 	}
 	fmtr := prettyjson.NewFormatter()
 	fmtr.Indent = 4
@@ -28,9 +28,11 @@ func Pretty(input string, colorOutput bool) string {
 	fmtr.NullColor = color.New(color.Underline)
 
 	formatted, err := fmtr.Format([]byte(input))
-	FatalErrorCheck("Error formatting JSON", err)
+	if err := GenErrorIfCheck("Error formatting JSON", err); err != nil {
+		return "", err
+	}
 
-	return string(formatted)
+	return string(formatted), nil
 }
 
 // Colorize function from zerolog console.go file to replicate their coloring functionality.
@@ -48,27 +50,38 @@ func Colorize(input interface{}, colorNum int, disabled bool) string {
 
 // Print the jsonnet output in the specified format.
 // Acceptable formats are: yaml, stream, json.
-func JsonnetPrint(output string, format string, color bool) {
+func JsonnetPrint(output string, format string, color bool) error {
 	switch format {
 	case "yaml":
 		yaml, err := goyaml.JSONToYAML([]byte(output))
-		FatalErrorCheck("Error converting output JSON to YAML", err)
+		if err := GenErrorIfCheck("Error converting output JSON to YAML", err); err != nil {
+			return err
+		}
 		fmt.Println(string(yaml))
 	case "stream": // output yaml stream
 		var o []interface{}
-		FatalErrorCheck("Error unmarshalling output JSON", json.Unmarshal([]byte(output), &o))
+		if err := GenErrorIfCheck("Error unmarshalling output JSON", json.Unmarshal([]byte(output), &o)); err != nil {
+			return err
+		}
 		for _, jobj := range o {
 			fmt.Println("---")
 			buf, err := goyaml.Marshal(jobj)
-			FatalErrorCheck("Error marshalling output JSON to YAML", err)
+			if err := GenErrorIfCheck("Error marshalling output JSON to YAML", err); err != nil {
+				return err
+			}
 			fmt.Println(string(buf))
 		}
 	case "json":
-		formatted := Pretty(output, color)
+		formatted, err := Pretty(output, color)
+		if err := GenErrorIfCheck("Error formatting output JSON", err); err != nil {
+			return err
+		}
 		fmt.Println(formatted)
 	default:
-		log.Fatal().Msg("Output format must be json, yaml or stream")
+		return types.Kr8Error{Message: "Output format must be json, yaml or stream", Value: format}
 	}
+
+	return nil
 }
 
 // Configures the default options for the jsonnet formatter.
@@ -103,18 +116,20 @@ func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, er
 // If successful, returns what was written. If not successful, returns an error.
 func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (string, error) {
 	if err := os.MkdirAll(path, 0750); err != nil {
-		return "error creating resource directory", err
+		return "", GenErrorIfCheck("error creating resource directory", err)
 	}
 
 	jsonStr, err := json.MarshalIndent(objStruct, "", "  ")
 	if err != nil {
-		return "error marshalling component resource to json", err
+		return "", GenErrorIfCheck("error marshalling component resource to json", err)
 	}
 
 	jsonStrFormatted, err := FormatJsonnetString(string(jsonStr))
 	if err != nil {
-		return "error formatting component resource to json", err
+		return "", GenErrorIfCheck("error formatting component resource to json", err)
 	}
 
-	return jsonStrFormatted, (os.WriteFile(path+"/"+filename, []byte(jsonStrFormatted), 0600))
+	return jsonStrFormatted, GenErrorIfCheck("error writing file to disk",
+		os.WriteFile(path+"/"+filename, []byte(jsonStrFormatted), 0600),
+	)
 }
