@@ -56,11 +56,11 @@ func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error) {
 	for _, extvar := range vmconfig.ExtVars {
 		args := strings.SplitN(extvar, "=", 2)
 		if len(args) != 2 {
-			log.Fatal().Str("ext-str-file", extvar).Msg("Failed to parse. Missing '=' in parameter`")
+			return nil, types.Kr8Error{Message: "Failed to parse. Missing '=' in parameter`", Value: extvar}
 		}
 		v, err := os.ReadFile(args[1])
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 		jvm.ExtVar(args[0], string(v))
 	}
@@ -122,7 +122,7 @@ func JsonnetRenderFiles(
 func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmConfig types.VMConfig) error {
 	// Check if cluster and/or clusterparams are specified
 	if cmdFlagsJsonnet.Cluster == "" && cmdFlagsJsonnet.ClusterParams == "" {
-		log.Fatal().Msg("Please specify a --cluster name and/or --clusterparams")
+		return types.Kr8Error{Message: "Please specify a --cluster name and/or --clusterparams", Value: ""}
 	}
 
 	// Render the cluster parameters

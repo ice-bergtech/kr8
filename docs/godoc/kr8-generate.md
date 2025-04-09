@@ -12,7 +12,7 @@ import "github.com/ice-bergtech/kr8/pkg/generate"
 - [func GenProcessComponent\(vmconfig types.VMConfig, componentName string, kr8Spec types.Kr8ClusterSpec, kr8Opts types.Kr8Opts, config string, allConfig \*safeString, filters util.PathFilterOptions, paramsFile string\) error](<#GenProcessComponent>)
 - [func GenerateIncludesFiles\(includesFiles \[\]interface\{\}, kr8Spec types.Kr8ClusterSpec, kr8Opts types.Kr8Opts, config string, componentName string, compPath string, componentOutputDir string, jvm \*jsonnet.VM\) \(map\[string\]bool, error\)](<#GenerateIncludesFiles>)
 - [func GetClusterParams\(clusterDir string, vmConfig types.VMConfig\) \(map\[string\]string, error\)](<#GetClusterParams>)
-- [func ProcessFile\(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm \*jsonnet.VM\) string](<#ProcessFile>)
+- [func ProcessFile\(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm \*jsonnet.VM\) \(string, error\)](<#ProcessFile>)
 - [func SetupAndConfigureVM\(vmconfig types.VMConfig, config string, kr8Spec types.Kr8ClusterSpec, componentName string, compSpec types.Kr8ComponentSpec, allConfig \*safeString, filters util.PathFilterOptions, paramsFile string, kr8Opts types.Kr8Opts\) \(\*jsonnet.VM, string, error\)](<#SetupAndConfigureVM>)
 - [func SetupJvmForComponent\(vmconfig types.VMConfig, config string, kr8Spec types.Kr8ClusterSpec, componentName string\) \(\*jsonnet.VM, error\)](<#SetupJvmForComponent>)
 
@@ -72,10 +72,10 @@ func GetClusterParams(clusterDir string, vmConfig types.VMConfig) (map[string]st
 
 
 <a name="ProcessFile"></a>
-## func [ProcessFile](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/file_processing.go#L80-L88>)
+## func [ProcessFile](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/file_processing.go#L83-L91>)
 
 ```go
-func ProcessFile(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm *jsonnet.VM) string
+func ProcessFile(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm *jsonnet.VM) (string, error)
 ```
 
 Process an includes file. Based on the extension, it will process it differently.

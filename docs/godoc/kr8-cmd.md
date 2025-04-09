@@ -580,7 +580,7 @@ var VersionCmd = &cobra.Command{
         fmt.Println(RootCmd.Use + "+ Version: " + version)
         info, ok := debug.ReadBuildInfo()
         if !ok {
-            panic("Could not read build info")
+            log.Fatal().Msg("could not read build info")
         }
         stamp := retrieveStamp(info)
         fmt.Printf("  Built with %s on %s\n", stamp.InfoGoCompiler, stamp.InfoBuildTime)

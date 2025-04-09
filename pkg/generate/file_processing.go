@@ -44,7 +44,10 @@ func processIncludesFile(
 	// remember output filename for purging files
 	outputFileMap[incInfo.DestName+"."+incInfo.DestExt] = true
 
-	outStr := ProcessFile(inputFile, outputFile, kr8Spec, componentName, config, incInfo, jvm)
+	outStr, err := ProcessFile(inputFile, outputFile, kr8Spec, componentName, config, incInfo, jvm)
+	if err := util.GenErrorIfCheck("Error processing file", err); err != nil {
+		return err
+	}
 
 	log.Debug().Str("cluster", kr8Spec.Name).Str("component", componentName).Msg("Checking if file needs updating...")
 
@@ -85,7 +88,7 @@ func ProcessFile(
 	config string,
 	incInfo types.Kr8ComponentSpecIncludeObject,
 	jvm *jsonnet.VM,
-) string {
+) (string, error) {
 	log.Debug().Str("cluster", kr8Spec.Name).
 		Str("component", componentName).
 		Msg("Process file: " + inputFile + " -> " + outputFile)
@@ -113,14 +116,14 @@ func ProcessFile(
 		outStr, err = "", os.ErrInvalid
 	}
 	if err != nil {
-		log.Fatal().Str("cluster", kr8Spec.Name).
+		log.Error().Str("cluster", kr8Spec.Name).
 			Str("component", componentName).
 			Str("file", incInfo.File).
 			Err(err).
 			Msg(outStr)
 	}
 
-	return outStr
+	return outStr, err
 }
 
 func processJsonnet(jvm *jsonnet.VM, input string, snippetFilename string) (string, error) {
