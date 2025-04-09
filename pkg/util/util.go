@@ -104,10 +104,13 @@ func FilterItems(input map[string]string, pfilter PathFilterOptions) []string {
 
 // Logs an error and exits the program if the error is not nil.
 // Saves 3 lines per use and centralizes fatal errors for rewriting.
-func FatalErrorCheck(message string, err error) {
+
+func GenErrorIfCheck(message string, err error) error {
 	if err != nil {
 		log.Fatal().Err(err).Msg(message)
+		return types.Kr8Error{Message: message, Value: err}
 	}
+	return nil
 }
 
 // Using the allClusterParams variable and command flags to create a list of clusters to generate.
