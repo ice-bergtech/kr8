@@ -65,7 +65,7 @@ func TestCreateClusterSpec(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:        "genDirOverride set",
+			name:        "genDirOverride set relative path",
 			clusterName: "test-cluster",
 			spec: gjson.Parse(`{
 				"_kr8_spec": {
@@ -76,10 +76,33 @@ func TestCreateClusterSpec(t *testing.T) {
 			kr8Opts: Kr8Opts{
 				BaseDir: "/path/to/kr8",
 			},
-			genDirOverride: "/path/to/override/dir",
+			genDirOverride: "path/to/gen/dir",
 			wantKr8ClusterSpec: Kr8ClusterSpec{
 				PostProcessor:      "",
-				GenerateDir:        filepath.Join("/path/to/override/dir", "test-cluster"),
+				GenerateDir:        filepath.Join("/path/to/gen/dir", "test-cluster"),
+				GenerateShortNames: false,
+				PruneParams:        false,
+				ClusterDir:         filepath.Join("/path/to/override/dir", "test-cluster"),
+				Name:               "test-cluster",
+			},
+			wantErr: false,
+		},
+		{
+			name:        "genDirOverride set absolute path",
+			clusterName: "test-cluster",
+			spec: gjson.Parse(`{
+				"_kr8_spec": {
+					"postprocessor": "",
+					"generate_dir": "/path/to/custom/dir"
+				}
+			}`),
+			kr8Opts: Kr8Opts{
+				BaseDir: "/path/to/kr8",
+			},
+			genDirOverride: "/absolute/path/to/gen/dir",
+			wantKr8ClusterSpec: Kr8ClusterSpec{
+				PostProcessor:      "",
+				GenerateDir:        filepath.Join("/absolute/path/to/gen/dir", "test-cluster"),
 				GenerateShortNames: false,
 				PruneParams:        false,
 				ClusterDir:         filepath.Join("/path/to/override/dir", "test-cluster"),
@@ -98,12 +121,16 @@ func TestCreateClusterSpec(t *testing.T) {
 				testEntry.genDirOverride,
 			)
 			if (err != nil) != testEntry.wantErr {
-				t.Errorf("CreateClusterSpec() error = %v, wantErr %v", err, testEntry.wantErr)
+				t.Errorf("CreateClusterSpec() `%v` error = \n%v\n-wantErr-\n%v", testEntry.name, err, testEntry.wantErr)
 
 				return
 			}
 			if !reflect.DeepEqual(gotKr8ClusterSpec, testEntry.wantKr8ClusterSpec) {
-				t.Errorf("CreateClusterSpec() gotKr8ClusterSpec = %v, want %v", gotKr8ClusterSpec, testEntry.wantKr8ClusterSpec)
+				t.Errorf("CreateClusterSpec() `%v` got Kr8ClusterSpec = \n%v\n-want-\n%v",
+					testEntry.name,
+					gotKr8ClusterSpec,
+					testEntry.wantKr8ClusterSpec,
+				)
 			}
 		})
 	}
@@ -150,7 +177,7 @@ func TestExtractExtFiles(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := ExtractExtFiles(tt.spec)
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("extractExtFiles() got = %v, want %v", got, tt.want)
+				t.Errorf("extractExtFiles() `%v` got = \n%v\n-want-\n%v", tt.name, got, tt.want)
 			}
 		})
 	}
@@ -187,7 +214,7 @@ func TestExtractJpaths(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := ExtractJpaths(tt.spec)
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("extractJpaths() got = %v, want %v", got, tt.want)
+				t.Errorf("extractJpaths() `%v` got = \n%v\n-want-\n%v", tt.name, got, tt.want)
 			}
 		})
 	}
@@ -265,7 +292,7 @@ func TestExtractIncludes(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := ExtractIncludes(tt.spec)
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("extractIncludes() got = %v, want %v", got, tt.want)
+				t.Errorf("extractIncludes() `%v` got = \n%v\n-want-\n%v", tt.name, got, tt.want)
 			}
 		})
 	}
@@ -356,7 +383,7 @@ func TestCreateComponentSpec(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, testEntry.want) {
-				t.Errorf("CreateComponentSpec() got = %v, want %v", got, testEntry.want)
+				t.Errorf("CreateComponentSpec() `%v` got = \n%v\n-want-\n%v", testEntry.name, got, testEntry.want)
 			}
 		})
 	}
