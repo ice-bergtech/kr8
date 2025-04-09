@@ -33,10 +33,10 @@ func TestCreateClusterSpec(t *testing.T) {
 			genDirOverride: "",
 			wantKr8ClusterSpec: Kr8ClusterSpec{
 				PostProcessor:      "",
-				GenerateDir:        filepath.Join("/path/to/kr8", "test-cluster"),
+				GenerateDir:        "/path/to/kr8/generated",
 				GenerateShortNames: false,
 				PruneParams:        false,
-				ClusterDir:         filepath.Join("/path/to/kr8", "test-cluster"),
+				ClusterDir:         filepath.Join("/path/to/kr8/generated/", "test-cluster"),
 				Name:               "test-cluster",
 			},
 			wantErr: false,
@@ -56,10 +56,33 @@ func TestCreateClusterSpec(t *testing.T) {
 			genDirOverride: "",
 			wantKr8ClusterSpec: Kr8ClusterSpec{
 				PostProcessor:      "function(input) input",
-				GenerateDir:        filepath.Join("/path/to/kr8", "test-cluster"),
+				GenerateDir:        "/path/to/custom/dir",
 				GenerateShortNames: false,
 				PruneParams:        false,
-				ClusterDir:         filepath.Join("/path/to/kr8", "test-cluster"),
+				ClusterDir:         "/path/to/custom/dir/test-cluster",
+				Name:               "test-cluster",
+			},
+			wantErr: false,
+		},
+		{
+			name:        "custom values relative generate dir",
+			clusterName: "test-cluster",
+			spec: gjson.Parse(`{
+				"_kr8_spec": {
+					"postprocessor": "function(input) input",
+					"generate_dir": "rel/custom/dir"
+				}
+			}`),
+			kr8Opts: Kr8Opts{
+				BaseDir: "/path/to/kr8",
+			},
+			genDirOverride: "",
+			wantKr8ClusterSpec: Kr8ClusterSpec{
+				PostProcessor:      "function(input) input",
+				GenerateDir:        "/path/to/kr8/rel/custom/dir",
+				GenerateShortNames: false,
+				PruneParams:        false,
+				ClusterDir:         filepath.Join("/path/to/kr8/rel/custom/dir", "test-cluster"),
 				Name:               "test-cluster",
 			},
 			wantErr: false,
@@ -76,13 +99,13 @@ func TestCreateClusterSpec(t *testing.T) {
 			kr8Opts: Kr8Opts{
 				BaseDir: "/path/to/kr8",
 			},
-			genDirOverride: "path/to/gen/dir",
+			genDirOverride: "alt/gen/dir",
 			wantKr8ClusterSpec: Kr8ClusterSpec{
 				PostProcessor:      "",
-				GenerateDir:        filepath.Join("/path/to/gen/dir", "test-cluster"),
+				GenerateDir:        "/path/to/kr8/alt/gen/dir",
 				GenerateShortNames: false,
 				PruneParams:        false,
-				ClusterDir:         filepath.Join("/path/to/override/dir", "test-cluster"),
+				ClusterDir:         filepath.Join("/path/to/kr8/alt/gen/dir", "test-cluster"),
 				Name:               "test-cluster",
 			},
 			wantErr: false,
@@ -105,7 +128,7 @@ func TestCreateClusterSpec(t *testing.T) {
 				GenerateDir:        filepath.Join("/absolute/path/to/gen/dir", "test-cluster"),
 				GenerateShortNames: false,
 				PruneParams:        false,
-				ClusterDir:         filepath.Join("/path/to/override/dir", "test-cluster"),
+				ClusterDir:         filepath.Join("/absolute/path/to/gen/dir", "test-cluster"),
 				Name:               "test-cluster",
 			},
 			wantErr: false,
