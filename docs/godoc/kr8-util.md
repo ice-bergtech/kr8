@@ -30,7 +30,7 @@ Utility functions for directories and files
 
 
 <a name="CalculateClusterIncludesExcludes"></a>
-## func [CalculateClusterIncludesExcludes](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L126>)
+## func [CalculateClusterIncludesExcludes](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L127>)
 
 ```go
 func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string
@@ -39,7 +39,7 @@ func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilte
 Using the allClusterParams variable and command flags to create a list of clusters to generate. Clusters can be filtered with "=" for equality or "\~" for regex match.
 
 <a name="CheckObjectMatch"></a>
-## func [CheckObjectMatch](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L54>)
+## func [CheckObjectMatch](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L55>)
 
 ```go
 func CheckObjectMatch(input gjson.Result, filterString string) bool
@@ -66,7 +66,7 @@ func Colorize(input interface{}, colorNum int, disabled bool) string
 Colorize function from zerolog console.go file to replicate their coloring functionality. Source: https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389
 
 <a name="FatalErrorCheck"></a>
-## func [FatalErrorCheck](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L108>)
+## func [FatalErrorCheck](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L109>)
 
 ```go
 func FatalErrorCheck(message string, err error)
@@ -84,7 +84,7 @@ func FetchRepoUrl(url string, destination string, noop bool) error
 Fetch a git repo from a url and clone it to a destination directory. If the performFetch flag is false, it will log the command that would be run and return without doing anything.
 
 <a name="Filter"></a>
-## func [Filter](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L14>)
+## func [Filter](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L15>)
 
 ```go
 func Filter(vs []string, f func(string) bool) []string
@@ -93,7 +93,7 @@ func Filter(vs []string, f func(string) bool) []string
 Filter returns a new slice containing only the elements that satisfy the predicate function. From https://gobyexample.com/collection-functions
 
 <a name="FilterItems"></a>
-## func [FilterItems](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L74>)
+## func [FilterItems](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L75>)
 
 ```go
 func FilterItems(input map[string]string, pfilter PathFilterOptions) []string
@@ -120,7 +120,7 @@ func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, er
 Formats a jsonnet string using custom options.
 
 <a name="GenErrorIfCheck"></a>
-## func [GenErrorIfCheck](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L114>)
+## func [GenErrorIfCheck](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L115>)
 
 ```go
 func GenErrorIfCheck(message string, err error) error
@@ -192,7 +192,7 @@ func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (st
 Write out a struct to a specified path and file. If successful, returns what was written. If not successful, returns an error.
 
 <a name="PathFilterOptions"></a>
-## type [PathFilterOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L26-L50>)
+## type [PathFilterOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L27-L51>)
 
 Fill with string to include and exclude, using kr8's special parsing.
 

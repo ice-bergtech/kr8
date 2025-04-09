@@ -4,9 +4,10 @@ import (
 	"regexp"
 	"strings"
 
-	types "github.com/ice-bergtech/kr8/pkg/types"
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
+
+	types "github.com/ice-bergtech/kr8/pkg/types"
 )
 
 // Filter returns a new slice containing only the elements that satisfy the predicate function.

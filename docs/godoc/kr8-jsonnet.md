@@ -99,7 +99,7 @@ func MergeComponentDefaults(componentMap map[string]types.Kr8ClusterComponentRef
 
 
 <a name="NativeHelmTemplate"></a>
-## func [NativeHelmTemplate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L99>)
+## func [NativeHelmTemplate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L97>)
 
 ```go
 func NativeHelmTemplate() *jsonnet.NativeFunction
@@ -110,7 +110,7 @@ Allows executing helm template to process a helm chart and make available to kr8
 Source: https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L23
 
 <a name="NativeHelp"></a>
-## func [NativeHelp](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L66>)
+## func [NativeHelp](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L64>)
 
 ```go
 func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction
@@ -119,7 +119,7 @@ func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction
 
 
 <a name="NativeKompose"></a>
-## func [NativeKompose](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L146>)
+## func [NativeKompose](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L144>)
 
 ```go
 func NativeKompose() *jsonnet.NativeFunction
@@ -330,7 +330,7 @@ Substitutes a regex pattern in a string with another string.
 Inputs: "regex", "src", "repl".
 
 <a name="NativeSprigTemplate"></a>
-## func [NativeSprigTemplate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L107>)
+## func [NativeSprigTemplate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L105>)
 
 ```go
 func NativeSprigTemplate() *jsonnet.NativeFunction
@@ -341,7 +341,7 @@ Uses sprig to process passed in config data and template. Sprig template guide: 
 Inputs: "config" "templateStr".
 
 <a name="RegisterNativeFuncs"></a>
-## func [RegisterNativeFuncs](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L26>)
+## func [RegisterNativeFuncs](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L24>)
 
 ```go
 func RegisterNativeFuncs(jvm *jsonnet.VM)
