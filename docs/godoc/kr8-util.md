@@ -10,26 +10,27 @@ Utility functions for directories and files
 
 - [func CalculateClusterIncludesExcludes\(input map\[string\]string, filters PathFilterOptions\) \[\]string](<#CalculateClusterIncludesExcludes>)
 - [func CheckObjectMatch\(input gjson.Result, filterString string\) bool](<#CheckObjectMatch>)
-- [func CleanOutputDir\(outputFileMap map\[string\]bool, componentOutputDir string\)](<#CleanOutputDir>)
+- [func CleanOutputDir\(outputFileMap map\[string\]bool, componentOutputDir string\) error](<#CleanOutputDir>)
 - [func Colorize\(input interface\{\}, colorNum int, disabled bool\) string](<#Colorize>)
 - [func FatalErrorCheck\(message string, err error\)](<#FatalErrorCheck>)
-- [func FetchRepoUrl\(url string, destination string, performFetch bool\) error](<#FetchRepoUrl>)
+- [func FetchRepoUrl\(url string, destination string, noop bool\) error](<#FetchRepoUrl>)
 - [func Filter\(vs \[\]string, f func\(string\) bool\) \[\]string](<#Filter>)
 - [func FilterItems\(input map\[string\]string, pfilter PathFilterOptions\) \[\]string](<#FilterItems>)
 - [func FormatJsonnetString\(input string\) \(string, error\)](<#FormatJsonnetString>)
 - [func FormatJsonnetStringCustom\(input string, opts formatter.Options\) \(string, error\)](<#FormatJsonnetStringCustom>)
+- [func GenErrorIfCheck\(message string, err error\) error](<#GenErrorIfCheck>)
 - [func GetClusterFilenames\(searchDir string\) \(\[\]types.Kr8Cluster, error\)](<#GetClusterFilenames>)
 - [func GetClusterParamsFilenames\(basePath string, targetPath string\) \[\]string](<#GetClusterParamsFilenames>)
-- [func GetClusterPaths\(searchDir string, clusterName string\) string](<#GetClusterPaths>)
+- [func GetClusterPaths\(searchDir string, clusterName string\) \(string, error\)](<#GetClusterPaths>)
 - [func GetDefaultFormatOptions\(\) formatter.Options](<#GetDefaultFormatOptions>)
-- [func JsonnetPrint\(output string, format string, color bool\)](<#JsonnetPrint>)
-- [func Pretty\(input string, colorOutput bool\) string](<#Pretty>)
+- [func JsonnetPrint\(output string, format string, color bool\) error](<#JsonnetPrint>)
+- [func Pretty\(input string, colorOutput bool\) \(string, error\)](<#Pretty>)
 - [func WriteObjToJsonFile\(filename string, path string, objStruct interface\{\}\) \(string, error\)](<#WriteObjToJsonFile>)
 - [type PathFilterOptions](<#PathFilterOptions>)
 
 
 <a name="CalculateClusterIncludesExcludes"></a>
-## func [CalculateClusterIncludesExcludes](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L115>)
+## func [CalculateClusterIncludesExcludes](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L126>)
 
 ```go
 func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string
@@ -38,7 +39,7 @@ func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilte
 Using the allClusterParams variable and command flags to create a list of clusters to generate. Clusters can be filtered with "=" for equality or "\~" for regex match.
 
 <a name="CheckObjectMatch"></a>
-## func [CheckObjectMatch](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L53>)
+## func [CheckObjectMatch](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L54>)
 
 ```go
 func CheckObjectMatch(input gjson.Result, filterString string) bool
@@ -47,16 +48,16 @@ func CheckObjectMatch(input gjson.Result, filterString string) bool
 Checks if a input object matches a filter string. The filter string can be an equality match or a regex match.
 
 <a name="CleanOutputDir"></a>
-## func [CleanOutputDir](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/directories.go#L111>)
+## func [CleanOutputDir](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/directories.go#L109>)
 
 ```go
-func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string)
+func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error
 ```
 
 
 
 <a name="Colorize"></a>
-## func [Colorize](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L38>)
+## func [Colorize](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L40>)
 
 ```go
 func Colorize(input interface{}, colorNum int, disabled bool) string
@@ -65,7 +66,7 @@ func Colorize(input interface{}, colorNum int, disabled bool) string
 Colorize function from zerolog console.go file to replicate their coloring functionality. Source: https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389
 
 <a name="FatalErrorCheck"></a>
-## func [FatalErrorCheck](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L107>)
+## func [FatalErrorCheck](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L108>)
 
 ```go
 func FatalErrorCheck(message string, err error)
@@ -77,13 +78,13 @@ Logs an error and exits the program if the error is not nil. Saves 3 lines per u
 ## func [FetchRepoUrl](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/remote.go#L13>)
 
 ```go
-func FetchRepoUrl(url string, destination string, performFetch bool) error
+func FetchRepoUrl(url string, destination string, noop bool) error
 ```
 
 Fetch a git repo from a url and clone it to a destination directory. If the performFetch flag is false, it will log the command that would be run and return without doing anything.
 
 <a name="Filter"></a>
-## func [Filter](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L13>)
+## func [Filter](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L14>)
 
 ```go
 func Filter(vs []string, f func(string) bool) []string
@@ -92,7 +93,7 @@ func Filter(vs []string, f func(string) bool) []string
 Filter returns a new slice containing only the elements that satisfy the predicate function. From https://gobyexample.com/collection-functions
 
 <a name="FilterItems"></a>
-## func [FilterItems](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L73>)
+## func [FilterItems](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L74>)
 
 ```go
 func FilterItems(input map[string]string, pfilter PathFilterOptions) []string
@@ -101,7 +102,7 @@ func FilterItems(input map[string]string, pfilter PathFilterOptions) []string
 Given a map of string, filter them based on the provided options. The map value is parsed as a gjson result and then checked against the provided options.
 
 <a name="FormatJsonnetString"></a>
-## func [FormatJsonnetString](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L93>)
+## func [FormatJsonnetString](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L106>)
 
 ```go
 func FormatJsonnetString(input string) (string, error)
@@ -110,13 +111,22 @@ func FormatJsonnetString(input string) (string, error)
 Formats a jsonnet string using the default options.
 
 <a name="FormatJsonnetStringCustom"></a>
-## func [FormatJsonnetStringCustom](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L98>)
+## func [FormatJsonnetStringCustom](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L111>)
 
 ```go
 func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, error)
 ```
 
 Formats a jsonnet string using custom options.
+
+<a name="GenErrorIfCheck"></a>
+## func [GenErrorIfCheck](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L114>)
+
+```go
+func GenErrorIfCheck(message string, err error) error
+```
+
+
 
 <a name="GetClusterFilenames"></a>
 ## func [GetClusterFilenames](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/directories.go#L16>)
@@ -128,7 +138,7 @@ func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error)
 Get a list of cluster from within a directory. Walks the directory tree, creating a types.Kr8Cluster for each cluster.jsonnet file found.
 
 <a name="GetClusterParamsFilenames"></a>
-## func [GetClusterParamsFilenames](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/directories.go#L73>)
+## func [GetClusterParamsFilenames](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/directories.go#L71>)
 
 ```go
 func GetClusterParamsFilenames(basePath string, targetPath string) []string
@@ -137,16 +147,16 @@ func GetClusterParamsFilenames(basePath string, targetPath string) []string
 Get all cluster parameters within a directory. Walks through the directory hierarchy and returns all paths to \`params.jsonnet\` files.
 
 <a name="GetClusterPaths"></a>
-## func [GetClusterPaths](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/directories.go#L46>)
+## func [GetClusterPaths](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/directories.go#L45>)
 
 ```go
-func GetClusterPaths(searchDir string, clusterName string) string
+func GetClusterPaths(searchDir string, clusterName string) (string, error)
 ```
 
 Get a specific cluster within a directory by name. Returns the path to the cluster.
 
 <a name="GetDefaultFormatOptions"></a>
-## func [GetDefaultFormatOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L75>)
+## func [GetDefaultFormatOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L88>)
 
 ```go
 func GetDefaultFormatOptions() formatter.Options
@@ -155,10 +165,10 @@ func GetDefaultFormatOptions() formatter.Options
 Configures the default options for the jsonnet formatter.
 
 <a name="JsonnetPrint"></a>
-## func [JsonnetPrint](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L51>)
+## func [JsonnetPrint](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L53>)
 
 ```go
-func JsonnetPrint(output string, format string, color bool)
+func JsonnetPrint(output string, format string, color bool) error
 ```
 
 Print the jsonnet output in the specified format. Acceptable formats are: yaml, stream, json.
@@ -167,13 +177,13 @@ Print the jsonnet output in the specified format. Acceptable formats are: yaml, 
 ## func [Pretty](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L17>)
 
 ```go
-func Pretty(input string, colorOutput bool) string
+func Pretty(input string, colorOutput bool) (string, error)
 ```
 
 Pretty formats the input jsonnet string with indentation and optional color output.
 
 <a name="WriteObjToJsonFile"></a>
-## func [WriteObjToJsonFile](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L104>)
+## func [WriteObjToJsonFile](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/json.go#L117>)
 
 ```go
 func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (string, error)
@@ -182,7 +192,7 @@ func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (st
 Write out a struct to a specified path and file. If successful, returns what was written. If not successful, returns an error.
 
 <a name="PathFilterOptions"></a>
-## type [PathFilterOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L25-L49>)
+## type [PathFilterOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/util/util.go#L26-L50>)
 
 Fill with string to include and exclude, using kr8's special parsing.
 
