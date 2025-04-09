@@ -22,10 +22,8 @@ func TestCreateClusterSpec(t *testing.T) {
 			name:        "default values",
 			clusterName: "test-cluster",
 			spec: gjson.Parse(`{
-				"_kr8_spec": {
 					"postprocessor": "",
 					"generate_dir": ""
-				}
 			}`),
 			kr8Opts: Kr8Opts{
 				BaseDir: "/path/to/kr8",
@@ -45,10 +43,8 @@ func TestCreateClusterSpec(t *testing.T) {
 			name:        "custom values",
 			clusterName: "test-cluster",
 			spec: gjson.Parse(`{
-				"_kr8_spec": {
 					"postprocessor": "function(input) input",
 					"generate_dir": "/path/to/custom/dir"
-				}
 			}`),
 			kr8Opts: Kr8Opts{
 				BaseDir: "/path/to/kr8",
@@ -68,10 +64,8 @@ func TestCreateClusterSpec(t *testing.T) {
 			name:        "custom values relative generate dir",
 			clusterName: "test-cluster",
 			spec: gjson.Parse(`{
-				"_kr8_spec": {
 					"postprocessor": "function(input) input",
 					"generate_dir": "rel/custom/dir"
-				}
 			}`),
 			kr8Opts: Kr8Opts{
 				BaseDir: "/path/to/kr8",
@@ -91,10 +85,8 @@ func TestCreateClusterSpec(t *testing.T) {
 			name:        "genDirOverride set relative path",
 			clusterName: "test-cluster",
 			spec: gjson.Parse(`{
-				"_kr8_spec": {
 					"postprocessor": "",
 					"generate_dir": "/path/to/custom/dir"
-				}
 			}`),
 			kr8Opts: Kr8Opts{
 				BaseDir: "/path/to/kr8",
@@ -114,10 +106,8 @@ func TestCreateClusterSpec(t *testing.T) {
 			name:        "genDirOverride set absolute path",
 			clusterName: "test-cluster",
 			spec: gjson.Parse(`{
-				"_kr8_spec": {
 					"postprocessor": "",
 					"generate_dir": "/path/to/custom/dir"
-				}
 			}`),
 			kr8Opts: Kr8Opts{
 				BaseDir: "/path/to/kr8",
