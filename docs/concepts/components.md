@@ -5,6 +5,8 @@ Components can be declared multiple times within a cluster, as long as they are 
 
 In a kr8+ project, components are defined in `./components` by default, or the directory specified by the `--componentdir`, `-X` flags.
 
+The component spec is defined as a golang struct: [docs/godoc/kr8-types.md#Kr8ComponentJsonnet]
+
 Your component might begin life before kr8+ in one of a few ways:
 
   - a [Helm Chart](https://github.com/helm/charts/tree/master/stable)
