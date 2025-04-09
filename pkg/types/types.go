@@ -56,6 +56,7 @@ type Kr8ClusterSpec struct {
 	// if this is true, we prune component parameters
 	PruneParams bool `json:"prune_params"`
 	// Additional information used to process the cluster that is not stored with it.
+	// Cluster output directory
 	ClusterDir string `json:"-"`
 }
 
@@ -74,7 +75,7 @@ func CreateClusterSpec(
 	}
 	if clGenerateDir == "" {
 		log.Warn().Msg("generate_dir should be set in cluster parameters or passed as generate-dir flag.  Defaulting to ./")
-		clGenerateDir = "./"
+		clGenerateDir = "generated"
 	}
 	// if generateDir does not start with /, then it goes in baseDir
 	if !strings.HasPrefix(clGenerateDir, "/") {
