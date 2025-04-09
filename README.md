@@ -135,12 +135,12 @@ task -l
 task: Available tasks for this project:
 * 01_setup:                     Instal dev tools                                         (aliases: setup, s)
 * 01_setup-bats:                Install bats testing tools                               (aliases: setup-bats)
-* 02_build:                     Build kr8+ for your local system                          (aliases: build, b)
+* 02_build:                     Build kr8+ for your local system                         (aliases: build, b)
 * 03_build-snapshot:            Build a snapshot for all platforms using goreleaser      (aliases: build-snapshot, bs)
 * 03_generate-bats-tests:       Generate resources to test against                       (aliases: gt)
-* 03_test-go:                   Tesk kr8+ for your local system                           (aliases: test, t)
-* 03_test-package:              Test compiled kr8+ binary against test inputs             (aliases: test-package, tp)
-* 04_generate-examples:         Generate example clusters and components                 (aliases: ge, gen)
+* 03_test-go:                   Tesk kr8+ for your local system                          (aliases: test, t)
+* 03_test-package:              Test compiled kr8+ binary against test inputs            (aliases: test-package, tp)
+* 04_generate-examples:         Generate example clusters and components with kr8+       (aliases: ge, gen)
 ```
 
 #### Examples
