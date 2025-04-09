@@ -15,17 +15,16 @@ import (
 // Walks the directory tree, creating a types.Kr8Cluster for each cluster.jsonnet file found.
 func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error) {
 	fileList := make([]string, 0)
-
-	FatalErrorCheck(
-		"Error building cluster list",
-		filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {
-			fileList = append(fileList, path)
-			// Pass error through
-			return err
-		}),
-	)
-
 	ClusterData := []types.Kr8Cluster{}
+
+	err := filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {
+		fileList = append(fileList, path)
+		// Pass error through
+		return err
+	})
+	if err != nil {
+		return ClusterData, GenErrorIfCheck("Error building cluster list", err)
+	}
 
 	for _, file := range fileList {
 		// get the filename
@@ -43,29 +42,28 @@ func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error) {
 
 // Get a specific cluster within a directory by name.
 // Returns the path to the cluster.
-func GetClusterPaths(searchDir string, clusterName string) string {
+func GetClusterPaths(searchDir string, clusterName string) (string, error) {
 	clusterPath := ""
 
-	FatalErrorCheck(
-		"Error building cluster list",
-		filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {
-			dir, file := filepath.Split(path)
-			if filepath.Base(dir) == clusterName && file == "cluster.jsonnet" {
-				clusterPath = path
-				// No error
-				return nil
-			} else {
-				// Pass back the error
-				return err
-			}
-		}),
-	)
-
+	err := filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {
+		dir, file := filepath.Split(path)
+		if filepath.Base(dir) == clusterName && file == "cluster.jsonnet" {
+			clusterPath = path
+			// No error
+			return nil
+		} else {
+			// Pass back the error
+			return err
+		}
+	})
+	if err != nil {
+		return "", GenErrorIfCheck("Error building cluster list", err)
+	}
 	if clusterPath == "" {
-		log.Fatal().Msg("Could not find cluster: " + clusterName)
+		return "", types.Kr8Error{Message: "Could not find cluster: " + clusterName, Value: ""}
 	}
 
-	return clusterPath
+	return clusterPath, nil
 }
 
 // Get all cluster parameters within a directory.
@@ -108,14 +106,18 @@ func GetClusterParamsFilenames(basePath string, targetPath string) []string {
 	return results
 }
 
-func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) {
+func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error {
 	// clean component dir
 	d, err := os.Open(filepath.Clean(componentOutputDir))
-	FatalErrorCheck("", err)
+	if err != nil {
+		return err
+	}
 	// Lifetime of function
 	defer d.Close()
 	names, err := d.Readdirnames(-1)
-	FatalErrorCheck("", err)
+	if err != nil {
+		return err
+	}
 	for _, name := range names {
 		if _, ok := outputFileMap[name]; ok {
 			// file is managed
@@ -124,8 +126,11 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) {
 		if filepath.Ext(name) == ".yaml" {
 			delFile := filepath.Join(componentOutputDir, name)
 			err = os.RemoveAll(delFile)
-			FatalErrorCheck("", err)
+			if err != nil {
+				return err
+			}
 			log.Debug().Msg("Deleted: " + delFile)
 		}
 	}
+	return nil
 }
