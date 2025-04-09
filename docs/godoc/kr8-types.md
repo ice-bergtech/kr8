@@ -85,7 +85,7 @@ type ExtFileVar map[string]string
 ```
 
 <a name="KomposeConvertOptions"></a>
-## type [KomposeConvertOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L22-L96>)
+## type [KomposeConvertOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L23-L97>)
 
 A struct describing a compose file that will be processed by kompose to produce kubernetes manifests.
 
@@ -170,7 +170,7 @@ type KomposeConvertOptions struct {
 ```
 
 <a name="Create"></a>
-### func [Create](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L99>)
+### func [Create](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L100>)
 
 ```go
 func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *KomposeConvertOptions
@@ -179,7 +179,7 @@ func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *Kompos
 Initialie Kompose options with sensible defaults.
 
 <a name="KomposeConvertOptions.Convert"></a>
-### func \(KomposeConvertOptions\) [Convert](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L207>)
+### func \(KomposeConvertOptions\) [Convert](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L208>)
 
 ```go
 func (k KomposeConvertOptions) Convert() (interface{}, error)
@@ -188,7 +188,7 @@ func (k KomposeConvertOptions) Convert() (interface{}, error)
 Converts a Docker Compose file described by k into a set of kubernetes manifests.
 
 <a name="KomposeConvertOptions.GenKomposePkgOpts"></a>
-### func \(KomposeConvertOptions\) [GenKomposePkgOpts](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L131>)
+### func \(KomposeConvertOptions\) [GenKomposePkgOpts](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L132>)
 
 ```go
 func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions
@@ -203,7 +203,7 @@ https://pkg.go.dev/github.com/kubernetes/kompose@v1.35.0/pkg/kobject#ConvertOpti
 https://github.com/kubernetes/kompose/blob/v1.35.0/pkg/app/app.go#L166
 
 <a name="KomposeConvertOptions.Validate"></a>
-### func \(KomposeConvertOptions\) [Validate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L195>)
+### func \(KomposeConvertOptions\) [Validate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L196>)
 
 ```go
 func (k KomposeConvertOptions) Validate() error

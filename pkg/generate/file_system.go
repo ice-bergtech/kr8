@@ -4,9 +4,10 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/rs/zerolog/log"
+
 	types "github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
-	"github.com/rs/zerolog/log"
 )
 
 func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error {

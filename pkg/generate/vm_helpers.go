@@ -6,10 +6,11 @@ import (
 	"strings"
 
 	jsonnet "github.com/google/go-jsonnet"
+	"github.com/rs/zerolog/log"
+
 	jnetvm "github.com/ice-bergtech/kr8/pkg/jnetvm"
 	types "github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
-	"github.com/rs/zerolog/log"
 )
 
 // This function sets up the JVM for a given component.

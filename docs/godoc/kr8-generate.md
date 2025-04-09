@@ -18,7 +18,7 @@ import "github.com/ice-bergtech/kr8/pkg/generate"
 
 
 <a name="CheckIfUpdateNeeded"></a>
-## func [CheckIfUpdateNeeded](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/file_system.go#L68>)
+## func [CheckIfUpdateNeeded](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/file_system.go#L69>)
 
 ```go
 func CheckIfUpdateNeeded(outFile string, outStr string) (bool, error)
@@ -27,7 +27,7 @@ func CheckIfUpdateNeeded(outFile string, outStr string) (bool, error)
 Check if a file needs updating based on its current contents and the new contents.
 
 <a name="CleanOutputDir"></a>
-## func [CleanOutputDir](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/file_system.go#L12>)
+## func [CleanOutputDir](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/file_system.go#L13>)
 
 ```go
 func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error
@@ -72,7 +72,7 @@ func GetClusterParams(clusterDir string, vmConfig types.VMConfig) (map[string]st
 
 
 <a name="ProcessFile"></a>
-## func [ProcessFile](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/file_processing.go#L83-L91>)
+## func [ProcessFile](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/file_processing.go#L84-L92>)
 
 ```go
 func ProcessFile(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm *jsonnet.VM) (string, error)
@@ -96,7 +96,7 @@ func SetupAndConfigureVM(vmconfig types.VMConfig, config string, kr8Spec types.K
 
 
 <a name="SetupJvmForComponent"></a>
-## func [SetupJvmForComponent](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/vm_helpers.go#L19-L24>)
+## func [SetupJvmForComponent](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/vm_helpers.go#L20-L25>)
 
 ```go
 func SetupJvmForComponent(vmconfig types.VMConfig, config string, kr8Spec types.Kr8ClusterSpec, componentName string) (*jsonnet.VM, error)
