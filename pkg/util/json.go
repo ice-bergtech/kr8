@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"os"
 
-	formatter "github.com/google/go-jsonnet/formatter"
-
 	"github.com/fatih/color"
 	goyaml "github.com/ghodss/yaml"
+	formatter "github.com/google/go-jsonnet/formatter"
 	"github.com/hokaccha/go-prettyjson"
-	"github.com/rs/zerolog/log"
+
+	types "github.com/ice-bergtech/kr8/pkg/types"
 )
 
 // Pretty formats the input jsonnet string with indentation and optional color output.
-func Pretty(input string, colorOutput bool) string {
+func Pretty(input string, colorOutput bool) (string, error) {
 	if input == "" {
 		// escape hatch for empty input
 		return "", nil
