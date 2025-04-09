@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -185,9 +186,13 @@ func ExtractIncludes(spec gjson.Result) []interface{} {
 // Extracts a component spec from a jsonnet object.
 func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
 	specM := spec.Map()
+	log.Debug().Msg(spec.String())
 	// spec is missing?
 	if len(specM) == 0 {
-		log.Fatal().Msg("Component has no `kr8_spec` object")
+		log.Error().Msg("Component has no `kr8_spec` object")
+		// intetionally create an error to return
+		return Kr8ComponentSpec{},
+			Kr8Error{Message: "Component has no `kr8_spec` object", Value: ""}
 	}
 
 	log.Debug().Msg("Component spec: " + spec.Str)
@@ -248,4 +253,14 @@ type VMConfig struct {
 	ExtVars []string `json:"ext_str_file" yaml:"ext_str_files"`
 	// base directory for the project
 	BaseDir string `json:"base_dir" yaml:"base_dir"`
+}
+
+type Kr8Error struct {
+	Message string
+	Value   interface{}
+}
+
+// Error implements error.
+func (e Kr8Error) Error() string {
+	return fmt.Sprintf("%s: %v", e.Message, e.Value)
 }
