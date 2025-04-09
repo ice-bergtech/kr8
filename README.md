@@ -1,7 +1,7 @@
 # kr8+
 
 [![CI status](https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg)](https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI)
-![Go Version](https://img.shields.io/badge/go%20version-%3E=1.23-61CFDD.svg?style=flat-square)
+![Go Version](https://img.shields.io/badge/go%20version-%3E=1.24-61CFDD.svg?style=flat-square)
 
 kr8+ is a fork of [kr8](https://github.com/apptio/kr8) with some additional features and improvements.
 kr8 was used in production to great success at Apptio for managing components of multiple Kubernetes clusters.
@@ -72,7 +72,7 @@ Jsonnet was chosen because it allows us to use code for configuration, while sta
 ## Development
 
 kr8+ is coded in [Golang](https://golang.org/).
-Currently, version `1.23.0` is used.
+Currently, version `1.24.2` is used.
 
 Common tasks can be executed with `go-task`.
 
@@ -80,7 +80,7 @@ Tasks are described in [Taskfile.yml](Taskfile.yml).
 
 ### Prerequisites
 
-- Go `1.23` or later
+- Go `1.24` or later
 - `git` for cloning submodules
 - [go-task](https://taskfile.dev/installation/) for task automation
 - [golangci-lint](https://golangci-lint.run/welcome/install/) for linting
