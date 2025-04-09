@@ -6,7 +6,11 @@
     extfiles: {},
     jpaths: [],
     includes: [
-      "component.jsonnet",
+      {
+        file: "component.jsonnet",
+        dest_name: "component",
+        dest_ext: "yaml",
+      },
     ],
   },
   namespace: "Default",

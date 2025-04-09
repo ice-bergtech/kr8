@@ -268,7 +268,7 @@ func getAllComponentParamsThreadsafe(
 }
 
 func GenerateIncludesFiles(
-	includesFiles []interface{},
+	includesFiles []types.Kr8ComponentSpecIncludeObject,
 	kr8Spec types.Kr8ClusterSpec,
 	kr8Opts types.Kr8Opts,
 	config string,
@@ -279,35 +279,14 @@ func GenerateIncludesFiles(
 ) (map[string]bool, error) {
 	outputFileMap := make(map[string]bool)
 	for _, include := range includesFiles {
-		incInfo := types.Kr8ComponentSpecIncludeObject{
-			DestExt:  "yaml",
-			DestDir:  "",
-			DestName: "",
-			File:     "",
-		}
-		switch val := include.(type) {
-		case string:
-			fileName := val
-			incInfo = types.Kr8ComponentSpecIncludeObject{
-				File:     fileName,
-				DestExt:  "yaml", // default to yaml ,
-				DestDir:  "",
-				DestName: "",
-			}
-		case types.Kr8ComponentSpecIncludeObject:
-			// include is a map with multiple fields
-			incInfo = val
-		default:
-			return nil, types.Kr8Error{Message: "Invalid include type", Value: val}
-		}
-		if incInfo.DestName == "" {
+		if include.DestName == "" {
 			if kr8Spec.GenerateShortNames {
-				sBase := filepath.Base(incInfo.File)
-				incInfo.DestName = sBase[0 : len(sBase)-len(filepath.Ext(include.(string)))]
+				sBase := filepath.Base(include.File)
+				include.DestName = sBase[0 : len(sBase)-len(filepath.Ext(include.File))]
 			} else {
 				// replaces slashes with _ in multi-dir paths and replace extension with yaml
-				incInfo.DestName = strings.ReplaceAll(
-					incInfo.File[0:len(incInfo.File)-len(filepath.Ext(include.(string)))],
+				include.DestName = strings.ReplaceAll(
+					include.File[0:len(include.File)-len(filepath.Ext(include.File))],
 					"/", "_",
 				)
 			}
@@ -320,7 +299,7 @@ func GenerateIncludesFiles(
 			componentName,
 			compPath,
 			componentOutputDir,
-			incInfo,
+			include,
 			outputFileMap,
 		)
 		if err != nil {

@@ -52,7 +52,7 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 			Kr8_allparams:         false,
 			Kr8_allclusters:       false,
 			DisableOutputDirClean: false,
-			Includes:              []interface{}{},
+			Includes:              []types.Kr8ComponentSpecIncludeObject{},
 			ExtFiles:              map[string]string{},
 			JPaths:                []string{},
 		},
@@ -63,7 +63,10 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 	}
 	switch componentOptions.ComponentType {
 	case "jsonnet":
-		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes, "component.jsonnet")
+		compJson.Kr8Spec.Includes = append(
+			compJson.Kr8Spec.Includes,
+			types.Kr8ComponentSpecIncludeObject{File: "component.jsonnet", DestName: "component", DestExt: "yaml"},
+		)
 	case "yml":
 		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes,
 			types.Kr8ComponentSpecIncludeObject{

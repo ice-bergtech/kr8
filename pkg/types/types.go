@@ -126,7 +126,7 @@ type Kr8ComponentSpec struct {
 	// Additional jsonnet libs to the jsonnet vm, component-path scoped
 	JPaths []string `json:"jpaths"`
 	// A list of filenames to include and output as files
-	Includes []interface{} `json:"includes"`
+	Includes Kr8ComponentSpecIncludes `json:"includes"`
 }
 
 // Extract jsonnet extVar defintions from spec.
@@ -153,34 +153,19 @@ func ExtractJpaths(spec gjson.Result) []string {
 }
 
 // Extract jsonnet includes filenames or objects from spec.
-func ExtractIncludes(spec gjson.Result) []interface{} {
+func ExtractIncludes(spec gjson.Result) (Kr8ComponentSpecIncludes, error) {
 	incl := spec.Get("includes")
-	includes := make([]interface{}, len(incl.Array()))
-	for idx, item := range incl.Array() {
-		switch item.Type {
-		case gjson.JSON:
-			var include Kr8ComponentSpecIncludeObject
-			err := json.Unmarshal([]byte(item.String()), &include)
-			if err != nil {
-				log.Info().Msg("Error unmarshalling include object: " + item.String() + " skipping.")
-
-				continue
-			}
-			includes[idx] = include
-		case gjson.String:
-			includes[idx] = item.String()
-		case gjson.True:
-		case gjson.False:
-		case gjson.Number:
-		case gjson.Null:
-		default:
-			log.Error().Msg("Includes list item is not a string or json object, skipping")
-
-			continue
-		}
+	includes := Kr8ComponentSpecIncludes{}
+	if incl.String() == "" {
+		return includes, nil
 	}
 
-	return includes
+	err := json.Unmarshal([]byte(incl.String()), &includes)
+	if err != nil {
+		log.Error().Err(err).Msg("Error unmarshalling include object: " + incl.String() + " skipping.")
+	}
+
+	return includes, err
 }
 
 // Extracts a component spec from a jsonnet object.
@@ -197,13 +182,19 @@ func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
 
 	log.Debug().Msg("Component spec: " + spec.Str)
 
+	includes, err := ExtractIncludes(spec)
+	if err != nil {
+		return Kr8ComponentSpec{},
+			Kr8Error{Message: "Component includes are malformed", Value: err}
+	}
+
 	componentSpec := Kr8ComponentSpec{
 		Kr8_allparams:         spec.Get("enable_kr8_allparams").Bool(),
 		Kr8_allclusters:       spec.Get("enable_kr8_allclusters").Bool(),
 		DisableOutputDirClean: spec.Get("disable_output_clean").Bool(),
 		ExtFiles:              ExtractExtFiles(spec),
 		JPaths:                ExtractJpaths(spec),
-		Includes:              ExtractIncludes(spec),
+		Includes:              includes,
 	}
 
 	return componentSpec, nil
@@ -213,12 +204,6 @@ func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
 // Keys are the variable names, values are the paths to the files to load as strings into the jsonnet vm.
 // To reference the variable in jsonnet code, use std.extvar("variable_name").
 type ExtFileVar map[string]string
-
-// A struct describing an included file that will be processed to produce a file.
-type Kr8ComponentSpecIncludeFile interface {
-	string
-	Kr8ComponentSpecIncludeObject
-}
 
 // An includes object which configures how kr8 includes an object.
 // It allows configuring the included file's destination directory and file name.
@@ -233,6 +218,62 @@ type Kr8ComponentSpecIncludeObject struct {
 	DestName string `json:"dest_name,omitempty"`
 	// override destination file extension
 	DestExt string `json:"dest_ext,omitempty"`
+}
+
+// Define Kr8ComponentSpecIncludes to handle dynamic decoding.
+type Kr8ComponentSpecIncludes []Kr8ComponentSpecIncludeObject
+
+// Implement custom unmarshaling for dynamic decoding.
+func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error {
+	// Check if the data is a single string
+	if data[0] == '"' { // JSON strings start with a double quote
+		var file string
+		if err := json.Unmarshal(data, &file); err != nil {
+			return err
+		}
+		// strip extension from file
+		ext := filepath.Ext(file)
+		fileName := strings.TrimSuffix(file, ext)
+		// Add a default Kr8ComponentSpecIncludeObject using the string as the file
+		*k = append(*k, Kr8ComponentSpecIncludeObject{
+			File:     file,
+			DestExt:  "yaml",
+			DestName: fileName,
+		})
+
+		return nil
+	}
+
+	// Otherwise, expect an array of objects or strings
+	var rawIncludes []json.RawMessage
+	if err := json.Unmarshal(data, &rawIncludes); err != nil {
+		return err
+	}
+
+	for _, raw := range rawIncludes {
+		if raw[0] == '"' { // Check if it's a string
+			var file string
+			if err := json.Unmarshal(raw, &file); err != nil {
+				return err
+			}
+			// strip extension from file
+			ext := filepath.Ext(file)
+			fileName := strings.TrimSuffix(file, ext)
+			*k = append(*k, Kr8ComponentSpecIncludeObject{
+				File:     file,
+				DestExt:  "yaml",
+				DestName: fileName,
+			})
+		} else { // Otherwise, it's an object
+			var include Kr8ComponentSpecIncludeObject
+			if err := json.Unmarshal(raw, &include); err != nil {
+				return err
+			}
+			*k = append(*k, include)
+		}
+	}
+
+	return nil
 }
 
 // Options for running the jsonnet command.

@@ -237,20 +237,24 @@ func TestExtractIncludes(t *testing.T) {
 	tests := []struct {
 		name string
 		spec gjson.Result
-		want []interface{}
+		want Kr8ComponentSpecIncludes
 	}{
 		{
 			name: "empty spec",
 			spec: gjson.Parse(`{}`),
-			want: make([]interface{}, 0),
+			want: make(Kr8ComponentSpecIncludes, 0),
 		},
 		{
 			name: "single include file",
 			spec: gjson.Parse(`{
 				"includes": ["/path/to/file1"]
 			}`),
-			want: []interface{}{
-				"/path/to/file1",
+			want: Kr8ComponentSpecIncludes{
+				Kr8ComponentSpecIncludeObject{
+					File:     "/path/to/file1",
+					DestName: "/path/to/file1",
+					DestExt:  "yaml",
+				},
 			},
 		},
 		{
@@ -258,9 +262,17 @@ func TestExtractIncludes(t *testing.T) {
 			spec: gjson.Parse(`{
 				"includes": ["/path/to/file1", "/path/to/file2"]
 			}`),
-			want: []interface{}{
-				"/path/to/file1",
-				"/path/to/file2",
+			want: Kr8ComponentSpecIncludes{
+				Kr8ComponentSpecIncludeObject{
+					File:     "/path/to/file1",
+					DestName: "/path/to/file1",
+					DestExt:  "yaml",
+				},
+				Kr8ComponentSpecIncludeObject{
+					File:     "/path/to/file2",
+					DestName: "/path/to/file2",
+					DestExt:  "yaml",
+				},
 			},
 		},
 		{
@@ -272,7 +284,7 @@ func TestExtractIncludes(t *testing.T) {
 					}
 				]
 			}`),
-			want: []interface{}{
+			want: Kr8ComponentSpecIncludes{
 				Kr8ComponentSpecIncludeObject{
 					File: "/path/to/file1",
 				},
@@ -290,7 +302,7 @@ func TestExtractIncludes(t *testing.T) {
 					}
 				]
 			}`),
-			want: []interface{}{
+			want: Kr8ComponentSpecIncludes{
 				Kr8ComponentSpecIncludeObject{
 					File: "/path/to/file1",
 				},
@@ -303,7 +315,7 @@ func TestExtractIncludes(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := ExtractIncludes(tt.spec)
+			got, _ := ExtractIncludes(tt.spec)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("extractIncludes() `%v` got = \n%v\n-want-\n%v", tt.name, got, tt.want)
 			}
@@ -381,9 +393,9 @@ func TestCreateComponentSpec(t *testing.T) {
 				"includes": ["/path/to/file1", "/path/to/file2"]
 			}`),
 			want: Kr8ComponentSpec{
-				Includes: []interface{}{
-					"/path/to/file1",
-					"/path/to/file2",
+				Includes: Kr8ComponentSpecIncludes{
+					Kr8ComponentSpecIncludeObject{File: "/path/to/file1"},
+					Kr8ComponentSpecIncludeObject{File: "/path/to/file2"},
 				},
 			},
 		},
