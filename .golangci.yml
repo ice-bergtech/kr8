@@ -93,6 +93,8 @@ linters:
       exclude:
         - '.+/cobra\.Command$'
         - 'survey'
+    funlen:
+      ignore-comments: true
     tagliatelle:
       case:
         use-field-name: false
@@ -120,6 +122,12 @@ linters:
           # Cluster jsonnet vm config
           - 'base_dir'
           - 'ext_str_file'
+  exclusions:
+    rules:
+      - path: '(.+)_test\.go'
+        linters:
+          - funlen
+          - goconst
 
 output:
   formats:

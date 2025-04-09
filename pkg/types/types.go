@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -56,6 +57,7 @@ type Kr8ClusterSpec struct {
 	// if this is true, we prune component parameters
 	PruneParams bool `json:"prune_params"`
 	// Additional information used to process the cluster that is not stored with it.
+	// Cluster output directory
 	ClusterDir string `json:"-"`
 }
 
@@ -73,7 +75,8 @@ func CreateClusterSpec(
 		clGenerateDir = spec.Get("generate_dir").String()
 	}
 	if clGenerateDir == "" {
-		log.Fatal().Msg("_kr8_spec.generate_dir must be set in parameters or passed as generate-dir flag")
+		log.Warn().Msg("generate_dir should be set in cluster parameters or passed as generate-dir flag.  Defaulting to ./")
+		clGenerateDir = "generated"
 	}
 	// if generateDir does not start with /, then it goes in baseDir
 	if !strings.HasPrefix(clGenerateDir, "/") {
@@ -127,7 +130,7 @@ type Kr8ComponentSpec struct {
 }
 
 // Extract jsonnet extVar defintions from spec.
-func extractExtFiles(spec gjson.Result) map[string]string {
+func ExtractExtFiles(spec gjson.Result) map[string]string {
 	result := make(map[string]string)
 	for k, v := range spec.Get("extfiles").Map() {
 		if v.Type == gjson.String {
@@ -139,7 +142,7 @@ func extractExtFiles(spec gjson.Result) map[string]string {
 }
 
 // Extract jsonnet lib paths from spec.
-func extractJpaths(spec gjson.Result) []string {
+func ExtractJpaths(spec gjson.Result) []string {
 	jPathsInput := spec.Get("jpaths").Array()
 	jPathsOutput := make([]string, len(jPathsInput))
 	for i, p := range jPathsInput {
@@ -150,7 +153,7 @@ func extractJpaths(spec gjson.Result) []string {
 }
 
 // Extract jsonnet includes filenames or objects from spec.
-func extractIncludes(spec gjson.Result) []interface{} {
+func ExtractIncludes(spec gjson.Result) []interface{} {
 	incl := spec.Get("includes")
 	includes := make([]interface{}, len(incl.Array()))
 	for idx, item := range incl.Array() {
@@ -171,7 +174,9 @@ func extractIncludes(spec gjson.Result) []interface{} {
 		case gjson.Number:
 		case gjson.Null:
 		default:
-			log.Fatal().Msg("Includes list item is not a string or json object")
+			log.Error().Msg("Includes list item is not a string or json object, skipping")
+
+			continue
 		}
 	}
 
@@ -181,9 +186,13 @@ func extractIncludes(spec gjson.Result) []interface{} {
 // Extracts a component spec from a jsonnet object.
 func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
 	specM := spec.Map()
+	log.Debug().Msg(spec.String())
 	// spec is missing?
 	if len(specM) == 0 {
-		log.Fatal().Msg("Component has no `kr8_spec` object")
+		log.Error().Msg("Component has no `kr8_spec` object")
+		// intetionally create an error to return
+		return Kr8ComponentSpec{},
+			Kr8Error{Message: "Component has no `kr8_spec` object", Value: ""}
 	}
 
 	log.Debug().Msg("Component spec: " + spec.Str)
@@ -192,9 +201,9 @@ func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
 		Kr8_allparams:         spec.Get("enable_kr8_allparams").Bool(),
 		Kr8_allclusters:       spec.Get("enable_kr8_allclusters").Bool(),
 		DisableOutputDirClean: spec.Get("disable_output_clean").Bool(),
-		ExtFiles:              extractExtFiles(spec),
-		JPaths:                extractJpaths(spec),
-		Includes:              extractIncludes(spec),
+		ExtFiles:              ExtractExtFiles(spec),
+		JPaths:                ExtractJpaths(spec),
+		Includes:              ExtractIncludes(spec),
 	}
 
 	return componentSpec, nil
@@ -244,4 +253,14 @@ type VMConfig struct {
 	ExtVars []string `json:"ext_str_file" yaml:"ext_str_files"`
 	// base directory for the project
 	BaseDir string `json:"base_dir" yaml:"base_dir"`
+}
+
+type Kr8Error struct {
+	Message string
+	Value   interface{}
+}
+
+// Error implements error.
+func (e Kr8Error) Error() string {
+	return fmt.Sprintf("%s: %v", e.Message, e.Value)
 }

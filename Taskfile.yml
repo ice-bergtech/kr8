@@ -34,8 +34,8 @@ tasks:
     aliases:
       - t
     cmds:
-      - go test
       - golangci-lint run
+      - go test ./pkg/*
       - task: build
       - task: test-package
 
