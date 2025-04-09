@@ -73,7 +73,8 @@ func CreateClusterSpec(
 		clGenerateDir = spec.Get("generate_dir").String()
 	}
 	if clGenerateDir == "" {
-		log.Fatal().Msg("_kr8_spec.generate_dir must be set in parameters or passed as generate-dir flag")
+		log.Warn().Msg("generate_dir should be set in cluster parameters or passed as generate-dir flag.  Defaulting to ./")
+		clGenerateDir = "./"
 	}
 	// if generateDir does not start with /, then it goes in baseDir
 	if !strings.HasPrefix(clGenerateDir, "/") {
@@ -171,7 +172,9 @@ func ExtractIncludes(spec gjson.Result) []interface{} {
 		case gjson.Number:
 		case gjson.Null:
 		default:
-			log.Fatal().Msg("Includes list item is not a string or json object")
+			log.Error().Msg("Includes list item is not a string or json object, skipping")
+
+			continue
 		}
 	}
 
