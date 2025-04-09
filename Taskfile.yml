@@ -5,22 +5,28 @@ tasks:
     cmds:
       - task: build
 
-  setup:
+  01_setup:
     desc: 'Instal dev tools'
+    aliases:
+      - setup
+      - s
     cmds:
       # https://golangci-lint.run/welcome/install/
       - brew install golangci-lint
       - brew upgrade golangci-lint
-      - task: setup-bats
-  
-  setup-bats:
+      - task: 01_setup-bats
+
+  01_setup-bats:
     desc: 'Install bats testing tools'
+    aliases:
+      - setup-bats
     cmds:
       - git clone https://github.com/bats-core/bats-core.git bats-test/bats
       - git clone https://github.com/bats-core/bats-support.git bats-test/test_helper/bats-support
       - git clone https://github.com/bats-core/bats-assert.git bats-test/test_helper/bats-assert
 
-  generate-bats-tests:
+  03_generate-bats-tests:
+    desc: Generate resources to test against
     aliases:
       - gt
     dir: ./bats-test
@@ -29,19 +35,21 @@ tasks:
     cmds:
       - ./GEN_ALL.sh
 
-  test:
-    desc: Tesk kr8 for your local system
+  03_test-go:
+    desc: Tesk kr8+ for your local system
     aliases:
+      - test
       - t
     cmds:
       - golangci-lint run
       - go test ./pkg/*
-      - task: build
-      - task: test-package
+      - task: 02_build
+      - task: 03_test-package
 
-  test-package:
-    desc: Test compiled kr8 binary against test inputs
+  03_test-package:
+    desc: Test compiled kr8+ binary against test inputs
     aliases:
+      - test-package
       - tp
     dir: ./bats-test
     env:
@@ -49,19 +57,30 @@ tasks:
     cmds:
       - ./TEST_ALL.sh
 
-  build:
-    desc: Build kr8 for your local system
+  02_build:
+    desc: Build kr8+ for your local system
     aliases:
+      - build
       - b
     cmds:
       - go fmt
       - go generate ./docs
       - go build
 
-  build-snapshot:
+  03_build-snapshot:
     desc: Build a snapshot for all platforms using goreleaser
     aliases:
+      - build-snapshot
       - bs
     cmds:
       - go generate ./docs
       - goreleaser release --snapshot --clean --skip=homebrew,docker
+
+  04_generate-examples:
+    desc: Generate example clusters and components with kr8+
+    aliases:
+      - ge
+      - gen
+    cmds:
+      - task: 02_build
+      - ./kr8 generate -B example

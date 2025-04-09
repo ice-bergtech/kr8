@@ -38,7 +38,7 @@ yml: leave a note in the params.jsonnet file about where and how the yml files c
 chart: generate a simple taskfile that handles vendoring the chart data
 
 <a name="GenerateLib"></a>
-## func [GenerateLib](<https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L96>)
+## func [GenerateLib](<https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L99>)
 
 ```go
 func GenerateLib(fetch bool, dstDir string) error
@@ -47,7 +47,7 @@ func GenerateLib(fetch bool, dstDir string) error
 
 
 <a name="GenerateReadme"></a>
-## func [GenerateReadme](<https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L104>)
+## func [GenerateReadme](<https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L107>)
 
 ```go
 func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) error

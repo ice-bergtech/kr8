@@ -5,6 +5,8 @@ Clusters are unique and singular.
 
 They have a name which is specified via the directory structure under  `./clusters` by default, or the directory specified by the `--clusterdir`, `-D` flags.
 
+The cluster spec is defined as a golang struct: [docs/godoc/kr8-types.md#Kr8ClusterJsonnet]
+
 Cluster configurations are defined in a hierarchical system which is loosely inspired by [Hiera](https://puppet.com/docs/hiera/3.3/index.html) from the Puppet ecosystem.
 
 An example definition for clusters might look like this:

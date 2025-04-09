@@ -7,7 +7,6 @@ import "github.com/ice-bergtech/kr8/pkg/types"
 ## Index
 
 - [func ExtractExtFiles\(spec gjson.Result\) map\[string\]string](<#ExtractExtFiles>)
-- [func ExtractIncludes\(spec gjson.Result\) \[\]interface\{\}](<#ExtractIncludes>)
 - [func ExtractJpaths\(spec gjson.Result\) \[\]string](<#ExtractJpaths>)
 - [type CmdJsonnetOptions](<#CmdJsonnetOptions>)
 - [type ExtFileVar](<#ExtFileVar>)
@@ -24,8 +23,10 @@ import "github.com/ice-bergtech/kr8/pkg/types"
 - [type Kr8ComponentJsonnet](<#Kr8ComponentJsonnet>)
 - [type Kr8ComponentSpec](<#Kr8ComponentSpec>)
   - [func CreateComponentSpec\(spec gjson.Result\) \(Kr8ComponentSpec, error\)](<#CreateComponentSpec>)
-- [type Kr8ComponentSpecIncludeFile](<#Kr8ComponentSpecIncludeFile>)
 - [type Kr8ComponentSpecIncludeObject](<#Kr8ComponentSpecIncludeObject>)
+- [type Kr8ComponentSpecIncludes](<#Kr8ComponentSpecIncludes>)
+  - [func ExtractIncludes\(spec gjson.Result\) \(Kr8ComponentSpecIncludes, error\)](<#ExtractIncludes>)
+  - [func \(k \*Kr8ComponentSpecIncludes\) UnmarshalJSON\(data \[\]byte\) error](<#Kr8ComponentSpecIncludes.UnmarshalJSON>)
 - [type Kr8Error](<#Kr8Error>)
   - [func \(e Kr8Error\) Error\(\) string](<#Kr8Error.Error>)
 - [type Kr8Opts](<#Kr8Opts>)
@@ -41,15 +42,6 @@ func ExtractExtFiles(spec gjson.Result) map[string]string
 
 Extract jsonnet extVar defintions from spec.
 
-<a name="ExtractIncludes"></a>
-## func [ExtractIncludes](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L156>)
-
-```go
-func ExtractIncludes(spec gjson.Result) []interface{}
-```
-
-Extract jsonnet includes filenames or objects from spec.
-
 <a name="ExtractJpaths"></a>
 ## func [ExtractJpaths](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L145>)
 
@@ -60,7 +52,7 @@ func ExtractJpaths(spec gjson.Result) []string
 Extract jsonnet lib paths from spec.
 
 <a name="CmdJsonnetOptions"></a>
-## type [CmdJsonnetOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L239-L246>)
+## type [CmdJsonnetOptions](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L280-L287>)
 
 Options for running the jsonnet command.
 
@@ -76,7 +68,7 @@ type CmdJsonnetOptions struct {
 ```
 
 <a name="ExtFileVar"></a>
-## type [ExtFileVar](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L215>)
+## type [ExtFileVar](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L206>)
 
 Map of external files to load into jsonnet vm as external variables. Keys are the variable names, values are the paths to the files to load as strings into the jsonnet vm. To reference the variable in jsonnet code, use std.extvar\("variable\_name"\).
 
@@ -322,12 +314,12 @@ type Kr8ComponentSpec struct {
     // Additional jsonnet libs to the jsonnet vm, component-path scoped
     JPaths []string `json:"jpaths"`
     // A list of filenames to include and output as files
-    Includes []interface{} `json:"includes"`
+    Includes Kr8ComponentSpecIncludes `json:"includes"`
 }
 ```
 
 <a name="CreateComponentSpec"></a>
-### func [CreateComponentSpec](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L187>)
+### func [CreateComponentSpec](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L172>)
 
 ```go
 func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error)
@@ -335,20 +327,8 @@ func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error)
 
 Extracts a component spec from a jsonnet object.
 
-<a name="Kr8ComponentSpecIncludeFile"></a>
-## type [Kr8ComponentSpecIncludeFile](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L218-L221>)
-
-A struct describing an included file that will be processed to produce a file.
-
-```go
-type Kr8ComponentSpecIncludeFile interface {
-    Kr8ComponentSpecIncludeObject
-    // contains filtered or unexported methods
-}
-```
-
 <a name="Kr8ComponentSpecIncludeObject"></a>
-## type [Kr8ComponentSpecIncludeObject](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L226-L236>)
+## type [Kr8ComponentSpecIncludeObject](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L211-L221>)
 
 An includes object which configures how kr8 includes an object. It allows configuring the included file's destination directory and file name. The input file will be processed differently depending on the filetype.
 
@@ -366,8 +346,35 @@ type Kr8ComponentSpecIncludeObject struct {
 }
 ```
 
+<a name="Kr8ComponentSpecIncludes"></a>
+## type [Kr8ComponentSpecIncludes](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L224>)
+
+Define Kr8ComponentSpecIncludes to handle dynamic decoding.
+
+```go
+type Kr8ComponentSpecIncludes []Kr8ComponentSpecIncludeObject
+```
+
+<a name="ExtractIncludes"></a>
+### func [ExtractIncludes](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L156>)
+
+```go
+func ExtractIncludes(spec gjson.Result) (Kr8ComponentSpecIncludes, error)
+```
+
+Extract jsonnet includes filenames or objects from spec.
+
+<a name="Kr8ComponentSpecIncludes.UnmarshalJSON"></a>
+### func \(\*Kr8ComponentSpecIncludes\) [UnmarshalJSON](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L227>)
+
+```go
+func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error
+```
+
+Implement custom unmarshaling for dynamic decoding.
+
 <a name="Kr8Error"></a>
-## type [Kr8Error](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L258-L261>)
+## type [Kr8Error](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L299-L302>)
 
 
 
@@ -379,7 +386,7 @@ type Kr8Error struct {
 ```
 
 <a name="Kr8Error.Error"></a>
-### func \(Kr8Error\) [Error](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L264>)
+### func \(Kr8Error\) [Error](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L305>)
 
 ```go
 func (e Kr8Error) Error() string
@@ -404,7 +411,7 @@ type Kr8Opts struct {
 ```
 
 <a name="VMConfig"></a>
-## type [VMConfig](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L249-L256>)
+## type [VMConfig](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L290-L297>)
 
 VMConfig describes configuration to initialize the Jsonnet VM with.
 
