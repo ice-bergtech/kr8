@@ -26,7 +26,7 @@ func processIncludesFile(
 	componentOutputDir string,
 	incInfo types.Kr8ComponentSpecIncludeObject,
 	outputFileMap map[string]bool,
-) {
+) error {
 	// ensure this directory exists
 	outputDir := componentOutputDir
 	if incInfo.DestDir != "" {
@@ -34,7 +34,9 @@ func processIncludesFile(
 	}
 	if _, err := os.Stat(outputDir); os.IsNotExist(err) {
 		err = os.MkdirAll(outputDir, 0750)
-		util.FatalErrorCheck("Error creating alternate directory", err)
+		if err := util.GenErrorIfCheck("Error creating alternate directory", err); err != nil {
+			return err
+		}
 	}
 	outputFile := filepath.Clean(filepath.Join(outputDir, incInfo.DestName+"."+incInfo.DestExt))
 	inputFile := filepath.Clean(filepath.Join(kr8Opts.BaseDir, componentPath, incInfo.File))
@@ -47,13 +49,24 @@ func processIncludesFile(
 	log.Debug().Str("cluster", kr8Spec.Name).Str("component", componentName).Msg("Checking if file needs updating...")
 
 	// only write file if it does not exist, or the generated contents does not match what is on disk
-	if CheckIfUpdateNeeded(outputFile, outStr) {
-		f, err := os.Create(outputFile)
-		util.FatalErrorCheck("Error creating file", err)
-		_, err = f.WriteString(outStr)
-		util.FatalErrorCheck("Error writing to file", err)
-		util.FatalErrorCheck("Error closing file", f.Close())
+	updateNeeded, err := CheckIfUpdateNeeded(outputFile, outStr)
+	if err != nil {
+		return util.GenErrorIfCheck("Error checking if file needs updating", err)
 	}
+	if updateNeeded {
+		file, err := os.Create(outputFile)
+		if err := util.GenErrorIfCheck("Error creating file", err); err != nil {
+			return err
+		}
+		_, err = file.WriteString(outStr)
+		if err := util.GenErrorIfCheck("Error writing to file", err); err != nil {
+			return err
+		}
+
+		return util.GenErrorIfCheck("Error closing file", file.Close())
+	}
+
+	return nil
 }
 
 // Process an includes file.
@@ -118,12 +131,18 @@ func processJsonnet(jvm *jsonnet.VM, input string, snippetFilename string) (stri
 	}
 
 	// create output file contents in a string first, as a yaml stream
-	var o []interface{}
+	var listObjOut []interface{}
 	var outStr string
-	util.FatalErrorCheck("Error unmarshalling jsonnet output to go slice", json.Unmarshal([]byte(jsonStr), &o))
-	for _, jObj := range o {
+	if err := util.GenErrorIfCheck("Error unmarshalling jsonnet output to go slice",
+		json.Unmarshal([]byte(jsonStr), &listObjOut),
+	); err != nil {
+		return "", err
+	}
+	for _, jObj := range listObjOut {
 		buf, err := goyaml.Marshal(jObj)
-		util.FatalErrorCheck("Error marshalling jsonnet object to yaml", err)
+		if err := util.GenErrorIfCheck("Error marshalling jsonnet object to yaml", err); err != nil {
+			return "", err
+		}
 		outStr += string(buf)
 		// Place yml new document at end of each object
 		outStr += "\n---\n"

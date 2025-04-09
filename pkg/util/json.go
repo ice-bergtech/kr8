@@ -80,6 +80,7 @@ func JsonnetPrint(output string, format string, color bool) error {
 	default:
 		return types.Kr8Error{Message: "Output format must be json, yaml or stream", Value: format}
 	}
+
 	return nil
 }
 
@@ -128,5 +129,7 @@ func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (st
 		return "", GenErrorIfCheck("error formatting component resource to json", err)
 	}
 
-	return jsonStrFormatted, GenErrorIfCheck("error writing file to disk", os.WriteFile(path+"/"+filename, []byte(jsonStrFormatted), 0600))
+	return jsonStrFormatted, GenErrorIfCheck("error writing file to disk",
+		os.WriteFile(path+"/"+filename, []byte(jsonStrFormatted), 0600),
+	)
 }

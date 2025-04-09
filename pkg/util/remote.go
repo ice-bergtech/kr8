@@ -43,6 +43,7 @@ func FetchRepoUrl(url string, destination string, noop bool) error {
 	// Check for .git folder
 	if _, err := os.Stat(filepath.Join(destination, ".git")); !os.IsNotExist(err) {
 		log.Debug().Msg("Removing .git directory")
+
 		return GenErrorIfCheck("Error removing .git directory", os.RemoveAll(destination+"/.git"))
 	}
 

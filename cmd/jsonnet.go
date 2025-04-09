@@ -3,6 +3,7 @@ package cmd
 import (
 	jvm "github.com/ice-bergtech/kr8/pkg/jnetvm"
 	types "github.com/ice-bergtech/kr8/pkg/types"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -22,7 +23,10 @@ var JsonnetRenderCmd = &cobra.Command{
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, f := range args {
-			jvm.JsonnetRender(cmdFlagsJsonnet, f, RootConfig.VMConfig)
+			err := jvm.JsonnetRender(cmdFlagsJsonnet, f, RootConfig.VMConfig)
+			if err != nil {
+				log.Fatal().Str("file", f).Err(err).Msg("error rendering jsonnet file")
+			}
 		}
 	},
 }

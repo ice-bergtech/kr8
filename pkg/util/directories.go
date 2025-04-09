@@ -108,13 +108,13 @@ func GetClusterParamsFilenames(basePath string, targetPath string) []string {
 
 func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error {
 	// clean component dir
-	d, err := os.Open(filepath.Clean(componentOutputDir))
+	dir, err := os.Open(filepath.Clean(componentOutputDir))
 	if err != nil {
 		return err
 	}
 	// Lifetime of function
-	defer d.Close()
-	names, err := d.Readdirnames(-1)
+	defer dir.Close()
+	names, err := dir.Readdirnames(-1)
 	if err != nil {
 		return err
 	}
@@ -132,5 +132,6 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) er
 			log.Debug().Msg("Deleted: " + delFile)
 		}
 	}
+
 	return nil
 }
