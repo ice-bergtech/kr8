@@ -1,3 +1,5 @@
+<img src="docs/kr8_gopher.png" alt="Kr8+ Gopher" width="120" align="right" >
+
 # kr8+
 
 [![CI status](https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg)](https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI)
@@ -7,8 +9,6 @@
 
 **Kr8+** is `pre-1.0`.
 This means that breaking changes will still happen from time to time, but it's stable enough for both scripting and interactive use.
-
-![Kr8+ Gopher](docs/kr8_gopher.png)
 
 ## Key Features
 
