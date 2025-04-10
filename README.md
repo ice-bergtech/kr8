@@ -11,6 +11,21 @@
 **kr8+** is `pre-1.0`.
 This means that breaking changes will still happen from time to time, but it's stable enough for both scripting and interactive use.
 
+<p align="center">
+   <a href="https://github.com/ice-bergtech/kr8/releases">Releases</a> ·
+	<a href="/docs/index.md">Documentation</a> ·
+	<a href="https://github.com/ice-bergtech/kr8/issues">Get Help</a>
+</p>
+
+## Menu
+
+* [Key Features](#key-features)
+* [Technical Overview](#technical-overview)
+* [Installation](#installation)
+  * [configuration](#configuration)
+* [Full Documentation](./docs/index.md)
+* [Development](#development)
+
 ## Key Features
 
 * **Cluster Configuration Management**: Manage Kubernetes clusters across environments, regions and platforms with a declarative and centralized approach.
@@ -18,6 +33,9 @@ This means that breaking changes will still happen from time to time, but it's s
 * **Jsonnet Native Funcitons**: Use jsonnet to render and override component config from multiple sources, such as templates, docker-compose files, Kustomize, and Helm.
 * **Extensibility**: Easily extensible to meet the needs of diverse Kubernetes environments.
 * **CI/CD Friendly**: Statically define all your configuration in a single source of truth, making it easy to integrate with CI/CD pipelines and deployment automation like ArgoCD.
+* **Standardization**: Ensures consistency across Kubernetes clusters, reducing errors and improving maintainability.
+* **Simplicity**: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.
+* **Scalability**: Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.
 
 ## Technical Overview
 
@@ -30,11 +48,12 @@ This means that breaking changes will still happen from time to time, but it's s
 - [kubernetes/kompose](https://github.com/kubernetes/kompose) `v1.35.0`
 - [Masterminds/sprig v3 Template Library](https://pkg.go.dev/github.com/Masterminds/sprig#section-readme) - [Template Documentation](https://masterminds.github.io/sprig/) `v3.2.3`
 
-## Why use kr8+?
 
-* **Standardization**: Ensures consistency across Kubernetes clusters, reducing errors and improving maintainability.
-* **Simplicity**: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.
-* **Scalability**: Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.
+## Installation
+
+The latest version is available for download from the [Github releases page](https://github.com/ice-bergtech/kr8/releases).
+
+Once installed, you can use `kr8 init` commands to setup the initial structure and configurations.
 
 ## Getting Started
 
@@ -43,12 +62,6 @@ An working example of a repo can be cloned [ice-bergtech/kr8-examples](https://g
 ```sh
 git clone git@github.com:ice-bergtech/kr8-examples.git
 ```
-
-### Installation
-
-The latest version is available for download from the [Github releases page](https://github.com/ice-bergtech/kr8/releases).
-
-Once installed, you can use `kr8 init` commands to setup the initial structure and configurations.
 
 ### Configuration
 
@@ -201,7 +214,17 @@ Parts of the code are derived from:
 **kr8+** is a fork of [kr8](https://github.com/apptio/kr8) with some additional features and improvements.
 **kr8** was used in production to great success at Apptio for managing components of multiple Kubernetes clusters.
 
+VSCode plugins:
+
+* [EditorConfig](https://open-vsx.org/vscode/item?itemName=EditorConfig.EditorConfig)
+* [Jsonnet Language Server](https://open-vsx.org/vscode/item?itemName=Grafana.vscode-jsonnet)
+
+
+Docs:
+
 * [Jsonnet Standard Library](https://jsonnet.org/ref/stdlib.html)
 * [Jsonnet Language Reference](https://jsonnet.org/ref/language.html)
 * [Sprig Template Documentation](https://masterminds.github.io/sprig/)
 * [The growing need for Kubernetes Configuration Management](https://leebriggs.co.uk/blog/2018/05/08/kubernetes-config-mgmt.html)
+
+Alternatives:
