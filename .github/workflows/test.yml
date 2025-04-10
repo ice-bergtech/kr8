@@ -18,6 +18,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
           submodules: true
       - name: 🚧 Set up Go
         uses: actions/setup-go@v5
