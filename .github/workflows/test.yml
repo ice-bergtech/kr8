@@ -7,14 +7,6 @@ on:
     tags:
       - "v*"
   pull_request:
-    paths:
-      - .github/workflows/test.yml
-      - '*.go'
-      - 'cmd/*'
-      - 'go.mod'
-      - 'go.sum'
-      - '.goreleaser.yml'
-      - 'bats-test/*'
   workflow_dispatch:
 
 jobs:
