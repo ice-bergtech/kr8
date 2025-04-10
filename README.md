@@ -1,6 +1,7 @@
-<img src="docs/kr8_gopher.png" alt="Kr8+ Gopher" width="120" align="right" >
 
 # kr8+
+
+<img src="docs/kr8_gopher.png" alt="Kr8+ Gopher" width="440" align="right" >
 
 [![CI status](https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg)](https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI)
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.24-61CFDD.svg?style=flat-square)
