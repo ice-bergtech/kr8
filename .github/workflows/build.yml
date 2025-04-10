@@ -1,4 +1,4 @@
-name: Build and Publish 
+name: Goreleaer Build and Publish 
 
 on:
   push:
@@ -7,13 +7,7 @@ on:
     tags:
       - "v*"
     paths:
-      - '*.go'
-      - 'cmd/*'
-      - 'go.mod'
-      - 'go.sum'
-      - '.goreleaser.yml'
-  pull_request:
-    paths:
+      - .github/workflows/build.yml
       - '*.go'
       - 'cmd/*'
       - 'go.mod'
