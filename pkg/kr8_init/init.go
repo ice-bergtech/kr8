@@ -100,12 +100,13 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 // If fetch is true, it will download the repo in the /lib directory.
 // If false, it will print the git commands to run.
 // Repo: https://github.com/ice-bergtech/kr8-libsonnet .
+// return util.FetchRepoUrl("https://github.com/ice-bergtech/kr8-libsonnet", dstDir+"/kr8-lib", !fetch).
 func GenerateLib(fetch bool, dstDir string) error {
 	if err := util.GenErrorIfCheck("error creating lib directory", os.MkdirAll(dstDir, 0750)); err != nil {
 		return err
 	}
 
-	return util.FetchRepoUrl("https://github.com/ice-bergtech/kr8-libsonnet", dstDir+"/kr8-lib", !fetch)
+	return util.FetchRepoUrl("https://github.com/kube-libsonnet/kube-libsonnet.git", dstDir+"/kube-lib", !fetch)
 }
 
 // Generates a starter readme for the repo, and writes it to the destination directory.
