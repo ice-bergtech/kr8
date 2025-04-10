@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Iceberg Tech" />
       <link rel="shortcut icon" href="../../img/favicon.ico" />
-    <title>Clusters - kr8+ - Docs</title>
+    <title>Clusters - kr8+ Docs</title>
     <link rel="stylesheet" href="../../css/theme.css" />
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -30,7 +30,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-          <a href="../.." class="icon icon-home"> kr8+ - Docs
+          <a href="../.." class="icon icon-home"> kr8+ Docs
         </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
       <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
@@ -48,7 +48,7 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="" href="https://github.com/ice-bergtech/kr8/tree/main/example">Examples</a>
+                <li class="toctree-l1"><a class="" href="https://github.com/ice-bergtech/kr8/tree/main/example">Examples 🔗</a>
                 </li>
               </ul>
               <p class="caption"><span class="caption-text">Concepts</span></p>
@@ -149,7 +149,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
       <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../..">kr8+ - Docs</a>
+          <a href="../..">kr8+ Docs</a>
         
       </nav>
       <div class="wy-nav-content">
@@ -195,7 +195,7 @@ Clusters are unique and singular.</p>
 <h2 id="components-in-clusters">Components in clusters</h2>
 <p>Adding a component to a cluster involves add a component key to the <code>_components</code> key inside <em>either</em> the <code>cluster.jsonnet</code> (for cluster specific components) or the <code>params.jsonnet</code> (for deploy components).</p>
 <p>Here's an example:</p>
-<pre><code class="language-jsonnet">_components+: {
+<pre><code class="language-yaml">_components+: {
   sealed_secrets: { path: 'components/sealed_secrets' },
 },
 </code></pre>
@@ -204,7 +204,7 @@ Clusters are unique and singular.</p>
 <p>Once you've initialized a component for a cluster, you can then start to override parameters for that component.
 You do this by simply defining a jsonnet key with the named parameters in it.
 Here's an example:</p>
-<pre><code class="language-jsonnet">external_dns+: {
+<pre><code class="language-yaml">external_dns+: {
     provider: 'cloudflare',
     txtPrefix: 'dev1',
     txtOwnerId: 'dev1-',
@@ -218,7 +218,7 @@ Here's an example:</p>
 <p>The hierarchy system is a very powerful part or kr8+.
 It allows you to remove duplication of parameter and component definitions.
 Take the previous cluster layout as an example:</p>
-<pre><code>clusters
+<pre><code class="language-sh">clusters
 ├── development
 │   └── dev1
 │       └── cluster.jsonnet
@@ -233,7 +233,7 @@ Take the previous cluster layout as an example:</p>
 <p>You can use the hierarchy system to ensure you have components installed in all clusters.
 Let's assume we want to make sure that we want to install the <code>sealed_secrets</code> component in <em>all</em> our clusters.
 We'd put it in this file:</p>
-<pre><code>clusters
+<pre><code class="language-sh">clusters
 ├── development
 │   └── dev1
 │       └── cluster.jsonnet
@@ -247,7 +247,7 @@ We'd put it in this file:</p>
 </code></pre>
 <p>Alongside that, let's assume all our production clusters are using the same external_dns domain name.
 We can define that like so:</p>
-<pre><code>clusters
+<pre><code class="language-sh">clusters
 ├── development
 │   └── dev1
 │       └── cluster.jsonnet

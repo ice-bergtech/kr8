@@ -9,7 +9,7 @@ By leveraging best practices and providing a structured approach, **kr8+** helps
 - [go-jsonnet](https://pkg.go.dev/github.com/google/go-jsonnet) `v0.20.0`
 - [ghodss/yaml](https://github.com/ghodss/yaml) `v1.0.0`
 - [Grafana/tanka helm](https://github.com/grafana/tanka/pkg/helm) `v0.27.1`
-- [kompose](https://github.com/kubernetes/kompose) `v1.35.0`
+- [kubernetes/kompose](https://github.com/kubernetes/kompose) `v1.35.0`
 - [Masterminds/sprig v3 Template Library](https://pkg.go.dev/github.com/Masterminds/sprig#section-readme) - [Template Documentation](https://masterminds.github.io/sprig/) `v3.2.3`
 
 ## Why use kr8+?

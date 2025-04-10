@@ -1,5 +1,5 @@
-site_name: kr8+ - Docs
-site_description: ""
+site_name: kr8+ Docs
+site_description: "Documentation for the kr8+ config management tool"
 site_author: Iceberg Tech
 theme:
   name: readthedocs
@@ -16,7 +16,7 @@ edit_uri: blob/main/docs
 nav:
   - Home: index.md
   - Installation: installation.md
-  - Examples: https://github.com/ice-bergtech/kr8/tree/main/example
+  - Examples 🔗: https://github.com/ice-bergtech/kr8/tree/main/example
   - Concepts:
     - Overview: concepts/overview.md
     - Clusters: concepts/clusters.md

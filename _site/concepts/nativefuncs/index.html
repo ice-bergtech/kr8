@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Iceberg Tech" />
       <link rel="shortcut icon" href="../../img/favicon.ico" />
-    <title>Native Funcs - kr8+ - Docs</title>
+    <title>Native Funcs - kr8+ Docs</title>
     <link rel="stylesheet" href="../../css/theme.css" />
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -30,7 +30,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-          <a href="../.." class="icon icon-home"> kr8+ - Docs
+          <a href="../.." class="icon icon-home"> kr8+ Docs
         </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
       <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
@@ -48,7 +48,7 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="" href="https://github.com/ice-bergtech/kr8/tree/main/example">Examples</a>
+                <li class="toctree-l1"><a class="" href="https://github.com/ice-bergtech/kr8/tree/main/example">Examples 🔗</a>
                 </li>
               </ul>
               <p class="caption"><span class="caption-text">Concepts</span></p>
@@ -153,7 +153,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
       <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../..">kr8+ - Docs</a>
+          <a href="../..">kr8+ Docs</a>
         
       </nav>
       <div class="wy-nav-content">
@@ -184,7 +184,7 @@ The resulting string is returned.</p>
 <pre><code class="language-go">std.native(&quot;template&quot;)(config json, str string) (string)
 </code></pre>
 <p>Example:</p>
-<pre><code class="language-jsonnet">local templateOutput = std.native('template')(config.data, &quot;Hello {{ .Name }}&quot;);
+<pre><code class="language-go">local templateOutput = std.native(&quot;template&quot;)(config.data, &quot;Hello {{ .Name }}&quot;);
 </code></pre>
 <h2 id="helmtemplate">helmTemplate</h2>
 <p>Provides the same <code>Helm.Template</code> functionality as the <code>grafana/tanka</code> package. 
@@ -195,7 +195,7 @@ Does not use sprig for templating.</p>
 <pre><code class="language-go">std.native(&quot;helmTemplate&quot;)(name string, chart string, opts TemplateOpts) (manifest.List)
 </code></pre>
 <p>Example:</p>
-<pre><code class="language-jsonnet">local helm_template = std.native('helmTemplate')(config.release_name, &quot;./vendor/&quot;+config.chart_version, {
+<pre><code class="language-go">local helm_template = std.native(&quot;helmTemplate&quot;)(config.release_name, &quot;./vendor/&quot;+config.chart_version, {
     calledFrom: std.thisFile,
     namespace: config.namespace,
     values: config.helm_values,
@@ -204,7 +204,7 @@ Does not use sprig for templating.</p>
 [
     object
     for object in std.objectValues(helm_template)
-    if 'kind' in object &amp;&amp; object.kind != 'Secret'
+    if &quot;kind&quot; in object &amp;&amp; object.kind != &quot;Secret&quot;
 ]
 </code></pre>
 <ul>
@@ -217,7 +217,7 @@ Does not use sprig for templating.</p>
 <pre><code class="language-go">std.native(&quot;escapeStringRegex&quot;)(str string) (string)
 </code></pre>
 <p>Example:</p>
-<pre><code class="language-jsonnet">local clean_string = std.native('escapeStringRegex')(config.knarly_string);
+<pre><code class="language-go">local clean_string = std.native(&quot;escapeStringRegex&quot;)(config.knarly_string);
 </code></pre>
 <h2 id="regexmatch">regexMatch</h2>
 <p>Uses <code>regexp.MatchString</code> to check if a string matches a regular expression.</p>
@@ -225,7 +225,8 @@ Does not use sprig for templating.</p>
 <pre><code class="language-go">std.native(&quot;regexMatch&quot;)(regex string, str string) (bool)
 </code></pre>
 <p>Example:</p>
-<pre><code class="language-jsonnet">if std.native(&quot;regexMatch&quot;)(&quot;\d+&quot;, config.thing) then config.thing else &quot;&quot;
+<pre><code class="language-go">// check if a string is numbers
+if std.native(&quot;regexMatch&quot;)(&quot;\d+&quot;, config.thing) then config.thing else &quot;&quot;
 </code></pre>
 <h2 id="regexsubst">regexSubst</h2>
 <p>Uses <code>regexp.ReplaceAllString</code> to replace all occurrences of a regular expression in a string.</p>
@@ -233,7 +234,7 @@ Does not use sprig for templating.</p>
 <pre><code class="language-go">std.native(&quot;regexSubst&quot;)(regex string, src string, repl string) (string)
 </code></pre>
 <p>Example:</p>
-<pre><code class="language-jsonnet">local stringVar = std.native(&quot;regexSubst&quot;)(&quot;\d&quot;, config.thing, &quot;&lt;num&gt;&quot;);
+<pre><code class="language-go">local stringVar = std.native(&quot;regexSubst&quot;)(&quot;\d&quot;, config.thing, &quot;&lt;num&gt;&quot;);
 </code></pre>
               
             </div>

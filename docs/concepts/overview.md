@@ -54,8 +54,8 @@ clusters
     │   │   └── cluster.jsonnet
     │   └── prod
     │       ├── cluster.jsonnet # prod-level configs
-            ├── workloads-1
-            │   └── cluster.jsonnet
+    │       ├── workloads-1
+    │       │   └── cluster.jsonnet
     │       └── workloads-2
     │           └── cluster.jsonnet
     └── region-2

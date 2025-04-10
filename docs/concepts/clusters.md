@@ -38,7 +38,7 @@ Adding a component to a cluster involves add a component key to the `_components
 
 Here's an example:
 
-```jsonnet
+```yaml
 _components+: {
   sealed_secrets: { path: 'components/sealed_secrets' },
 },
@@ -52,7 +52,7 @@ Once you've initialized a component for a cluster, you can then start to overrid
 You do this by simply defining a jsonnet key with the named parameters in it.
 Here's an example:
 
-```jsonnet
+```yaml
 external_dns+: {
     provider: 'cloudflare',
     txtPrefix: 'dev1',
@@ -70,7 +70,7 @@ The hierarchy system is a very powerful part or kr8+.
 It allows you to remove duplication of parameter and component definitions.
 Take the previous cluster layout as an example:
 
-```
+```sh
 clusters
 ├── development
 │   └── dev1
@@ -88,7 +88,7 @@ You can use the hierarchy system to ensure you have components installed in all 
 Let's assume we want to make sure that we want to install the `sealed_secrets` component in _all_ our clusters.
 We'd put it in this file:
 
-```
+```sh
 clusters
 ├── development
 │   └── dev1
@@ -105,7 +105,7 @@ clusters
 Alongside that, let's assume all our production clusters are using the same external_dns domain name.
 We can define that like so:
 
-```
+```sh
 clusters
 ├── development
 │   └── dev1
