@@ -198,13 +198,15 @@
 <p>yml: leave a note in the params.jsonnet file about where and how the yml files can be referenced</p>
 <p>chart: generate a simple taskfile that handles vendoring the chart data</p>
 <p><a name="GenerateLib"></a></p>
-<h2 id="func-generatelib">func <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L99">GenerateLib</a></h2>
+<h2 id="func-generatelib">func <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L104">GenerateLib</a></h2>
 <pre><code class="language-go">func GenerateLib(fetch bool, dstDir string) error
 </code></pre>
+<p>Downloads a starter kr8 jsonnet lib from github. If fetch is true, it will download the repo in the /lib directory. If false, it will print the git commands to run. Repo: https://github.com/ice-bergtech/kr8-libsonnet . return util.FetchRepoUrl("https://github.com/ice-bergtech/kr8-libsonnet", dstDir+"/kr8-lib", !fetch).</p>
 <p><a name="GenerateReadme"></a></p>
-<h2 id="func-generatereadme">func <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L107">GenerateReadme</a></h2>
+<h2 id="func-generatereadme">func <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L113">GenerateReadme</a></h2>
 <pre><code class="language-go">func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) error
 </code></pre>
+<p>Generates a starter readme for the repo, and writes it to the destination directory.</p>
 <p><a name="Kr8InitOptions"></a></p>
 <h2 id="type-kr8initoptions">type <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/kr8_init/init.go#L12-L25">Kr8InitOptions</a></h2>
 <p>Kr8InitOptions defines the options used by the init subcommands.</p>
