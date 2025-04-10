@@ -38,7 +38,11 @@ This means that breaking changes will still happen from time to time, but it's s
 
 ## Getting Started
 
-An example of a repo can be found in the [example](./example) folder.
+An working example of a repo can be cloned [ice-bergtech/kr8-examples](https://github.com/ice-bergtech/kr8-examples):
+
+```sh
+git clone git@github.com:ice-bergtech/kr8-examples.git
+```
 
 ### Installation
 
@@ -165,7 +169,7 @@ There are few sets of tests:
 
 - Unit Tests: `go test ./...` or `task test`
 - Integration Tests using `bats`: `task test-package`
-- Generate examples: `./kr8 generate -B example` or `task gen`
+- Generate examples repo: `./kr8 generate -B examples` or `task gen`
 
 ### Build Troubleshooting
 

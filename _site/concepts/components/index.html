@@ -48,7 +48,7 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="" href="https://github.com/ice-bergtech/kr8/tree/main/example">Examples 🔗</a>
+                <li class="toctree-l1"><a class="" href="https://github.com/ice-bergtech/kr8-examples">Examples 🔗</a>
                 </li>
               </ul>
               <p class="caption"><span class="caption-text">Concepts</span></p>
@@ -367,7 +367,7 @@ tasks:
 <p>Consider the situation whereby you might have two clusters, one in AWS and one in DigitalOcean.
 You need to set a default storageclass.
 You could do this with jsonnet.</p>
-<p>This example is located in <a href="https://github.com/ice-bergtech/kr8/tree/main/example/components/doc-concepts/jsonnetStorageClasses/">example/components/doc-conepts/jsonnetStorageClasses</a>.</p>
+<p>This example is located in <a href="https://github.com/ice-bergtech/kr8-examples/components/doc-concepts/jsonnetStorageClasses/">kr8-examples jsonnetStorageClasses</a>.</p>
 <p>Your jsonnet component would look like this:</p>
 <pre><code class="language-bash">components/doc-conepts/jsonnetStorageClasses
 ├── params.jsonnet
@@ -421,7 +421,7 @@ if kr8_cluster.cluster_type == &quot;aws&quot; then std.objectValues(
 You can then manipulate the structure of that YAML using Jsonnet.
 kr8+ takes care of the heavy lifting for you.</p>
 <p>This is useful when loading manifests from remote source, and you want to manipulate the mbefore deploying into a cluster.</p>
-<p>This example can be found here: <a href="https://github.com/ice-bergtech/kr8/tree/main/example/components/doc-concepts/echo-test/">example/components/doc-concepts/echo-test/</a></p>
+<p>This example can be found here: <a href="https://github.com/ice-bergtech/kr8-examples/components/doc-concepts/echo-test/">kr8-examples echo-test</a></p>
 <pre><code class="language-bash">components/doc-conepts/jsonnetStorageClasses
 ├── Taskfile.yml
 ├── params.jsonnet

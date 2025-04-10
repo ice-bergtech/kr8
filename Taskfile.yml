@@ -90,4 +90,4 @@ tasks:
       - gen
     cmds:
       - task: 02_build
-      - ./kr8 generate -B example
+      - ./kr8 generate -B examples

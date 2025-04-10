@@ -16,7 +16,7 @@ edit_uri: blob/main/docs
 nav:
   - Home: index.md
   - Installation: installation.md
-  - Examples 🔗: https://github.com/ice-bergtech/kr8/tree/main/example
+  - Examples 🔗: https://github.com/ice-bergtech/kr8-examples
   - Concepts:
     - Overview: concepts/overview.md
     - Clusters: concepts/clusters.md

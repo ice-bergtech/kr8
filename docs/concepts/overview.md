@@ -15,6 +15,8 @@ You will have:
 * components that are only installed on _some_ clusters (services, hardware dependent workloads)
 * components that have multiple versions/deployments installed on a single cluster (upgrades, namespacing)
 
+For working examples of everything, check out the [ice-bergtech/kr8-examples](https://github.com/ice-bergtech/kr8-examples) repo.
+
 ### Components
 
 A component is something you install in your cluster to make it function and work as you expect.
