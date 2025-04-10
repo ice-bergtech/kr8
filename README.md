@@ -1,11 +1,14 @@
+
 # kr8+
+
+<img src="docs/kr8_gopher.png" alt="kr8+ Gopher" width="400" align="right" >
 
 [![CI status](https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg)](https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI)
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.24-61CFDD.svg?style=flat-square)
 
-**Kr8+** is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters. By leveraging best practices and providing a structured approach, **Kr8+** helps DevOps teams streamline their workflows and maintain consistency across multiple environments.
+**kr8+** is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters. By leveraging best practices and providing a structured approach, **kr8+** helps DevOps teams streamline their workflows and maintain consistency across multiple environments.
 
-**Kr8+** is `pre-1.0`.
+**kr8+** is `pre-1.0`.
 This means that breaking changes will still happen from time to time, but it's stable enough for both scripting and interactive use.
 
 ## Key Features
@@ -27,7 +30,7 @@ This means that breaking changes will still happen from time to time, but it's s
 - [kompose](https://github.com/kubernetes/kompose) `v1.35.0`
 - [Masterminds/sprig v3 Template Library](https://pkg.go.dev/github.com/Masterminds/sprig#section-readme) - [Template Documentation](https://masterminds.github.io/sprig/) `v3.2.3`
 
-## Why use Kr8+?
+## Why use kr8+?
 
 * **Standardization**: Ensures consistency across Kubernetes clusters, reducing errors and improving maintainability.
 * **Simplicity**: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.

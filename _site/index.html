@@ -264,6 +264,10 @@
             
             <li class="nav-item" data-bs-level="1"><a href="#kr8" class="nav-link">kr8+</a>
               <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#why-use-kr8" class="nav-link">Why use kr8+?</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -272,9 +276,31 @@
                     <div class="col-md-9" role="main">
 
 <h1 id="kr8">kr8+</h1>
-<p>kr8+ is a configuration management tool for Kubernetes clusters, designed to generate deployable manifests for the components required to make your clusters usable.</p>
-<p>Its main function is to manipulate JSON and YAML without using a templating engine.
-It does this using <a href="http://jsonnet.org">jsonnet</a></p>
+<p><strong>kr8+</strong> is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.
+By leveraging best practices and providing a structured approach, <strong>kr8+</strong> helps DevOps teams streamline their workflows and maintain consistency across multiple environments.</p>
+<p><strong>kr8+</strong> consists of:</p>
+<ul>
+<li><strong>kr8+</strong> - a Go binary for rendering manifests</li>
+<li><a href="https://pkg.go.dev/github.com/google/go-jsonnet">go-jsonnet</a> <code>v0.20.0</code></li>
+<li><a href="https://github.com/ghodss/yaml">ghodss/yaml</a> <code>v1.0.0</code></li>
+<li><a href="https://github.com/grafana/tanka/pkg/helm">Grafana/tanka helm</a> <code>v0.27.1</code></li>
+<li><a href="https://github.com/kubernetes/kompose">kompose</a> <code>v1.35.0</code></li>
+<li><a href="https://pkg.go.dev/github.com/Masterminds/sprig#section-readme">Masterminds/sprig v3 Template Library</a> - <a href="https://masterminds.github.io/sprig/">Template Documentation</a> <code>v3.2.3</code></li>
+</ul>
+<h2 id="why-use-kr8">Why use kr8+?</h2>
+<ul>
+<li><strong>Standardization</strong>: Ensures consistency across Kubernetes clusters, reducing errors and improving maintainability.</li>
+<li><strong>Simplicity</strong>: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.</li>
+<li><strong>Scalability</strong>: Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.</li>
+</ul>
+<p>To get started, check out one of the following:</p>
+<ul>
+<li><a href="installation/">Installation</a></li>
+<li><a href="https://github.com/ice-bergtech/kr8/tree/main/example">Examples</a></li>
+<li><a href="concepts/overview/">Concepts</a></li>
+<li><a href="concepts/clusters/">Cluster concept</a></li>
+<li><a href="concepts/components/">Component Concept</a></li>
+</ul>
 <p>For documentation of the code, see the godoc directory:</p>
 <ul>
 <li><a href="godoc/kr8-cmd/">cmd</a> - how kr8+ processes commands and flags</li>
@@ -282,16 +308,7 @@ It does this using <a href="http://jsonnet.org">jsonnet</a></p>
 <li><a href="godoc/kr8-types/">pkg/types</a> - standard types used by kr8+</li>
 <li><a href="godoc/kr8-util/">pkg/util</a> - utility functions used by kr8+</li>
 </ul>
-<p>Index</p>
-<ul>
-<li><a href="installation/">Installation</a></li>
-<li><a href="https://github.com/ice-bergtech/kr8/tree/main/example">Examples</a></li>
-<li><a href="concepts/overview/">Concepts</a></li>
-<li><a href="concepts/clusters/">Clusters</a></li>
-<li><a href="concepts/components/">Components</a></li>
-<li><a href="helpers/">Helpers</a> | <a href="https://github.com/ice-bergtech/kr8/tree/main/scripts">Scripts</a></li>
-<li></li>
-</ul></div>
+<p><img alt="kr8+ Gopher" src="kr8_gopher.png" /></p></div>
             </div>
         </div>
 
@@ -373,5 +390,5 @@ It does this using <a href="http://jsonnet.org">jsonnet</a></p>
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-04-10 02:19:38.878599+00:00
+Build Date UTC : 2025-04-10 03:45:28.869459+00:00
 -->
