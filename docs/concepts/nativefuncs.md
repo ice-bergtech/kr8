@@ -3,6 +3,8 @@
 Additional functions have been added to the jsonnet vm to add functionality.
 They are able to be called from jsonnet using `std.native('funcName')`, where `funcName` is the name of the function.
 
+Native function definitions: [pkg/nativefuncs](https://github.com/ice-bergtech/kr8/blob/master/pkg/nativefuncs/nativefuncs.go).
+
 ## template
 
 Templates the passed in input `str` using the json string `config`.
@@ -21,8 +23,6 @@ Example:
 ```jsonnet
 local templateOutput = std.native('template')(config.data, "Hello {{ .Name }}");
 ```
-
-Source: [jsonnet.go:144](cmd/jsonnet.go:144)
 
 
 ## helmTemplate
@@ -74,8 +74,6 @@ Example:
 local clean_string = std.native('escapeStringRegex')(config.knarly_string);
 ```
 
-Source: [jsonnet.go:166](cmd/jsonnet.go:166)
-
 ## regexMatch
 
 Uses `regexp.MatchString` to check if a string matches a regular expression.
@@ -92,8 +90,6 @@ Example:
 if std.native("regexMatch")("\d+", config.thing) then config.thing else ""
 ```
 
-Source: [jsonnet.go:174](cmd/jsonnet.go:174)
-
 ## regexSubst
 
 Uses `regexp.ReplaceAllString` to replace all occurrences of a regular expression in a string.
@@ -109,5 +105,3 @@ Example:
 ```jsonnet
 local stringVar = std.native("regexSubst")("\d", config.thing, "<num>");
 ```
-
-Source: [jsonnet.go:182](cmd/jsonnet.go:182)

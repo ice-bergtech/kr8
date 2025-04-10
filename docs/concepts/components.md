@@ -156,7 +156,7 @@ Consider the situation whereby you might have two clusters, one in AWS and one i
 You need to set a default storageclass.
 You could do this with jsonnet.
 
-This example is located in [components/doc-conepts/jsonnetStorageClasses](../../example/components/doc-concepts/jsonnetStorageClasses/).
+This example is located in [example/components/doc-conepts/jsonnetStorageClasses](https://github.com/ice-bergtech/kr8/tree/main/example/components/doc-concepts/jsonnetStorageClasses/).
 
 Your jsonnet component would look like this:
 
@@ -226,7 +226,7 @@ kr8+ takes care of the heavy lifting for you.
 
 This is useful when loading manifests from remote source, and you want to manipulate the mbefore deploying into a cluster.
 
-This example can be found here: [example/components/doc-concepts/echo-test/](../../example/components/doc-concepts/echo-test/)
+This example can be found here: [example/components/doc-concepts/echo-test/](https://github.com/ice-bergtech/kr8/tree/main/example/components/doc-concepts/echo-test/)
 
 ```bash
 components/doc-conepts/jsonnetStorageClasses

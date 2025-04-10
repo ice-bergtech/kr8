@@ -2,7 +2,7 @@
 
 kr8-helpers is a set of scripts that wraps around the kr8 command for rendering components. The different types of components have different helps.
 
-You should ensure the `kr8-helpers` scripts are available in your `$PATH`. You can find them [here](https://github.com/apptio/kr8/tree/master/scripts)
+You should ensure the `kr8-helpers` scripts are available in your `$PATH`. You can find them [here](https://github.com/ice-bergtech/kr8/tree/main/scripts)
 
 ## clean-output
 
@@ -10,7 +10,7 @@ This helper cleans the generated directory and the metadata directory for each c
 
 ## helm-render
 
-Render a helm chart using `helm template`. This allows you to install helm charts as components with kr8. For more information, see the [helm component section](../components/helm.md)
+Render a helm chart using `helm template`. This allows you to install helm charts as components with kr8. For more information, see the [helm component section](./concepts/components.md#helm)
 
 Example:
 
@@ -20,7 +20,7 @@ kr8-helpers helm-render "{{.CHART_NAME}}"
 
 ## helm-render-with-patch
 
-Similar to `helm-render` except you can also patch the helm chart and add options and configuration that might not be exposed as a helm `values.yaml`. This helper will look for a `patches.jsonnet` inside the component directory. For more information, see the [helm component section](../components/helm.md)
+Similar to `helm-render` except you can also patch the helm chart and add options and configuration that might not be exposed as a helm `values.yaml`. This helper will look for a `patches.jsonnet` inside the component directory. For more information, see the [helm component section](./concepts/components.md#helm)
 
 Example:
 

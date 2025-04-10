@@ -5,8 +5,8 @@ It is designed to easily layer config from multiple sources.
 
 A deployment consists of 2 parts:
 
-  - [components](components.md) - one or more applications packaged together
-  - [clusters](clusters.md) - a deployment environment, organized as a tree of configuration
+  - [components](./components.md) - one or more applications packaged together
+  - [clusters](./clusters.md) - a deployment environment, organized as a tree of configuration
 
 The relationship between components and clusters are simple: components are installed on clusters.
 You will have:
@@ -24,7 +24,7 @@ Some examples of components might be:
 - argo applications: generate argo cd applications for managing applying cluster configuration to live nodes
 - application: a single application that you want to run in your cluster. This is usually a web application, but it can also be a database, cron job, or documentation.
 
-for more information on components see the [Components](docs/concepts/components.md) documentation.
+for more information on components see the [Components](./components.md) documentation.
 
 ### Cluster Config
 
@@ -68,4 +68,4 @@ clusters
             └── cluster.jsonnet
 ```
 
-See the [Clusters](docs/concepts/clusters.md) documentation.
+See the [Clusters](./clusters.md) documentation.
