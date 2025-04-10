@@ -8,6 +8,8 @@
 **Kr8+** is `pre-1.0`.
 This means that breaking changes will still happen from time to time, but it's stable enough for both scripting and interactive use.
 
+![Kr8+ Gopher](docs/kr8_gopher.png)
+
 ## Key Features
 
 * **Cluster Configuration Management**: Manage Kubernetes clusters across environments, regions and platforms with a declarative and centralized approach.
