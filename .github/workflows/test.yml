@@ -18,6 +18,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          submodules: true
       - name: 🚧 Set up Go
         uses: actions/setup-go@v5
         with:
@@ -54,7 +55,7 @@ jobs:
           KR8: '../kr8'
         run: cd bats-test && bats get_test.sh
       - name: 🧪 Generate Examples and Compare
-        run: ./kr8 -B example generate
+        run: ./kr8 -B examples generate
       - name: Verify no changes were made to tracked files by tests 
         run: git diff --exit-code || echo "Changes detected"
 
