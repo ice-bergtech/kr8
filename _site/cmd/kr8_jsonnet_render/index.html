@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Iceberg Tech">
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>kr8 jsonnet render - Kr8+ - MkDocs</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" disabled>
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" >
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Kr8+ - MkDocs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../installation/" class="nav-link">Installation</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/ice-bergtech/kr8/tree/main/example" class="nav-link">Examples</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Concepts</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../concepts/overview/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../../concepts/clusters/" class="dropdown-item">Clusters</a>
+</li>
+                                    
+<li>
+    <a href="../../concepts/components/" class="dropdown-item">Components</a>
+</li>
+                                    
+<li>
+    <a href="../../concepts/nativefuncs/" class="dropdown-item">Native Funcs</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../helpers/" class="nav-link">Helpers</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Cmd Docs</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../kr8/" class="dropdown-item">kr8</a>
+</li>
+                                    
+<li>
+    <a href="../kr8_version/" class="dropdown-item">kr8 version</a>
+</li>
+                                    
+<li>
+    <a href="../kr8_generate/" class="dropdown-item">kr8 generate</a>
+</li>
+                                    
+<li>
+    <a href="../kr8_format/" class="dropdown-item">kr8 format</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">kr8 get</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../kr8_get/" class="dropdown-item">kr8 get</a>
+</li>
+            
+<li>
+    <a href="../kr8_get_clusters/" class="dropdown-item">kr8 get clusters</a>
+</li>
+            
+<li>
+    <a href="../kr8_get_components/" class="dropdown-item">kr8 get components</a>
+</li>
+            
+<li>
+    <a href="../kr8_get_params/" class="dropdown-item">kr8 get params</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">kr8 init</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../kr8_init/" class="dropdown-item">kr8 init</a>
+</li>
+            
+<li>
+    <a href="../kr8_init_cluster/" class="dropdown-item">kr8 init cluster</a>
+</li>
+            
+<li>
+    <a href="../kr8_init_component/" class="dropdown-item">kr8 init component</a>
+</li>
+            
+<li>
+    <a href="../kr8_init_repo/" class="dropdown-item">kr8 init repo</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">kr8 jsonnet</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../kr8_jsonnet/" class="dropdown-item">kr8 jsonnet</a>
+</li>
+            
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">kr8 jsonnet render</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">kr8 render</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../kr8_render/" class="dropdown-item">kr8 render</a>
+</li>
+            
+<li>
+    <a href="../kr8_render_helm/" class="dropdown-item">kr8 render helm</a>
+</li>
+            
+<li>
+    <a href="../kr8_render_jsonnet/" class="dropdown-item">kr8 render jsonnet</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Godocs</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../godoc/kr8-cmd/" class="dropdown-item">kr8-cmd</a>
+</li>
+                                    
+<li>
+    <a href="../../godoc/kr8-generate/" class="dropdown-item">kr8-generate</a>
+</li>
+                                    
+<li>
+    <a href="../../godoc/kr8-init/" class="dropdown-item">kr8-init</a>
+</li>
+                                    
+<li>
+    <a href="../../godoc/kr8-jsonnet/" class="dropdown-item">kr8-jsonnet</a>
+</li>
+                                    
+<li>
+    <a href="../../godoc/kr8-types/" class="dropdown-item">kr8-types</a>
+</li>
+                                    
+<li>
+    <a href="../../godoc/kr8-util/" class="dropdown-item">kr8-util</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../kr8_jsonnet/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../kr8_render/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/ice-bergtech/kr8/blob/main/docs/cmd/kr8_jsonnet_render.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                              <button id="theme-menu" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static" aria-label="Toggle theme" class="nav-link dropdown-toggle">
+                                <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                <span class="d-lg-none ms-2">Toggle theme</span>
+                              </button>
+                              <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+                                    <i class="fa-solid fa-sun fa-fw"></i>
+                                    <span class="ms-2">Light</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="true">
+                                    <i class="fa-solid fa-moon fa-fw"></i>
+                                    <span class="ms-2">Dark</span>
+                                    <i class="fa-solid fa-check ms-auto"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto" aria-pressed="false">
+                                    <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                    <span class="ms-2">Auto</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                              </ul>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script src="../../js/darkmode.js"></script>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="2"><a href="#kr8-jsonnet-render" class="nav-link">kr8 jsonnet render</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="3"><a href="#synopsis" class="nav-link">Synopsis</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#options" class="nav-link">Options</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#options-inherited-from-parent-commands" class="nav-link">Options inherited from parent commands</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#see-also" class="nav-link">SEE ALSO</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h2 id="kr8-jsonnet-render">kr8 jsonnet render</h2>
+<p>Render a jsonnet file</p>
+<h3 id="synopsis">Synopsis</h3>
+<p>Render a jsonnet file to JSON or YAML</p>
+<pre><code>kr8 jsonnet render [flags] file [file ...]
+</code></pre>
+<h3 id="options">Options</h3>
+<pre><code>  -C, --cluster string         cluster to render params for
+  -p, --clusterparams string   provide cluster params as single file - can be combined with --cluster to override cluster
+  -c, --component string       component to render params for
+  -F, --format string          Output format: json, yaml, stream (default &quot;json&quot;)
+  -h, --help                   help for render
+      --prune                  Prune removes null and empty objects from ingested jsonnet files (default true)
+</code></pre>
+<h3 id="options-inherited-from-parent-commands">Options inherited from parent commands</h3>
+<pre><code>  -B, --base string            kr8 config base directory (default &quot;./&quot;)
+  -D, --clusterdir string      kr8 cluster directory
+      --color                  enable colorized output. Set to false to disable (default true)
+  -d, --componentdir string    kr8 component directory
+      --config string          A config file with kr8 configuration
+      --debug                  log more information about what kr8 is doing. Overrides --loglevel
+      --ext-str-file strings   Set jsonnet extvar from file contents
+  -J, --jpath stringArray      Directories to add to jsonnet include path. Repeat arg for multiple directories
+  -L, --loglevel string        set log level (default &quot;info&quot;)
+      --parallel int           parallelism - defaults to runtime.GOMAXPROCS(0) (default -1)
+</code></pre>
+<h3 id="see-also">SEE ALSO</h3>
+<ul>
+<li><a href="../kr8_jsonnet/">kr8 jsonnet</a>  - Jsonnet utilities</li>
+</ul>
+<h6 id="auto-generated-by-spf13cobra-on-9-apr-2025">Auto generated by spf13/cobra on 9-Apr-2025</h6></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

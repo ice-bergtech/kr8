@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Iceberg Tech">
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Clusters - Kr8+ - MkDocs</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" disabled>
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" >
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Kr8+ - MkDocs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../installation/" class="nav-link">Installation</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/ice-bergtech/kr8/tree/main/example" class="nav-link">Examples</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Concepts</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../overview/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Clusters</a>
+</li>
+                                    
+<li>
+    <a href="../components/" class="dropdown-item">Components</a>
+</li>
+                                    
+<li>
+    <a href="../nativefuncs/" class="dropdown-item">Native Funcs</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../helpers/" class="nav-link">Helpers</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Cmd Docs</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../cmd/kr8/" class="dropdown-item">kr8</a>
+</li>
+                                    
+<li>
+    <a href="../../cmd/kr8_version/" class="dropdown-item">kr8 version</a>
+</li>
+                                    
+<li>
+    <a href="../../cmd/kr8_generate/" class="dropdown-item">kr8 generate</a>
+</li>
+                                    
+<li>
+    <a href="../../cmd/kr8_format/" class="dropdown-item">kr8 format</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">kr8 get</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../cmd/kr8_get/" class="dropdown-item">kr8 get</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_get_clusters/" class="dropdown-item">kr8 get clusters</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_get_components/" class="dropdown-item">kr8 get components</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_get_params/" class="dropdown-item">kr8 get params</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">kr8 init</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../cmd/kr8_init/" class="dropdown-item">kr8 init</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_init_cluster/" class="dropdown-item">kr8 init cluster</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_init_component/" class="dropdown-item">kr8 init component</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_init_repo/" class="dropdown-item">kr8 init repo</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">kr8 jsonnet</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../cmd/kr8_jsonnet/" class="dropdown-item">kr8 jsonnet</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_jsonnet_render/" class="dropdown-item">kr8 jsonnet render</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">kr8 render</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../cmd/kr8_render/" class="dropdown-item">kr8 render</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_render_helm/" class="dropdown-item">kr8 render helm</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_render_jsonnet/" class="dropdown-item">kr8 render jsonnet</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Godocs</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../godoc/kr8-cmd/" class="dropdown-item">kr8-cmd</a>
+</li>
+                                    
+<li>
+    <a href="../../godoc/kr8-generate/" class="dropdown-item">kr8-generate</a>
+</li>
+                                    
+<li>
+    <a href="../../godoc/kr8-init/" class="dropdown-item">kr8-init</a>
+</li>
+                                    
+<li>
+    <a href="../../godoc/kr8-jsonnet/" class="dropdown-item">kr8-jsonnet</a>
+</li>
+                                    
+<li>
+    <a href="../../godoc/kr8-types/" class="dropdown-item">kr8-types</a>
+</li>
+                                    
+<li>
+    <a href="../../godoc/kr8-util/" class="dropdown-item">kr8-util</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../overview/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../components/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/ice-bergtech/kr8/blob/main/docs/concepts/clusters.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                              <button id="theme-menu" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static" aria-label="Toggle theme" class="nav-link dropdown-toggle">
+                                <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                <span class="d-lg-none ms-2">Toggle theme</span>
+                              </button>
+                              <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+                                    <i class="fa-solid fa-sun fa-fw"></i>
+                                    <span class="ms-2">Light</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="true">
+                                    <i class="fa-solid fa-moon fa-fw"></i>
+                                    <span class="ms-2">Dark</span>
+                                    <i class="fa-solid fa-check ms-auto"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto" aria-pressed="false">
+                                    <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                    <span class="ms-2">Auto</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                              </ul>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script src="../../js/darkmode.js"></script>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#clusters" class="nav-link">Clusters</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#components-in-clusters" class="nav-link">Components in clusters</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#cluster-parameters" class="nav-link">Cluster parameters</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#hierarchy-system" class="nav-link">Hierarchy System</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="clusters">Clusters</h1>
+<p>A cluster is a deployment environment, organized as a tree of configuration.
+Clusters are unique and singular.</p>
+<p>They have a name which is specified via the directory structure under  <code>./clusters</code> by default, or the directory specified by the <code>--clusterdir</code>, <code>-D</code> flags.</p>
+<p>The cluster spec is defined as a golang struct: [docs/godoc/kr8-types.md#Kr8ClusterJsonnet]</p>
+<p>Cluster configurations are defined in a hierarchical system which is loosely inspired by <a href="https://puppet.com/docs/hiera/3.3/index.html">Hiera</a> from the Puppet ecosystem.</p>
+<p>An example definition for clusters might look like this:</p>
+<pre><code class="language-bash">clusters
+├── development
+│   └── dev1
+│       └── cluster.jsonnet
+├── params.jsonnet
+└── production
+    ├── params.jsonnet
+    ├── prod1
+    │   └── cluster.jsonnet
+    └── prod2
+        └── cluster.jsonnet
+</code></pre>
+<p>The clusters are given names and then grouped together inside a directory tree.</p>
+<p>There are two jsonnet files you'll notice here:</p>
+<ul>
+<li><code>cluster.jsonnet</code> - this defines a named cluster, kr8+ will stop going down through the directory tree when it finds this file</li>
+<li><code>params.jsonnet</code> - this is a file which can have components and parameters defined for clustes lower down in the hierarchy. We'll go into more detail about this shortly.</li>
+</ul>
+<h2 id="components-in-clusters">Components in clusters</h2>
+<p>Adding a component to a cluster involves add a component key to the <code>_components</code> key inside <em>either</em> the <code>cluster.jsonnet</code> (for cluster specific components) or the <code>params.jsonnet</code> (for deploy components).</p>
+<p>Here's an example:</p>
+<pre><code class="language-jsonnet">_components+: {
+  sealed_secrets: { path: 'components/sealed_secrets' },
+},
+</code></pre>
+<p>Notice we're using the jsonnet <code>+</code> operator to make sure we're appending this to the list of components for that cluster, which will ensure the inheritance system works</p>
+<h2 id="cluster-parameters">Cluster parameters</h2>
+<p>Once you've initialized a component for a cluster, you can then start to override parameters for that component.
+You do this by simply defining a jsonnet key with the named parameters in it.
+Here's an example:</p>
+<pre><code class="language-jsonnet">external_dns+: {
+    provider: 'cloudflare',
+    txtPrefix: 'dev1',
+    txtOwnerId: 'dev1-',
+    domainFilters: [
+      'example.com',
+    ],
+    tolerateMasters: false,
+  },
+</code></pre>
+<h2 id="hierarchy-system">Hierarchy System</h2>
+<p>The hierarchy system is a very powerful part or kr8+.
+It allows you to remove duplication of parameter and component definitions.
+Take the previous cluster layout as an example:</p>
+<pre><code>clusters
+├── development
+│   └── dev1
+│       └── cluster.jsonnet
+├── params.jsonnet
+└── production
+    ├── params.jsonnet
+    ├── prod1
+    │   └── cluster.jsonnet
+    └── prod2
+        └── cluster.jsonnet
+</code></pre>
+<p>You can use the hierarchy system to ensure you have components installed in all clusters.
+Let's assume we want to make sure that we want to install the <code>sealed_secrets</code> component in <em>all</em> our clusters.
+We'd put it in this file:</p>
+<pre><code>clusters
+├── development
+│   └── dev1
+│       └── cluster.jsonnet
+├── params.jsonnet &lt;---- place component here
+└── production
+    ├── params.jsonnet
+    ├── prod1
+    │   └── cluster.jsonnet
+    └── prod2
+        └── cluster.jsonnet
+</code></pre>
+<p>Alongside that, let's assume all our production clusters are using the same external_dns domain name.
+We can define that like so:</p>
+<pre><code>clusters
+├── development
+│   └── dev1
+│       └── cluster.jsonnet
+├── params.jsonnet
+└── production
+    ├── params.jsonnet &lt;--- place external_dns configuration here
+    ├── prod1
+    │   └── cluster.jsonnet
+    └── prod2
+        └── cluster.jsonnet
+</code></pre>
+<p>kr8+ will look for the smallest unit of configuration, so if you want one cluster to be slightly different inside a hierarchy unit, you can continue to override components and parameters inside a clusters' <code>cluster.jsonnet</code> file.</p>
+<hr />
+<p>A cluster cluster configuration file will include:</p>
+<p><code>_kr8_spec</code> Configuration parameters for kr8+
+| key                    | description | example     |
+| ---------------------- | ----------- | ----------- |
+| <code>generate_dir</code>         |             | 'generated' |
+| <code>generate_short_names</code> |             | true        |</p>
+<p>| <code>_cluster</code> | Cluster configuration, which can be used as part of the Jsonnet configuration later. This consists of things like the cluster name, type, region, and other cluster specific configuration etc. |```json</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>description</th>
+<th>example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cluster_name</code></td>
+<td></td>
+<td>'ue1-prod'</td>
+</tr>
+<tr>
+<td><code>cluster_type</code></td>
+<td></td>
+<td>'k8'</td>
+</tr>
+<tr>
+<td><code>region_name</code></td>
+<td></td>
+<td>'us-east-1'</td>
+</tr>
+<tr>
+<td><code>tier</code></td>
+<td></td>
+<td>'prod'</td>
+</tr>
+</tbody>
+</table></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

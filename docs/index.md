@@ -7,7 +7,7 @@ It does this using [jsonnet](http://jsonnet.org)
 
 For documentation of the code, see the godoc directory:
 
-* [cmd](godoc/cmd.md) - how kr8+ processes commands and flags
+* [cmd](godoc/kr8-cmd.md) - how kr8+ processes commands and flags
 * [pkg/jvm](godoc/kr8-jsonnet.md) - how kr8+ processes jsonnet
 * [pkg/types](godoc/kr8-types.md) - standard types used by kr8+
 * [pkg/util](godoc/kr8-util.md) - utility functions used by kr8+
@@ -15,8 +15,9 @@ For documentation of the code, see the godoc directory:
 Index
 
 * [Installation](installation.md)
-* [Examples](../example)
+* [Examples](https://github.com/ice-bergtech/kr8/tree/main/example)
 * [Concepts](concepts/overview.md)
 * [Clusters](concepts/clusters.md)
 * [Components](concepts/components.md)
-* [Helpers](helpers.md) | [Script](../scripts/kr8-helpers)
+* [Helpers](helpers.md) | [Scripts](https://github.com/ice-bergtech/kr8/tree/main/scripts)
+* 

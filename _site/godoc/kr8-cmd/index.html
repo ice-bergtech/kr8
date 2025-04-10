@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Iceberg Tech">
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>kr8-cmd - Kr8+ - MkDocs</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" disabled>
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" >
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Kr8+ - MkDocs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../installation/" class="nav-link">Installation</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/ice-bergtech/kr8/tree/main/example" class="nav-link">Examples</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Concepts</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../concepts/overview/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../../concepts/clusters/" class="dropdown-item">Clusters</a>
+</li>
+                                    
+<li>
+    <a href="../../concepts/components/" class="dropdown-item">Components</a>
+</li>
+                                    
+<li>
+    <a href="../../concepts/nativefuncs/" class="dropdown-item">Native Funcs</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../helpers/" class="nav-link">Helpers</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Cmd Docs</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../cmd/kr8/" class="dropdown-item">kr8</a>
+</li>
+                                    
+<li>
+    <a href="../../cmd/kr8_version/" class="dropdown-item">kr8 version</a>
+</li>
+                                    
+<li>
+    <a href="../../cmd/kr8_generate/" class="dropdown-item">kr8 generate</a>
+</li>
+                                    
+<li>
+    <a href="../../cmd/kr8_format/" class="dropdown-item">kr8 format</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">kr8 get</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../cmd/kr8_get/" class="dropdown-item">kr8 get</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_get_clusters/" class="dropdown-item">kr8 get clusters</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_get_components/" class="dropdown-item">kr8 get components</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_get_params/" class="dropdown-item">kr8 get params</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">kr8 init</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../cmd/kr8_init/" class="dropdown-item">kr8 init</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_init_cluster/" class="dropdown-item">kr8 init cluster</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_init_component/" class="dropdown-item">kr8 init component</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_init_repo/" class="dropdown-item">kr8 init repo</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">kr8 jsonnet</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../cmd/kr8_jsonnet/" class="dropdown-item">kr8 jsonnet</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_jsonnet_render/" class="dropdown-item">kr8 jsonnet render</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">kr8 render</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../cmd/kr8_render/" class="dropdown-item">kr8 render</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_render_helm/" class="dropdown-item">kr8 render helm</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_render_jsonnet/" class="dropdown-item">kr8 render jsonnet</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Godocs</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">kr8-cmd</a>
+</li>
+                                    
+<li>
+    <a href="../kr8-generate/" class="dropdown-item">kr8-generate</a>
+</li>
+                                    
+<li>
+    <a href="../kr8-init/" class="dropdown-item">kr8-init</a>
+</li>
+                                    
+<li>
+    <a href="../kr8-jsonnet/" class="dropdown-item">kr8-jsonnet</a>
+</li>
+                                    
+<li>
+    <a href="../kr8-types/" class="dropdown-item">kr8-types</a>
+</li>
+                                    
+<li>
+    <a href="../kr8-util/" class="dropdown-item">kr8-util</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../../cmd/kr8_render_jsonnet/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../kr8-generate/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/ice-bergtech/kr8/blob/main/docs/godoc/kr8-cmd.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                              <button id="theme-menu" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static" aria-label="Toggle theme" class="nav-link dropdown-toggle">
+                                <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                <span class="d-lg-none ms-2">Toggle theme</span>
+                              </button>
+                              <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+                                    <i class="fa-solid fa-sun fa-fw"></i>
+                                    <span class="ms-2">Light</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="true">
+                                    <i class="fa-solid fa-moon fa-fw"></i>
+                                    <span class="ms-2">Dark</span>
+                                    <i class="fa-solid fa-check ms-auto"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto" aria-pressed="false">
+                                    <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                    <span class="ms-2">Auto</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                              </ul>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script src="../../js/darkmode.js"></script>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#cmd" class="nav-link">cmd</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#index" class="nav-link">Index</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#variables" class="nav-link">Variables</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#func-configurelogger" class="nav-link">func ConfigureLogger</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#func-execute" class="nav-link">func Execute</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#func-generatecommand" class="nav-link">func GenerateCommand</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#func-initconfig" class="nav-link">func InitConfig</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-cmdgenerateoptions" class="nav-link">type CmdGenerateOptions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-cmdgetoptions" class="nav-link">type CmdGetOptions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-cmdrenderoptions" class="nav-link">type CmdRenderOptions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-cmdrootoptions" class="nav-link">type CmdRootOptions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-stamp" class="nav-link">type Stamp</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="cmd">cmd</h1>
+<pre><code class="language-go">import &quot;github.com/ice-bergtech/kr8/cmd&quot;
+</code></pre>
+<h2 id="index">Index</h2>
+<ul>
+<li><a href="#variables">Variables</a></li>
+<li><a href="#ConfigureLogger">func ConfigureLogger(debug bool)</a></li>
+<li><a href="#Execute">func Execute(ver string)</a></li>
+<li><a href="#GenerateCommand">func GenerateCommand(cmd *cobra.Command, args []string)</a></li>
+<li><a href="#InitConfig">func InitConfig()</a></li>
+<li><a href="#CmdGenerateOptions">type CmdGenerateOptions</a></li>
+<li><a href="#CmdGetOptions">type CmdGetOptions</a></li>
+<li><a href="#CmdRenderOptions">type CmdRenderOptions</a></li>
+<li><a href="#CmdRootOptions">type CmdRootOptions</a></li>
+<li><a href="#Stamp">type Stamp</a></li>
+</ul>
+<h2 id="variables">Variables</h2>
+<p><a name="FormatCmd"></a></p>
+<pre><code class="language-go">var FormatCmd = &amp;cobra.Command{
+    Use:   &quot;format [flags]&quot;,
+    Short: &quot;Format jsonnet files&quot;,
+    Long:  `Format jsonnet configuration files`,
+
+    Args: cobra.MinimumNArgs(0),
+    Run: func(cmd *cobra.Command, args []string) {
+        // First get a list of all files in the base directory and subdirectories. Ignore .git directories.
+        var fileList []string
+        err := filepath.Walk(RootConfig.BaseDir, func(path string, info fs.FileInfo, err error) error {
+            if info.IsDir() {
+                if info.Name() == &quot;.git&quot; {
+                    return filepath.SkipDir
+                }
+
+                return nil
+            }
+            fileList = append(fileList, path)
+
+            return nil
+        })
+        util.FatalErrorCheck(&quot;Error walking the path &quot;+RootConfig.BaseDir, err)
+
+        fileList = util.Filter(fileList, func(s string) bool {
+            var result bool
+            for _, f := range strings.Split(cmdFormatFlags.Includes, &quot;,&quot;) {
+                t, _ := filepath.Match(f, s)
+                if t {
+                    return t
+                }
+                result = result || t
+            }
+
+            return result
+        })
+
+        fileList = util.Filter(fileList, func(s string) bool {
+            var result bool
+            for _, f := range strings.Split(cmdFormatFlags.Excludes, &quot;,&quot;) {
+                t, _ := filepath.Match(f, s)
+                if t {
+                    return !t
+                }
+                result = result || t
+            }
+
+            return !result
+        })
+        log.Debug().Msg(&quot;Filtered file list: &quot; + fmt.Sprintf(&quot;%v&quot;, fileList))
+        log.Debug().Msg(&quot;Formatting files...&quot;)
+
+        var waitGroup sync.WaitGroup
+        parallel, err := cmd.Flags().GetInt(&quot;parallel&quot;)
+        util.FatalErrorCheck(&quot;Error getting parallel flag&quot;, err)
+        log.Debug().Msg(&quot;Parallel set to &quot; + strconv.Itoa(parallel))
+        ants_file, _ := ants.NewPool(parallel)
+        for _, filename := range fileList {
+            waitGroup.Add(1)
+            _ = ants_file.Submit(func() {
+                defer waitGroup.Done()
+                var bytes []byte
+                bytes, err = os.ReadFile(filepath.Clean(filename))
+                output, err := formatter.Format(filename, string(bytes), util.GetDefaultFormatOptions())
+                if err != nil {
+                    fmt.Fprintln(os.Stderr, err.Error())
+
+                    return
+                }
+                err = os.WriteFile(filepath.Clean(filename), []byte(output), 0600)
+                if err != nil {
+                    fmt.Fprintln(os.Stderr, err.Error())
+
+                    return
+                }
+            })
+        }
+        waitGroup.Wait()
+    },
+}
+</code></pre>
+<p><a name="GenerateCmd"></a></p>
+<pre><code class="language-go">var GenerateCmd = &amp;cobra.Command{
+    Use:   &quot;generate [flags]&quot;,
+    Short: &quot;Generate components&quot;,
+    Long:  `Generate components in clusters`,
+
+    Args: cobra.MinimumNArgs(0),
+    Run:  GenerateCommand,
+}
+</code></pre>
+<p><a name="GetClustersCmd"></a></p>
+<pre><code class="language-go">var GetClustersCmd = &amp;cobra.Command{
+    Use:   &quot;clusters [flags]&quot;,
+    Short: &quot;Get all clusters&quot;,
+    Long:  &quot;Get all clusters defined in kr8 config hierarchy&quot;,
+    Run: func(cmd *cobra.Command, args []string) {
+
+        clusters, err := util.GetClusterFilenames(RootConfig.ClusterDir)
+        util.FatalErrorCheck(&quot;Error getting clusters&quot;, err)
+
+        if cmdGetFlags.NoTable {
+            for _, c := range clusters {
+                println(c.Name + &quot;: &quot; + c.Path)
+            }
+
+            return
+        }
+
+        var entry []string
+        table := tablewriter.NewWriter(os.Stdout)
+        table.SetHeader([]string{&quot;Name&quot;, &quot;Path&quot;})
+
+        for _, c := range clusters {
+            entry = append(entry, c.Name)
+            entry = append(entry, c.Path)
+            table.Append(entry)
+            entry = entry[:0]
+        }
+        table.Render()
+
+    },
+}
+</code></pre>
+<p><a name="GetCmd"></a>GetCmd represents the get command.</p>
+<pre><code class="language-go">var GetCmd = &amp;cobra.Command{
+    Use:   &quot;get&quot;,
+    Short: &quot;Display one or many kr8 resources&quot;,
+    Long:  `Displays information about kr8 resources such as clusters and components`,
+}
+</code></pre>
+<p><a name="GetComponentsCmd"></a></p>
+<pre><code class="language-go">var GetComponentsCmd = &amp;cobra.Command{
+    Use:   &quot;components [flags]&quot;,
+    Short: &quot;Get all components&quot;,
+    Long:  &quot;Get all available components defined in the kr8 config hierarchy&quot;,
+    Run: func(cmd *cobra.Command, args []string) {
+
+        if cmdGetFlags.Cluster == &quot;&quot; &amp;&amp; cmdGetFlags.ClusterParams == &quot;&quot; {
+            log.Fatal().Msg(&quot;Please specify a --cluster name and/or --clusterparams file&quot;)
+        }
+
+        var params []string
+        if cmdGetFlags.Cluster != &quot;&quot; {
+            clusterPath, err := util.GetClusterPaths(RootConfig.ClusterDir, cmdGetFlags.Cluster)
+            util.FatalErrorCheck(&quot;error getting cluster path for &quot;+cmdGetFlags.Cluster, err)
+            params = util.GetClusterParamsFilenames(RootConfig.ClusterDir, clusterPath)
+        }
+        if cmdGetFlags.ClusterParams != &quot;&quot; {
+            params = append(params, cmdGetFlags.ClusterParams)
+        }
+
+        jvm, err := jnetvm.JsonnetRenderFiles(RootConfig.VMConfig, params, &quot;._components&quot;, true, &quot;&quot;, &quot;components&quot;)
+        util.FatalErrorCheck(&quot;error rendering jsonnet files&quot;, err)
+        if cmdGetFlags.ParamField != &quot;&quot; {
+            value := gjson.Get(jvm, cmdGetFlags.ParamField)
+            if value.String() == &quot;&quot; {
+                log.Fatal().Msg(&quot;Error getting param: &quot; + cmdGetFlags.ParamField)
+            } else {
+                formatted, err := util.Pretty(jvm, RootConfig.Color)
+                util.FatalErrorCheck(&quot;error pretty printing jsonnet&quot;, err)
+                fmt.Println(formatted)
+            }
+        } else {
+            formatted, err := util.Pretty(jvm, RootConfig.Color)
+            util.FatalErrorCheck(&quot;error pretty printing jsonnet&quot;, err)
+            fmt.Println(formatted)
+        }
+    },
+}
+</code></pre>
+<p><a name="GetParamsCmd"></a></p>
+<pre><code class="language-go">var GetParamsCmd = &amp;cobra.Command{
+    Use:   &quot;params [flags]&quot;,
+    Short: &quot;Get parameter for components and clusters&quot;,
+    Long:  &quot;Get parameters assigned to clusters and components in the kr8 config hierarchy&quot;,
+    Run: func(cmd *cobra.Command, args []string) {
+        if cmdGetFlags.Cluster == &quot;&quot; {
+            log.Fatal().Msg(&quot;Please specify a --cluster&quot;)
+        }
+
+        var cList []string
+        if cmdGetFlags.Component != &quot;&quot; {
+            cList = append(cList, cmdGetFlags.Component)
+        }
+
+        params, err := jnetvm.JsonnetRenderClusterParams(
+            RootConfig.VMConfig,
+            cmdGetFlags.Cluster,
+            cList,
+            cmdGetFlags.ClusterParams,
+            true,
+        )
+        util.FatalErrorCheck(&quot;error rendering cluster params&quot;, err)
+
+        if cmdGetFlags.ParamField == &quot;&quot; {
+            if cmdGetFlags.Component != &quot;&quot; {
+                result := gjson.Get(params, cmdGetFlags.Component).String()
+                formatted, err := util.Pretty(result, RootConfig.Color)
+                util.FatalErrorCheck(&quot;error pretty printing jsonnet&quot;, err)
+                fmt.Println(formatted)
+            } else {
+                formatted, err := util.Pretty(params, RootConfig.Color)
+                util.FatalErrorCheck(&quot;error pretty printing jsonnet&quot;, err)
+                fmt.Println(formatted)
+            }
+
+            return
+        }
+
+        if cmdGetFlags.ParamField != &quot;&quot; {
+            value := gjson.Get(params, cmdGetFlags.ParamField)
+            if value.String() == &quot;&quot; {
+                log.Fatal().Msg(&quot;Error getting param: &quot; + cmdGetFlags.ParamField)
+            }
+
+            fmt.Println(value)
+        }
+    },
+}
+</code></pre>
+<p><a name="InitClusterCmd"></a></p>
+<pre><code class="language-go">var InitClusterCmd = &amp;cobra.Command{
+    Use:   &quot;cluster [flags]&quot;,
+    Short: &quot;Init a new cluster config file&quot;,
+    Long:  &quot;Initialize a new cluster configuration file&quot;,
+    Run: func(cmd *cobra.Command, args []string) {
+        cSpec := types.Kr8ClusterSpec{
+            Name:               cmdInitFlags.ClusterName,
+            PostProcessor:      &quot;function(input) input&quot;,
+            GenerateDir:        &quot;generated&quot;,
+            GenerateShortNames: false,
+            PruneParams:        false,
+            ClusterDir:         RootConfig.ClusterDir,
+        }
+
+        if cmdInitFlags.Interactive {
+            prompt := &amp;survey.Input{
+                Message: &quot;Set the cluster name&quot;,
+                Default: cmdInitFlags.ClusterName,
+                Help:    &quot;Distinct name for the cluster&quot;,
+            }
+            util.FatalErrorCheck(&quot;Invalid cluster name&quot;, survey.AskOne(prompt, &amp;cSpec.Name))
+
+            prompt = &amp;survey.Input{
+                Message: &quot;Set the cluster configuration directory&quot;,
+                Default: RootConfig.ClusterDir,
+                Help:    &quot;Set the root directory for the new cluster&quot;,
+            }
+            util.FatalErrorCheck(&quot;Invalid cluster directory&quot;, survey.AskOne(prompt, &amp;cSpec.ClusterDir))
+
+            promptB := &amp;survey.Confirm{
+                Message: &quot;Generate short names for output file names?&quot;,
+                Default: cSpec.GenerateShortNames,
+                Help:    &quot;Shortens component names and file structure&quot;,
+            }
+            util.FatalErrorCheck(&quot;Invalid option&quot;, survey.AskOne(promptB, &amp;cSpec.GenerateShortNames))
+
+            promptB = &amp;survey.Confirm{
+                Message: &quot;Prune component parameters?&quot;,
+                Default: cSpec.PruneParams,
+                Help:    &quot;This removes empty and null parameters from configuration&quot;,
+            }
+            util.FatalErrorCheck(&quot;Invalid option&quot;, survey.AskOne(promptB, &amp;cSpec.PruneParams))
+        }
+
+        util.FatalErrorCheck(&quot;Error generating cluster jsonnet file&quot;, kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterDir))
+    },
+}
+</code></pre>
+<p><a name="InitCmd"></a>InitCmd represents the command. Various subcommands are available to initialize different components of kr8.</p>
+<pre><code class="language-go">var InitCmd = &amp;cobra.Command{
+    Use:   &quot;init&quot;,
+    Short: &quot;Initialize kr8 config repos, components and clusters&quot;,
+    Long: `kr8 requires specific directories and exists for its config to work.
+This init command helps in creating directory structure for repos, clusters and 
+components`,
+}
+</code></pre>
+<p><a name="InitComponentCmd"></a></p>
+<pre><code class="language-go">var InitComponentCmd = &amp;cobra.Command{
+    Use:   &quot;component [flags]&quot;,
+    Short: &quot;Init a new component config file&quot;,
+    Long:  &quot;Initialize a new component configuration file&quot;,
+    Run: func(cmd *cobra.Command, args []string) {
+
+        if cmdInitFlags.Interactive {
+            prompt := &amp;survey.Input{
+                Message: &quot;Enter component name&quot;,
+                Default: cmdInitFlags.ComponentName,
+                Help:    &quot;Enter the name of the component you want to create&quot;,
+            }
+            util.FatalErrorCheck(&quot;Invalid component name&quot;, survey.AskOne(prompt, &amp;cmdInitFlags.ComponentName))
+
+            prompt = &amp;survey.Input{
+                Message: &quot;Enter component directory&quot;,
+                Default: RootConfig.ComponentDir,
+                Help:    &quot;Enter the directory where you want to create the component&quot;,
+            }
+            util.FatalErrorCheck(&quot;Invalid component directory&quot;, survey.AskOne(prompt, &amp;RootConfig.ComponentDir))
+
+            promptS := &amp;survey.Select{
+                Message: &quot;Select component type&quot;,
+                Options: []string{&quot;jsonnet&quot;, &quot;yml&quot;, &quot;tpl&quot;, &quot;chart&quot;},
+                Help:    &quot;Select the type of component you want to create&quot;,
+                Default: &quot;jsonnet&quot;,
+                Description: func(value string, index int) string {
+                    switch value {
+                    case &quot;jsonnet&quot;:
+                        return &quot;Use a Jsonnet file to describe the component resources&quot;
+                    case &quot;yml&quot;:
+                        return &quot;Use a yml (docker-compose) file to describe the component resources&quot;
+                    case &quot;tpl&quot;:
+                        return &quot;Use a template file to describe the component resources&quot;
+                    case &quot;chart&quot;:
+                        return &quot;Use a Helm chart to describe the component resources&quot;
+                    default:
+                        return &quot;&quot;
+                    }
+                },
+            }
+            util.FatalErrorCheck(&quot;Invalid component type&quot;, survey.AskOne(promptS, &amp;cmdInitFlags.ComponentType))
+        }
+        util.FatalErrorCheck(
+            &quot;Error generating component jsonnet&quot;,
+            kr8init.GenerateComponentJsonnet(cmdInitFlags, RootConfig.ComponentDir),
+        )
+    },
+}
+</code></pre>
+<p><a name="InitRepoCmd"></a>Initializes a new kr8 configuration repository</p>
+<p>Directory tree:</p>
+<pre><code>components/
+
+clusters/
+
+lib/
+
+generated/
+</code></pre>
+<pre><code class="language-go">var InitRepoCmd = &amp;cobra.Command{
+    Use:   &quot;repo [flags] dir&quot;,
+    Args:  cobra.MinimumNArgs(1),
+    Short: &quot;Initialize a new kr8 config repo&quot;,
+    Long: `Initialize a new kr8 config repo by downloading the kr8 config skeleton repo
+and initialize a git repo so you can get started`,
+    Run: func(cmd *cobra.Command, args []string) {
+        if len(args) == 0 {
+            log.Fatal().Msg(&quot;Error: no directory specified&quot;)
+        }
+        outDir := args[len(args)-1]
+        log.Debug().Msg(&quot;Initializing kr8 config repo in &quot; + outDir)
+        if cmdInitFlags.InitUrl != &quot;&quot; {
+            util.FatalErrorCheck(
+                &quot;Issue fetching repo&quot;,
+                util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, cmdInitFlags.Fetch),
+            )
+
+            return
+        }
+
+        cmdInitOptions := kr8init.Kr8InitOptions{
+            InitUrl:       cmdInitFlags.InitUrl,
+            ClusterName:   cmdInitFlags.ClusterName,
+            ComponentName: &quot;example-component&quot;,
+            ComponentType: &quot;jsonnet&quot;,
+            Interactive:   false,
+            Fetch:         false,
+        }
+        clusterOptions := types.Kr8ClusterSpec{
+            Name:               cmdInitFlags.ClusterName,
+            PostProcessor:      &quot;&quot;,
+            GenerateDir:        &quot;generated&quot;,
+            GenerateShortNames: false,
+            PruneParams:        false,
+            ClusterDir:         &quot;clusters&quot;,
+        }
+
+        util.FatalErrorCheck(
+            &quot;Issue creating cluster.jsonnet&quot;,
+            kr8init.GenerateClusterJsonnet(clusterOptions, outDir+&quot;/clusters&quot;),
+        )
+        util.FatalErrorCheck(
+            &quot;Issue creating example component.jsonnet&quot;,
+            kr8init.GenerateComponentJsonnet(cmdInitOptions, outDir+&quot;/components&quot;),
+        )
+        util.FatalErrorCheck(
+            &quot;Issue creating lib folder&quot;,
+            kr8init.GenerateLib(cmdInitFlags.Fetch, outDir+&quot;/lib&quot;),
+        )
+        util.FatalErrorCheck(
+            &quot;Issue creating Readme.md&quot;,
+            kr8init.GenerateReadme(outDir, cmdInitOptions, clusterOptions),
+        )
+    },
+}
+</code></pre>
+<p><a name="JsonnetCmd"></a></p>
+<pre><code class="language-go">var JsonnetCmd = &amp;cobra.Command{
+    Use:   &quot;jsonnet&quot;,
+    Short: &quot;Jsonnet utilities&quot;,
+    Long:  `Utility commands to process jsonnet`,
+}
+</code></pre>
+<p><a name="JsonnetRenderCmd"></a></p>
+<pre><code class="language-go">var JsonnetRenderCmd = &amp;cobra.Command{
+    Use:   &quot;render [flags] file [file ...]&quot;,
+    Short: &quot;Render a jsonnet file&quot;,
+    Long:  `Render a jsonnet file to JSON or YAML`,
+
+    Args: cobra.MinimumNArgs(1),
+    Run: func(cmd *cobra.Command, args []string) {
+        for _, f := range args {
+            err := jvm.JsonnetRender(cmdFlagsJsonnet, f, RootConfig.VMConfig)
+            if err != nil {
+                log.Fatal().Str(&quot;file&quot;, f).Err(err).Msg(&quot;error rendering jsonnet file&quot;)
+            }
+        }
+    },
+}
+</code></pre>
+<p><a name="RenderCmd"></a></p>
+<pre><code class="language-go">var RenderCmd = &amp;cobra.Command{
+    Use:   &quot;render&quot;,
+    Short: &quot;Render files&quot;,
+    Long:  `Render files in jsonnet or YAML`,
+}
+</code></pre>
+<p><a name="RenderHelmCmd"></a></p>
+<pre><code class="language-go">var RenderHelmCmd = &amp;cobra.Command{
+    Use:   &quot;helm&quot;,
+    Short: &quot;Clean YAML stream from Helm Template output - Reads from Stdin&quot;,
+    Long:  `Removes Null YAML objects from a YAML stream`,
+    Run: func(cmd *cobra.Command, args []string) {
+        decoder := yaml.NewYAMLReader(bufio.NewReader(os.Stdin))
+        jsa := [][]byte{}
+        for {
+            bytes, err := decoder.Read()
+            if errors.Is(err, io.EOF) {
+                break
+            } else if err != nil {
+                util.FatalErrorCheck(&quot;Error decoding yaml stream&quot;, err)
+            }
+            if len(bytes) == 0 {
+                continue
+            }
+            jsonData, err := yaml.ToJSON(bytes)
+            util.FatalErrorCheck(&quot;Error converting yaml to JSON&quot;, err)
+            if string(jsonData) == &quot;null&quot; {
+
+                continue
+            }
+            _, _, err = unstructured.UnstructuredJSONScheme.Decode(jsonData, nil, nil)
+            util.FatalErrorCheck(&quot;Error handling unstructured JSON&quot;, err)
+            jsa = append(jsa, jsonData)
+        }
+        for _, j := range jsa {
+            out, err := goyaml.JSONToYAML(j)
+            util.FatalErrorCheck(&quot;Error encoding JSON to YAML&quot;, err)
+            fmt.Println(&quot;---&quot;)
+            fmt.Println(string(out))
+        }
+    },
+}
+</code></pre>
+<p><a name="RenderJsonnetCmd"></a></p>
+<pre><code class="language-go">var RenderJsonnetCmd = &amp;cobra.Command{
+    Use:   &quot;jsonnet file [file ...]&quot;,
+    Short: &quot;Render a jsonnet file&quot;,
+    Long:  `Render a jsonnet file to JSON or YAML`,
+
+    Args: cobra.MinimumNArgs(1),
+    Run: func(cmd *cobra.Command, args []string) {
+        for _, fileName := range args {
+            err := jvm.JsonnetRender(
+                types.CmdJsonnetOptions{
+                    Prune:         cmdRenderFlags.Prune,
+                    ClusterParams: cmdRenderFlags.ClusterParams,
+                    Cluster:       cmdRenderFlags.Cluster,
+                    Component:     cmdRenderFlags.ComponentName,
+                    Format:        cmdRenderFlags.Format,
+                    Color:         false,
+                }, fileName, RootConfig.VMConfig)
+            if err != nil {
+                log.Fatal().Str(&quot;filename&quot;, fileName).Err(err).Msg(&quot;error rendering jsonnet&quot;)
+            }
+        }
+    },
+}
+</code></pre>
+<p><a name="RootCmd"></a>RootCmd represents the base command when called without any subcommands.</p>
+<pre><code class="language-go">var RootCmd = &amp;cobra.Command{
+    Use:   &quot;kr8&quot;,
+    Short: &quot;Kubernetes config parameter framework&quot;,
+    Long: `A tool to generate Kubernetes configuration from a hierarchy
+    of jsonnet files`,
+}
+</code></pre>
+<p><a name="VersionCmd"></a>Print out versions of packages in use. Chore() - Updated manually.</p>
+<pre><code class="language-go">var VersionCmd = &amp;cobra.Command{
+    Use:   &quot;version&quot;,
+    Short: &quot;Return the current version of kr8+&quot;,
+    Long:  `return the current version of kr8+`,
+    Run: func(cmd *cobra.Command, args []string) {
+        fmt.Println(RootCmd.Use + &quot;+ Version: &quot; + version)
+        info, ok := debug.ReadBuildInfo()
+        if !ok {
+            log.Fatal().Msg(&quot;could not read build info&quot;)
+        }
+        stamp := retrieveStamp(info)
+        fmt.Printf(&quot;  Built with %s on %s\n&quot;, stamp.InfoGoCompiler, stamp.InfoBuildTime)
+        fmt.Printf(&quot;  VCS revision: %s\n&quot;, stamp.VCSRevision)
+        fmt.Printf(&quot;  Go version %s, GOOS %s, GOARCH %s\n&quot;, info.GoVersion, stamp.InfoGOOS, stamp.InfoGOARCH)
+        fmt.Print(&quot;  Dependencies:\n&quot;)
+        for _, mod := range retrieveDepends(info) {
+            fmt.Printf(&quot;    %s\n&quot;, mod)
+        }
+
+    },
+}
+</code></pre>
+<p><a name="ConfigureLogger"></a></p>
+<h2 id="func-configurelogger">func <a href="https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L98">ConfigureLogger</a></h2>
+<pre><code class="language-go">func ConfigureLogger(debug bool)
+</code></pre>
+<p><a name="Execute"></a></p>
+<h2 id="func-execute">func <a href="https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L33">Execute</a></h2>
+<pre><code class="language-go">func Execute(ver string)
+</code></pre>
+<p>Execute adds all child commands to the root command sets flags appropriately. This is called by main.main(). It only needs to happen once to the rootCmd.</p>
+<p><a name="GenerateCommand"></a></p>
+<h2 id="func-generatecommand">func <a href="https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L63">GenerateCommand</a></h2>
+<pre><code class="language-go">func GenerateCommand(cmd *cobra.Command, args []string)
+</code></pre>
+<p>This function will generate the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.</p>
+<p><a name="InitConfig"></a></p>
+<h2 id="func-initconfig">func <a href="https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L137">InitConfig</a></h2>
+<pre><code class="language-go">func InitConfig()
+</code></pre>
+<p>InitConfig reads in config file and ENV variables if set.</p>
+<p><a name="CmdGenerateOptions"></a></p>
+<h2 id="type-cmdgenerateoptions">type <a href="https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L18-L25">CmdGenerateOptions</a></h2>
+<p>Stores the options for the 'generate' command.</p>
+<pre><code class="language-go">type CmdGenerateOptions struct {
+    // Stores the path to the cluster params file
+    ClusterParamsFile string
+    // Stores the output directory for generated files
+    GenerateDir string
+    // Stores the filters to apply to clusters and components when generating files
+    Filters util.PathFilterOptions
+}
+</code></pre>
+<p><a name="CmdGetOptions"></a></p>
+<h2 id="type-cmdgetoptions">type <a href="https://github.com/ice-bergtech/kr8/blob/main/cmd/get.go#L38-L52">CmdGetOptions</a></h2>
+<p>Holds the options for the get command.</p>
+<pre><code class="language-go">type CmdGetOptions struct {
+    // ClusterParams provides a way to provide cluster params as a single file.
+    // This can be combined with --cluster to override the cluster.
+    ClusterParams string
+    // If true, just prints result instead of placing in table
+    NoTable bool
+    // Field to display from the resource
+    FieldName string
+    // Cluster to get resources from
+    Cluster string
+    // Component to get resources from
+    Component string
+    // Param to display from the resource
+    ParamField string
+}
+</code></pre>
+<p><a name="CmdRenderOptions"></a></p>
+<h2 id="type-cmdrenderoptions">type <a href="https://github.com/ice-bergtech/kr8/blob/main/cmd/render.go#L24-L35">CmdRenderOptions</a></h2>
+<p>Contains parameters for the kr8 render command.</p>
+<pre><code class="language-go">type CmdRenderOptions struct {
+    // Prune null and empty objects from rendered json
+    Prune bool
+    // Filename to read cluster configuration from
+    ClusterParams string
+    // Name of the component to render
+    ComponentName string
+    // Name of the cluster to render
+    Cluster string
+    // Format of the output (yaml, json or stream)
+    Format string
+}
+</code></pre>
+<p><a name="CmdRootOptions"></a></p>
+<h2 id="type-cmdrootoptions">type <a href="https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L42-L61">CmdRootOptions</a></h2>
+<p>Default options that are available to all commands.</p>
+<pre><code class="language-go">type CmdRootOptions struct {
+    // kr8 config base directory
+    BaseDir string
+    // kr8 cluster directory
+    ClusterDir string
+    // kr8 component directory
+    ComponentDir string
+    // A config file with kr8 configuration
+    ConfigFile string
+    // parallelism - defaults to runtime.GOMAXPROCS(0)
+    Parallel int
+    // log more information about what kr8 is doing. Overrides --loglevel
+    Debug bool
+    // set log level
+    LogLevel string
+    // enable colorized output (default true). Set to false to disable&quot;)
+    Color bool
+    // contains ingormation to configure jsonnet vm
+    VMConfig types.VMConfig
+}
+</code></pre>
+<p><a name="RootConfig"></a></p>
+<pre><code class="language-go">var RootConfig CmdRootOptions
+</code></pre>
+<p><a name="Stamp"></a></p>
+<h2 id="type-stamp">type <a href="https://github.com/ice-bergtech/kr8/blob/main/cmd/version.go#L13-L20">Stamp</a></h2>
+<pre><code class="language-go">type Stamp struct {
+    InfoGoVersion  string
+    InfoGoCompiler string
+    InfoGOARCH     string
+    InfoGOOS       string
+    InfoBuildTime  string
+    VCSRevision    string
+}
+</code></pre></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

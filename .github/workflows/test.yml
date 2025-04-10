@@ -1,4 +1,4 @@
-name: CI
+name: CI Tests
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
       - "v*"
   pull_request:
     paths:
+      - .github/workflows/test.yml
       - '*.go'
       - 'cmd/*'
       - 'go.mod'
@@ -64,4 +65,4 @@ jobs:
         run: ./kr8 -B example generate
       - name: Verify no changes were made to tracked files by tests 
         run: git diff --exit-code || echo "Changes detected"
-          
+
