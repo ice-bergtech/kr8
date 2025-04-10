@@ -101,7 +101,7 @@ func GenerateLib(fetch bool, dstDir string) error {
 		return err
 	}
 
-	return util.FetchRepoUrl("https://github.com/kube-libsonnet/kube-libsonnet.git", dstDir+"/klib", fetch)
+	return util.FetchRepoUrl("https://github.com/kube-libsonnet/kube-libsonnet.git", dstDir+"/klib", !fetch)
 }
 
 func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) error {
