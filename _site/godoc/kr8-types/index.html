@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Iceberg Tech">
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>kr8-types - Kr8+ - MkDocs</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" disabled>
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" >
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Kr8+ - MkDocs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../installation/" class="nav-link">Installation</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/ice-bergtech/kr8/tree/main/example" class="nav-link">Examples</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Concepts</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../concepts/overview/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../../concepts/clusters/" class="dropdown-item">Clusters</a>
+</li>
+                                    
+<li>
+    <a href="../../concepts/components/" class="dropdown-item">Components</a>
+</li>
+                                    
+<li>
+    <a href="../../concepts/nativefuncs/" class="dropdown-item">Native Funcs</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../helpers/" class="nav-link">Helpers</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Cmd Docs</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../cmd/kr8/" class="dropdown-item">kr8</a>
+</li>
+                                    
+<li>
+    <a href="../../cmd/kr8_version/" class="dropdown-item">kr8 version</a>
+</li>
+                                    
+<li>
+    <a href="../../cmd/kr8_generate/" class="dropdown-item">kr8 generate</a>
+</li>
+                                    
+<li>
+    <a href="../../cmd/kr8_format/" class="dropdown-item">kr8 format</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">kr8 get</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../cmd/kr8_get/" class="dropdown-item">kr8 get</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_get_clusters/" class="dropdown-item">kr8 get clusters</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_get_components/" class="dropdown-item">kr8 get components</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_get_params/" class="dropdown-item">kr8 get params</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">kr8 init</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../cmd/kr8_init/" class="dropdown-item">kr8 init</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_init_cluster/" class="dropdown-item">kr8 init cluster</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_init_component/" class="dropdown-item">kr8 init component</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_init_repo/" class="dropdown-item">kr8 init repo</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">kr8 jsonnet</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../cmd/kr8_jsonnet/" class="dropdown-item">kr8 jsonnet</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_jsonnet_render/" class="dropdown-item">kr8 jsonnet render</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">kr8 render</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../cmd/kr8_render/" class="dropdown-item">kr8 render</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_render_helm/" class="dropdown-item">kr8 render helm</a>
+</li>
+            
+<li>
+    <a href="../../cmd/kr8_render_jsonnet/" class="dropdown-item">kr8 render jsonnet</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Godocs</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../kr8-cmd/" class="dropdown-item">kr8-cmd</a>
+</li>
+                                    
+<li>
+    <a href="../kr8-generate/" class="dropdown-item">kr8-generate</a>
+</li>
+                                    
+<li>
+    <a href="../kr8-init/" class="dropdown-item">kr8-init</a>
+</li>
+                                    
+<li>
+    <a href="../kr8-jsonnet/" class="dropdown-item">kr8-jsonnet</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">kr8-types</a>
+</li>
+                                    
+<li>
+    <a href="../kr8-util/" class="dropdown-item">kr8-util</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../kr8-jsonnet/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../kr8-util/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/ice-bergtech/kr8/blob/main/docs/godoc/kr8-types.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                              <button id="theme-menu" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static" aria-label="Toggle theme" class="nav-link dropdown-toggle">
+                                <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                <span class="d-lg-none ms-2">Toggle theme</span>
+                              </button>
+                              <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+                                    <i class="fa-solid fa-sun fa-fw"></i>
+                                    <span class="ms-2">Light</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="true">
+                                    <i class="fa-solid fa-moon fa-fw"></i>
+                                    <span class="ms-2">Dark</span>
+                                    <i class="fa-solid fa-check ms-auto"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto" aria-pressed="false">
+                                    <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                    <span class="ms-2">Auto</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                              </ul>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script src="../../js/darkmode.js"></script>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#types" class="nav-link">types</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#index" class="nav-link">Index</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#func-extractextfiles" class="nav-link">func ExtractExtFiles</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#func-extractjpaths" class="nav-link">func ExtractJpaths</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-cmdjsonnetoptions" class="nav-link">type CmdJsonnetOptions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-extfilevar" class="nav-link">type ExtFileVar</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-komposeconvertoptions" class="nav-link">type KomposeConvertOptions</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="3"><a href="#func-create" class="nav-link">func Create</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#func-komposeconvertoptions-convert" class="nav-link">func (KomposeConvertOptions) Convert</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#func-komposeconvertoptions-genkomposepkgopts" class="nav-link">func (KomposeConvertOptions) GenKomposePkgOpts</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#func-komposeconvertoptions-validate" class="nav-link">func (KomposeConvertOptions) Validate</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-kr8cluster" class="nav-link">type Kr8Cluster</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-kr8clustercomponentref" class="nav-link">type Kr8ClusterComponentRef</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-kr8clusterjsonnet" class="nav-link">type Kr8ClusterJsonnet</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-kr8clusterspec" class="nav-link">type Kr8ClusterSpec</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="3"><a href="#func-createclusterspec" class="nav-link">func CreateClusterSpec</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-kr8componentjsonnet" class="nav-link">type Kr8ComponentJsonnet</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-kr8componentspec" class="nav-link">type Kr8ComponentSpec</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="3"><a href="#func-createcomponentspec" class="nav-link">func CreateComponentSpec</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-kr8componentspecincludeobject" class="nav-link">type Kr8ComponentSpecIncludeObject</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-kr8componentspecincludes" class="nav-link">type Kr8ComponentSpecIncludes</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="3"><a href="#func-extractincludes" class="nav-link">func ExtractIncludes</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#func-kr8componentspecincludes-unmarshaljson" class="nav-link">func (*Kr8ComponentSpecIncludes) UnmarshalJSON</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-kr8error" class="nav-link">type Kr8Error</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="3"><a href="#func-kr8error-error" class="nav-link">func (Kr8Error) Error</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-kr8opts" class="nav-link">type Kr8Opts</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#type-vmconfig" class="nav-link">type VMConfig</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="types">types</h1>
+<pre><code class="language-go">import &quot;github.com/ice-bergtech/kr8/pkg/types&quot;
+</code></pre>
+<h2 id="index">Index</h2>
+<ul>
+<li><a href="#ExtractExtFiles">func ExtractExtFiles(spec gjson.Result) map[string]string</a></li>
+<li><a href="#ExtractJpaths">func ExtractJpaths(spec gjson.Result) []string</a></li>
+<li><a href="#CmdJsonnetOptions">type CmdJsonnetOptions</a></li>
+<li><a href="#ExtFileVar">type ExtFileVar</a></li>
+<li><a href="#KomposeConvertOptions">type KomposeConvertOptions</a></li>
+<li><a href="#Create">func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *KomposeConvertOptions</a></li>
+<li><a href="#KomposeConvertOptions.Convert">func (k KomposeConvertOptions) Convert() (interface{}, error)</a></li>
+<li><a href="#KomposeConvertOptions.GenKomposePkgOpts">func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions</a></li>
+<li><a href="#KomposeConvertOptions.Validate">func (k KomposeConvertOptions) Validate() error</a></li>
+<li><a href="#Kr8Cluster">type Kr8Cluster</a></li>
+<li><a href="#Kr8ClusterComponentRef">type Kr8ClusterComponentRef</a></li>
+<li><a href="#Kr8ClusterJsonnet">type Kr8ClusterJsonnet</a></li>
+<li><a href="#Kr8ClusterSpec">type Kr8ClusterSpec</a></li>
+<li><a href="#CreateClusterSpec">func CreateClusterSpec(clusterName string, spec gjson.Result, kr8Opts Kr8Opts, genDirOverride string) (Kr8ClusterSpec, error)</a></li>
+<li><a href="#Kr8ComponentJsonnet">type Kr8ComponentJsonnet</a></li>
+<li><a href="#Kr8ComponentSpec">type Kr8ComponentSpec</a></li>
+<li><a href="#CreateComponentSpec">func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error)</a></li>
+<li><a href="#Kr8ComponentSpecIncludeObject">type Kr8ComponentSpecIncludeObject</a></li>
+<li><a href="#Kr8ComponentSpecIncludes">type Kr8ComponentSpecIncludes</a></li>
+<li><a href="#ExtractIncludes">func ExtractIncludes(spec gjson.Result) (Kr8ComponentSpecIncludes, error)</a></li>
+<li><a href="#Kr8ComponentSpecIncludes.UnmarshalJSON">func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error</a></li>
+<li><a href="#Kr8Error">type Kr8Error</a></li>
+<li><a href="#Kr8Error.Error">func (e Kr8Error) Error() string</a></li>
+<li><a href="#Kr8Opts">type Kr8Opts</a></li>
+<li><a href="#VMConfig">type VMConfig</a></li>
+</ul>
+<p><a name="ExtractExtFiles"></a></p>
+<h2 id="func-extractextfiles">func <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L133">ExtractExtFiles</a></h2>
+<pre><code class="language-go">func ExtractExtFiles(spec gjson.Result) map[string]string
+</code></pre>
+<p>Extract jsonnet extVar defintions from spec.</p>
+<p><a name="ExtractJpaths"></a></p>
+<h2 id="func-extractjpaths">func <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L145">ExtractJpaths</a></h2>
+<pre><code class="language-go">func ExtractJpaths(spec gjson.Result) []string
+</code></pre>
+<p>Extract jsonnet lib paths from spec.</p>
+<p><a name="CmdJsonnetOptions"></a></p>
+<h2 id="type-cmdjsonnetoptions">type <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L280-L287">CmdJsonnetOptions</a></h2>
+<p>Options for running the jsonnet command.</p>
+<pre><code class="language-go">type CmdJsonnetOptions struct {
+    Prune         bool
+    Cluster       string
+    ClusterParams string
+    Component     string
+    Format        string
+    Color         bool
+}
+</code></pre>
+<p><a name="ExtFileVar"></a></p>
+<h2 id="type-extfilevar">type <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L206">ExtFileVar</a></h2>
+<p>Map of external files to load into jsonnet vm as external variables. Keys are the variable names, values are the paths to the files to load as strings into the jsonnet vm. To reference the variable in jsonnet code, use std.extvar("variable_name").</p>
+<pre><code class="language-go">type ExtFileVar map[string]string
+</code></pre>
+<p><a name="KomposeConvertOptions"></a></p>
+<h2 id="type-komposeconvertoptions">type <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L23-L97">KomposeConvertOptions</a></h2>
+<p>A struct describing a compose file that will be processed by kompose to produce kubernetes manifests.</p>
+<p>Based on https://github.com/kubernetes/kompose/blob/main/cmd/convert.go</p>
+<pre><code class="language-go">type KomposeConvertOptions struct {
+    // Kubernetes: Set the output controller (&quot;deployment&quot;|&quot;daemonSet&quot;|&quot;replicationController&quot;)
+    Controller string
+
+    // The kubecfg (?) profile to use, can use multiple profiles
+    Profiles []string
+
+    // List of compose file filenames.
+    // Filenames should be in the format `[docker-]compose.ym[a]l`
+    InputFiles []string
+    // Specify a file name or directory to save objects to (if path does not exist, a file will be created)
+    OutFile string
+    // Generate a Helm chart for converted objects
+    CreateChart bool
+    // Add kompose annotations to generated resource
+    WithKomposeAnnotation bool
+    // Generate resource files into YAML format
+    GenerateYaml bool
+    // Spaces length to indent generated yaml files
+    GenerateYAMLIndent int
+    // Generate resource files into JSON format
+    GenerateJSON bool
+    // Print converted objects to stdout
+    GenerateToStdout bool
+
+    // Set the type of build (&quot;local&quot;|&quot;build-config&quot;(OpenShift only)|&quot;none&quot;)
+    Build string
+
+    // Specify the namespace of the generated resources`)
+    Namespace string
+    // Specify the number of replicas in the generated resource spec
+    Replicas int
+    // Convert docker-compose secrets into files instead of symlinked directories
+    SecretsAsFiles bool
+    // Use Empty Volumes. Do not generate PVCs
+    EmptyVols bool
+    // Volumes to be generated (&quot;persistentVolumeClaim&quot;|&quot;emptyDir&quot;|&quot;hostPath&quot; | &quot;configMap&quot;)
+    Volumes string
+    // Specify the size of pvc storage requests in the generated resource spec
+    PVCRequestSize string
+    // Specify whether to generate network policies or not
+    NetworkPolicies bool
+
+    // Create multiple containers grouped by 'kompose.service.group' label
+    MultipleContainerMode bool
+    // Group multiple service to create single workload by `label`(`kompose.service.group`) or `volume`(shared volumes)
+    ServiceGroupMode string
+    // Using with --service-group-mode=volume to specific a final service name for the group
+    ServiceGroupName string
+
+    // ??
+    Provider string
+    // ??
+    StoreManifest bool
+    // ??
+    Server string
+
+    // OpenShift: ??
+    OSCreateDeploymentConfig bool
+    // Openshift: Specify source repository for buildconfig (default remote origin)
+    OSBuildRepo string
+    // Openshift: Use an insecure Docker repository for OpenShift ImageStream
+    OSInsecureRepository bool
+    // Openshift: Specify repository branch to use for buildconfig (default master)
+    OSBuildBranch string
+
+    // Whether to push built docker image to remote registry.
+    ImagePush bool
+    // Command used to build to image.  Used with PushCommand
+    ImageBuildCommand string
+    // Command used to push image
+    ImagePushCommand string
+    // Specify registry for pushing image, which will override registry from image name
+    ImagePushRegistry string
+}
+</code></pre>
+<p><a name="Create"></a></p>
+<h3 id="func-create">func <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L100">Create</a></h3>
+<pre><code class="language-go">func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *KomposeConvertOptions
+</code></pre>
+<p>Initialie Kompose options with sensible defaults.</p>
+<p><a name="KomposeConvertOptions.Convert"></a></p>
+<h3 id="func-komposeconvertoptions-convert">func (KomposeConvertOptions) <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L208">Convert</a></h3>
+<pre><code class="language-go">func (k KomposeConvertOptions) Convert() (interface{}, error)
+</code></pre>
+<p>Converts a Docker Compose file described by k into a set of kubernetes manifests.</p>
+<p><a name="KomposeConvertOptions.GenKomposePkgOpts"></a></p>
+<h3 id="func-komposeconvertoptions-genkomposepkgopts">func (KomposeConvertOptions) <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L132">GenKomposePkgOpts</a></h3>
+<pre><code class="language-go">func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions
+</code></pre>
+<p>Generates a ConvertOptions struct that kompose expects from our commented KomposeConvertOptions</p>
+<p>References:</p>
+<p>https://pkg.go.dev/github.com/kubernetes/kompose@v1.35.0/pkg/kobject#ConvertOptions</p>
+<p>https://github.com/kubernetes/kompose/blob/v1.35.0/pkg/app/app.go#L166</p>
+<p><a name="KomposeConvertOptions.Validate"></a></p>
+<h3 id="func-komposeconvertoptions-validate">func (KomposeConvertOptions) <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/kompose.go#L196">Validate</a></h3>
+<pre><code class="language-go">func (k KomposeConvertOptions) Validate() error
+</code></pre>
+<p>Validates a set of options for converting a Kubernetes manifest to a Docker Compose file.</p>
+<p><a name="Kr8Cluster"></a></p>
+<h2 id="type-kr8cluster">type <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L14-L17">Kr8Cluster</a></h2>
+<p>An object that stores variables that can be referenced by components.</p>
+<pre><code class="language-go">type Kr8Cluster struct {
+    Name string `json:&quot;name&quot;`
+    Path string `json:&quot;-&quot;`
+}
+</code></pre>
+<p><a name="Kr8ClusterComponentRef"></a></p>
+<h2 id="type-kr8clustercomponentref">type <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L41-L44">Kr8ClusterComponentRef</a></h2>
+<p>A reference to a component folder that contains a params.jsonnet file. This is used in the cluster jsonnet file to reference components.</p>
+<pre><code class="language-go">type Kr8ClusterComponentRef struct {
+    // The path to a component folder that contains a params.jsonnet file
+    Path string `json:&quot;path&quot;`
+}
+</code></pre>
+<p><a name="Kr8ClusterJsonnet"></a></p>
+<h2 id="type-kr8clusterjsonnet">type <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L30-L37">Kr8ClusterJsonnet</a></h2>
+<p>The specification for a clusters.jsonnet file. This describes configuration for a cluster that kr8 should process.</p>
+<pre><code class="language-go">type Kr8ClusterJsonnet struct {
+    // kr8 configuration for how to process the cluster
+    ClusterSpec Kr8ClusterSpec `json:&quot;_kr8_spec&quot;`
+    // Cluster Level configuration that components can reference
+    Cluster Kr8Cluster `json:&quot;_cluster&quot;`
+    // Distictly named components.
+    Components map[string]Kr8ClusterComponentRef `json:&quot;_components&quot;`
+}
+</code></pre>
+<p><a name="Kr8ClusterSpec"></a></p>
+<h2 id="type-kr8clusterspec">type <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L48-L62">Kr8ClusterSpec</a></h2>
+<p>The specification for how to process a cluster. This is used in the cluster jsonnet file to configure how kr8 should process the cluster.</p>
+<pre><code class="language-go">type Kr8ClusterSpec struct {
+    // The name of the cluster
+    Name string `json:&quot;-&quot;`
+    // A jsonnet function that each output entry is processed through. Default `function(input) input`
+    PostProcessor string `json:&quot;postprocessor&quot;`
+    // The name of the root generate directory. Default `generated`
+    GenerateDir string `json:&quot;generate_dir&quot;`
+    // if this is true, we don't use the full file path to generate output file names
+    GenerateShortNames bool `json:&quot;generate_short_names&quot;`
+    // if this is true, we prune component parameters
+    PruneParams bool `json:&quot;prune_params&quot;`
+    // Additional information used to process the cluster that is not stored with it.
+    // Cluster output directory
+    ClusterDir string `json:&quot;-&quot;`
+}
+</code></pre>
+<p><a name="CreateClusterSpec"></a></p>
+<h3 id="func-createclusterspec">func <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L66-L71">CreateClusterSpec</a></h3>
+<pre><code class="language-go">func CreateClusterSpec(clusterName string, spec gjson.Result, kr8Opts Kr8Opts, genDirOverride string) (Kr8ClusterSpec, error)
+</code></pre>
+<p>This function creates a Kr8ClusterSpec from passed params. If genDirOverride is empty, the value of generate_dir from the spec is used.</p>
+<p><a name="Kr8ComponentJsonnet"></a></p>
+<h2 id="type-kr8componentjsonnet">type <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L101-L113">Kr8ComponentJsonnet</a></h2>
+<p>The specification for component's params.jsonnet file. It contains all the configuration and variables used to generate component resources. This configuration is often modified from the cluster config to add cluster-specific configuration.</p>
+<pre><code class="language-go">type Kr8ComponentJsonnet struct {
+    // Component-specific configuration for how kr8 should process the component (required)
+    Kr8Spec Kr8ComponentSpec `json:&quot;kr8_spec&quot;`
+    // The default namespace to deploy the component to
+    Namespace string `json:&quot;namespace&quot;`
+    // A unique name for the component
+    ReleaseName string `json:&quot;release_name&quot;`
+    // Component version string (optional)
+    Version string `json:&quot;version&quot;`
+    // Relative directory where the component's resources are located (required).
+    // Usually std.thisFile.
+    CalledFrom string `json:&quot;called_from&quot;`
+}
+</code></pre>
+<p><a name="Kr8ComponentSpec"></a></p>
+<h2 id="type-kr8componentspec">type <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L117-L130">Kr8ComponentSpec</a></h2>
+<p>The kr8_spec object in a cluster config file. This configures how kr8 processes the component.</p>
+<pre><code class="language-go">type Kr8ComponentSpec struct {
+    // If true, includes the parameters of the current cluster when generating this component
+    Kr8_allparams bool `json:&quot;enable_kr8_allparams&quot;`
+    // If true, includes the parameters of all other clusters when generating this component
+    Kr8_allclusters bool `json:&quot;enable_kr8_allclusters&quot;`
+    // If false, all non-generated files present in the output directory will be removed
+    DisableOutputDirClean bool `json:&quot;disable_output_clean&quot;`
+    // A list of filenames to include as jsonnet vm external vars
+    ExtFiles ExtFileVar `json:&quot;extfiles&quot;`
+    // Additional jsonnet libs to the jsonnet vm, component-path scoped
+    JPaths []string `json:&quot;jpaths&quot;`
+    // A list of filenames to include and output as files
+    Includes Kr8ComponentSpecIncludes `json:&quot;includes&quot;`
+}
+</code></pre>
+<p><a name="CreateComponentSpec"></a></p>
+<h3 id="func-createcomponentspec">func <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L172">CreateComponentSpec</a></h3>
+<pre><code class="language-go">func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error)
+</code></pre>
+<p>Extracts a component spec from a jsonnet object.</p>
+<p><a name="Kr8ComponentSpecIncludeObject"></a></p>
+<h2 id="type-kr8componentspecincludeobject">type <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L211-L221">Kr8ComponentSpecIncludeObject</a></h2>
+<p>An includes object which configures how kr8 includes an object. It allows configuring the included file's destination directory and file name. The input file will be processed differently depending on the filetype.</p>
+<pre><code class="language-go">type Kr8ComponentSpecIncludeObject struct {
+    // an input file to process
+    // accepted filetypes: .jsonnet .yml .yaml .tmpl .tpl
+    File string `json:&quot;file&quot;`
+    // handle alternate output directory for file
+    DestDir string `json:&quot;dest_dir,omitempty&quot;`
+    // override destination file name
+    DestName string `json:&quot;dest_name,omitempty&quot;`
+    // override destination file extension
+    DestExt string `json:&quot;dest_ext,omitempty&quot;`
+}
+</code></pre>
+<p><a name="Kr8ComponentSpecIncludes"></a></p>
+<h2 id="type-kr8componentspecincludes">type <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L224">Kr8ComponentSpecIncludes</a></h2>
+<p>Define Kr8ComponentSpecIncludes to handle dynamic decoding.</p>
+<pre><code class="language-go">type Kr8ComponentSpecIncludes []Kr8ComponentSpecIncludeObject
+</code></pre>
+<p><a name="ExtractIncludes"></a></p>
+<h3 id="func-extractincludes">func <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L156">ExtractIncludes</a></h3>
+<pre><code class="language-go">func ExtractIncludes(spec gjson.Result) (Kr8ComponentSpecIncludes, error)
+</code></pre>
+<p>Extract jsonnet includes filenames or objects from spec.</p>
+<p><a name="Kr8ComponentSpecIncludes.UnmarshalJSON"></a></p>
+<h3 id="func-kr8componentspecincludes-unmarshaljson">func (*Kr8ComponentSpecIncludes) <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L227">UnmarshalJSON</a></h3>
+<pre><code class="language-go">func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error
+</code></pre>
+<p>Implement custom unmarshaling for dynamic decoding.</p>
+<p><a name="Kr8Error"></a></p>
+<h2 id="type-kr8error">type <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L299-L302">Kr8Error</a></h2>
+<pre><code class="language-go">type Kr8Error struct {
+    Message string
+    Value   interface{}
+}
+</code></pre>
+<p><a name="Kr8Error.Error"></a></p>
+<h3 id="func-kr8error-error">func (Kr8Error) <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L305">Error</a></h3>
+<pre><code class="language-go">func (e Kr8Error) Error() string
+</code></pre>
+<p>Error implements error.</p>
+<p><a name="Kr8Opts"></a></p>
+<h2 id="type-kr8opts">type <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L19-L26">Kr8Opts</a></h2>
+<pre><code class="language-go">type Kr8Opts struct {
+    // Base directory of kr8 configuration
+    BaseDir string
+    // Directory where component definitions are stored
+    ComponentDir string
+    // Directory where cluster configurations are stored
+    ClusterDir string
+}
+</code></pre>
+<p><a name="VMConfig"></a></p>
+<h2 id="type-vmconfig">type <a href="https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L290-L297">VMConfig</a></h2>
+<p>VMConfig describes configuration to initialize the Jsonnet VM with.</p>
+<pre><code class="language-go">type VMConfig struct {
+    // Jpaths is a list of paths to search for Jsonnet libraries (libsonnet files)
+    Jpaths []string `json:&quot;jpath&quot; yaml:&quot;jpath&quot;`
+    // ExtVars is a list of external variables to pass to Jsonnet VM
+    ExtVars []string `json:&quot;ext_str_file&quot; yaml:&quot;ext_str_files&quot;`
+    // base directory for the project
+    BaseDir string `json:&quot;base_dir&quot; yaml:&quot;base_dir&quot;`
+}
+</code></pre></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
