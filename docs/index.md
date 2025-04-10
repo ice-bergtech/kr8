@@ -1,7 +1,7 @@
 # kr8+
 
-**Kr8+** is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.
-By leveraging best practices and providing a structured approach, **Kr8+** helps DevOps teams streamline their workflows and maintain consistency across multiple environments.
+**kr8+** is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.
+By leveraging best practices and providing a structured approach, **kr8+** helps DevOps teams streamline their workflows and maintain consistency across multiple environments.
 
 **kr8+** consists of:
 
@@ -12,7 +12,7 @@ By leveraging best practices and providing a structured approach, **Kr8+** helps
 - [kompose](https://github.com/kubernetes/kompose) `v1.35.0`
 - [Masterminds/sprig v3 Template Library](https://pkg.go.dev/github.com/Masterminds/sprig#section-readme) - [Template Documentation](https://masterminds.github.io/sprig/) `v3.2.3`
 
-## Why use Kr8+?
+## Why use kr8+?
 
 * **Standardization**: Ensures consistency across Kubernetes clusters, reducing errors and improving maintainability.
 * **Simplicity**: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.
@@ -34,4 +34,4 @@ For documentation of the code, see the godoc directory:
 * [pkg/util](godoc/kr8-util.md) - utility functions used by kr8+
 
 
-![Kr8+ Gopher](./kr8_gopher.png)
+![kr8+ Gopher](./kr8_gopher.png)
