@@ -9,6 +9,9 @@
   * Components are stored separately in their own folders, allowing for easy management and version control.
   * Able to define multiple versions of components with different configuration
   * Configuration files are written in YAML or JSON, ensuring compatibility with existing tools and workflows.
+  * Ensures consistency across Kubernetes clusters, reducing errors and improving maintainability.
+  * Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.
+  * Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.
 * **Jsonnet Native Funcitons**: Use jsonnet to render and override component config from multiple sources
   * Go-templates: Able to output text files templated based off of component configuration.  Integrated with sprig templating functions
   * Docker-compose: Able to process docker-compose as yaml, or through [kubernetes/kompose]() to output kubernetes resources
@@ -24,6 +27,3 @@
   * Easily create reproducible builds by using the same configuration across different environments.
   * Fully version control charts and normally-remote configurations in a single place.
   * Store generated secrets via [SealedSecrets](https://github.com/bitnami-labs/sealed-secrets)
-* **Standardization**: Ensures consistency across Kubernetes clusters, reducing errors and improving maintainability.
-* **Simplicity**: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.
-* **Scalability**: Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.
