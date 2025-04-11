@@ -6,7 +6,7 @@
 [![CI status](https://github.com/ice-bergtech/kr8p/workflows/CI/badge.svg)](https://github.com/ice-bergtech/kr8p/actions?query=workflow%3ACI)
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.24-61CFDD.svg?style=flat-square)
 
-**kr8+** is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.By leveraging best practices and providing a structured approach, **kr8+** helps DevOps teams streamline their workflows and maintain consistency across multiple environments.
+**kr8+** or `kr8p` is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.By leveraging best practices and providing a structured approach, **kr8+** helps DevOps teams streamline their workflows and maintain consistency across multiple environments.
 
 **kr8+** is `pre-1.0`.
 This means that breaking changes still happen from time to time, but it's stable enough for both scripting and interactive use in production environments.
