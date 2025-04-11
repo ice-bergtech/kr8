@@ -1,23 +1,37 @@
 # Installation
 
-The kr8+ binary has a single job: generate manifests. In order to ensure you can create components and install them, you'll need some dependencies.
+The **kr8+** binaries can be installed via two methods:
 
-## Manually
+* [ice-bergtech/icetech Homebrew tap](https://github.com/ice-bergtech/homebrew-icetech)
+* [Github releases page](https://github.com/ice-bergtech/kr8/releases)
 
-kr8+ is a Go binary, which means you can simply download it from the [Github releases page](https://github.com/ice-bergtech/kr8/releases)
+## Homebrew Tap
 
-# Linux
-
-kr8+ is a Go binary, which means you can simply download it from the [Github releases page](https://github.com/ice-bergtech/kr8/releases)
-
-RPM and DEB packages are also generated for each release
-
-# OS X Homebrew
-
-The easiest way to get started with kr8 is to use the homebrew tap.
-This will install all the tools kr8 depends on for you.
+This is the preferred way to install **kr8+** as it ensures that all dependencies are installed correctly.
 
 ```bash
-brew tap apptio/tap
-brew install kr8
+brew tap "ice-bergtech/icetech"
+brew install "kr8"
+```
+
+## Manually via Releases
+
+kr8+ is a Go binary, which means you can simply download it from the [Github releases page](https://github.com/ice-bergtech/kr8/releases)
+
+Build are produced for:
+
+* **Linux** - amd64 deb, rpm, and apk
+* **Darwin** - amd64
+
+
+```sh
+apk add kr8_$VERSION_linux_amd64.apk
+```
+
+```sh
+deb install kr8_$VERSION_linux_amd64.deb
+```
+
+```sh
+rpm install kr8_$VERSION_linux_amd64.rpm
 ```

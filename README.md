@@ -53,7 +53,13 @@ This means that breaking changes still happen from time to time, but it's stable
 
 ## Installation
 
-The latest version is available for download from the [Github releases page](https://github.com/ice-bergtech/kr8/releases).
+The latest version is available for download from the [Github releases page](https://github.com/ice-bergtech/kr8/releases)
+To install via Homebrew, add the [icetech github tap](https://github.com/ice-bergtech/homebrew-icetech) and install::
+
+```sh
+brew tap ice-bergtech/icetech
+brew install kr8
+```
 
 Once installed, use `kr8 init` commands to setup the initial structure and configurations.
 
