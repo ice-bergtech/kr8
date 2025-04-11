@@ -5,14 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Iceberg Tech" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>kr8+ - kr8+ Docs</title>
+    <title>Repo Readme - kr8+ Docs</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "kr8+";
+        var mkdocs_page_name = "Repo Readme";
         var mkdocs_page_input_path = "README-repo.md";
         var mkdocs_page_url = null;
       </script>
@@ -43,8 +43,60 @@
                 <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
                 </li>
               </ul>
-              <ul>
-                <li class="toctree-l1"><a class="" href="../readme-repo.md">Repo Readme</a>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Repo Readme</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#menu">Menu</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-features">Key Features</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#technical-overview">Technical Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#clusters-configurations">Clusters Configurations</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#conponents-configurations">Conponents Configurations</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#jsonnet-libraries">Jsonnet Libraries</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#deployment">Deployment</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#further-information">Further Information</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#development">Development</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#dependencies">Dependencies</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#setup">Setup</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#running-tasks">Running Tasks</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tests">Tests</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#build-troubleshooting">Build Troubleshooting</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#license">License</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#references-and-additional-resources">References and Additional Resources</a>
+    </li>
+    </ul>
                 </li>
               </ul>
               <ul>
@@ -152,7 +204,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-      <li class="breadcrumb-item active">kr8+</li>
+      <li class="breadcrumb-item active">Repo Readme</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/ice-bergtech/kr8/blob/main/docs/README-repo.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -163,7 +215,7 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="kr8">kr8+</h1>
-<p><img src="docs/kr8_gopher.png" alt="kr8+ Gopher" width="400" align="right" ></p>
+<p><img src="./kr8_gopher.png" alt="kr8+ Gopher" width="400" align="right" ></p>
 <p><a href="https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI"><img alt="CI status" src="https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg" /></a>
 <img alt="Go Version" src="https://img.shields.io/badge/go%20version-%3E=1.24-61CFDD.svg?style=flat-square" /></p>
 <p><strong>kr8+</strong> is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.By leveraging best practices and providing a structured approach, <strong>kr8+</strong> helps DevOps teams streamline their workflows and maintain consistency across multiple environments.</p>
@@ -171,7 +223,7 @@
 This means that breaking changes still happen from time to time, but it's stable enough for both scripting and interactive use in production environments.</p>
 <p align="center">
    <a href="https://github.com/ice-bergtech/kr8/releases">Releases</a> ·
-    <a href="/docs/index.md">Documentation</a> ·
+    <a href="./index.md">Documentation</a> ·
     <a href="https://github.com/ice-bergtech/kr8/issues">Get Help</a>
 </p>
 
@@ -181,7 +233,7 @@ This means that breaking changes still happen from time to time, but it's stable
 <li><a href="#technical-overview">Technical Overview</a></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#configuration">configuration</a></li>
-<li><a href="./docs/index.md">Full Documentation</a></li>
+<li><a href="../">Full Documentation</a></li>
 <li><a href="#development">Development</a></li>
 </ul>
 <h2 id="key-features">Key Features</h2>
@@ -195,7 +247,7 @@ This means that breaking changes still happen from time to time, but it's stable
 <li><strong>Simplicity</strong>: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.</li>
 <li><strong>Scalability</strong>: Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.</li>
 </ul>
-<p><img alt="kr8+ workflow" src="docs/diagram/kr8-workflow.png" /></p>
+<p><img alt="kr8+ workflow" src="../diagram/kr8-workflow.png" /></p>
 <h2 id="technical-overview">Technical Overview</h2>
 <p><strong>kr8+</strong> consists of:</p>
 <ul>
@@ -225,13 +277,13 @@ Jsonnet was chosen because it allows us to use code for configuration, while sta
 <h4 id="clusters-configurations">Clusters Configurations</h4>
 <p>A cluster is a deployment environment, organized in folders as a tree of configuration.
 Configuration the folders is layered on the parent folder's configuration, allowing you to override or extend configurations.</p>
-<p>Cluster Spec: <a href="docs/godoc/kr8-types.md#Kr8ClusterJsonnet">types.Kr8ClusterJsonnet</a></p>
-<p>More information: <a href="docs/concepts/clusters.md">Managing Clusters</a></p>
+<p>Cluster Spec: <a href="../godoc/kr8-types/#Kr8ClusterJsonnet">types.Kr8ClusterJsonnet</a></p>
+<p>More information: <a href="../concepts/clusters/">Managing Clusters</a></p>
 <h4 id="conponents-configurations">Conponents Configurations</h4>
 <p>A component is a deployable unit that you wish to install in one or more clusters.
 Components can be declared multiple times within a cluster, as long as they are named distinctly when loaded.</p>
-<p>Component Spec: <a href="docs/godoc/kr8-types.md#Kr8ComponentJsonnet">types.Kr8ComponentJsonnet</a></p>
-<p>More information: <a href="docs/concepts/components.md">Managing Components</a></p>
+<p>Component Spec: <a href="../godoc/kr8-types/#Kr8ComponentJsonnet">types.Kr8ComponentJsonnet</a></p>
+<p>More information: <a href="../concepts/components/">Managing Components</a></p>
 <h4 id="jsonnet-libraries">Jsonnet Libraries</h4>
 <p>Jsonnet libraries are reusable code that can be imported into your Jsonnet files.
 They allow you to write modular and maintainable configuration.</p>
@@ -240,25 +292,25 @@ They allow you to write modular and maintainable configuration.</p>
 <li><a href="https://github.com/ice-bergtech/kr8-libsonnet">kr8-libesonnet</a></li>
 <li><a href="https://github.com/kube-libsonnet/kube-libsonnet">kube-libsonnet</a></li>
 </ul>
-<p>More information: <a href="docs/concepts/jsonnetlibs.md">Jsonnet Libraries</a></p>
+<p>More information: <a href="../concepts/overview/">Jsonnet Libraries</a></p>
 <h3 id="deployment">Deployment</h3>
 <p>To generate the final configured manifests, just run <code>kr8 generate</code>.
 <strong>kr8+</strong> reads the cluster and components configuration files and generates the final manifests based on the parameters provided.</p>
 <p>Manifest changes are checked into source control, allowing them to be ingested by tools like ArgoCD, Portainer, Rancher etc.</p>
 <h3 id="further-information">Further Information</h3>
 <ul>
-<li><a href="docs/cmd/kr8.md">Command Documentation</a></li>
+<li><a href="../cmd/kr8/">Command Documentation</a></li>
 <li><strong>kr8+</strong></li>
-<li><a href="docs/concepts/overview.md">Concepts</a></li>
-<li><a href="docs/concepts/clusters.md">Managing Clusters</a></li>
-<li><a href="docs/concepts/components.md">Creating Components</a></li>
-<li><a href="docs/components/nativefuncs.md">Native Functions</a></li>
-<li><a href="docs/godoc">Code Documentation</a></li>
+<li><a href="../concepts/overview/">Concepts</a></li>
+<li><a href="../concepts/clusters/">Managing Clusters</a></li>
+<li><a href="../concepts/components/">Creating Components</a></li>
+<li><a href="../concepts/nativefuncs/">Native Functions</a></li>
+<li><a href="./godoc">Code Documentation</a></li>
 </ul>
 <h2 id="development">Development</h2>
 <p><strong>kr8+</strong> is coded in <a href="https://golang.org/">Golang</a>.
 Currently, version <code>1.24.2</code> is used.</p>
-<p>Common tasks are described in <a href="Taskfile.yml">Taskfile.yml</a>, and can be executed with <a href="https://taskfile.dev/installation/">go-task</a>.</p>
+<p>Common tasks are described in <a href="../Taskfile.yml">Taskfile.yml</a>, and can be executed with <a href="https://taskfile.dev/installation/">go-task</a>.</p>
 <h3 id="dependencies">Dependencies</h3>
 <ul>
 <li>Golang version  <code>1.24</code> or later (<a href="https://go.dev/doc/install">installation</a>)</li>
@@ -317,12 +369,12 @@ task build-snapshot
 <p>We welcome contributions from the community to enhance <strong>kr8+</strong>.</p>
 <p>Fork the repo in github and send a merge request!</p>
 <h2 id="license">License</h2>
-<p>The project is licensed under the <a href="LICENSE">MIT license</a>.</p>
+<p>The project is licensed under the <a href="../LICENSE">MIT license</a>.</p>
 <p>Parts of the code are derived from:</p>
 <ul>
-<li><a href="https://github.com/apptio/kr8">kr8</a> - <a href="LICENSE-apptio">MIT License</a></li>
-<li><a href="https://leebriggs.co.uk/">Lee Briggs</a> - <a href="LICENSE-briggs">MIT License</a></li>
-<li><a href="https://github.com/kubecfg/kubecfg">kubecfg</a> - <a href="LICENSE-kubecfg">Apache 2.0</a></li>
+<li><a href="https://github.com/apptio/kr8">kr8</a> - <a href="../LICENSE-apptio">MIT License</a></li>
+<li><a href="https://leebriggs.co.uk/">Lee Briggs</a> - <a href="../LICENSE-briggs">MIT License</a></li>
+<li><a href="https://github.com/kubecfg/kubecfg">kubecfg</a> - <a href="../LICENSE-kubecfg">Apache 2.0</a></li>
 </ul>
 <h2 id="references-and-additional-resources">References and Additional Resources</h2>
 <p><strong>kr8+</strong> is a fork of <a href="https://github.com/apptio/kr8">kr8</a> with some additional features and improvements.
@@ -343,6 +395,10 @@ task build-snapshot
               
             </div>
           </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../installation/" class="btn btn-neutral float-right" title="Installation">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
 
   <hr/>
 
@@ -368,6 +424,10 @@ task build-snapshot
         </span>
     
     
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../installation/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

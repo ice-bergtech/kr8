@@ -15,7 +15,7 @@ edit_uri: blob/main/docs
 
 nav:
   - Home: index.md
-  - Repo Readme: readme-repo.md
+  - Repo Readme: README-repo.md
   - Installation: installation.md
   - Examples 🔗: https://github.com/ice-bergtech/kr8-examples
   - Concepts:

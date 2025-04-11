@@ -7,6 +7,7 @@ import (
 	"go/build"
 	"log"
 	"os"
+	"strings"
 
 	cmd "github.com/ice-bergtech/kr8/cmd"
 	"github.com/princjef/gomarkdoc"
@@ -29,6 +30,19 @@ func CobraDocs() {
 func CopyReadme() {
 	destinationFile := "./README-repo.md"
 	iFile, err := os.ReadFile("../README.md")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fixed := strings.Replace(string(iFile), "docs/", "", -1)
+	err = os.WriteFile(destinationFile, []byte(fixed), 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// copy over referenced task file
+	destinationFile = "./Taskfile.yml"
+	iFile, err = os.ReadFile("../Taskfile.yml")
 	if err != nil {
 		log.Fatal(err)
 	}

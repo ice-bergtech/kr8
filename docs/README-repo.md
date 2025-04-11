@@ -1,7 +1,7 @@
 
 # kr8+
 
-<img src="docs/kr8_gopher.png" alt="kr8+ Gopher" width="400" align="right" >
+<img src="./kr8_gopher.png" alt="kr8+ Gopher" width="400" align="right" >
 
 [![CI status](https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg)](https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI)
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.24-61CFDD.svg?style=flat-square)
@@ -13,7 +13,7 @@ This means that breaking changes still happen from time to time, but it's stable
 
 <p align="center">
    <a href="https://github.com/ice-bergtech/kr8/releases">Releases</a> ·
-	<a href="/docs/index.md">Documentation</a> ·
+	<a href="./index.md">Documentation</a> ·
 	<a href="https://github.com/ice-bergtech/kr8/issues">Get Help</a>
 </p>
 
@@ -23,7 +23,7 @@ This means that breaking changes still happen from time to time, but it's stable
 * [Technical Overview](#technical-overview)
 * [Installation](#installation)
   * [configuration](#configuration)
-* [Full Documentation](./docs/index.md)
+* [Full Documentation](./index.md)
 * [Development](#development)
 
 ## Key Features
@@ -37,7 +37,7 @@ This means that breaking changes still happen from time to time, but it's stable
 * **Simplicity**: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.
 * **Scalability**: Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.
 
-![kr8+ workflow](docs/diagram/kr8-workflow.png)
+![kr8+ workflow](./diagram/kr8-workflow.png)
 
 ## Technical Overview
 
@@ -81,18 +81,18 @@ A typical repo that uses **kr8+** has the following parts:
 A cluster is a deployment environment, organized in folders as a tree of configuration.
 Configuration the folders is layered on the parent folder's configuration, allowing you to override or extend configurations.
 
-Cluster Spec: [types.Kr8ClusterJsonnet](docs/godoc/kr8-types.md#Kr8ClusterJsonnet)
+Cluster Spec: [types.Kr8ClusterJsonnet](./godoc/kr8-types.md#Kr8ClusterJsonnet)
 
-More information: [Managing Clusters](docs/concepts/clusters.md)
+More information: [Managing Clusters](./concepts/clusters.md)
 
 #### Conponents Configurations
 
 A component is a deployable unit that you wish to install in one or more clusters.
 Components can be declared multiple times within a cluster, as long as they are named distinctly when loaded.
 
-Component Spec: [types.Kr8ComponentJsonnet](docs/godoc/kr8-types.md#Kr8ComponentJsonnet)
+Component Spec: [types.Kr8ComponentJsonnet](./godoc/kr8-types.md#Kr8ComponentJsonnet)
 
-More information: [Managing Components](docs/concepts/components.md)
+More information: [Managing Components](./concepts/components.md)
 
 #### Jsonnet Libraries
 
@@ -104,7 +104,7 @@ Common libraries include:
 * [kr8-libesonnet](https://github.com/ice-bergtech/kr8-libsonnet)
 * [kube-libsonnet](https://github.com/kube-libsonnet/kube-libsonnet)
 
-More information: [Jsonnet Libraries](docs/concepts/jsonnetlibs.md)
+More information: [Jsonnet Libraries](./concepts/overview.md)
 
 ### Deployment
 
@@ -115,13 +115,13 @@ Manifest changes are checked into source control, allowing them to be ingested b
 
 ### Further Information
 
-* [Command Documentation](docs/cmd/kr8.md)
+* [Command Documentation](./cmd/kr8.md)
 * **kr8+**
-  * [Concepts](docs/concepts/overview.md)
-  * [Managing Clusters](docs/concepts/clusters.md)
-  * [Creating Components](docs/concepts/components.md)
-  * [Native Functions](docs/components/nativefuncs.md)
-* [Code Documentation](docs/godoc)
+  * [Concepts](./concepts/overview.md)
+  * [Managing Clusters](./concepts/clusters.md)
+  * [Creating Components](./concepts/components.md)
+  * [Native Functions](./concepts/nativefuncs.md)
+* [Code Documentation](./godoc)
 
 ## Development
 

@@ -1,0 +1,93 @@
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - task: build
+
+  01_setup:
+    desc: 'Instal dev tools'
+    aliases:
+      - setup
+      - s
+    cmds:
+      # https://golangci-lint.run/welcome/install/
+      - brew install golangci-lint
+      - brew upgrade golangci-lint
+      - task: 01_setup-bats
+      - pip install --user mkdocs
+
+  01_setup-bats:
+    desc: 'Install bats testing tools'
+    aliases:
+      - setup-bats
+    cmds:
+      - git clone https://github.com/bats-core/bats-core.git bats-test/bats
+      - git clone https://github.com/bats-core/bats-support.git bats-test/test_helper/bats-support
+      - git clone https://github.com/bats-core/bats-assert.git bats-test/test_helper/bats-assert
+
+  03_generate-bats-tests:
+    desc: Generate resources to test against
+    aliases:
+      - gt
+    dir: ./bats-test
+    env:
+      KR8: '../kr8'
+    cmds:
+      - ./GEN_ALL.sh
+
+  03_test-go:
+    desc: Tesk kr8+ for your local system
+    aliases:
+      - test
+      - t
+    cmds:
+      - golangci-lint run
+      - go test ./pkg/*
+      - task: 02_build
+      - task: 03_test-package
+
+  03_test-package:
+    desc: Test compiled kr8+ binary against test inputs
+    aliases:
+      - test-package
+      - tp
+    dir: ./bats-test
+    env:
+      KR8: '../kr8'
+    cmds:
+      - ./TEST_ALL.sh
+
+  02_build:
+    desc: Build kr8+ for your local system
+    aliases:
+      - build
+      - b
+    cmds:
+      - go fmt
+      - go generate ./docs
+      - go build
+      - task: 02_build_mkdocs
+
+  02_build_mkdocs:
+    desc: Uses mkdocs to build documentation site from docs
+    cmds:
+      - mkdocs build
+
+  03_build-snapshot:
+    desc: Build a snapshot for all platforms using goreleaser
+    aliases:
+      - build-snapshot
+      - bs
+    cmds:
+      - go generate ./docs
+      - goreleaser release --snapshot --clean --skip=homebrew,docker
+
+  04_generate-examples:
+    desc: Generate example clusters and components with kr8+
+    aliases:
+      - ge
+      - gen
+    cmds:
+      - task: 02_build
+      - ./kr8 generate -B examples
