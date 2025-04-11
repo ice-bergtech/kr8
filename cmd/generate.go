@@ -9,9 +9,9 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/maps"
 
-	gen "github.com/ice-bergtech/kr8/pkg/generate"
-	"github.com/ice-bergtech/kr8/pkg/types"
-	util "github.com/ice-bergtech/kr8/pkg/util"
+	gen "github.com/ice-bergtech/kr8p/pkg/generate"
+	"github.com/ice-bergtech/kr8p/pkg/types"
+	util "github.com/ice-bergtech/kr8p/pkg/util"
 )
 
 // Stores the options for the 'generate' command.
@@ -54,7 +54,7 @@ var GenerateCmd = &cobra.Command{
 	Aliases: []string{"gen"},
 	Short:   "Generate components",
 	Long:    `Generate components in clusters`,
-	Example: "kr8 generate",
+	Example: "kr8p generate",
 
 	Args: cobra.MinimumNArgs(0),
 	Run:  GenerateCommand,
@@ -76,7 +76,7 @@ func GenerateCommand(cmd *cobra.Command, args []string) {
 		clusterList = maps.Keys(allClusterParams)
 	}
 
-	kr8Opts := types.Kr8Opts{
+	kr8Opts := types.Kr8pOpts{
 		BaseDir:      RootConfig.BaseDir,
 		ComponentDir: RootConfig.ComponentDir,
 		ClusterDir:   RootConfig.ClusterDir,

@@ -11,13 +11,13 @@ import (
 )
 
 // An object that stores variables that can be referenced by components.
-type Kr8Cluster struct {
+type Kr8pCluster struct {
 	Name string `json:"name"`
 	Path string `json:"-"`
 }
 
-type Kr8Opts struct {
-	// Base directory of kr8 configuration
+type Kr8pOpts struct {
+	// Base directory of kr8p configuration
 	BaseDir string
 	// Directory where component definitions are stored
 	ComponentDir string
@@ -26,26 +26,26 @@ type Kr8Opts struct {
 }
 
 // The specification for a clusters.jsonnet file.
-// This describes configuration for a cluster that kr8 should process.
-type Kr8ClusterJsonnet struct {
-	// kr8 configuration for how to process the cluster
-	ClusterSpec Kr8ClusterSpec `json:"_kr8_spec"`
+// This describes configuration for a cluster that kr8p should process.
+type Kr8pClusterJsonnet struct {
+	// kr8p configuration for how to process the cluster
+	ClusterSpec Kr8pClusterSpec `json:"_kr8_spec"`
 	// Cluster Level configuration that components can reference
-	Cluster Kr8Cluster `json:"_cluster"`
+	Cluster Kr8pCluster `json:"_cluster"`
 	// Distictly named components.
-	Components map[string]Kr8ClusterComponentRef `json:"_components"`
+	Components map[string]Kr8pClusterComponentRef `json:"_components"`
 }
 
 // A reference to a component folder that contains a params.jsonnet file.
 // This is used in the cluster jsonnet file to reference components.
-type Kr8ClusterComponentRef struct {
+type Kr8pClusterComponentRef struct {
 	// The path to a component folder that contains a params.jsonnet file
 	Path string `json:"path"`
 }
 
 // The specification for how to process a cluster.
-// This is used in the cluster jsonnet file to configure how kr8 should process the cluster.
-type Kr8ClusterSpec struct {
+// This is used in the cluster jsonnet file to configure how kr8p should process the cluster.
+type Kr8pClusterSpec struct {
 	// The name of the cluster
 	Name string `json:"-"`
 	// A jsonnet function that each output entry is processed through. Default `function(input) input`
@@ -66,9 +66,9 @@ type Kr8ClusterSpec struct {
 func CreateClusterSpec(
 	clusterName string,
 	spec gjson.Result,
-	kr8Opts Kr8Opts,
+	kr8Opts Kr8pOpts,
 	genDirOverride string,
-) (Kr8ClusterSpec, error) {
+) (Kr8pClusterSpec, error) {
 	// First determine the value of generate_dir from the command line args or spec.
 	clGenerateDir := genDirOverride
 	if clGenerateDir == "" {
@@ -85,7 +85,7 @@ func CreateClusterSpec(
 	clusterDir := filepath.Join(clGenerateDir, clusterName)
 	log.Debug().Str("cluster", clusterName).Msg("output directory: " + clusterDir)
 
-	return Kr8ClusterSpec{
+	return Kr8pClusterSpec{
 		PostProcessor:      spec.Get("postprocessor").String(),
 		GenerateDir:        clGenerateDir,
 		GenerateShortNames: spec.Get("generate_short_names").Bool(),
@@ -98,9 +98,9 @@ func CreateClusterSpec(
 // The specification for component's params.jsonnet file.
 // It contains all the configuration and variables used to generate component resources.
 // This configuration is often modified from the cluster config to add cluster-specific configuration.
-type Kr8ComponentJsonnet struct {
-	// Component-specific configuration for how kr8 should process the component (required)
-	Kr8Spec Kr8ComponentSpec `json:"kr8_spec"`
+type Kr8pComponentJsonnet struct {
+	// Component-specific configuration for how kr8p should process the component (required)
+	Kr8Spec Kr8pComponentSpec `json:"kr8_spec"`
 	// The default namespace to deploy the component to
 	Namespace string `json:"namespace"`
 	// A unique name for the component
@@ -113,8 +113,8 @@ type Kr8ComponentJsonnet struct {
 }
 
 // The kr8_spec object in a cluster config file.
-// This configures how kr8 processes the component.
-type Kr8ComponentSpec struct {
+// This configures how kr8p processes the component.
+type Kr8pComponentSpec struct {
 	// If true, includes the parameters of the current cluster when generating this component
 	Kr8_allparams bool `json:"enable_kr8_allparams"`
 	// If true, includes the parameters of all other clusters when generating this component
@@ -126,7 +126,7 @@ type Kr8ComponentSpec struct {
 	// Additional jsonnet libs to the jsonnet vm, component-path scoped
 	JPaths []string `json:"jpaths"`
 	// A list of filenames to include and output as files
-	Includes Kr8ComponentSpecIncludes `json:"includes"`
+	Includes Kr8pComponentSpecIncludes `json:"includes"`
 }
 
 // Extract jsonnet extVar defintions from spec.
@@ -153,9 +153,9 @@ func ExtractJpaths(spec gjson.Result) []string {
 }
 
 // Extract jsonnet includes filenames or objects from spec.
-func ExtractIncludes(spec gjson.Result) (Kr8ComponentSpecIncludes, error) {
+func ExtractIncludes(spec gjson.Result) (Kr8pComponentSpecIncludes, error) {
 	incl := spec.Get("includes")
-	includes := Kr8ComponentSpecIncludes{}
+	includes := Kr8pComponentSpecIncludes{}
 	if incl.String() == "" {
 		return includes, nil
 	}
@@ -169,26 +169,26 @@ func ExtractIncludes(spec gjson.Result) (Kr8ComponentSpecIncludes, error) {
 }
 
 // Extracts a component spec from a jsonnet object.
-func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
+func CreateComponentSpec(spec gjson.Result) (Kr8pComponentSpec, error) {
 	specM := spec.Map()
 	log.Debug().Msg(spec.String())
 	// spec is missing?
 	if len(specM) == 0 {
 		log.Error().Msg("Component has no `kr8_spec` object")
 		// intetionally create an error to return
-		return Kr8ComponentSpec{},
-			Kr8Error{Message: "Component has no `kr8_spec` object", Value: ""}
+		return Kr8pComponentSpec{},
+			Kr8pError{Message: "Component has no `kr8_spec` object", Value: ""}
 	}
 
 	log.Debug().Msg("Component spec: " + spec.Str)
 
 	includes, err := ExtractIncludes(spec)
 	if err != nil {
-		return Kr8ComponentSpec{},
-			Kr8Error{Message: "Component includes are malformed", Value: err}
+		return Kr8pComponentSpec{},
+			Kr8pError{Message: "Component includes are malformed", Value: err}
 	}
 
-	componentSpec := Kr8ComponentSpec{
+	componentSpec := Kr8pComponentSpec{
 		Kr8_allparams:         spec.Get("enable_kr8_allparams").Bool(),
 		Kr8_allclusters:       spec.Get("enable_kr8_allclusters").Bool(),
 		DisableOutputDirClean: spec.Get("disable_output_clean").Bool(),
@@ -205,10 +205,10 @@ func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
 // To reference the variable in jsonnet code, use std.extvar("variable_name").
 type ExtFileVar map[string]string
 
-// An includes object which configures how kr8 includes an object.
+// An includes object which configures how kr8p includes an object.
 // It allows configuring the included file's destination directory and file name.
 // The input file will be processed differently depending on the filetype.
-type Kr8ComponentSpecIncludeObject struct {
+type Kr8pComponentSpecIncludeObject struct {
 	// an input file to process
 	// accepted filetypes: .jsonnet .yml .yaml .tmpl .tpl
 	File string `json:"file"`
@@ -220,11 +220,11 @@ type Kr8ComponentSpecIncludeObject struct {
 	DestExt string `json:"dest_ext,omitempty"`
 }
 
-// Define Kr8ComponentSpecIncludes to handle dynamic decoding.
-type Kr8ComponentSpecIncludes []Kr8ComponentSpecIncludeObject
+// Define Kr8pComponentSpecIncludes to handle dynamic decoding.
+type Kr8pComponentSpecIncludes []Kr8pComponentSpecIncludeObject
 
 // Implement custom unmarshaling for dynamic decoding.
-func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error {
+func (k *Kr8pComponentSpecIncludes) UnmarshalJSON(data []byte) error {
 	// Check if the data is a single string
 	if data[0] == '"' { // JSON strings start with a double quote
 		var file string
@@ -235,7 +235,7 @@ func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error {
 		ext := filepath.Ext(file)
 		fileName := strings.TrimSuffix(file, ext)
 		// Add a default Kr8ComponentSpecIncludeObject using the string as the file
-		*k = append(*k, Kr8ComponentSpecIncludeObject{
+		*k = append(*k, Kr8pComponentSpecIncludeObject{
 			File:     file,
 			DestExt:  "yaml",
 			DestName: fileName,
@@ -259,13 +259,13 @@ func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error {
 			// strip extension from file
 			ext := filepath.Ext(file)
 			fileName := strings.TrimSuffix(file, ext)
-			*k = append(*k, Kr8ComponentSpecIncludeObject{
+			*k = append(*k, Kr8pComponentSpecIncludeObject{
 				File:     file,
 				DestExt:  "yaml",
 				DestName: fileName,
 			})
 		} else { // Otherwise, it's an object
-			var include Kr8ComponentSpecIncludeObject
+			var include Kr8pComponentSpecIncludeObject
 			if err := json.Unmarshal(raw, &include); err != nil {
 				return err
 			}
@@ -296,12 +296,12 @@ type VMConfig struct {
 	BaseDir string `json:"base_dir" yaml:"base_dir"`
 }
 
-type Kr8Error struct {
+type Kr8pError struct {
 	Message string
 	Value   interface{}
 }
 
 // Error implements error.
-func (e Kr8Error) Error() string {
+func (e Kr8pError) Error() string {
 	return fmt.Sprintf("%s: %v", e.Message, e.Value)
 }

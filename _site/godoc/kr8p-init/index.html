@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Iceberg Tech" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>kr8p init - kr8+ Docs</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "kr8p init";
+        var mkdocs_page_input_path = "godoc/kr8p-init.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> kr8+ Docs
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../README-repo/">Repo Readme</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/ice-bergtech/kr8p-examples">Examples 🔗</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Concepts</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/clusters/">Clusters</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/components/">Components</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/nativefuncs/">Native Funcs</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../helpers/">Helpers</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Cmd Docs</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8p/">kr8</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8p_version/">kr8p version</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8p_generate/">kr8p generate</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8p_format/">kr8p format</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >kr8p get</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_get/">kr8p get</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_get_clusters/">kr8p get clusters</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_get_components/">kr8p get components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_get_params/">kr8p get params</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >kr8p init</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_init/">kr8p init</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_init_cluster/">kr8p init cluster</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_init_component/">kr8p init component</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_init_repo/">kr8p init repo</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >kr8p jsonnet</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_jsonnet/">kr8p jsonnet</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_jsonnet_render/">kr8p jsonnet render</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >kr8p render</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_render/">kr8p render</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_render_helm/">kr8p render helm</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_render_jsonnet/">kr8p render jsonnet</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Godocs</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8p-cmd/">kr8p</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8p-types/">kr8p types</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8p-generate/">kr8p generate</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">kr8p init</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#index">Index</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-generateclusterjsonnet">func GenerateClusterJsonnet</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-generatecomponentjsonnet">func GenerateComponentJsonnet</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-generatelib">func GenerateLib</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-generatereadme">func GenerateReadme</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#type-kr8pinitoptions">type Kr8pInitOptions</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8p-jsonnet/">kr8p jsonnet</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8p-util/">kr8p util</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">kr8+ Docs</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Godocs</li>
+      <li class="breadcrumb-item active">kr8p init</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/ice-bergtech/kr8p/blob/main/docs/godoc/kr8p-init.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="kr8p_init">kr8p_init</h1>
+<pre><code class="language-go">import &quot;github.com/ice-bergtech/kr8p/pkg/kr8p_init&quot;
+</code></pre>
+<h2 id="index">Index</h2>
+<ul>
+<li><a href="#GenerateClusterJsonnet">func GenerateClusterJsonnet(cSpec types.Kr8pClusterSpec, dstDir string) error</a></li>
+<li><a href="#GenerateComponentJsonnet">func GenerateComponentJsonnet(componentOptions Kr8pInitOptions, dstDir string) error</a></li>
+<li><a href="#GenerateLib">func GenerateLib(fetch bool, dstDir string) error</a></li>
+<li><a href="#GenerateReadme">func GenerateReadme(dstDir string, cmdOptions Kr8pInitOptions, clusterSpec types.Kr8pClusterSpec) error</a></li>
+<li><a href="#Kr8pInitOptions">type Kr8pInitOptions</a></li>
+</ul>
+<p><a name="GenerateClusterJsonnet"></a></p>
+<h2 id="func-generateclusterjsonnet">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/kr8p_init/init.go#L28">GenerateClusterJsonnet</a></h2>
+<pre><code class="language-go">func GenerateClusterJsonnet(cSpec types.Kr8pClusterSpec, dstDir string) error
+</code></pre>
+<p>Generate a cluster.jsonnet file based on the provided Kr8ClusterSpec and store it in the specified directory.</p>
+<p><a name="GenerateComponentJsonnet"></a></p>
+<h2 id="func-generatecomponentjsonnet">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/kr8p_init/init.go#L49">GenerateComponentJsonnet</a></h2>
+<pre><code class="language-go">func GenerateComponentJsonnet(componentOptions Kr8pInitOptions, dstDir string) error
+</code></pre>
+<p>Generate default component kr8_spec values and store in params.jsonnet. Based on the type:</p>
+<p>jsonnet: create a component.jsonnet file and reference it from the params.jsonnet file</p>
+<p>yml: leave a note in the params.jsonnet file about where and how the yml files can be referenced</p>
+<p>chart: generate a simple taskfile that handles vendoring the chart data</p>
+<p><a name="GenerateLib"></a></p>
+<h2 id="func-generatelib">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/kr8p_init/init.go#L104">GenerateLib</a></h2>
+<pre><code class="language-go">func GenerateLib(fetch bool, dstDir string) error
+</code></pre>
+<p>Downloads a starter kr8p jsonnet lib from github. If fetch is true, it will download the repo in the /lib directory. If false, it will print the git commands to run. Repo: https://github.com/ice-bergtech/kr8-libsonnet . return util.FetchRepoUrl("https://github.com/ice-bergtech/kr8-libsonnet", dstDir+"/kr8-lib", !fetch).</p>
+<p><a name="GenerateReadme"></a></p>
+<h2 id="func-generatereadme">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/kr8p_init/init.go#L113">GenerateReadme</a></h2>
+<pre><code class="language-go">func GenerateReadme(dstDir string, cmdOptions Kr8pInitOptions, clusterSpec types.Kr8pClusterSpec) error
+</code></pre>
+<p>Generates a starter readme for the repo, and writes it to the destination directory.</p>
+<p><a name="Kr8pInitOptions"></a></p>
+<h2 id="type-kr8pinitoptions">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/kr8p_init/init.go#L12-L25">Kr8pInitOptions</a></h2>
+<p>Kr8pInitOptions defines the options used by the init subcommands.</p>
+<pre><code class="language-go">type Kr8pInitOptions struct {
+    // URL to fetch the skeleton directory from
+    InitUrl string
+    // Name of the cluster to initialize
+    ClusterName string
+    // Name of the component to initialize
+    ComponentName string
+    // Type of component to initialize (e.g. jsonnet, yml, chart, compose)
+    ComponentType string
+    // Whether to run in interactive mode or not
+    Interactive bool
+    // Whether to fetch remote resources or not
+    Fetch bool
+}
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../kr8p-generate/" class="btn btn-neutral float-left" title="kr8p generate"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../kr8p-jsonnet/" class="btn btn-neutral float-right" title="kr8p jsonnet">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/ice-bergtech/kr8p/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../kr8p-generate/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../kr8p-jsonnet/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

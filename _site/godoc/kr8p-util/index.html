@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Iceberg Tech" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>kr8p util - kr8+ Docs</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "kr8p util";
+        var mkdocs_page_input_path = "godoc/kr8p-util.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> kr8+ Docs
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../README-repo/">Repo Readme</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/ice-bergtech/kr8p-examples">Examples 🔗</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Concepts</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/clusters/">Clusters</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/components/">Components</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/nativefuncs/">Native Funcs</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../helpers/">Helpers</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Cmd Docs</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8p/">kr8</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8p_version/">kr8p version</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8p_generate/">kr8p generate</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8p_format/">kr8p format</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >kr8p get</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_get/">kr8p get</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_get_clusters/">kr8p get clusters</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_get_components/">kr8p get components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_get_params/">kr8p get params</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >kr8p init</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_init/">kr8p init</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_init_cluster/">kr8p init cluster</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_init_component/">kr8p init component</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_init_repo/">kr8p init repo</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >kr8p jsonnet</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_jsonnet/">kr8p jsonnet</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_jsonnet_render/">kr8p jsonnet render</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >kr8p render</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_render/">kr8p render</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_render_helm/">kr8p render helm</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8p_render_jsonnet/">kr8p render jsonnet</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Godocs</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8p-cmd/">kr8p</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8p-types/">kr8p types</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8p-generate/">kr8p generate</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8p-init/">kr8p init</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8p-jsonnet/">kr8p jsonnet</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">kr8p util</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#index">Index</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-calculateclusterincludesexcludes">func CalculateClusterIncludesExcludes</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-checkobjectmatch">func CheckObjectMatch</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-cleanoutputdir">func CleanOutputDir</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-colorize">func Colorize</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-fatalerrorcheck">func FatalErrorCheck</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-fetchrepourl">func FetchRepoUrl</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-filter">func Filter</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-filteritems">func FilterItems</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-formatjsonnetstring">func FormatJsonnetString</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-formatjsonnetstringcustom">func FormatJsonnetStringCustom</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-generrorifcheck">func GenErrorIfCheck</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-getclusterfilenames">func GetClusterFilenames</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-getclusterparamsfilenames">func GetClusterParamsFilenames</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-getclusterpaths">func GetClusterPaths</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-getdefaultformatoptions">func GetDefaultFormatOptions</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-jsonnetprint">func JsonnetPrint</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-pretty">func Pretty</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-writeobjtojsonfile">func WriteObjToJsonFile</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#type-pathfilteroptions">type PathFilterOptions</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">kr8+ Docs</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Godocs</li>
+      <li class="breadcrumb-item active">kr8p util</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/ice-bergtech/kr8p/blob/main/docs/godoc/kr8p-util.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="util">util</h1>
+<pre><code class="language-go">import &quot;github.com/ice-bergtech/kr8p/pkg/util&quot;
+</code></pre>
+<p>Utility functions for directories and files</p>
+<h2 id="index">Index</h2>
+<ul>
+<li><a href="#CalculateClusterIncludesExcludes">func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string</a></li>
+<li><a href="#CheckObjectMatch">func CheckObjectMatch(input gjson.Result, filterString string) bool</a></li>
+<li><a href="#CleanOutputDir">func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error</a></li>
+<li><a href="#Colorize">func Colorize(input interface{}, colorNum int, disabled bool) string</a></li>
+<li><a href="#FatalErrorCheck">func FatalErrorCheck(message string, err error)</a></li>
+<li><a href="#FetchRepoUrl">func FetchRepoUrl(url string, destination string, noop bool) error</a></li>
+<li><a href="#Filter">func Filter(vs []string, f func(string) bool) []string</a></li>
+<li><a href="#FilterItems">func FilterItems(input map[string]string, pfilter PathFilterOptions) []string</a></li>
+<li><a href="#FormatJsonnetString">func FormatJsonnetString(input string) (string, error)</a></li>
+<li><a href="#FormatJsonnetStringCustom">func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, error)</a></li>
+<li><a href="#GenErrorIfCheck">func GenErrorIfCheck(message string, err error) error</a></li>
+<li><a href="#GetClusterFilenames">func GetClusterFilenames(searchDir string) ([]types.Kr8pCluster, error)</a></li>
+<li><a href="#GetClusterParamsFilenames">func GetClusterParamsFilenames(basePath string, targetPath string) []string</a></li>
+<li><a href="#GetClusterPaths">func GetClusterPaths(searchDir string, clusterName string) (string, error)</a></li>
+<li><a href="#GetDefaultFormatOptions">func GetDefaultFormatOptions() formatter.Options</a></li>
+<li><a href="#JsonnetPrint">func JsonnetPrint(output string, format string, color bool) error</a></li>
+<li><a href="#Pretty">func Pretty(inputJson string, colorOutput bool) (string, error)</a></li>
+<li><a href="#WriteObjToJsonFile">func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (string, error)</a></li>
+<li><a href="#PathFilterOptions">type PathFilterOptions</a></li>
+</ul>
+<p><a name="CalculateClusterIncludesExcludes"></a></p>
+<h2 id="func-calculateclusterincludesexcludes">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/util.go#L127">CalculateClusterIncludesExcludes</a></h2>
+<pre><code class="language-go">func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string
+</code></pre>
+<p>Using the allClusterParams variable and command flags to create a list of clusters to generate. Clusters can be filtered with "=" for equality or "\~" for regex match.</p>
+<p><a name="CheckObjectMatch"></a></p>
+<h2 id="func-checkobjectmatch">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/util.go#L55">CheckObjectMatch</a></h2>
+<pre><code class="language-go">func CheckObjectMatch(input gjson.Result, filterString string) bool
+</code></pre>
+<p>Checks if a input object matches a filter string. The filter string can be an equality match or a regex match.</p>
+<p><a name="CleanOutputDir"></a></p>
+<h2 id="func-cleanoutputdir">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/directories.go#L111">CleanOutputDir</a></h2>
+<pre><code class="language-go">func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error
+</code></pre>
+<p>Given a map of filenames, prunes all *.yaml files that are NOT in the map from the directory.</p>
+<p><a name="Colorize"></a></p>
+<h2 id="func-colorize">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/json.go#L42">Colorize</a></h2>
+<pre><code class="language-go">func Colorize(input interface{}, colorNum int, disabled bool) string
+</code></pre>
+<p>Colorize function from zerolog console.go file to replicate their coloring functionality. Source: https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389 Replicated here because it's a private function.</p>
+<p><a name="FatalErrorCheck"></a></p>
+<h2 id="func-fatalerrorcheck">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/util.go#L109">FatalErrorCheck</a></h2>
+<pre><code class="language-go">func FatalErrorCheck(message string, err error)
+</code></pre>
+<p>Logs an error and exits the program if the error is not nil. Saves 3 lines per use and centralizes fatal errors for rewriting.</p>
+<p><a name="FetchRepoUrl"></a></p>
+<h2 id="func-fetchrepourl">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/remote.go#L13">FetchRepoUrl</a></h2>
+<pre><code class="language-go">func FetchRepoUrl(url string, destination string, noop bool) error
+</code></pre>
+<p>Fetch a git repo from a url and clone it to a destination directory. If the noop flag is true, it will log the command that would be run and return without doing anything.</p>
+<p><a name="Filter"></a></p>
+<h2 id="func-filter">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/util.go#L15">Filter</a></h2>
+<pre><code class="language-go">func Filter(vs []string, f func(string) bool) []string
+</code></pre>
+<p>Filter returns a new slice containing only the elements that satisfy the predicate function. From https://gobyexample.com/collection-functions</p>
+<p><a name="FilterItems"></a></p>
+<h2 id="func-filteritems">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/util.go#L75">FilterItems</a></h2>
+<pre><code class="language-go">func FilterItems(input map[string]string, pfilter PathFilterOptions) []string
+</code></pre>
+<p>Given a map of string, filter them based on the provided options. The map value is parsed as a gjson result and then checked against the provided options.</p>
+<p><a name="FormatJsonnetString"></a></p>
+<h2 id="func-formatjsonnetstring">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/json.go#L108">FormatJsonnetString</a></h2>
+<pre><code class="language-go">func FormatJsonnetString(input string) (string, error)
+</code></pre>
+<p>Formats a jsonnet string using the default options.</p>
+<p><a name="FormatJsonnetStringCustom"></a></p>
+<h2 id="func-formatjsonnetstringcustom">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/json.go#L113">FormatJsonnetStringCustom</a></h2>
+<pre><code class="language-go">func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, error)
+</code></pre>
+<p>Formats a jsonnet string using custom options.</p>
+<p><a name="GenErrorIfCheck"></a></p>
+<h2 id="func-generrorifcheck">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/util.go#L115">GenErrorIfCheck</a></h2>
+<pre><code class="language-go">func GenErrorIfCheck(message string, err error) error
+</code></pre>
+<p><a name="GetClusterFilenames"></a></p>
+<h2 id="func-getclusterfilenames">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/directories.go#L16">GetClusterFilenames</a></h2>
+<pre><code class="language-go">func GetClusterFilenames(searchDir string) ([]types.Kr8pCluster, error)
+</code></pre>
+<p>Get a list of cluster from within a directory. Walks the directory tree, creating a types.Kr8Cluster for each cluster.jsonnet file found.</p>
+<p><a name="GetClusterParamsFilenames"></a></p>
+<h2 id="func-getclusterparamsfilenames">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/directories.go#L72">GetClusterParamsFilenames</a></h2>
+<pre><code class="language-go">func GetClusterParamsFilenames(basePath string, targetPath string) []string
+</code></pre>
+<p>Get all cluster parameters within a directory. Walks through the directory hierarchy and returns all paths to `params.jsonnet` files.</p>
+<p><a name="GetClusterPaths"></a></p>
+<h2 id="func-getclusterpaths">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/directories.go#L46">GetClusterPaths</a></h2>
+<pre><code class="language-go">func GetClusterPaths(searchDir string, clusterName string) (string, error)
+</code></pre>
+<p>Get a specific cluster within a directory by name. Walks the cluster directory searching for the given clusterName. Returns the path to the cluster.</p>
+<p><a name="GetDefaultFormatOptions"></a></p>
+<h2 id="func-getdefaultformatoptions">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/json.go#L90">GetDefaultFormatOptions</a></h2>
+<pre><code class="language-go">func GetDefaultFormatOptions() formatter.Options
+</code></pre>
+<p>Configures the default options for the jsonnet formatter.</p>
+<p><a name="JsonnetPrint"></a></p>
+<h2 id="func-jsonnetprint">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/json.go#L55">JsonnetPrint</a></h2>
+<pre><code class="language-go">func JsonnetPrint(output string, format string, color bool) error
+</code></pre>
+<p>Print the jsonnet in the specified format. Acceptable formats are: yaml, stream, json.</p>
+<p><a name="Pretty"></a></p>
+<h2 id="func-pretty">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/json.go#L18">Pretty</a></h2>
+<pre><code class="language-go">func Pretty(inputJson string, colorOutput bool) (string, error)
+</code></pre>
+<p>Pretty formats the input jsonnet string with indentation and optional color output. Returns an error when the input can't properly format the json string input.</p>
+<p><a name="WriteObjToJsonFile"></a></p>
+<h2 id="func-writeobjtojsonfile">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/json.go#L120">WriteObjToJsonFile</a></h2>
+<pre><code class="language-go">func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (string, error)
+</code></pre>
+<p>Write out a struct to a specified path and file. Marshals the given interface and generates a formatted json string. It will create all parent directories needed.</p>
+<p><a name="PathFilterOptions"></a></p>
+<h2 id="type-pathfilteroptions">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/util.go#L27-L51">PathFilterOptions</a></h2>
+<p>Fill with string to include and exclude, using kr8's special parsing.</p>
+<pre><code class="language-go">type PathFilterOptions struct {
+    // Comma-separated list of include filters
+    // Filters can include:
+    //
+    // regex filters using the &quot;~&quot; operator. For example, &quot;name~^myregex$&quot;
+    // equality matches using the &quot;=&quot; operator. For example, &quot;name=myvalue&quot;
+    // substring matches using the &quot;=&quot; operator. For example, &quot;name=myvalue&quot;
+    //
+    // If no operator is provided, it is treated as a substring match against the &quot;name&quot; field.
+    Includes string
+    // Comma-separated list of exclude filters.
+    // Filters can include:
+    //
+    // regex filters using the &quot;~&quot; operator. For example, &quot;name~^myregex$&quot;
+    // equality matches using the &quot;=&quot; operator. For example, &quot;name=myvalue&quot;
+    // substring matches using the &quot;=&quot; operator. For example, &quot;name=myvalue&quot;
+    //
+    // If no operator is provided, it is treated as a substring match against the &quot;name&quot; field.
+    Excludes string
+    // Comma separated cluster names.
+    // Filters keys on exact match.
+    Clusters string
+    // Comma separated component names.
+    Components string
+}
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../kr8p-jsonnet/" class="btn btn-neutral float-left" title="kr8p jsonnet"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/ice-bergtech/kr8p/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../kr8p-jsonnet/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

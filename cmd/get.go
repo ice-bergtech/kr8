@@ -15,8 +15,8 @@
 package cmd
 
 import (
-	"github.com/ice-bergtech/kr8/pkg/jnetvm"
-	util "github.com/ice-bergtech/kr8/pkg/util"
+	"github.com/ice-bergtech/kr8p/pkg/jnetvm"
+	util "github.com/ice-bergtech/kr8p/pkg/util"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
@@ -30,8 +30,8 @@ import (
 // GetCmd represents the get command.
 var GetCmd = &cobra.Command{
 	Use:   "get",
-	Short: "Display one or many kr8 resources",
-	Long:  `Displays information about kr8 resources such as clusters and components`,
+	Short: "Display one or many kr8p resources",
+	Long:  `Displays information about kr8p resources such as clusters and components`,
 }
 
 // Holds the options for the get command.
@@ -86,7 +86,7 @@ func init() {
 var GetClustersCmd = &cobra.Command{
 	Use:   "clusters [flags]",
 	Short: "Get all clusters",
-	Long:  "Get all clusters defined in kr8 config hierarchy",
+	Long:  "Get all clusters defined in kr8p config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {
 
 		clusters, err := util.GetClusterFilenames(RootConfig.ClusterDir)
@@ -118,7 +118,7 @@ var GetClustersCmd = &cobra.Command{
 var GetComponentsCmd = &cobra.Command{
 	Use:   "components [flags]",
 	Short: "Get all components",
-	Long:  "Get all available components defined in the kr8 config hierarchy",
+	Long:  "Get all available components defined in the kr8p config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if cmdGetFlags.Cluster == "" && cmdGetFlags.ClusterParams == "" {
@@ -157,7 +157,7 @@ var GetComponentsCmd = &cobra.Command{
 var GetParamsCmd = &cobra.Command{
 	Use:   "params [flags]",
 	Short: "Get parameter for components and clusters",
-	Long:  "Get parameters assigned to clusters and components in the kr8 config hierarchy",
+	Long:  "Get parameters assigned to clusters and components in the kr8p config hierarchy",
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmdGetFlags.Cluster == "" {
 			log.Fatal().Msg("Please specify a --cluster")

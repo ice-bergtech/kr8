@@ -8,14 +8,14 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	types "github.com/ice-bergtech/kr8/pkg/types"
+	types "github.com/ice-bergtech/kr8p/pkg/types"
 )
 
 // Get a list of cluster from within a directory.
 // Walks the directory tree, creating a types.Kr8Cluster for each cluster.jsonnet file found.
-func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error) {
+func GetClusterFilenames(searchDir string) ([]types.Kr8pCluster, error) {
 	fileList := make([]string, 0)
-	ClusterData := []types.Kr8Cluster{}
+	ClusterData := []types.Kr8pCluster{}
 
 	err := filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {
 		fileList = append(fileList, path)
@@ -32,7 +32,7 @@ func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error) {
 		fileName := splitFile[len(splitFile)-1]
 		// check if the filename is cluster.jsonnet
 		if fileName == "cluster.jsonnet" {
-			entry := types.Kr8Cluster{Name: splitFile[len(splitFile)-2], Path: strings.Join(splitFile[:len(splitFile)-1], "/")}
+			entry := types.Kr8pCluster{Name: splitFile[len(splitFile)-2], Path: strings.Join(splitFile[:len(splitFile)-1], "/")}
 			ClusterData = append(ClusterData, entry)
 		}
 	}
@@ -61,7 +61,7 @@ func GetClusterPaths(searchDir string, clusterName string) (string, error) {
 		return "", GenErrorIfCheck("error building cluster list", err)
 	}
 	if clusterPath == "" {
-		return "", types.Kr8Error{Message: "error: could not find cluster: " + clusterName, Value: ""}
+		return "", types.Kr8pError{Message: "error: could not find cluster: " + clusterName, Value: ""}
 	}
 
 	return clusterPath, nil

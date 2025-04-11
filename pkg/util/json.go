@@ -10,7 +10,7 @@ import (
 	formatter "github.com/google/go-jsonnet/formatter"
 	"github.com/hokaccha/go-prettyjson"
 
-	types "github.com/ice-bergtech/kr8/pkg/types"
+	types "github.com/ice-bergtech/kr8p/pkg/types"
 )
 
 // Pretty formats the input jsonnet string with indentation and optional color output.
@@ -80,7 +80,7 @@ func JsonnetPrint(output string, format string, color bool) error {
 		}
 		fmt.Println(formatted)
 	default:
-		return types.Kr8Error{Message: "error: output format must be json, yaml or stream", Value: format}
+		return types.Kr8pError{Message: "error: output format must be json, yaml or stream", Value: format}
 	}
 
 	return nil

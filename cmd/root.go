@@ -13,8 +13,8 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	types "github.com/ice-bergtech/kr8/pkg/types"
-	util "github.com/ice-bergtech/kr8/pkg/util"
+	types "github.com/ice-bergtech/kr8p/pkg/types"
+	util "github.com/ice-bergtech/kr8p/pkg/util"
 )
 
 // exported version variable.
@@ -22,7 +22,7 @@ var version string
 
 // RootCmd represents the base command when called without any subcommands.
 var RootCmd = &cobra.Command{
-	Use:   "kr8",
+	Use:   "kr8p",
 	Short: "Kubernetes config parameter framework",
 	Long: `A tool to generate Kubernetes configuration from a hierarchy
 	of jsonnet files`,
@@ -40,17 +40,17 @@ func Execute(ver string) {
 
 // Default options that are available to all commands.
 type CmdRootOptions struct {
-	// kr8 config base directory
+	// kr8p config base directory
 	BaseDir string
-	// kr8 cluster directory
+	// kr8p cluster directory
 	ClusterDir string
-	// kr8 component directory
+	// kr8p component directory
 	ComponentDir string
-	// A config file with kr8 configuration
+	// A config file with kr8p configuration
 	ConfigFile string
 	// parallelism - defaults to runtime.GOMAXPROCS(0)
 	Parallel int
-	// log more information about what kr8 is doing. Overrides --loglevel
+	// log more information about what kr8p is doing. Overrides --loglevel
 	Debug bool
 	// set log level
 	LogLevel string
@@ -67,17 +67,17 @@ func init() {
 
 	RootCmd.PersistentFlags().BoolVar(&RootConfig.Debug,
 		"debug", false,
-		"log more information about what kr8 is doing. Overrides --loglevel")
+		"log more information about what kr8p is doing. Overrides --loglevel")
 	RootCmd.PersistentFlags().StringVarP(&RootConfig.LogLevel,
 		"loglevel", "L", "info",
 		"set log level")
-	RootCmd.PersistentFlags().StringVarP(&RootConfig.BaseDir, "base", "B", "./", "kr8 config base directory")
+	RootCmd.PersistentFlags().StringVarP(&RootConfig.BaseDir, "base", "B", "./", "kr8p config base directory")
 	RootCmd.PersistentFlags().StringVarP(&RootConfig.ClusterDir,
 		"clusterdir", "D", "",
-		"kr8 cluster directory")
+		"kr8p cluster directory")
 	RootCmd.PersistentFlags().StringVarP(&RootConfig.ComponentDir,
 		"componentdir", "d", "",
-		"kr8 component directory")
+		"kr8p component directory")
 	RootCmd.PersistentFlags().BoolVar(&RootConfig.Color,
 		"color", true,
 		"enable colorized output. Set to false to disable")
@@ -92,7 +92,7 @@ func init() {
 		"parallelism - defaults to runtime.GOMAXPROCS(0)")
 	RootCmd.PersistentFlags().StringVarP(&RootConfig.ConfigFile,
 		"config", "", "",
-		"A config file with kr8 configuration")
+		"A config file with kr8p configuration")
 }
 
 func ConfigureLogger(debug bool) {

@@ -15,7 +15,7 @@ import (
 	"github.com/rs/zerolog/log"
 	kompose_logger "github.com/sirupsen/logrus"
 
-	types "github.com/ice-bergtech/kr8/pkg/types"
+	types "github.com/ice-bergtech/kr8p/pkg/types"
 )
 
 // Registers additional native functions in the jsonnet VM.
@@ -68,7 +68,7 @@ func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			result := "help: " + strings.Join(
 				[]string{
-					"Print out kr8 native funcion names and parameters.",
+					"Print out kr8p native funcion names and parameters.",
 					"Functions are called in the format:",
 					"`std.native('<function>')(<param1>, <param2>)`",
 				},
@@ -91,7 +91,7 @@ func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction {
 	}
 }
 
-// Allows executing helm template to process a helm chart and make available to kr8 configuration.
+// Allows executing helm template to process a helm chart and make available to kr8p configuration.
 //
 // Source: https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L23
 func NativeHelmTemplate() *jsonnet.NativeFunction {
@@ -185,13 +185,13 @@ func NativeKompose() *jsonnet.NativeFunction {
 	}
 }
 
-func parseOpts(data interface{}) (*types.Kr8ComponentJsonnet, error) {
+func parseOpts(data interface{}) (*types.Kr8pComponentJsonnet, error) {
 	component, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
 
-	opts := types.Kr8ComponentJsonnet{}
+	opts := types.Kr8pComponentJsonnet{}
 
 	if err := json.Unmarshal(component, &opts); err != nil {
 		return nil, err

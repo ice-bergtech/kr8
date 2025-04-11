@@ -1,8 +1,8 @@
 package main
 
-import "github.com/ice-bergtech/kr8/cmd"
+import "github.com/ice-bergtech/kr8p/cmd"
 
-var version = "snapshot"
+var version = "v0.0.6"
 
 func main() {
 	cmd.Execute(version)

@@ -1,3 +1,4 @@
+# https://taskfile.dev/usage
 version: '3'
 
 tasks:
@@ -90,4 +91,4 @@ tasks:
       - gen
     cmds:
       - task: 02_build
-      - ./kr8 generate -B examples
+      - ./kr8p generate -B examples

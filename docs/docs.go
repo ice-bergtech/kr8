@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	cmd "github.com/ice-bergtech/kr8/cmd"
+	cmd "github.com/ice-bergtech/kr8p/cmd"
 	"github.com/princjef/gomarkdoc"
 	"github.com/princjef/gomarkdoc/lang"
 	"github.com/princjef/gomarkdoc/logger"
@@ -53,9 +53,15 @@ func CopyReadme() {
 }
 
 func GoMarkDoc() {
-	out, err := gomarkdoc.NewRenderer()
+	docRenderrer, err := gomarkdoc.NewRenderer()
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	repo := lang.Repo{
+		Remote:        "https://github.com:icebergtech/kr8p",
+		DefaultBranch: "main",
+		PathFromRoot:  "",
 	}
 
 	err = os.Mkdir("godoc", 0750)
@@ -64,12 +70,12 @@ func GoMarkDoc() {
 	}
 
 	docfiles := map[string]string{
-		"../cmd":          "kr8-cmd.md",
-		"../pkg/jnetvm":   "kr8-jsonnet.md",
-		"../pkg/types":    "kr8-types.md",
-		"../pkg/util":     "kr8-util.md",
-		"../pkg/kr8_init": "kr8-init.md",
-		"../pkg/generate": "kr8-generate.md",
+		"../cmd":           "kr8p-cmd.md",
+		"../pkg/jnetvm":    "kr8p-jsonnet.md",
+		"../pkg/types":     "kr8p-types.md",
+		"../pkg/util":      "kr8p-util.md",
+		"../pkg/kr8p_init": "kr8p-init.md",
+		"../pkg/generate":  "kr8p-generate.md",
 	}
 
 	for pkgPath, pkgDoc := range docfiles {
@@ -79,11 +85,11 @@ func GoMarkDoc() {
 		}
 
 		logger := logger.New(logger.DebugLevel)
-		pkg, err := lang.NewPackageFromBuild(logger, buildPkg)
+		pkg, err := lang.NewPackageFromBuild(logger, buildPkg, lang.PackageWithRepositoryOverrides(&repo))
 		if err != nil {
 			log.Fatal(err)
 		}
-		output, err := out.Package(pkg)
+		output, err := docRenderrer.Package(pkg)
 		if err != nil {
 			log.Fatal(err)
 		}
