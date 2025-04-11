@@ -50,7 +50,9 @@
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="#">Installation</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#manually">Manually</a>
+    <li class="toctree-l2"><a class="reference internal" href="#homebrew-tap">Homebrew Tap</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#manually-via-releases">Manually via Releases</a>
     </li>
     </ul>
                 </li>
@@ -78,51 +80,51 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../cmd/kr8/">kr8</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../cmd/kr8_version/">kr8 version</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../cmd/kr8_version/">kr8p version</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../cmd/kr8_generate/">kr8 generate</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../cmd/kr8_generate/">kr8p generate</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../cmd/kr8_format/">kr8 format</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../cmd/kr8_format/">kr8p format</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >kr8 get</a>
+                  <li class="toctree-l1"><a class="reference internal" >kr8p get</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_get/">kr8 get</a>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_get/">kr8p get</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_get_clusters/">kr8 get clusters</a>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_get_clusters/">kr8p get clusters</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_get_components/">kr8 get components</a>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_get_components/">kr8p get components</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_get_params/">kr8 get params</a>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_get_params/">kr8p get params</a>
                 </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >kr8 init</a>
+                  <li class="toctree-l1"><a class="reference internal" >kr8p init</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_init/">kr8 init</a>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_init/">kr8p init</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_init_cluster/">kr8 init cluster</a>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_init_cluster/">kr8p init cluster</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_init_component/">kr8 init component</a>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_init_component/">kr8p init component</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_init_repo/">kr8 init repo</a>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_init_repo/">kr8p init repo</a>
                 </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >kr8 jsonnet</a>
+                  <li class="toctree-l1"><a class="reference internal" >kr8p jsonnet</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_jsonnet/">kr8 jsonnet</a>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_jsonnet/">kr8p jsonnet</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_jsonnet_render/">kr8 jsonnet render</a>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_jsonnet_render/">kr8p jsonnet render</a>
                 </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >kr8 render</a>
+                  <li class="toctree-l1"><a class="reference internal" >kr8p render</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_render/">kr8 render</a>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_render/">kr8p render</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_render_helm/">kr8 render helm</a>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_render_helm/">kr8p render helm</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_render_jsonnet/">kr8 render jsonnet</a>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_render_jsonnet/">kr8p render jsonnet</a>
                 </li>
     </ul>
                   </li>
@@ -167,17 +169,28 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="installation">Installation</h1>
-<p>The kr8+ binary has a single job: generate manifests. In order to ensure you can create components and install them, you'll need some dependencies.</p>
-<h2 id="manually">Manually</h2>
+<p>The <strong>kr8+</strong> binaries can be installed via two methods:</p>
+<ul>
+<li><a href="https://github.com/ice-bergtech/homebrew-icetech">ice-bergtech/icetech Homebrew tap</a></li>
+<li><a href="https://github.com/ice-bergtech/kr8/releases">Github releases page</a></li>
+</ul>
+<h2 id="homebrew-tap">Homebrew Tap</h2>
+<p>This is the preferred way to install <strong>kr8+</strong> as it ensures that all dependencies are installed correctly.</p>
+<pre><code class="language-bash">brew tap &quot;ice-bergtech/icetech&quot;
+brew install &quot;kr8&quot;
+</code></pre>
+<h2 id="manually-via-releases">Manually via Releases</h2>
 <p>kr8+ is a Go binary, which means you can simply download it from the <a href="https://github.com/ice-bergtech/kr8/releases">Github releases page</a></p>
-<h1 id="linux">Linux</h1>
-<p>kr8+ is a Go binary, which means you can simply download it from the <a href="https://github.com/ice-bergtech/kr8/releases">Github releases page</a></p>
-<p>RPM and DEB packages are also generated for each release</p>
-<h1 id="os-x-homebrew">OS X Homebrew</h1>
-<p>The easiest way to get started with kr8 is to use the homebrew tap.
-This will install all the tools kr8 depends on for you.</p>
-<pre><code class="language-bash">brew tap apptio/tap
-brew install kr8
+<p>Build are produced for:</p>
+<ul>
+<li><strong>Linux</strong> - amd64 deb, rpm, and apk</li>
+<li><strong>Darwin</strong> - amd64</li>
+</ul>
+<pre><code class="language-sh">apk add kr8_$VERSION_linux_amd64.apk
+</code></pre>
+<pre><code class="language-sh">deb install kr8_$VERSION_linux_amd64.deb
+</code></pre>
+<pre><code class="language-sh">rpm install kr8_$VERSION_linux_amd64.rpm
 </code></pre>
               
             </div>

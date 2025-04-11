@@ -54,7 +54,7 @@ var GenerateCmd = &cobra.Command{
 	Aliases: []string{"gen"},
 	Short:   "Generate components",
 	Long:    `Generate components in clusters`,
-	Example: "kr8 generate",
+	Example: "kr8p generate",
 
 	Args: cobra.MinimumNArgs(0),
 	Run:  GenerateCommand,

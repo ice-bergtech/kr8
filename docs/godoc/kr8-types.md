@@ -230,11 +230,11 @@ type Kr8ClusterComponentRef struct {
 <a name="Kr8ClusterJsonnet"></a>
 ## type [Kr8ClusterJsonnet](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L30-L37>)
 
-The specification for a clusters.jsonnet file. This describes configuration for a cluster that kr8 should process.
+The specification for a clusters.jsonnet file. This describes configuration for a cluster that kr8p should process.
 
 ```go
 type Kr8ClusterJsonnet struct {
-    // kr8 configuration for how to process the cluster
+    // kr8p configuration for how to process the cluster
     ClusterSpec Kr8ClusterSpec `json:"_kr8_spec"`
     // Cluster Level configuration that components can reference
     Cluster Kr8Cluster `json:"_cluster"`
@@ -246,7 +246,7 @@ type Kr8ClusterJsonnet struct {
 <a name="Kr8ClusterSpec"></a>
 ## type [Kr8ClusterSpec](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L48-L62>)
 
-The specification for how to process a cluster. This is used in the cluster jsonnet file to configure how kr8 should process the cluster.
+The specification for how to process a cluster. This is used in the cluster jsonnet file to configure how kr8p should process the cluster.
 
 ```go
 type Kr8ClusterSpec struct {
@@ -282,7 +282,7 @@ The specification for component's params.jsonnet file. It contains all the confi
 
 ```go
 type Kr8ComponentJsonnet struct {
-    // Component-specific configuration for how kr8 should process the component (required)
+    // Component-specific configuration for how kr8p should process the component (required)
     Kr8Spec Kr8ComponentSpec `json:"kr8_spec"`
     // The default namespace to deploy the component to
     Namespace string `json:"namespace"`
@@ -299,7 +299,7 @@ type Kr8ComponentJsonnet struct {
 <a name="Kr8ComponentSpec"></a>
 ## type [Kr8ComponentSpec](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L117-L130>)
 
-The kr8\_spec object in a cluster config file. This configures how kr8 processes the component.
+The kr8\_spec object in a cluster config file. This configures how kr8p processes the component.
 
 ```go
 type Kr8ComponentSpec struct {
@@ -330,7 +330,7 @@ Extracts a component spec from a jsonnet object.
 <a name="Kr8ComponentSpecIncludeObject"></a>
 ## type [Kr8ComponentSpecIncludeObject](<https://github.com/ice-bergtech/kr8/blob/main/pkg/types/types.go#L211-L221>)
 
-An includes object which configures how kr8 includes an object. It allows configuring the included file's destination directory and file name. The input file will be processed differently depending on the filetype.
+An includes object which configures how kr8p includes an object. It allows configuring the included file's destination directory and file name. The input file will be processed differently depending on the filetype.
 
 ```go
 type Kr8ComponentSpecIncludeObject struct {
@@ -401,7 +401,7 @@ Error implements error.
 
 ```go
 type Kr8Opts struct {
-    // Base directory of kr8 configuration
+    // Base directory of kr8p configuration
     BaseDir string
     // Directory where component definitions are stored
     ComponentDir string

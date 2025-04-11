@@ -68,7 +68,7 @@ func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			result := "help: " + strings.Join(
 				[]string{
-					"Print out kr8 native funcion names and parameters.",
+					"Print out kr8p native funcion names and parameters.",
 					"Functions are called in the format:",
 					"`std.native('<function>')(<param1>, <param2>)`",
 				},
@@ -91,7 +91,7 @@ func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction {
 	}
 }
 
-// Allows executing helm template to process a helm chart and make available to kr8 configuration.
+// Allows executing helm template to process a helm chart and make available to kr8p configuration.
 //
 // Source: https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L23
 func NativeHelmTemplate() *jsonnet.NativeFunction {

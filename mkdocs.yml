@@ -26,26 +26,26 @@ nav:
   - Helpers: helpers.md
   - Cmd Docs:
     - kr8: cmd/kr8.md
-    - kr8 version: cmd/kr8_version.md  
-    - kr8 generate: cmd/kr8_generate.md
-    - kr8 format: cmd/kr8_format.md
-    - kr8 get: 
-      - kr8 get: cmd/kr8_get.md
-      - kr8 get clusters: cmd/kr8_get_clusters.md
-      - kr8 get components: cmd/kr8_get_components.md
-      - kr8 get params: cmd/kr8_get_params.md
-    - kr8 init:
-      - kr8 init: cmd/kr8_init.md
-      - kr8 init cluster: cmd/kr8_init_cluster.md
-      - kr8 init component: cmd/kr8_init_component.md
-      - kr8 init repo: cmd/kr8_init_repo.md
-    - kr8 jsonnet: 
-      - kr8 jsonnet: cmd/kr8_jsonnet.md
-      - kr8 jsonnet render: cmd/kr8_jsonnet_render.md
-    - kr8 render:
-      - kr8 render: cmd/kr8_render.md
-      - kr8 render helm: cmd/kr8_render_helm.md
-      - kr8 render jsonnet: cmd/kr8_render_jsonnet.md
+    - kr8p version: cmd/kr8_version.md  
+    - kr8p generate: cmd/kr8_generate.md
+    - kr8p format: cmd/kr8_format.md
+    - kr8p get: 
+      - kr8p get: cmd/kr8_get.md
+      - kr8p get clusters: cmd/kr8_get_clusters.md
+      - kr8p get components: cmd/kr8_get_components.md
+      - kr8p get params: cmd/kr8_get_params.md
+    - kr8p init:
+      - kr8p init: cmd/kr8_init.md
+      - kr8p init cluster: cmd/kr8_init_cluster.md
+      - kr8p init component: cmd/kr8_init_component.md
+      - kr8p init repo: cmd/kr8_init_repo.md
+    - kr8p jsonnet: 
+      - kr8p jsonnet: cmd/kr8_jsonnet.md
+      - kr8p jsonnet render: cmd/kr8_jsonnet_render.md
+    - kr8p render:
+      - kr8p render: cmd/kr8_render.md
+      - kr8p render helm: cmd/kr8_render_helm.md
+      - kr8p render jsonnet: cmd/kr8_render_jsonnet.md
   - Godocs:
     - kr8-cmd: godoc/kr8-cmd.md
     - kr8-generate: godoc/kr8-generate.md

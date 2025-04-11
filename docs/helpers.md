@@ -1,6 +1,6 @@
 # Helpers
 
-kr8-helpers is a set of scripts that wraps around the kr8 command for rendering components. The different types of components have different helps.
+kr8-helpers is a set of scripts that wraps around the kr8p command for rendering components. The different types of components have different helps.
 
 You should ensure the `kr8-helpers` scripts are available in your `$PATH`. You can find them [here](https://github.com/ice-bergtech/kr8/tree/main/scripts)
 

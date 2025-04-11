@@ -74,51 +74,51 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8/">kr8</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8_version/">kr8 version</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8_version/">kr8p version</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8_generate/">kr8 generate</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8_generate/">kr8p generate</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8_format/">kr8 format</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8_format/">kr8p format</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >kr8 get</a>
+                  <li class="toctree-l1"><a class="reference internal" >kr8p get</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_get/">kr8 get</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_get/">kr8p get</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_get_clusters/">kr8 get clusters</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_get_clusters/">kr8p get clusters</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_get_components/">kr8 get components</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_get_components/">kr8p get components</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_get_params/">kr8 get params</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_get_params/">kr8p get params</a>
                 </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >kr8 init</a>
+                  <li class="toctree-l1"><a class="reference internal" >kr8p init</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_init/">kr8 init</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_init/">kr8p init</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_init_cluster/">kr8 init cluster</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_init_cluster/">kr8p init cluster</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_init_component/">kr8 init component</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_init_component/">kr8p init component</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_init_repo/">kr8 init repo</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_init_repo/">kr8p init repo</a>
                 </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >kr8 jsonnet</a>
+                  <li class="toctree-l1"><a class="reference internal" >kr8p jsonnet</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_jsonnet/">kr8 jsonnet</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_jsonnet/">kr8p jsonnet</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_jsonnet_render/">kr8 jsonnet render</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_jsonnet_render/">kr8p jsonnet render</a>
                 </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" >kr8 render</a>
+                  <li class="toctree-l1"><a class="reference internal" >kr8p render</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_render/">kr8 render</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_render/">kr8p render</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_render_helm/">kr8 render helm</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_render_helm/">kr8p render helm</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_render_jsonnet/">kr8 render jsonnet</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_render_jsonnet/">kr8p render jsonnet</a>
                 </li>
     </ul>
                   </li>
@@ -291,7 +291,7 @@
     Aliases: []string{&quot;gen&quot;},
     Short:   &quot;Generate components&quot;,
     Long:    `Generate components in clusters`,
-    Example: &quot;kr8 generate&quot;,
+    Example: &quot;kr8p generate&quot;,
 
     Args: cobra.MinimumNArgs(0),
     Run:  GenerateCommand,
@@ -301,7 +301,7 @@
 <pre><code class="language-go">var GetClustersCmd = &amp;cobra.Command{
     Use:   &quot;clusters [flags]&quot;,
     Short: &quot;Get all clusters&quot;,
-    Long:  &quot;Get all clusters defined in kr8 config hierarchy&quot;,
+    Long:  &quot;Get all clusters defined in kr8p config hierarchy&quot;,
     Run: func(cmd *cobra.Command, args []string) {
 
         clusters, err := util.GetClusterFilenames(RootConfig.ClusterDir)
@@ -333,15 +333,15 @@
 <p><a name="GetCmd"></a>GetCmd represents the get command.</p>
 <pre><code class="language-go">var GetCmd = &amp;cobra.Command{
     Use:   &quot;get&quot;,
-    Short: &quot;Display one or many kr8 resources&quot;,
-    Long:  `Displays information about kr8 resources such as clusters and components`,
+    Short: &quot;Display one or many kr8p resources&quot;,
+    Long:  `Displays information about kr8p resources such as clusters and components`,
 }
 </code></pre>
 <p><a name="GetComponentsCmd"></a></p>
 <pre><code class="language-go">var GetComponentsCmd = &amp;cobra.Command{
     Use:   &quot;components [flags]&quot;,
     Short: &quot;Get all components&quot;,
-    Long:  &quot;Get all available components defined in the kr8 config hierarchy&quot;,
+    Long:  &quot;Get all available components defined in the kr8p config hierarchy&quot;,
     Run: func(cmd *cobra.Command, args []string) {
 
         if cmdGetFlags.Cluster == &quot;&quot; &amp;&amp; cmdGetFlags.ClusterParams == &quot;&quot; {
@@ -381,7 +381,7 @@
 <pre><code class="language-go">var GetParamsCmd = &amp;cobra.Command{
     Use:   &quot;params [flags]&quot;,
     Short: &quot;Get parameter for components and clusters&quot;,
-    Long:  &quot;Get parameters assigned to clusters and components in the kr8 config hierarchy&quot;,
+    Long:  &quot;Get parameters assigned to clusters and components in the kr8p config hierarchy&quot;,
     Run: func(cmd *cobra.Command, args []string) {
         if cmdGetFlags.Cluster == &quot;&quot; {
             log.Fatal().Msg(&quot;Please specify a --cluster&quot;)
@@ -479,8 +479,8 @@
 <p><a name="InitCmd"></a>InitCmd represents the command. Various subcommands are available to initialize different components of kr8.</p>
 <pre><code class="language-go">var InitCmd = &amp;cobra.Command{
     Use:   &quot;init&quot;,
-    Short: &quot;Initialize kr8 config repos, components and clusters&quot;,
-    Long: `kr8 requires specific directories and exists for its config to work.
+    Short: &quot;Initialize kr8p config repos, components and clusters&quot;,
+    Long: `kr8p requires specific directories and exists for its config to work.
 This init command helps in creating directory structure for repos, clusters and 
 components`,
 }
@@ -536,7 +536,7 @@ components`,
     },
 }
 </code></pre>
-<p><a name="InitRepoCmd"></a>Initializes a new kr8 configuration repository</p>
+<p><a name="InitRepoCmd"></a>Initializes a new kr8p configuration repository</p>
 <p>Directory tree:</p>
 <pre><code>components/
 
@@ -549,15 +549,15 @@ generated/
 <pre><code class="language-go">var InitRepoCmd = &amp;cobra.Command{
     Use:   &quot;repo [flags] dir&quot;,
     Args:  cobra.MinimumNArgs(1),
-    Short: &quot;Initialize a new kr8 config repo&quot;,
-    Long: `Initialize a new kr8 config repo by downloading the kr8 config skeleton repo
+    Short: &quot;Initialize a new kr8p config repo&quot;,
+    Long: `Initialize a new kr8p config repo by downloading the kr8p config skeleton repo
 and initialize a git repo so you can get started`,
     Run: func(cmd *cobra.Command, args []string) {
         if len(args) == 0 {
             log.Fatal().Msg(&quot;Error: no directory specified&quot;)
         }
         outDir := args[len(args)-1]
-        log.Debug().Msg(&quot;Initializing kr8 config repo in &quot; + outDir)
+        log.Debug().Msg(&quot;Initializing kr8p config repo in &quot; + outDir)
         if cmdInitFlags.InitUrl != &quot;&quot; {
             util.FatalErrorCheck(
                 &quot;Issue fetching repo&quot;,
@@ -698,7 +698,7 @@ and initialize a git repo so you can get started`,
 </code></pre>
 <p><a name="RootCmd"></a>RootCmd represents the base command when called without any subcommands.</p>
 <pre><code class="language-go">var RootCmd = &amp;cobra.Command{
-    Use:   &quot;kr8&quot;,
+    Use:   &quot;kr8p&quot;,
     Short: &quot;Kubernetes config parameter framework&quot;,
     Long: `A tool to generate Kubernetes configuration from a hierarchy
     of jsonnet files`,
@@ -779,7 +779,7 @@ and initialize a git repo so you can get started`,
 </code></pre>
 <p><a name="CmdRenderOptions"></a></p>
 <h2 id="type-cmdrenderoptions">type <a href="https://github.com/ice-bergtech/kr8/blob/main/cmd/render.go#L24-L35">CmdRenderOptions</a></h2>
-<p>Contains parameters for the kr8 render command.</p>
+<p>Contains parameters for the kr8p render command.</p>
 <pre><code class="language-go">type CmdRenderOptions struct {
     // Prune null and empty objects from rendered json
     Prune bool
@@ -797,17 +797,17 @@ and initialize a git repo so you can get started`,
 <h2 id="type-cmdrootoptions">type <a href="https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L42-L61">CmdRootOptions</a></h2>
 <p>Default options that are available to all commands.</p>
 <pre><code class="language-go">type CmdRootOptions struct {
-    // kr8 config base directory
+    // kr8p config base directory
     BaseDir string
-    // kr8 cluster directory
+    // kr8p cluster directory
     ClusterDir string
-    // kr8 component directory
+    // kr8p component directory
     ComponentDir string
-    // A config file with kr8 configuration
+    // A config file with kr8p configuration
     ConfigFile string
     // parallelism - defaults to runtime.GOMAXPROCS(0)
     Parallel int
-    // log more information about what kr8 is doing. Overrides --loglevel
+    // log more information about what kr8p is doing. Overrides --loglevel
     Debug bool
     // set log level
     LogLevel string
@@ -835,7 +835,7 @@ and initialize a git repo so you can get started`,
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../../cmd/kr8_render_jsonnet/" class="btn btn-neutral float-left" title="kr8 render jsonnet"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../cmd/kr8_render_jsonnet/" class="btn btn-neutral float-left" title="kr8p render jsonnet"><span class="icon icon-circle-arrow-left"></span> Previous</a>
         <a href="../kr8-generate/" class="btn btn-neutral float-right" title="kr8-generate">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 

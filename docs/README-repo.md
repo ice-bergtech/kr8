@@ -53,9 +53,15 @@ This means that breaking changes still happen from time to time, but it's stable
 
 ## Installation
 
-The latest version is available for download from the [Github releases page](https://github.com/ice-bergtech/kr8/releases).
+The latest version is available for download from the [Github releases page](https://github.com/ice-bergtech/kr8/releases)
+To install via Homebrew, add the [icetech github tap](https://github.com/ice-bergtech/homebrew-icetech) and install::
 
-Once installed, use `kr8 init` commands to setup the initial structure and configurations.
+```sh
+brew tap ice-bergtech/icetech
+brew install kr8
+```
+
+Once installed, use `kr8p init` commands to setup the initial structure and configurations.
 
 ## Getting Started
 
@@ -108,7 +114,7 @@ More information: [Jsonnet Libraries](./concepts/overview.md)
 
 ### Deployment
 
-To generate the final configured manifests, just run `kr8 generate`.
+To generate the final configured manifests, just run `kr8p generate`.
 **kr8+** reads the cluster and components configuration files and generates the final manifests based on the parameters provided.
 
 Manifest changes are checked into source control, allowing them to be ingested by tools like ArgoCD, Portainer, Rancher etc.
@@ -122,6 +128,34 @@ Manifest changes are checked into source control, allowing them to be ingested b
   * [Creating Components](./concepts/components.md)
   * [Native Functions](./concepts/nativefuncs.md)
 * [Code Documentation](./godoc)
+
+## References and Additional Resources
+
+**kr8+** is a fork of [kr8](https://github.com/apptio/kr8) with some additional features and improvements.
+**kr8** was used in production to great success at Apptio for managing components across multiple Kubernetes cluster tiers, regions, and environments.
+
+## Cluster and Component Configuration
+
+* [Jsonnet Standard Library](https://jsonnet.org/ref/stdlib.html)
+* [Jsonnet Language Reference](https://jsonnet.org/ref/language.html)
+* [Sprig Template Documentation](https://masterminds.github.io/sprig/)
+
+## Dev Environment
+
+* VSCode plugin [EditorConfig](https://open-vsx.org/vscode/item?itemName=EditorConfig.EditorConfig)
+* VSCode plugins [Grafana Jsonnet Language Server](https://open-vsx.org/vscode/item?itemName=Grafana.vscode-jsonnet)
+
+
+## Theory
+
+* [The growing need for Kubernetes Configuration Management](https://leebriggs.co.uk/blog/2018/05/08/kubernetes-config-mgmt.html)
+
+## Alternatives tools
+
+* [Bazel](https://bazel.build/about)
+* [helm](https://helm.sh/)
+* [kustomize](https://kustomize.io/)
+* raw [jsonnet](https://github.com/jsonnet/go-jsonnet)
 
 ## Development
 
@@ -184,7 +218,7 @@ There are a few sets of tests:
 
 - Unit Tests: `go test ./...` or `task test`
 - Integration Tests using `bats`: `task test-package`
-- Generate examples repo: `./kr8 generate -B examples` or `task gen`
+- Generate examples repo: `./kr8p generate -B examples` or `task gen`
 
 ### Build Troubleshooting
 
@@ -210,23 +244,3 @@ Parts of the code are derived from:
 * [kr8](https://github.com/apptio/kr8) - [MIT License](LICENSE-apptio)
 * [Lee Briggs](https://leebriggs.co.uk/) - [MIT License](LICENSE-briggs)
 * [kubecfg](https://github.com/kubecfg/kubecfg) - [Apache 2.0](LICENSE-kubecfg)
-
-## References and Additional Resources
-
-**kr8+** is a fork of [kr8](https://github.com/apptio/kr8) with some additional features and improvements.
-**kr8** was used in production to great success at Apptio for managing components of multiple Kubernetes clusters.
-
-VSCode plugins:
-
-* [EditorConfig](https://open-vsx.org/vscode/item?itemName=EditorConfig.EditorConfig)
-* [Jsonnet Language Server](https://open-vsx.org/vscode/item?itemName=Grafana.vscode-jsonnet)
-
-
-Docs:
-
-* [Jsonnet Standard Library](https://jsonnet.org/ref/stdlib.html)
-* [Jsonnet Language Reference](https://jsonnet.org/ref/language.html)
-* [Sprig Template Documentation](https://masterminds.github.io/sprig/)
-* [The growing need for Kubernetes Configuration Management](https://leebriggs.co.uk/blog/2018/05/08/kubernetes-config-mgmt.html)
-
-Alternatives:

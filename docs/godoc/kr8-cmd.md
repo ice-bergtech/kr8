@@ -112,7 +112,7 @@ var GenerateCmd = &cobra.Command{
     Aliases: []string{"gen"},
     Short:   "Generate components",
     Long:    `Generate components in clusters`,
-    Example: "kr8 generate",
+    Example: "kr8p generate",
 
     Args: cobra.MinimumNArgs(0),
     Run:  GenerateCommand,
@@ -125,7 +125,7 @@ var GenerateCmd = &cobra.Command{
 var GetClustersCmd = &cobra.Command{
     Use:   "clusters [flags]",
     Short: "Get all clusters",
-    Long:  "Get all clusters defined in kr8 config hierarchy",
+    Long:  "Get all clusters defined in kr8p config hierarchy",
     Run: func(cmd *cobra.Command, args []string) {
 
         clusters, err := util.GetClusterFilenames(RootConfig.ClusterDir)
@@ -160,8 +160,8 @@ var GetClustersCmd = &cobra.Command{
 ```go
 var GetCmd = &cobra.Command{
     Use:   "get",
-    Short: "Display one or many kr8 resources",
-    Long:  `Displays information about kr8 resources such as clusters and components`,
+    Short: "Display one or many kr8p resources",
+    Long:  `Displays information about kr8p resources such as clusters and components`,
 }
 ```
 
@@ -171,7 +171,7 @@ var GetCmd = &cobra.Command{
 var GetComponentsCmd = &cobra.Command{
     Use:   "components [flags]",
     Short: "Get all components",
-    Long:  "Get all available components defined in the kr8 config hierarchy",
+    Long:  "Get all available components defined in the kr8p config hierarchy",
     Run: func(cmd *cobra.Command, args []string) {
 
         if cmdGetFlags.Cluster == "" && cmdGetFlags.ClusterParams == "" {
@@ -214,7 +214,7 @@ var GetComponentsCmd = &cobra.Command{
 var GetParamsCmd = &cobra.Command{
     Use:   "params [flags]",
     Short: "Get parameter for components and clusters",
-    Long:  "Get parameters assigned to clusters and components in the kr8 config hierarchy",
+    Long:  "Get parameters assigned to clusters and components in the kr8p config hierarchy",
     Run: func(cmd *cobra.Command, args []string) {
         if cmdGetFlags.Cluster == "" {
             log.Fatal().Msg("Please specify a --cluster")
@@ -318,8 +318,8 @@ var InitClusterCmd = &cobra.Command{
 ```go
 var InitCmd = &cobra.Command{
     Use:   "init",
-    Short: "Initialize kr8 config repos, components and clusters",
-    Long: `kr8 requires specific directories and exists for its config to work.
+    Short: "Initialize kr8p config repos, components and clusters",
+    Long: `kr8p requires specific directories and exists for its config to work.
 This init command helps in creating directory structure for repos, clusters and 
 components`,
 }
@@ -379,7 +379,7 @@ var InitComponentCmd = &cobra.Command{
 }
 ```
 
-<a name="InitRepoCmd"></a>Initializes a new kr8 configuration repository
+<a name="InitRepoCmd"></a>Initializes a new kr8p configuration repository
 
 Directory tree:
 
@@ -397,15 +397,15 @@ generated/
 var InitRepoCmd = &cobra.Command{
     Use:   "repo [flags] dir",
     Args:  cobra.MinimumNArgs(1),
-    Short: "Initialize a new kr8 config repo",
-    Long: `Initialize a new kr8 config repo by downloading the kr8 config skeleton repo
+    Short: "Initialize a new kr8p config repo",
+    Long: `Initialize a new kr8p config repo by downloading the kr8p config skeleton repo
 and initialize a git repo so you can get started`,
     Run: func(cmd *cobra.Command, args []string) {
         if len(args) == 0 {
             log.Fatal().Msg("Error: no directory specified")
         }
         outDir := args[len(args)-1]
-        log.Debug().Msg("Initializing kr8 config repo in " + outDir)
+        log.Debug().Msg("Initializing kr8p config repo in " + outDir)
         if cmdInitFlags.InitUrl != "" {
             util.FatalErrorCheck(
                 "Issue fetching repo",
@@ -564,7 +564,7 @@ var RenderJsonnetCmd = &cobra.Command{
 
 ```go
 var RootCmd = &cobra.Command{
-    Use:   "kr8",
+    Use:   "kr8p",
     Short: "Kubernetes config parameter framework",
     Long: `A tool to generate Kubernetes configuration from a hierarchy
 	of jsonnet files`,
@@ -675,7 +675,7 @@ type CmdGetOptions struct {
 <a name="CmdRenderOptions"></a>
 ## type [CmdRenderOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/render.go#L24-L35>)
 
-Contains parameters for the kr8 render command.
+Contains parameters for the kr8p render command.
 
 ```go
 type CmdRenderOptions struct {
@@ -699,17 +699,17 @@ Default options that are available to all commands.
 
 ```go
 type CmdRootOptions struct {
-    // kr8 config base directory
+    // kr8p config base directory
     BaseDir string
-    // kr8 cluster directory
+    // kr8p cluster directory
     ClusterDir string
-    // kr8 component directory
+    // kr8p component directory
     ComponentDir string
-    // A config file with kr8 configuration
+    // A config file with kr8p configuration
     ConfigFile string
     // parallelism - defaults to runtime.GOMAXPROCS(0)
     Parallel int
-    // log more information about what kr8 is doing. Overrides --loglevel
+    // log more information about what kr8p is doing. Overrides --loglevel
     Debug bool
     // set log level
     LogLevel string

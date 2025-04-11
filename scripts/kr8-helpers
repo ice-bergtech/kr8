@@ -65,10 +65,10 @@ _helm-render() {
   local _outfile="$2"
 
   # render helm values for the chart
-  kr8 jsonnet render --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --format yaml $KR8_JSONNET_ARGS "${_chart}-values.jsonnet" > "$metaDir/${_chart}-values.jsonnet"
+  kr8p jsonnet render --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --format yaml $KR8_JSONNET_ARGS "${_chart}-values.jsonnet" > "$metaDir/${_chart}-values.jsonnet"
   # render chart
-  local releasename=$(kr8 cluster params --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --param "${KR8_COMPONENT}.release_name" --notunset)
-  local namespace=$(kr8 cluster params --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --param "${KR8_COMPONENT}.namespace" --notunset)
+  local releasename=$(kr8p cluster params --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --param "${KR8_COMPONENT}.release_name" --notunset)
+  local namespace=$(kr8p cluster params --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --param "${KR8_COMPONENT}.namespace" --notunset)
 
   # record metadata
   set-meta 
@@ -79,7 +79,7 @@ _helm-render() {
   else
     local userelname="--name $releasename"
   fi
-  helm template $userelname --namespace "$namespace" --values  "$metaDir/${_chart}-values.jsonnet" "./charts/${_chart}" | kr8 yaml helmclean > "$_outfile"
+  helm template $userelname --namespace "$namespace" --values  "$metaDir/${_chart}-values.jsonnet" "./charts/${_chart}" | kr8p yaml helmclean > "$_outfile"
 }
 
 helm-render() {
@@ -91,7 +91,7 @@ helm-render() {
 
   tmpfile=$(mktemp)
   _helm-render "$_chart" "$tmpfile"
-   kr8 jsonnet render --prune=false --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --format stream $KR8_JSONNET_ARGS $KR8_BASE/lib/postprocess.jsonnet  --ext-str-file inputYaml="$tmpfile" > "$outputDir/${_chart}.yaml"
+   kr8p jsonnet render --prune=false --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --format stream $KR8_JSONNET_ARGS $KR8_BASE/lib/postprocess.jsonnet  --ext-str-file inputYaml="$tmpfile" > "$outputDir/${_chart}.yaml"
    rm -f "$tmpfile"
 }
 
@@ -101,9 +101,9 @@ set-meta(){
 
   local namespace
   local releasename
-  namespace=$(set -eu; kr8 cluster params --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --param "${KR8_COMPONENT}.namespace" --notunset)
-  releasename=$(kr8 cluster params --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --param "${KR8_COMPONENT}.release_name" --notunset)
-  kubecfg_gc_enable=$(kr8 cluster params --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --param "${KR8_COMPONENT}.kubecfg_gc_enable")
+  namespace=$(set -eu; kr8p cluster params --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --param "${KR8_COMPONENT}.namespace" --notunset)
+  releasename=$(kr8p cluster params --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --param "${KR8_COMPONENT}.release_name" --notunset)
+  kubecfg_gc_enable=$(kr8p cluster params --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --param "${KR8_COMPONENT}.kubecfg_gc_enable")
 
   echo "$namespace" > "$metaDir/namespace_default"
   echo "${KR8_COMPONENT}_${namespace}_${releasename}" > "$metaDir/gc_tag"
@@ -116,7 +116,7 @@ set-meta(){
     rm -f "$metaDir/gc_enable"
   fi
 
-  kubecfg_update_args=$(kr8 cluster params --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --param "${KR8_COMPONENT}.kubecfg_update_args")
+  kubecfg_update_args=$(kr8p cluster params --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --param "${KR8_COMPONENT}.kubecfg_update_args")
   if [ ! -z "$kubecfg_update_args" ]
   then 
     echo  "$kubecfg_update_args" > "$metaDir/kubecfg_update_args"
@@ -137,9 +137,9 @@ helm-render-with-patch() {
   tmpfile=$(mktemp)
   tmpfile2=$(mktemp)
   _helm-render "$_chart" "$tmpfile"
-  kr8 jsonnet render --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --format stream $KR8_JSONNET_ARGS patches.jsonnet  --ext-str-file inputYaml="$tmpfile" > "$tmpfile2"
+  kr8p jsonnet render --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --format stream $KR8_JSONNET_ARGS patches.jsonnet  --ext-str-file inputYaml="$tmpfile" > "$tmpfile2"
   rm -f $tmpfile 
-  kr8 jsonnet render --prune=false --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --format stream $KR8_JSONNET_ARGS $KR8_BASE/lib/postprocess.jsonnet  --ext-str-file inputYaml="$tmpfile2" > "$outputDir/${_chart}.yaml"
+  kr8p jsonnet render --prune=false --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --format stream $KR8_JSONNET_ARGS $KR8_BASE/lib/postprocess.jsonnet  --ext-str-file inputYaml="$tmpfile2" > "$outputDir/${_chart}.yaml"
   rm -f $tmpfile2
 }
 
@@ -153,8 +153,8 @@ yaml-install() {
   do
     local outf
     outf=$(basename $yaml)
-    kr8 jsonnet render --prune=false --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --format stream $KR8_JSONNET_ARGS $KR8_BASE/lib/postprocess.jsonnet  --ext-str-file inputYaml="$yaml" > "$outputDir/$outf"
-#    kr8 yaml helmclean < "$yaml" > "$outputDir/$outf"
+    kr8p jsonnet render --prune=false --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --format stream $KR8_JSONNET_ARGS $KR8_BASE/lib/postprocess.jsonnet  --ext-str-file inputYaml="$yaml" > "$outputDir/$outf"
+#    kr8p yaml helmclean < "$yaml" > "$outputDir/$outf"
   done
 }
 
@@ -171,8 +171,8 @@ jsonnet-render() {
   do
     local outf
     outf=$(basename $jsonnet | sed 's/\.jsonnet$/.yaml/')
-    kr8 jsonnet render --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --format stream "$jsonnet" "$@" $KR8_JSONNET_ARGS > "$tmpfile"
-    kr8 jsonnet render --prune=false --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --format stream $KR8_JSONNET_ARGS $KR8_BASE/lib/postprocess.jsonnet  --ext-str-file inputYaml="$tmpfile" > "$outputDir/$outf"
+    kr8p jsonnet render --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --format stream "$jsonnet" "$@" $KR8_JSONNET_ARGS > "$tmpfile"
+    kr8p jsonnet render --prune=false --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --format stream $KR8_JSONNET_ARGS $KR8_BASE/lib/postprocess.jsonnet  --ext-str-file inputYaml="$tmpfile" > "$outputDir/$outf"
   done
   rm -f "$tmpfile"
 }
@@ -186,7 +186,7 @@ jk-render() {
 
   tmpfile=$(mktemp)
   # Render the params file into a temporary JSON file
-  kr8 cluster params --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --param "${KR8_COMPONENT}"  > "$tmpfile"
+  kr8p cluster params --cluster "$KR8_CLUSTER" --component "$KR8_COMPONENT" --param "${KR8_COMPONENT}"  > "$tmpfile"
   jk run "$_js" -f "$tmpfile" -o "$outputDir"
 
 

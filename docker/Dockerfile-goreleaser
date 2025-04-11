@@ -2,6 +2,6 @@ FROM scratch
 
 WORKDIR /app
 
-COPY ./kr8 /app
+COPY ./kr8p /app
 
 ENTRYPOINT ["/app/kr8"]

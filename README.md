@@ -61,7 +61,7 @@ brew tap ice-bergtech/icetech
 brew install kr8
 ```
 
-Once installed, use `kr8 init` commands to setup the initial structure and configurations.
+Once installed, use `kr8p init` commands to setup the initial structure and configurations.
 
 ## Getting Started
 
@@ -114,7 +114,7 @@ More information: [Jsonnet Libraries](./docs/concepts/overview.md)
 
 ### Deployment
 
-To generate the final configured manifests, just run `kr8 generate`.
+To generate the final configured manifests, just run `kr8p generate`.
 **kr8+** reads the cluster and components configuration files and generates the final manifests based on the parameters provided.
 
 Manifest changes are checked into source control, allowing them to be ingested by tools like ArgoCD, Portainer, Rancher etc.
@@ -218,7 +218,7 @@ There are a few sets of tests:
 
 - Unit Tests: `go test ./...` or `task test`
 - Integration Tests using `bats`: `task test-package`
-- Generate examples repo: `./kr8 generate -B examples` or `task gen`
+- Generate examples repo: `./kr8p generate -B examples` or `task gen`
 
 ### Build Troubleshooting
 

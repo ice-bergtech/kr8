@@ -96,7 +96,7 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 	return err
 }
 
-// Downloads a starter kr8 jsonnet lib from github.
+// Downloads a starter kr8p jsonnet lib from github.
 // If fetch is true, it will download the repo in the /lib directory.
 // If false, it will print the git commands to run.
 // Repo: https://github.com/ice-bergtech/kr8-libsonnet .
@@ -136,7 +136,7 @@ func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.
 		"",
 		"1. Define components in the `components` directory.",
 		"2. Define tiered cluster configuration in the `" + clusterSpec.ClusterDir + "` directory.",
-		"3. Run `kr8 generate` to generate component configuration files.",
+		"3. Run `kr8p generate` to generate component configuration files.",
 		"",
 		"## Info ",
 		"",

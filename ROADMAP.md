@@ -14,5 +14,6 @@ However, there are always things to improve:
 * Add ability to fetch or coordinate fetching remote resources (e.g. Helm charts, CRDs etc.)
 * Improve examples and tutorials for better onboarding
 * Identify common tasks and integrate into **kr8+** or a jsonnet libsonnet library
-* integrate `kr8-helpers` scripts into the main kr8 binary
+* integrate `kr8-helpers` scripts into the main kr8p binary
 * integrate `go-task` for preparing remote resource definition fetching scripts for user
+* Register a domain for documentation

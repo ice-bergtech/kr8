@@ -1,4 +1,4 @@
-project_name: kr8
+project_name: kr8p
 version: 2
 before:
   hooks:
@@ -12,7 +12,7 @@ builds:
       - amd64
     main: .
     ldflags: -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
-    binary: kr8
+    binary: kr8p
 archives:
   - formats: [tar.gz]
     name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
@@ -52,14 +52,14 @@ sboms:
 #       - "--label=org.label-schema.version={{.Version}}"
 #       - "--label=org.label-schema.name={{.ProjectName}}"
 # docker_manifests:
-#   - name_template: 'ghcr.io/ice-bergtech/kr8:{{ .Tag }}'
+#   - name_template: 'ghcr.io/ice-bergtech/kr8p:{{ .Tag }}'
 #     image_templates:
-#       - 'ghcr.io/ice-bergtech/kr8:{{ .Tag }}-amd64'
-#       - 'ghcr.io/ice-bergtech/kr8:{{ .Tag }}-arm64'
-#   - name_template: 'ghcr.io/ice-bergtech/kr8:latest'
+#       - 'ghcr.io/ice-bergtech/kr8p:{{ .Tag }}-amd64'
+#       - 'ghcr.io/ice-bergtech/kr8p:{{ .Tag }}-arm64'
+#   - name_template: 'ghcr.io/ice-bergtech/kr8p:latest'
 #     image_templates:
-#       - 'ghcr.io/ice-bergtech/kr8:latest-amd64'
-#       - 'ghcr.io/ice-bergtech/kr8:latest-arm64'
+#       - 'ghcr.io/ice-bergtech/kr8p:latest-amd64'
+#       - 'ghcr.io/ice-bergtech/kr8p:latest-arm64'
 # docker_signs:
 #   - cmd: cosign
 #     artifacts: manifests
@@ -70,7 +70,7 @@ sboms:
 nfpms:
   -
     vendor: 'Iceberg Tech'
-    homepage: "https://github.com/ice-bergtech/kr8"
+    homepage: "https://github.com/ice-bergtech/kr8p"
     maintainer: 'Iceberg Tech LLC'
     description: "Opinionated configuration management tool for Kubernetes Cluster"
     license: MIT
@@ -91,8 +91,8 @@ signs:
       - "--yes"
 brews:
   # https://goreleaser.com/customization/homebrew/
-  - name: kr8
-    url_template: "https://github.com/ice-bergtech/kr8/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+  - name: kr8p
+    url_template: "https://github.com/ice-bergtech/kr8p/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
     url_headers:
     - "Accept: application/octet-stream"
     - 'Authorization: bearer #{ENV["HOMEBREW_TAP_GITHUB_TOKEN"]}'
@@ -115,11 +115,11 @@ brews:
       email: release@icebergtech.xyz
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
 
-    homepage: "https://ice-bergtech.github.io/kr8"
+    homepage: "https://ice-bergtech.github.io/kr8p"
     description: "An opinionated configuration management tool for Kubernetes Clusters"
     license: MIT
     install: |
-      bin.install "kr8"
+      bin.install "kr8p"
       bin.install "scripts/kr8-helpers"
     dependencies:
       - helm
