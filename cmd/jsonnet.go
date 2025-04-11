@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	jvm "github.com/ice-bergtech/kr8/pkg/jnetvm"
-	types "github.com/ice-bergtech/kr8/pkg/types"
+	jvm "github.com/ice-bergtech/kr8p/pkg/jnetvm"
+	types "github.com/ice-bergtech/kr8p/pkg/types"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )

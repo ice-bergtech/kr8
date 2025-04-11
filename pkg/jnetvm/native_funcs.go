@@ -15,7 +15,7 @@ import (
 	"github.com/rs/zerolog/log"
 	kompose_logger "github.com/sirupsen/logrus"
 
-	types "github.com/ice-bergtech/kr8/pkg/types"
+	types "github.com/ice-bergtech/kr8p/pkg/types"
 )
 
 // Registers additional native functions in the jsonnet VM.

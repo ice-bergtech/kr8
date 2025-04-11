@@ -7,7 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 
-	types "github.com/ice-bergtech/kr8/pkg/types"
+	types "github.com/ice-bergtech/kr8p/pkg/types"
 )
 
 // Filter returns a new slice containing only the elements that satisfy the predicate function.

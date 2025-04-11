@@ -14,7 +14,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
-	util "github.com/ice-bergtech/kr8/pkg/util"
+	util "github.com/ice-bergtech/kr8p/pkg/util"
 )
 
 // Contains the paths to include and exclude for a format command.

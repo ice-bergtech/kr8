@@ -15,8 +15,8 @@
 package cmd
 
 import (
-	"github.com/ice-bergtech/kr8/pkg/jnetvm"
-	util "github.com/ice-bergtech/kr8/pkg/util"
+	"github.com/ice-bergtech/kr8p/pkg/jnetvm"
+	util "github.com/ice-bergtech/kr8p/pkg/util"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"

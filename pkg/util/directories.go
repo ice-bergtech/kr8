@@ -8,7 +8,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	types "github.com/ice-bergtech/kr8/pkg/types"
+	types "github.com/ice-bergtech/kr8p/pkg/types"
 )
 
 // Get a list of cluster from within a directory.

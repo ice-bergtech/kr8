@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"github.com/AlecAivazis/survey/v2"
-	kr8init "github.com/ice-bergtech/kr8/pkg/kr8_init"
-	types "github.com/ice-bergtech/kr8/pkg/types"
-	util "github.com/ice-bergtech/kr8/pkg/util"
+	kr8init "github.com/ice-bergtech/kr8p/pkg/kr8_init"
+	types "github.com/ice-bergtech/kr8p/pkg/types"
+	util "github.com/ice-bergtech/kr8p/pkg/util"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )

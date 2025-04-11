@@ -15,9 +15,9 @@ import (
 	"github.com/tidwall/gjson"
 	"golang.org/x/exp/maps"
 
-	jnetvm "github.com/ice-bergtech/kr8/pkg/jnetvm"
-	types "github.com/ice-bergtech/kr8/pkg/types"
-	util "github.com/ice-bergtech/kr8/pkg/util"
+	jnetvm "github.com/ice-bergtech/kr8p/pkg/jnetvm"
+	types "github.com/ice-bergtech/kr8p/pkg/types"
+	util "github.com/ice-bergtech/kr8p/pkg/util"
 )
 
 // A thread-safe string that can be used to store and retrieve configuration data.

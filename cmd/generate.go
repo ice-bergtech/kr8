@@ -9,9 +9,9 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/maps"
 
-	gen "github.com/ice-bergtech/kr8/pkg/generate"
-	"github.com/ice-bergtech/kr8/pkg/types"
-	util "github.com/ice-bergtech/kr8/pkg/util"
+	gen "github.com/ice-bergtech/kr8p/pkg/generate"
+	"github.com/ice-bergtech/kr8p/pkg/types"
+	util "github.com/ice-bergtech/kr8p/pkg/util"
 )
 
 // Stores the options for the 'generate' command.

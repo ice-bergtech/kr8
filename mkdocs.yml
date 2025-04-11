@@ -7,8 +7,7 @@ theme:
   color_mode: dark
   user_color_mode_toggle: true
 
-
-repo_url: https://github.com/ice-bergtech/kr8/
+repo_url: https://github.com/ice-bergtech/kr8p/
 site_dir: ./_site
 docs_dir: ./docs
 edit_uri: blob/main/docs
@@ -17,7 +16,7 @@ nav:
   - Home: index.md
   - Repo Readme: README-repo.md
   - Installation: installation.md
-  - Examples 🔗: https://github.com/ice-bergtech/kr8-examples
+  - Examples 🔗: https://github.com/ice-bergtech/kr8p-examples
   - Concepts:
     - Overview: concepts/overview.md
     - Clusters: concepts/clusters.md
@@ -25,31 +24,31 @@ nav:
     - Native Funcs: concepts/nativefuncs.md
   - Helpers: helpers.md
   - Cmd Docs:
-    - kr8: cmd/kr8.md
-    - kr8p version: cmd/kr8_version.md  
-    - kr8p generate: cmd/kr8_generate.md
-    - kr8p format: cmd/kr8_format.md
+    - kr8: cmd/kr8p.md
+    - kr8p version: cmd/kr8p_version.md  
+    - kr8p generate: cmd/kr8p_generate.md
+    - kr8p format: cmd/kr8p_format.md
     - kr8p get: 
-      - kr8p get: cmd/kr8_get.md
-      - kr8p get clusters: cmd/kr8_get_clusters.md
-      - kr8p get components: cmd/kr8_get_components.md
-      - kr8p get params: cmd/kr8_get_params.md
+      - kr8p get: cmd/kr8p_get.md
+      - kr8p get clusters: cmd/kr8p_get_clusters.md
+      - kr8p get components: cmd/kr8p_get_components.md
+      - kr8p get params: cmd/kr8p_get_params.md
     - kr8p init:
-      - kr8p init: cmd/kr8_init.md
-      - kr8p init cluster: cmd/kr8_init_cluster.md
-      - kr8p init component: cmd/kr8_init_component.md
-      - kr8p init repo: cmd/kr8_init_repo.md
+      - kr8p init: cmd/kr8p_init.md
+      - kr8p init cluster: cmd/kr8p_init_cluster.md
+      - kr8p init component: cmd/kr8p_init_component.md
+      - kr8p init repo: cmd/kr8p_init_repo.md
     - kr8p jsonnet: 
-      - kr8p jsonnet: cmd/kr8_jsonnet.md
-      - kr8p jsonnet render: cmd/kr8_jsonnet_render.md
+      - kr8p jsonnet: cmd/kr8p_jsonnet.md
+      - kr8p jsonnet render: cmd/kr8p_jsonnet_render.md
     - kr8p render:
-      - kr8p render: cmd/kr8_render.md
-      - kr8p render helm: cmd/kr8_render_helm.md
-      - kr8p render jsonnet: cmd/kr8_render_jsonnet.md
+      - kr8p render: cmd/kr8p_render.md
+      - kr8p render helm: cmd/kr8p_render_helm.md
+      - kr8p render jsonnet: cmd/kr8p_render_jsonnet.md
   - Godocs:
-    - kr8-cmd: godoc/kr8-cmd.md
-    - kr8-generate: godoc/kr8-generate.md
-    - kr8-init: godoc/kr8-init.md
-    - kr8-jsonnet: godoc/kr8-jsonnet.md
-    - kr8-types: godoc/kr8-types.md
-    - kr8-util: godoc/kr8-util.md
+    - kr8p: godoc/kr8p-cmd.md
+    - kr8p types: godoc/kr8p-types.md
+    - kr8p generate: godoc/kr8p-generate.md
+    - kr8p init: godoc/kr8p-init.md
+    - kr8p jsonnet: godoc/kr8p-jsonnet.md
+    - kr8p util: godoc/kr8p-util.md

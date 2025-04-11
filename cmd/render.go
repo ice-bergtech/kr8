@@ -15,9 +15,9 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/util/yaml"
 
-	jvm "github.com/ice-bergtech/kr8/pkg/jnetvm"
-	types "github.com/ice-bergtech/kr8/pkg/types"
-	util "github.com/ice-bergtech/kr8/pkg/util"
+	jvm "github.com/ice-bergtech/kr8p/pkg/jnetvm"
+	types "github.com/ice-bergtech/kr8p/pkg/types"
+	util "github.com/ice-bergtech/kr8p/pkg/util"
 )
 
 // Contains parameters for the kr8p render command.

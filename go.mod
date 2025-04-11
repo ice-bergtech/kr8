@@ -1,4 +1,4 @@
-module github.com/ice-bergtech/kr8
+module github.com/ice-bergtech/kr8p
 
 go 1.24.2
 
