@@ -129,6 +129,34 @@ Manifest changes are checked into source control, allowing them to be ingested b
   * [Native Functions](./docs/concepts/nativefuncs.md)
 * [Code Documentation](./docs/godoc)
 
+## References and Additional Resources
+
+**kr8+** is a fork of [kr8](https://github.com/apptio/kr8) with some additional features and improvements.
+**kr8** was used in production to great success at Apptio for managing components across multiple Kubernetes cluster tiers, regions, and environments.
+
+## Cluster and Component Configuration
+
+* [Jsonnet Standard Library](https://jsonnet.org/ref/stdlib.html)
+* [Jsonnet Language Reference](https://jsonnet.org/ref/language.html)
+* [Sprig Template Documentation](https://masterminds.github.io/sprig/)
+
+## Dev Environment
+
+* VSCode plugin [EditorConfig](https://open-vsx.org/vscode/item?itemName=EditorConfig.EditorConfig)
+* VSCode plugins [Grafana Jsonnet Language Server](https://open-vsx.org/vscode/item?itemName=Grafana.vscode-jsonnet)
+
+
+## Theory
+
+* [The growing need for Kubernetes Configuration Management](https://leebriggs.co.uk/blog/2018/05/08/kubernetes-config-mgmt.html)
+
+## Alternatives tools
+
+* [Bazel](https://bazel.build/about)
+* [helm](https://helm.sh/)
+* [kustomize](https://kustomize.io/)
+* raw [jsonnet](https://github.com/jsonnet/go-jsonnet)
+
 ## Development
 
 **kr8+** is coded in [Golang](https://golang.org/).
@@ -216,23 +244,3 @@ Parts of the code are derived from:
 * [kr8](https://github.com/apptio/kr8) - [MIT License](LICENSE-apptio)
 * [Lee Briggs](https://leebriggs.co.uk/) - [MIT License](LICENSE-briggs)
 * [kubecfg](https://github.com/kubecfg/kubecfg) - [Apache 2.0](LICENSE-kubecfg)
-
-## References and Additional Resources
-
-**kr8+** is a fork of [kr8](https://github.com/apptio/kr8) with some additional features and improvements.
-**kr8** was used in production to great success at Apptio for managing components of multiple Kubernetes clusters.
-
-VSCode plugins:
-
-* [EditorConfig](https://open-vsx.org/vscode/item?itemName=EditorConfig.EditorConfig)
-* [Jsonnet Language Server](https://open-vsx.org/vscode/item?itemName=Grafana.vscode-jsonnet)
-
-
-Docs:
-
-* [Jsonnet Standard Library](https://jsonnet.org/ref/stdlib.html)
-* [Jsonnet Language Reference](https://jsonnet.org/ref/language.html)
-* [Sprig Template Documentation](https://masterminds.github.io/sprig/)
-* [The growing need for Kubernetes Configuration Management](https://leebriggs.co.uk/blog/2018/05/08/kubernetes-config-mgmt.html)
-
-Alternatives:
