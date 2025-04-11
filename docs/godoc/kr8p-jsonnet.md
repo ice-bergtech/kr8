@@ -45,7 +45,7 @@ Package jvm contains the jsonnet rendering logic.
 
 
 <a name="JsonnetRender"></a>
-## func [JsonnetRender](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L122>)
+## func JsonnetRender
 
 ```go
 func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmConfig types.VMConfig) error
@@ -54,7 +54,7 @@ func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmC
 Renders a jsonnet file with the specified options.
 
 <a name="JsonnetRenderClusterParams"></a>
-## func [JsonnetRenderClusterParams](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L195-L201>)
+## func JsonnetRenderClusterParams
 
 ```go
 func JsonnetRenderClusterParams(vmconfig types.VMConfig, clusterName string, componentNames []string, clusterParams string, prune bool) (string, error)
@@ -63,7 +63,7 @@ func JsonnetRenderClusterParams(vmconfig types.VMConfig, clusterName string, com
 Render cluster params, merged with one or more component's parameters. Empty componentName list renders all component parameters.
 
 <a name="JsonnetRenderClusterParamsOnly"></a>
-## func [JsonnetRenderClusterParamsOnly](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L172-L177>)
+## func JsonnetRenderClusterParamsOnly
 
 ```go
 func JsonnetRenderClusterParamsOnly(vmconfig types.VMConfig, clusterName string, clusterParams string, prune bool) (string, error)
@@ -72,7 +72,7 @@ func JsonnetRenderClusterParamsOnly(vmconfig types.VMConfig, clusterName string,
 Only render cluster params \(\_cluster\), without components.
 
 <a name="JsonnetRenderFiles"></a>
-## func [JsonnetRenderFiles](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L73-L80>)
+## func JsonnetRenderFiles
 
 ```go
 func JsonnetRenderFiles(vmConfig types.VMConfig, files []string, param string, prune bool, prepend string, source string) (string, error)
@@ -81,7 +81,7 @@ func JsonnetRenderFiles(vmConfig types.VMConfig, files []string, param string, p
 Takes a list of jsonnet files and imports each one. Formats the string for jsonnet using "\+".
 
 <a name="JsonnetVM"></a>
-## func [JsonnetVM](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L41>)
+## func JsonnetVM
 
 ```go
 func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error)
@@ -90,7 +90,7 @@ func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error)
 Create a Jsonnet VM to run commands in.
 
 <a name="MergeComponentDefaults"></a>
-## func [MergeComponentDefaults](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L240-L244>)
+## func MergeComponentDefaults
 
 ```go
 func MergeComponentDefaults(componentMap map[string]types.Kr8ClusterComponentRef, componentNames []string, vmconfig types.VMConfig) (string, error)
@@ -99,7 +99,7 @@ func MergeComponentDefaults(componentMap map[string]types.Kr8ClusterComponentRef
 
 
 <a name="NativeHelmTemplate"></a>
-## func [NativeHelmTemplate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L97>)
+## func NativeHelmTemplate
 
 ```go
 func NativeHelmTemplate() *jsonnet.NativeFunction
@@ -110,7 +110,7 @@ Allows executing helm template to process a helm chart and make available to kr8
 Source: https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L23
 
 <a name="NativeHelp"></a>
-## func [NativeHelp](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L64>)
+## func NativeHelp
 
 ```go
 func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction
@@ -119,7 +119,7 @@ func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction
 
 
 <a name="NativeKompose"></a>
-## func [NativeKompose](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L144>)
+## func NativeKompose
 
 ```go
 func NativeKompose() *jsonnet.NativeFunction
@@ -132,7 +132,7 @@ Source: https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
 Inputs: \`inFile\`, \`outPath\`, \`opts\`.
 
 <a name="NativeNetAddressARPA"></a>
-## func [NativeNetAddressARPA](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L399>)
+## func NativeNetAddressARPA
 
 ```go
 func NativeNetAddressARPA() *jsonnet.NativeFunction
@@ -143,7 +143,7 @@ Convert address to addr.APRA DNS name.
 Inputs: "rawIP".
 
 <a name="NativeNetAddressBinary"></a>
-## func [NativeNetAddressBinary](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L443>)
+## func NativeNetAddressBinary
 
 ```go
 func NativeNetAddressBinary() *jsonnet.NativeFunction
@@ -154,7 +154,7 @@ Return binary string representation of address. This is the default stringer for
 Inputs: "rawIP".
 
 <a name="NativeNetAddressCalcSubnetsV4"></a>
-## func [NativeNetAddressCalcSubnetsV4](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L510>)
+## func NativeNetAddressCalcSubnetsV4
 
 ```go
 func NativeNetAddressCalcSubnetsV4() *jsonnet.NativeFunction
@@ -165,7 +165,7 @@ Return a list of networks of a given masklen that can be extracted from an IPv4 
 Inputs: "ip4Net", "maskLen".
 
 <a name="NativeNetAddressCalcSubnetsV6"></a>
-## func [NativeNetAddressCalcSubnetsV6](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L543>)
+## func NativeNetAddressCalcSubnetsV6
 
 ```go
 func NativeNetAddressCalcSubnetsV6() *jsonnet.NativeFunction
@@ -176,7 +176,7 @@ Return a list of networks of a given masklen that can be extracted from an IPv6 
 Inputs: "ip6Net", "netMaskLen", "hostMaskLen".
 
 <a name="NativeNetAddressCompare"></a>
-## func [NativeNetAddressCompare](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L196>)
+## func NativeNetAddressCompare
 
 ```go
 func NativeNetAddressCompare() *jsonnet.NativeFunction
@@ -187,7 +187,7 @@ Compare two addresses.
 0 if a==b, \-1 if a\<b, 1 if a\>b.
 
 <a name="NativeNetAddressDec"></a>
-## func [NativeNetAddressDec](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L348>)
+## func NativeNetAddressDec
 
 ```go
 func NativeNetAddressDec() *jsonnet.NativeFunction
@@ -198,7 +198,7 @@ PreviousIP returns a net.IP decremented by one from the input address. If you un
 Inputs: "rawIP".
 
 <a name="NativeNetAddressDecBy"></a>
-## func [NativeNetAddressDecBy](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L370>)
+## func NativeNetAddressDecBy
 
 ```go
 func NativeNetAddressDecBy() *jsonnet.NativeFunction
@@ -209,7 +209,7 @@ Returns a net.IP that is lower than the supplied net.IP by the supplied integer 
 Inputs: "rawIP", "count".
 
 <a name="NativeNetAddressDelta"></a>
-## func [NativeNetAddressDelta](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L228>)
+## func NativeNetAddressDelta
 
 ```go
 func NativeNetAddressDelta() *jsonnet.NativeFunction
@@ -220,7 +220,7 @@ Gets the delta of two addresses. Takes two net.IP's as input and returns the dif
 Inputs: "rawIP, "otherIP".
 
 <a name="NativeNetAddressHex"></a>
-## func [NativeNetAddressHex](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L421>)
+## func NativeNetAddressHex
 
 ```go
 func NativeNetAddressHex() *jsonnet.NativeFunction
@@ -231,7 +231,7 @@ Return hex representation of address. This is the default stringer format for v6
 Inputs: "rawIP".
 
 <a name="NativeNetAddressInc"></a>
-## func [NativeNetAddressInc](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L296>)
+## func NativeNetAddressInc
 
 ```go
 func NativeNetAddressInc() *jsonnet.NativeFunction
@@ -242,7 +242,7 @@ NextIP returns a net.IP incremented by one from the input address. If you overfl
 Inputs: "rawIP".
 
 <a name="NativeNetAddressIncBy"></a>
-## func [NativeNetAddressIncBy](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L318>)
+## func NativeNetAddressIncBy
 
 ```go
 func NativeNetAddressIncBy() *jsonnet.NativeFunction
@@ -253,7 +253,7 @@ Returns a net.IP that is greater than the supplied net.IP by the supplied intege
 Inputs: "rawIP", "count".
 
 <a name="NativeNetAddressNetsBetween"></a>
-## func [NativeNetAddressNetsBetween](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L465>)
+## func NativeNetAddressNetsBetween
 
 ```go
 func NativeNetAddressNetsBetween() *jsonnet.NativeFunction
@@ -264,7 +264,7 @@ Returns a slice of netblocks spanning the range between the two networks, inclus
 Inputs: "ipNet", "otherIPNet".
 
 <a name="NativeNetAddressSort"></a>
-## func [NativeNetAddressSort](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L259>)
+## func NativeNetAddressSort
 
 ```go
 func NativeNetAddressSort() *jsonnet.NativeFunction
@@ -275,7 +275,7 @@ Sort list of ip addresses.
 Inputs: "listIPs".
 
 <a name="NativeNetIPInfo"></a>
-## func [NativeNetIPInfo](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L170>)
+## func NativeNetIPInfo
 
 ```go
 func NativeNetIPInfo() *jsonnet.NativeFunction
@@ -286,7 +286,7 @@ net.IP tools. https://github.com/c-robinson/iplib .
 Inputs: "rawIP".
 
 <a name="NativeNetUrl"></a>
-## func [NativeNetUrl](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L48>)
+## func NativeNetUrl
 
 ```go
 func NativeNetUrl() *jsonnet.NativeFunction
@@ -297,7 +297,7 @@ Decode URL information from a string. Based on https://github.com/lintnet/go-jso
 Inputs: "rawURL".
 
 <a name="NativeRegexEscape"></a>
-## func [NativeRegexEscape](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_regex.go#L34>)
+## func NativeRegexEscape
 
 ```go
 func NativeRegexEscape() *jsonnet.NativeFunction
@@ -308,7 +308,7 @@ Escapes a string for use in regex.
 Inputs: "str".
 
 <a name="NativeRegexMatch"></a>
-## func [NativeRegexMatch](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_regex.go#L46>)
+## func NativeRegexMatch
 
 ```go
 func NativeRegexMatch() *jsonnet.NativeFunction
@@ -319,7 +319,7 @@ Matches a string against a regex pattern.
 Inputs: "regex", "string".
 
 <a name="NativeRegexSubst"></a>
-## func [NativeRegexSubst](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_regex.go#L58>)
+## func NativeRegexSubst
 
 ```go
 func NativeRegexSubst() *jsonnet.NativeFunction
@@ -330,7 +330,7 @@ Substitutes a regex pattern in a string with another string.
 Inputs: "regex", "src", "repl".
 
 <a name="NativeSprigTemplate"></a>
-## func [NativeSprigTemplate](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L105>)
+## func NativeSprigTemplate
 
 ```go
 func NativeSprigTemplate() *jsonnet.NativeFunction
@@ -341,7 +341,7 @@ Uses sprig to process passed in config data and template. Sprig template guide: 
 Inputs: "config" "templateStr".
 
 <a name="RegisterNativeFuncs"></a>
-## func [RegisterNativeFuncs](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L24>)
+## func RegisterNativeFuncs
 
 ```go
 func RegisterNativeFuncs(jvm *jsonnet.VM)
@@ -350,7 +350,7 @@ func RegisterNativeFuncs(jvm *jsonnet.VM)
 Registers additional native functions in the jsonnet VM. These functions are used to extend the functionality of jsonnet. Adds on to functions part of the jsonnet stdlib: https://jsonnet.org/ref/stdlib.html
 
 <a name="IPV4"></a>
-## type [IPV4](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L96-L104>)
+## type IPV4
 
 
 
@@ -367,7 +367,7 @@ type IPV4 struct {
 ```
 
 <a name="IPV4Info"></a>
-### func [IPV4Info](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L141>)
+### func IPV4Info
 
 ```go
 func IPV4Info(rawIP string) (*IPV4, error)
@@ -376,7 +376,7 @@ func IPV4Info(rawIP string) (*IPV4, error)
 
 
 <a name="IPV6"></a>
-## type [IPV6](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L106-L114>)
+## type IPV6
 
 
 
@@ -393,7 +393,7 @@ type IPV6 struct {
 ```
 
 <a name="IPV6Info"></a>
-### func [IPV6Info](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L116>)
+### func IPV6Info
 
 ```go
 func IPV6Info(rawIP string) (*IPV6, error)
@@ -402,7 +402,7 @@ func IPV6Info(rawIP string) (*IPV6, error)
 
 
 <a name="NativeFuncURL"></a>
-## type [NativeFuncURL](<https://github.com/ice-bergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L18-L42>)
+## type NativeFuncURL
 
 Contains the url information.
 

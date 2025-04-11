@@ -18,7 +18,7 @@ import "github.com/ice-bergtech/kr8p/pkg/generate"
 
 
 <a name="CheckIfUpdateNeeded"></a>
-## func [CheckIfUpdateNeeded](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/file_system.go#L69>)
+## func CheckIfUpdateNeeded
 
 ```go
 func CheckIfUpdateNeeded(outFile string, outStr string) (bool, error)
@@ -27,7 +27,7 @@ func CheckIfUpdateNeeded(outFile string, outStr string) (bool, error)
 Check if a file needs updating based on its current contents and the new contents.
 
 <a name="CleanOutputDir"></a>
-## func [CleanOutputDir](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/file_system.go#L13>)
+## func CleanOutputDir
 
 ```go
 func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error
@@ -36,7 +36,7 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) er
 
 
 <a name="GenProcessCluster"></a>
-## func [GenProcessCluster](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/generate.go#L313-L323>)
+## func GenProcessCluster
 
 ```go
 func GenProcessCluster(clusterName string, clusterdir string, baseDir string, generateDirOverride string, kr8Opts types.Kr8Opts, clusterParamsFile string, filters util.PathFilterOptions, vmConfig types.VMConfig, pool *ants.Pool) error
@@ -45,7 +45,7 @@ func GenProcessCluster(clusterName string, clusterdir string, baseDir string, ge
 
 
 <a name="GenProcessComponent"></a>
-## func [GenProcessComponent](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/generate.go#L101-L110>)
+## func GenProcessComponent
 
 ```go
 func GenProcessComponent(vmconfig types.VMConfig, componentName string, kr8Spec types.Kr8ClusterSpec, kr8Opts types.Kr8Opts, config string, allConfig *safeString, filters util.PathFilterOptions, paramsFile string) error
@@ -54,7 +54,7 @@ func GenProcessComponent(vmconfig types.VMConfig, componentName string, kr8Spec 
 
 
 <a name="GenerateIncludesFiles"></a>
-## func [GenerateIncludesFiles](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/generate.go#L270-L279>)
+## func GenerateIncludesFiles
 
 ```go
 func GenerateIncludesFiles(includesFiles []types.Kr8ComponentSpecIncludeObject, kr8Spec types.Kr8ClusterSpec, kr8Opts types.Kr8Opts, config string, componentName string, compPath string, componentOutputDir string, jvm *jsonnet.VM) (map[string]bool, error)
@@ -63,7 +63,7 @@ func GenerateIncludesFiles(includesFiles []types.Kr8ComponentSpecIncludeObject, 
 
 
 <a name="GetClusterParams"></a>
-## func [GetClusterParams](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/generate.go#L31>)
+## func GetClusterParams
 
 ```go
 func GetClusterParams(clusterDir string, vmConfig types.VMConfig) (map[string]string, error)
@@ -72,7 +72,7 @@ func GetClusterParams(clusterDir string, vmConfig types.VMConfig) (map[string]st
 
 
 <a name="ProcessFile"></a>
-## func [ProcessFile](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/file_processing.go#L84-L92>)
+## func ProcessFile
 
 ```go
 func ProcessFile(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm *jsonnet.VM) (string, error)
@@ -87,7 +87,7 @@ Process an includes file. Based on the extension, it will process it differently
 .tpl, .tmpl: Processed using component config and Sprig templating.
 
 <a name="SetupAndConfigureVM"></a>
-## func [SetupAndConfigureVM](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/generate.go#L169-L179>)
+## func SetupAndConfigureVM
 
 ```go
 func SetupAndConfigureVM(vmconfig types.VMConfig, config string, kr8Spec types.Kr8ClusterSpec, componentName string, compSpec types.Kr8ComponentSpec, allConfig *safeString, filters util.PathFilterOptions, paramsFile string, kr8Opts types.Kr8Opts) (*jsonnet.VM, string, error)
@@ -96,7 +96,7 @@ func SetupAndConfigureVM(vmconfig types.VMConfig, config string, kr8Spec types.K
 
 
 <a name="SetupJvmForComponent"></a>
-## func [SetupJvmForComponent](<https://github.com/ice-bergtech/kr8/blob/main/pkg/generate/vm_helpers.go#L20-L25>)
+## func SetupJvmForComponent
 
 ```go
 func SetupJvmForComponent(vmconfig types.VMConfig, config string, kr8Spec types.Kr8ClusterSpec, componentName string) (*jsonnet.VM, error)

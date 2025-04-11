@@ -598,7 +598,7 @@ var VersionCmd = &cobra.Command{
 ```
 
 <a name="ConfigureLogger"></a>
-## func [ConfigureLogger](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L98>)
+## func ConfigureLogger
 
 ```go
 func ConfigureLogger(debug bool)
@@ -607,7 +607,7 @@ func ConfigureLogger(debug bool)
 
 
 <a name="Execute"></a>
-## func [Execute](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L33>)
+## func Execute
 
 ```go
 func Execute(ver string)
@@ -616,7 +616,7 @@ func Execute(ver string)
 Execute adds all child commands to the root command sets flags appropriately. This is called by main.main\(\). It only needs to happen once to the rootCmd.
 
 <a name="GenerateCommand"></a>
-## func [GenerateCommand](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L65>)
+## func GenerateCommand
 
 ```go
 func GenerateCommand(cmd *cobra.Command, args []string)
@@ -625,7 +625,7 @@ func GenerateCommand(cmd *cobra.Command, args []string)
 This function will generate the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.
 
 <a name="InitConfig"></a>
-## func [InitConfig](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L137>)
+## func InitConfig
 
 ```go
 func InitConfig()
@@ -634,7 +634,7 @@ func InitConfig()
 InitConfig reads in config file and ENV variables if set.
 
 <a name="CmdGenerateOptions"></a>
-## type [CmdGenerateOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L18-L25>)
+## type CmdGenerateOptions
 
 Stores the options for the 'generate' command.
 
@@ -650,7 +650,7 @@ type CmdGenerateOptions struct {
 ```
 
 <a name="CmdGetOptions"></a>
-## type [CmdGetOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/get.go#L38-L52>)
+## type CmdGetOptions
 
 Holds the options for the get command.
 
@@ -673,7 +673,7 @@ type CmdGetOptions struct {
 ```
 
 <a name="CmdRenderOptions"></a>
-## type [CmdRenderOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/render.go#L24-L35>)
+## type CmdRenderOptions
 
 Contains parameters for the kr8p render command.
 
@@ -693,7 +693,7 @@ type CmdRenderOptions struct {
 ```
 
 <a name="CmdRootOptions"></a>
-## type [CmdRootOptions](<https://github.com/ice-bergtech/kr8/blob/main/cmd/root.go#L42-L61>)
+## type CmdRootOptions
 
 Default options that are available to all commands.
 
@@ -727,7 +727,7 @@ var RootConfig CmdRootOptions
 ```
 
 <a name="Stamp"></a>
-## type [Stamp](<https://github.com/ice-bergtech/kr8/blob/main/cmd/version.go#L13-L20>)
+## type Stamp
 
 
 
