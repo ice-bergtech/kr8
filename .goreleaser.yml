@@ -100,13 +100,13 @@ brews:
     repository:
       # defaults to github
       owner: ice-bergtech
-      name: homebrew-icetech
+      name: homebrew-tap
       branch: main
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
       pull_request:
         enabled: true
       # git:
-      #   url: 'git@github.com:ice-bergtech/homebrew-icetech.git'
+      #   url: 'git@github.com:ice-bergtech/homebrew-tap.git'
       #   private_key: '{{ .Env.PRIVATE_KEY_PATH }}'
 
 
