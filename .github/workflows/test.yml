@@ -34,28 +34,28 @@ jobs:
       - name: 🧪 Run build
         run: go build
       # Start of bats tests
-      - name: 🧪 Run kr8p jsonnet tests
+      - name: 🧪 Run kr8 jsonnet tests
         env:
-          KR8: '../kr8p'
+          KR8: '../kr8'
         run: cd bats-test && bats jsonnet_test.sh
-      - name: 🧪 Run kr8p render tests
+      - name: 🧪 Run kr8 render tests
         env:
-          KR8: '../kr8p'
+          KR8: '../kr8'
         run: cd bats-test && bats render_test.sh
-      - name: 🧪 Run kr8p init tests
+      - name: 🧪 Run kr8 init tests
         env:
-          KR8: '../kr8p'
+          KR8: '../kr8'
         run: cd bats-test && bats init_test.sh
-      - name: 🧪 Run kr8p cluster tests
+      - name: 🧪 Run kr8 cluster tests
         env:
-          KR8: '../kr8p'
+          KR8: '../kr8'
         run: cd bats-test && bats cluster_test.sh
-      - name: 🧪 Run kr8p get tests
+      - name: 🧪 Run kr8 get tests
         env:
-          KR8: '../kr8p'
+          KR8: '../kr8'
         run: cd bats-test && bats get_test.sh
       - name: 🧪 Generate Examples and Compare
-        run: ./kr8p -B examples generate
+        run: ./kr8 -B examples generate
       - name: Verify no changes were made to tracked files by tests 
         run: git diff --exit-code || echo "Changes detected"
 

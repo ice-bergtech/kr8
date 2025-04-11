@@ -13,19 +13,19 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 
-	types "github.com/ice-bergtech/kr8p/pkg/types"
-	util "github.com/ice-bergtech/kr8p/pkg/util"
+	types "github.com/ice-bergtech/kr8/pkg/types"
+	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
 func processIncludesFile(
 	jvm *jsonnet.VM,
 	config string,
-	kr8Spec types.Kr8pClusterSpec,
-	kr8Opts types.Kr8pOpts,
+	kr8Spec types.Kr8ClusterSpec,
+	kr8Opts types.Kr8Opts,
 	componentName string,
 	componentPath string,
 	componentOutputDir string,
-	incInfo types.Kr8pComponentSpecIncludeObject,
+	incInfo types.Kr8ComponentSpecIncludeObject,
 	outputFileMap map[string]bool,
 ) error {
 	// ensure this directory exists
@@ -84,10 +84,10 @@ func processIncludesFile(
 func ProcessFile(
 	inputFile string,
 	outputFile string,
-	kr8Spec types.Kr8pClusterSpec,
+	kr8Spec types.Kr8ClusterSpec,
 	componentName string,
 	config string,
-	incInfo types.Kr8pComponentSpecIncludeObject,
+	incInfo types.Kr8ComponentSpecIncludeObject,
 	jvm *jsonnet.VM,
 ) (string, error) {
 	log.Debug().Str("cluster", kr8Spec.Name).

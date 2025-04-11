@@ -15,9 +15,9 @@ import (
 	"github.com/tidwall/gjson"
 	"golang.org/x/exp/maps"
 
-	jnetvm "github.com/ice-bergtech/kr8p/pkg/jnetvm"
-	types "github.com/ice-bergtech/kr8p/pkg/types"
-	util "github.com/ice-bergtech/kr8p/pkg/util"
+	jnetvm "github.com/ice-bergtech/kr8/pkg/jnetvm"
+	types "github.com/ice-bergtech/kr8/pkg/types"
+	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
 // A thread-safe string that can be used to store and retrieve configuration data.
@@ -101,8 +101,8 @@ func buildComponentList(
 func GenProcessComponent(
 	vmconfig types.VMConfig,
 	componentName string,
-	kr8Spec types.Kr8pClusterSpec,
-	kr8Opts types.Kr8pOpts,
+	kr8Spec types.Kr8ClusterSpec,
+	kr8Opts types.Kr8Opts,
 	config string,
 	allConfig *safeString,
 	filters util.PathFilterOptions,
@@ -169,13 +169,13 @@ func GenProcessComponent(
 func SetupAndConfigureVM(
 	vmconfig types.VMConfig,
 	config string,
-	kr8Spec types.Kr8pClusterSpec,
+	kr8Spec types.Kr8ClusterSpec,
 	componentName string,
-	compSpec types.Kr8pComponentSpec,
+	compSpec types.Kr8ComponentSpec,
 	allConfig *safeString,
 	filters util.PathFilterOptions,
 	paramsFile string,
-	kr8Opts types.Kr8pOpts,
+	kr8Opts types.Kr8Opts,
 ) (*jsonnet.VM, string, error) {
 	jvm, err := SetupJvmForComponent(vmconfig, config, kr8Spec, componentName)
 	if err := util.GenErrorIfCheck("error setting up JVM for component", err); err != nil {
@@ -236,7 +236,7 @@ func getAllComponentParamsThreadsafe(
 	allConfig *safeString,
 	config string,
 	vmconfig types.VMConfig,
-	kr8Spec types.Kr8pClusterSpec,
+	kr8Spec types.Kr8ClusterSpec,
 	filters util.PathFilterOptions,
 	paramsFile string,
 	jvm *jsonnet.VM,
@@ -268,9 +268,9 @@ func getAllComponentParamsThreadsafe(
 }
 
 func GenerateIncludesFiles(
-	includesFiles []types.Kr8pComponentSpecIncludeObject,
-	kr8Spec types.Kr8pClusterSpec,
-	kr8Opts types.Kr8pOpts,
+	includesFiles []types.Kr8ComponentSpecIncludeObject,
+	kr8Spec types.Kr8ClusterSpec,
+	kr8Opts types.Kr8Opts,
 	config string,
 	componentName string,
 	compPath string,
@@ -315,7 +315,7 @@ func GenProcessCluster(
 	clusterdir string,
 	baseDir string,
 	generateDirOverride string,
-	kr8Opts types.Kr8pOpts,
+	kr8Opts types.Kr8Opts,
 	clusterParamsFile string,
 	filters util.PathFilterOptions,
 	vmConfig types.VMConfig,
@@ -333,7 +333,7 @@ func GenProcessCluster(
 		return err
 	}
 
-	// get kr8p settings for cluster
+	// get kr8 settings for cluster
 	kr8Spec, err := types.CreateClusterSpec(clusterName, gjson.Parse(renderedKr8Spec),
 		kr8Opts, generateDirOverride,
 	)
@@ -374,11 +374,11 @@ func GenProcessCluster(
 func renderComponents(
 	config string,
 	vmConfig types.VMConfig,
-	kr8Spec types.Kr8pClusterSpec,
+	kr8Spec types.Kr8ClusterSpec,
 	compList []string,
 	clusterParamsFile string,
 	pool *ants.Pool,
-	kr8Opts types.Kr8pOpts,
+	kr8Opts types.Kr8Opts,
 	filters util.PathFilterOptions,
 ) error {
 	var allconfig safeString

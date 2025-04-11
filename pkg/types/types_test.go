@@ -13,9 +13,9 @@ func TestCreateClusterSpec(t *testing.T) {
 		name               string
 		clusterName        string
 		spec               gjson.Result
-		kr8Opts            Kr8pOpts
+		kr8Opts            Kr8Opts
 		genDirOverride     string
-		wantKr8ClusterSpec Kr8pClusterSpec
+		wantKr8ClusterSpec Kr8ClusterSpec
 		wantErr            bool
 	}{
 		{
@@ -25,11 +25,11 @@ func TestCreateClusterSpec(t *testing.T) {
 					"postprocessor": "",
 					"generate_dir": ""
 			}`),
-			kr8Opts: Kr8pOpts{
+			kr8Opts: Kr8Opts{
 				BaseDir: "/path/to/kr8",
 			},
 			genDirOverride: "",
-			wantKr8ClusterSpec: Kr8pClusterSpec{
+			wantKr8ClusterSpec: Kr8ClusterSpec{
 				PostProcessor:      "",
 				GenerateDir:        "/path/to/kr8/generated",
 				GenerateShortNames: false,
@@ -46,11 +46,11 @@ func TestCreateClusterSpec(t *testing.T) {
 					"postprocessor": "function(input) input",
 					"generate_dir": "/path/to/custom/dir"
 			}`),
-			kr8Opts: Kr8pOpts{
+			kr8Opts: Kr8Opts{
 				BaseDir: "/path/to/kr8",
 			},
 			genDirOverride: "",
-			wantKr8ClusterSpec: Kr8pClusterSpec{
+			wantKr8ClusterSpec: Kr8ClusterSpec{
 				PostProcessor:      "function(input) input",
 				GenerateDir:        "/path/to/custom/dir",
 				GenerateShortNames: false,
@@ -67,11 +67,11 @@ func TestCreateClusterSpec(t *testing.T) {
 					"postprocessor": "function(input) input",
 					"generate_dir": "rel/custom/dir"
 			}`),
-			kr8Opts: Kr8pOpts{
+			kr8Opts: Kr8Opts{
 				BaseDir: "/path/to/kr8",
 			},
 			genDirOverride: "",
-			wantKr8ClusterSpec: Kr8pClusterSpec{
+			wantKr8ClusterSpec: Kr8ClusterSpec{
 				PostProcessor:      "function(input) input",
 				GenerateDir:        "/path/to/kr8/rel/custom/dir",
 				GenerateShortNames: false,
@@ -88,11 +88,11 @@ func TestCreateClusterSpec(t *testing.T) {
 					"postprocessor": "",
 					"generate_dir": "/path/to/custom/dir"
 			}`),
-			kr8Opts: Kr8pOpts{
+			kr8Opts: Kr8Opts{
 				BaseDir: "/path/to/kr8",
 			},
 			genDirOverride: "alt/gen/dir",
-			wantKr8ClusterSpec: Kr8pClusterSpec{
+			wantKr8ClusterSpec: Kr8ClusterSpec{
 				PostProcessor:      "",
 				GenerateDir:        "/path/to/kr8/alt/gen/dir",
 				GenerateShortNames: false,
@@ -109,11 +109,11 @@ func TestCreateClusterSpec(t *testing.T) {
 					"postprocessor": "",
 					"generate_dir": "/path/to/custom/dir"
 			}`),
-			kr8Opts: Kr8pOpts{
+			kr8Opts: Kr8Opts{
 				BaseDir: "/path/to/kr8",
 			},
 			genDirOverride: "/absolute/path/to/gen/dir",
-			wantKr8ClusterSpec: Kr8pClusterSpec{
+			wantKr8ClusterSpec: Kr8ClusterSpec{
 				PostProcessor:      "",
 				GenerateDir:        "/absolute/path/to/gen/dir",
 				GenerateShortNames: false,
@@ -237,20 +237,20 @@ func TestExtractIncludes(t *testing.T) {
 	tests := []struct {
 		name string
 		spec gjson.Result
-		want Kr8pComponentSpecIncludes
+		want Kr8ComponentSpecIncludes
 	}{
 		{
 			name: "empty spec",
 			spec: gjson.Parse(`{}`),
-			want: make(Kr8pComponentSpecIncludes, 0),
+			want: make(Kr8ComponentSpecIncludes, 0),
 		},
 		{
 			name: "single include file",
 			spec: gjson.Parse(`{
 				"includes": ["/path/to/file1"]
 			}`),
-			want: Kr8pComponentSpecIncludes{
-				Kr8pComponentSpecIncludeObject{
+			want: Kr8ComponentSpecIncludes{
+				Kr8ComponentSpecIncludeObject{
 					File:     "/path/to/file1",
 					DestName: "/path/to/file1",
 					DestExt:  "yaml",
@@ -262,13 +262,13 @@ func TestExtractIncludes(t *testing.T) {
 			spec: gjson.Parse(`{
 				"includes": ["/path/to/file1", "/path/to/file2"]
 			}`),
-			want: Kr8pComponentSpecIncludes{
-				Kr8pComponentSpecIncludeObject{
+			want: Kr8ComponentSpecIncludes{
+				Kr8ComponentSpecIncludeObject{
 					File:     "/path/to/file1",
 					DestName: "/path/to/file1",
 					DestExt:  "yaml",
 				},
-				Kr8pComponentSpecIncludeObject{
+				Kr8ComponentSpecIncludeObject{
 					File:     "/path/to/file2",
 					DestName: "/path/to/file2",
 					DestExt:  "yaml",
@@ -284,8 +284,8 @@ func TestExtractIncludes(t *testing.T) {
 					}
 				]
 			}`),
-			want: Kr8pComponentSpecIncludes{
-				Kr8pComponentSpecIncludeObject{
+			want: Kr8ComponentSpecIncludes{
+				Kr8ComponentSpecIncludeObject{
 					File: "/path/to/file1",
 				},
 			},
@@ -302,11 +302,11 @@ func TestExtractIncludes(t *testing.T) {
 					}
 				]
 			}`),
-			want: Kr8pComponentSpecIncludes{
-				Kr8pComponentSpecIncludeObject{
+			want: Kr8ComponentSpecIncludes{
+				Kr8ComponentSpecIncludeObject{
 					File: "/path/to/file1",
 				},
-				Kr8pComponentSpecIncludeObject{
+				Kr8ComponentSpecIncludeObject{
 					File: "/path/to/file2",
 				},
 			},
@@ -327,13 +327,13 @@ func TestCreateComponentSpec(t *testing.T) {
 	tests := []struct {
 		name string
 		spec gjson.Result
-		want Kr8pComponentSpec
+		want Kr8ComponentSpec
 		err  bool
 	}{
 		{
 			name: "empty spec",
 			spec: gjson.Parse(`{}`),
-			want: Kr8pComponentSpec{},
+			want: Kr8ComponentSpec{},
 			err:  true,
 		},
 		{
@@ -341,7 +341,7 @@ func TestCreateComponentSpec(t *testing.T) {
 			spec: gjson.Parse(`{
 				"enable_kr8_allparams": true
 			}`),
-			want: Kr8pComponentSpec{
+			want: Kr8ComponentSpec{
 				Kr8_allparams: true,
 			},
 		},
@@ -351,7 +351,7 @@ func TestCreateComponentSpec(t *testing.T) {
 				"enable_kr8_allparams": true,
 				"enable_kr8_allclusters": false
 			}`),
-			want: Kr8pComponentSpec{
+			want: Kr8ComponentSpec{
 				Kr8_allparams:   true,
 				Kr8_allclusters: false,
 			},
@@ -361,7 +361,7 @@ func TestCreateComponentSpec(t *testing.T) {
 			spec: gjson.Parse(`{
 				"disable_output_clean": false
 			}`),
-			want: Kr8pComponentSpec{
+			want: Kr8ComponentSpec{
 				DisableOutputDirClean: false,
 			},
 		},
@@ -372,7 +372,7 @@ func TestCreateComponentSpec(t *testing.T) {
 					"var1": "/path/to/file1"
 				}
 			}`),
-			want: Kr8pComponentSpec{
+			want: Kr8ComponentSpec{
 				ExtFiles: map[string]string{
 					"var1": "/path/to/file1",
 				},
@@ -383,7 +383,7 @@ func TestCreateComponentSpec(t *testing.T) {
 			spec: gjson.Parse(`{
 				"jpaths": ["/path/to/jpath"]
 			}`),
-			want: Kr8pComponentSpec{
+			want: Kr8ComponentSpec{
 				JPaths: []string{"/path/to/jpath"},
 			},
 		},
@@ -392,10 +392,10 @@ func TestCreateComponentSpec(t *testing.T) {
 			spec: gjson.Parse(`{
 				"includes": ["/path/to/file1", "/path/to/file2"]
 			}`),
-			want: Kr8pComponentSpec{
-				Includes: Kr8pComponentSpecIncludes{
-					Kr8pComponentSpecIncludeObject{File: "/path/to/file1"},
-					Kr8pComponentSpecIncludeObject{File: "/path/to/file2"},
+			want: Kr8ComponentSpec{
+				Includes: Kr8ComponentSpecIncludes{
+					Kr8ComponentSpecIncludeObject{File: "/path/to/file1"},
+					Kr8ComponentSpecIncludeObject{File: "/path/to/file2"},
 				},
 			},
 		},

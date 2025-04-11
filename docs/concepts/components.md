@@ -191,7 +191,7 @@ We also need to tell kr8+ what files to include for the component:
 Your jsonnet manifest looks like this:
 
 ```go
-// a jsonnet external variable from kr8p that gets contains cluster-level configuration
+// a jsonnet external variable from kr8 that gets contains cluster-level configuration
 local kr8_cluster = std.extVar("kr8_cluster");
 
 // a jsonnet function for creating a storageclass

@@ -33,8 +33,8 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 
-	types "github.com/ice-bergtech/kr8p/pkg/types"
-	util "github.com/ice-bergtech/kr8p/pkg/util"
+	types "github.com/ice-bergtech/kr8/pkg/types"
+	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
 // Create a Jsonnet VM to run commands in.
@@ -56,7 +56,7 @@ func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error) {
 	for _, extvar := range vmconfig.ExtVars {
 		args := strings.SplitN(extvar, "=", 2)
 		if len(args) != 2 {
-			return nil, types.Kr8pError{Message: "Failed to parse. Missing '=' in parameter`", Value: extvar}
+			return nil, types.Kr8Error{Message: "Failed to parse. Missing '=' in parameter`", Value: extvar}
 		}
 		v, err := os.ReadFile(args[1])
 		if err != nil {
@@ -122,7 +122,7 @@ func JsonnetRenderFiles(
 func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmConfig types.VMConfig) error {
 	// Check if cluster and/or clusterparams are specified
 	if cmdFlagsJsonnet.Cluster == "" && cmdFlagsJsonnet.ClusterParams == "" {
-		return types.Kr8pError{Message: "Please specify a --cluster name and/or --clusterparams", Value: ""}
+		return types.Kr8Error{Message: "Please specify a --cluster name and/or --clusterparams", Value: ""}
 	}
 
 	// Render the cluster parameters
@@ -139,7 +139,7 @@ func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmC
 
 	// Create a new VM instance
 	jvm, _ := JsonnetVM(vmConfig)
-	// Setup kr8p config as external vars
+	// Setup kr8 config as external vars
 	jvm.ExtCode("kr8_cluster", "std.prune("+config+"._cluster)")
 	jvm.ExtCode("kr8_components", "std.prune("+config+"._components)")
 	jvm.ExtCode("kr8", "std.prune("+config+"."+cmdFlagsJsonnet.Component+")")
@@ -200,11 +200,11 @@ func JsonnetRenderClusterParams(
 	prune bool,
 ) (string, error) {
 	if clusterName == "" && clusterParams == "" {
-		return "", types.Kr8pError{Message: "Please specify a --cluster name and/or --clusterparams", Value: ""}
+		return "", types.Kr8Error{Message: "Please specify a --cluster name and/or --clusterparams", Value: ""}
 	}
 
 	var params []string
-	var componentMap map[string]types.Kr8pClusterComponentRef
+	var componentMap map[string]types.Kr8ClusterComponentRef
 
 	if clusterName != "" {
 		clusterPath, err := util.GetClusterPaths(vmconfig.BaseDir, clusterName)
@@ -238,7 +238,7 @@ func JsonnetRenderClusterParams(
 }
 
 func MergeComponentDefaults(
-	componentMap map[string]types.Kr8pClusterComponentRef,
+	componentMap map[string]types.Kr8ClusterComponentRef,
 	componentNames []string,
 	vmconfig types.VMConfig,
 ) (string, error) {
