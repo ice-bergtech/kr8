@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"github.com/AlecAivazis/survey/v2"
-	kr8init "github.com/ice-bergtech/kr8p/pkg/kr8p_init"
-	types "github.com/ice-bergtech/kr8p/pkg/types"
-	util "github.com/ice-bergtech/kr8p/pkg/util"
+	kr8init "github.com/ice-bergtech/kr8/pkg/kr8_init"
+	types "github.com/ice-bergtech/kr8/pkg/types"
+	util "github.com/ice-bergtech/kr8/pkg/util"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -46,8 +46,8 @@ func init() {
 // Various subcommands are available to initialize different components of kr8.
 var InitCmd = &cobra.Command{
 	Use:   "init",
-	Short: "Initialize kr8p config repos, components and clusters",
-	Long: `kr8p requires specific directories and exists for its config to work.
+	Short: "Initialize kr8 config repos, components and clusters",
+	Long: `kr8 requires specific directories and exists for its config to work.
 This init command helps in creating directory structure for repos, clusters and 
 components`,
 }
@@ -100,7 +100,7 @@ var InitClusterCmd = &cobra.Command{
 	},
 }
 
-// Initializes a new kr8p configuration repository
+// Initializes a new kr8 configuration repository
 //
 // Directory tree:
 //
@@ -114,15 +114,15 @@ var InitClusterCmd = &cobra.Command{
 var InitRepoCmd = &cobra.Command{
 	Use:   "repo [flags] dir",
 	Args:  cobra.MinimumNArgs(1),
-	Short: "Initialize a new kr8p config repo",
-	Long: `Initialize a new kr8p config repo by downloading the kr8p config skeleton repo
+	Short: "Initialize a new kr8 config repo",
+	Long: `Initialize a new kr8 config repo by downloading the kr8 config skeleton repo
 and initialize a git repo so you can get started`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			log.Fatal().Msg("Error: no directory specified")
 		}
 		outDir := args[len(args)-1]
-		log.Debug().Msg("Initializing kr8p config repo in " + outDir)
+		log.Debug().Msg("Initializing kr8 config repo in " + outDir)
 		if cmdInitFlags.InitUrl != "" {
 			util.FatalErrorCheck(
 				"Issue fetching repo",
