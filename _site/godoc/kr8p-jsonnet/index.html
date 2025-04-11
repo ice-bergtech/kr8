@@ -250,7 +250,7 @@
 <li><a href="#JsonnetRenderClusterParamsOnly">func JsonnetRenderClusterParamsOnly(vmconfig types.VMConfig, clusterName string, clusterParams string, prune bool) (string, error)</a></li>
 <li><a href="#JsonnetRenderFiles">func JsonnetRenderFiles(vmConfig types.VMConfig, files []string, param string, prune bool, prepend string, source string) (string, error)</a></li>
 <li><a href="#JsonnetVM">func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error)</a></li>
-<li><a href="#MergeComponentDefaults">func MergeComponentDefaults(componentMap map[string]types.Kr8ClusterComponentRef, componentNames []string, vmconfig types.VMConfig) (string, error)</a></li>
+<li><a href="#MergeComponentDefaults">func MergeComponentDefaults(componentMap map[string]types.Kr8pClusterComponentRef, componentNames []string, vmconfig types.VMConfig) (string, error)</a></li>
 <li><a href="#NativeHelmTemplate">func NativeHelmTemplate() *jsonnet.NativeFunction</a></li>
 <li><a href="#NativeHelp">func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction</a></li>
 <li><a href="#NativeKompose">func NativeKompose() *jsonnet.NativeFunction</a></li>
@@ -307,7 +307,7 @@
 <p>Create a Jsonnet VM to run commands in.</p>
 <p><a name="MergeComponentDefaults"></a></p>
 <h2 id="func-mergecomponentdefaults">func MergeComponentDefaults</h2>
-<pre><code class="language-go">func MergeComponentDefaults(componentMap map[string]types.Kr8ClusterComponentRef, componentNames []string, vmconfig types.VMConfig) (string, error)
+<pre><code class="language-go">func MergeComponentDefaults(componentMap map[string]types.Kr8pClusterComponentRef, componentNames []string, vmconfig types.VMConfig) (string, error)
 </code></pre>
 <p><a name="NativeHelmTemplate"></a></p>
 <h2 id="func-nativehelmtemplate">func NativeHelmTemplate</h2>

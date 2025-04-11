@@ -19,7 +19,7 @@ Utility functions for directories and files
 - [func FormatJsonnetString\(input string\) \(string, error\)](<#FormatJsonnetString>)
 - [func FormatJsonnetStringCustom\(input string, opts formatter.Options\) \(string, error\)](<#FormatJsonnetStringCustom>)
 - [func GenErrorIfCheck\(message string, err error\) error](<#GenErrorIfCheck>)
-- [func GetClusterFilenames\(searchDir string\) \(\[\]types.Kr8Cluster, error\)](<#GetClusterFilenames>)
+- [func GetClusterFilenames\(searchDir string\) \(\[\]types.Kr8pCluster, error\)](<#GetClusterFilenames>)
 - [func GetClusterParamsFilenames\(basePath string, targetPath string\) \[\]string](<#GetClusterParamsFilenames>)
 - [func GetClusterPaths\(searchDir string, clusterName string\) \(string, error\)](<#GetClusterPaths>)
 - [func GetDefaultFormatOptions\(\) formatter.Options](<#GetDefaultFormatOptions>)
@@ -132,7 +132,7 @@ func GenErrorIfCheck(message string, err error) error
 ## func GetClusterFilenames
 
 ```go
-func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error)
+func GetClusterFilenames(searchDir string) ([]types.Kr8pCluster, error)
 ```
 
 Get a list of cluster from within a directory. Walks the directory tree, creating a types.Kr8Cluster for each cluster.jsonnet file found.

@@ -13,7 +13,7 @@ Package jvm contains the jsonnet rendering logic.
 - [func JsonnetRenderClusterParamsOnly\(vmconfig types.VMConfig, clusterName string, clusterParams string, prune bool\) \(string, error\)](<#JsonnetRenderClusterParamsOnly>)
 - [func JsonnetRenderFiles\(vmConfig types.VMConfig, files \[\]string, param string, prune bool, prepend string, source string\) \(string, error\)](<#JsonnetRenderFiles>)
 - [func JsonnetVM\(vmconfig types.VMConfig\) \(\*jsonnet.VM, error\)](<#JsonnetVM>)
-- [func MergeComponentDefaults\(componentMap map\[string\]types.Kr8ClusterComponentRef, componentNames \[\]string, vmconfig types.VMConfig\) \(string, error\)](<#MergeComponentDefaults>)
+- [func MergeComponentDefaults\(componentMap map\[string\]types.Kr8pClusterComponentRef, componentNames \[\]string, vmconfig types.VMConfig\) \(string, error\)](<#MergeComponentDefaults>)
 - [func NativeHelmTemplate\(\) \*jsonnet.NativeFunction](<#NativeHelmTemplate>)
 - [func NativeHelp\(allFuncs \[\]\*jsonnet.NativeFunction\) \*jsonnet.NativeFunction](<#NativeHelp>)
 - [func NativeKompose\(\) \*jsonnet.NativeFunction](<#NativeKompose>)
@@ -93,7 +93,7 @@ Create a Jsonnet VM to run commands in.
 ## func MergeComponentDefaults
 
 ```go
-func MergeComponentDefaults(componentMap map[string]types.Kr8ClusterComponentRef, componentNames []string, vmconfig types.VMConfig) (string, error)
+func MergeComponentDefaults(componentMap map[string]types.Kr8pClusterComponentRef, componentNames []string, vmconfig types.VMConfig) (string, error)
 ```
 
 

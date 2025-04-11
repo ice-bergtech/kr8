@@ -64,12 +64,12 @@ func GoMarkDoc() {
 	}
 
 	docfiles := map[string]string{
-		"../cmd":          "kr8p-cmd.md",
-		"../pkg/jnetvm":   "kr8p-jsonnet.md",
-		"../pkg/types":    "kr8p-types.md",
-		"../pkg/util":     "kr8p-util.md",
-		"../pkg/kr8_init": "kr8p-init.md",
-		"../pkg/generate": "kr8p-generate.md",
+		"../cmd":           "kr8p-cmd.md",
+		"../pkg/jnetvm":    "kr8p-jsonnet.md",
+		"../pkg/types":     "kr8p-types.md",
+		"../pkg/util":      "kr8p-util.md",
+		"../pkg/kr8p_init": "kr8p-init.md",
+		"../pkg/generate":  "kr8p-generate.md",
 	}
 
 	for pkgPath, pkgDoc := range docfiles {

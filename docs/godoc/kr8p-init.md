@@ -1,23 +1,23 @@
-# kr8init
+# kr8p\_init
 
 ```go
-import "github.com/ice-bergtech/kr8p/pkg/kr8_init"
+import "github.com/ice-bergtech/kr8p/pkg/kr8p_init"
 ```
 
 ## Index
 
-- [func GenerateClusterJsonnet\(cSpec types.Kr8ClusterSpec, dstDir string\) error](<#GenerateClusterJsonnet>)
-- [func GenerateComponentJsonnet\(componentOptions Kr8InitOptions, dstDir string\) error](<#GenerateComponentJsonnet>)
+- [func GenerateClusterJsonnet\(cSpec types.Kr8pClusterSpec, dstDir string\) error](<#GenerateClusterJsonnet>)
+- [func GenerateComponentJsonnet\(componentOptions Kr8pInitOptions, dstDir string\) error](<#GenerateComponentJsonnet>)
 - [func GenerateLib\(fetch bool, dstDir string\) error](<#GenerateLib>)
-- [func GenerateReadme\(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec\) error](<#GenerateReadme>)
-- [type Kr8InitOptions](<#Kr8InitOptions>)
+- [func GenerateReadme\(dstDir string, cmdOptions Kr8pInitOptions, clusterSpec types.Kr8pClusterSpec\) error](<#GenerateReadme>)
+- [type Kr8pInitOptions](<#Kr8pInitOptions>)
 
 
 <a name="GenerateClusterJsonnet"></a>
 ## func GenerateClusterJsonnet
 
 ```go
-func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error
+func GenerateClusterJsonnet(cSpec types.Kr8pClusterSpec, dstDir string) error
 ```
 
 Generate a cluster.jsonnet file based on the provided Kr8ClusterSpec and store it in the specified directory.
@@ -26,7 +26,7 @@ Generate a cluster.jsonnet file based on the provided Kr8ClusterSpec and store i
 ## func GenerateComponentJsonnet
 
 ```go
-func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) error
+func GenerateComponentJsonnet(componentOptions Kr8pInitOptions, dstDir string) error
 ```
 
 Generate default component kr8\_spec values and store in params.jsonnet. Based on the type:
@@ -50,18 +50,18 @@ Downloads a starter kr8p jsonnet lib from github. If fetch is true, it will down
 ## func GenerateReadme
 
 ```go
-func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) error
+func GenerateReadme(dstDir string, cmdOptions Kr8pInitOptions, clusterSpec types.Kr8pClusterSpec) error
 ```
 
 Generates a starter readme for the repo, and writes it to the destination directory.
 
-<a name="Kr8InitOptions"></a>
-## type Kr8InitOptions
+<a name="Kr8pInitOptions"></a>
+## type Kr8pInitOptions
 
-Kr8InitOptions defines the options used by the init subcommands.
+Kr8pInitOptions defines the options used by the init subcommands.
 
 ```go
-type Kr8InitOptions struct {
+type Kr8pInitOptions struct {
     // URL to fetch the skeleton directory from
     InitUrl string
     // Name of the cluster to initialize

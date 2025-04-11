@@ -8,13 +8,13 @@ import "github.com/ice-bergtech/kr8p/pkg/generate"
 
 - [func CheckIfUpdateNeeded\(outFile string, outStr string\) \(bool, error\)](<#CheckIfUpdateNeeded>)
 - [func CleanOutputDir\(outputFileMap map\[string\]bool, componentOutputDir string\) error](<#CleanOutputDir>)
-- [func GenProcessCluster\(clusterName string, clusterdir string, baseDir string, generateDirOverride string, kr8Opts types.Kr8Opts, clusterParamsFile string, filters util.PathFilterOptions, vmConfig types.VMConfig, pool \*ants.Pool\) error](<#GenProcessCluster>)
-- [func GenProcessComponent\(vmconfig types.VMConfig, componentName string, kr8Spec types.Kr8ClusterSpec, kr8Opts types.Kr8Opts, config string, allConfig \*safeString, filters util.PathFilterOptions, paramsFile string\) error](<#GenProcessComponent>)
-- [func GenerateIncludesFiles\(includesFiles \[\]types.Kr8ComponentSpecIncludeObject, kr8Spec types.Kr8ClusterSpec, kr8Opts types.Kr8Opts, config string, componentName string, compPath string, componentOutputDir string, jvm \*jsonnet.VM\) \(map\[string\]bool, error\)](<#GenerateIncludesFiles>)
+- [func GenProcessCluster\(clusterName string, clusterdir string, baseDir string, generateDirOverride string, kr8Opts types.Kr8pOpts, clusterParamsFile string, filters util.PathFilterOptions, vmConfig types.VMConfig, pool \*ants.Pool\) error](<#GenProcessCluster>)
+- [func GenProcessComponent\(vmconfig types.VMConfig, componentName string, kr8Spec types.Kr8pClusterSpec, kr8Opts types.Kr8pOpts, config string, allConfig \*safeString, filters util.PathFilterOptions, paramsFile string\) error](<#GenProcessComponent>)
+- [func GenerateIncludesFiles\(includesFiles \[\]types.Kr8pComponentSpecIncludeObject, kr8Spec types.Kr8pClusterSpec, kr8Opts types.Kr8pOpts, config string, componentName string, compPath string, componentOutputDir string, jvm \*jsonnet.VM\) \(map\[string\]bool, error\)](<#GenerateIncludesFiles>)
 - [func GetClusterParams\(clusterDir string, vmConfig types.VMConfig\) \(map\[string\]string, error\)](<#GetClusterParams>)
-- [func ProcessFile\(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm \*jsonnet.VM\) \(string, error\)](<#ProcessFile>)
-- [func SetupAndConfigureVM\(vmconfig types.VMConfig, config string, kr8Spec types.Kr8ClusterSpec, componentName string, compSpec types.Kr8ComponentSpec, allConfig \*safeString, filters util.PathFilterOptions, paramsFile string, kr8Opts types.Kr8Opts\) \(\*jsonnet.VM, string, error\)](<#SetupAndConfigureVM>)
-- [func SetupJvmForComponent\(vmconfig types.VMConfig, config string, kr8Spec types.Kr8ClusterSpec, componentName string\) \(\*jsonnet.VM, error\)](<#SetupJvmForComponent>)
+- [func ProcessFile\(inputFile string, outputFile string, kr8Spec types.Kr8pClusterSpec, componentName string, config string, incInfo types.Kr8pComponentSpecIncludeObject, jvm \*jsonnet.VM\) \(string, error\)](<#ProcessFile>)
+- [func SetupAndConfigureVM\(vmconfig types.VMConfig, config string, kr8Spec types.Kr8pClusterSpec, componentName string, compSpec types.Kr8pComponentSpec, allConfig \*safeString, filters util.PathFilterOptions, paramsFile string, kr8Opts types.Kr8pOpts\) \(\*jsonnet.VM, string, error\)](<#SetupAndConfigureVM>)
+- [func SetupJvmForComponent\(vmconfig types.VMConfig, config string, kr8Spec types.Kr8pClusterSpec, componentName string\) \(\*jsonnet.VM, error\)](<#SetupJvmForComponent>)
 
 
 <a name="CheckIfUpdateNeeded"></a>
@@ -39,7 +39,7 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) er
 ## func GenProcessCluster
 
 ```go
-func GenProcessCluster(clusterName string, clusterdir string, baseDir string, generateDirOverride string, kr8Opts types.Kr8Opts, clusterParamsFile string, filters util.PathFilterOptions, vmConfig types.VMConfig, pool *ants.Pool) error
+func GenProcessCluster(clusterName string, clusterdir string, baseDir string, generateDirOverride string, kr8Opts types.Kr8pOpts, clusterParamsFile string, filters util.PathFilterOptions, vmConfig types.VMConfig, pool *ants.Pool) error
 ```
 
 
@@ -48,7 +48,7 @@ func GenProcessCluster(clusterName string, clusterdir string, baseDir string, ge
 ## func GenProcessComponent
 
 ```go
-func GenProcessComponent(vmconfig types.VMConfig, componentName string, kr8Spec types.Kr8ClusterSpec, kr8Opts types.Kr8Opts, config string, allConfig *safeString, filters util.PathFilterOptions, paramsFile string) error
+func GenProcessComponent(vmconfig types.VMConfig, componentName string, kr8Spec types.Kr8pClusterSpec, kr8Opts types.Kr8pOpts, config string, allConfig *safeString, filters util.PathFilterOptions, paramsFile string) error
 ```
 
 
@@ -57,7 +57,7 @@ func GenProcessComponent(vmconfig types.VMConfig, componentName string, kr8Spec 
 ## func GenerateIncludesFiles
 
 ```go
-func GenerateIncludesFiles(includesFiles []types.Kr8ComponentSpecIncludeObject, kr8Spec types.Kr8ClusterSpec, kr8Opts types.Kr8Opts, config string, componentName string, compPath string, componentOutputDir string, jvm *jsonnet.VM) (map[string]bool, error)
+func GenerateIncludesFiles(includesFiles []types.Kr8pComponentSpecIncludeObject, kr8Spec types.Kr8pClusterSpec, kr8Opts types.Kr8pOpts, config string, componentName string, compPath string, componentOutputDir string, jvm *jsonnet.VM) (map[string]bool, error)
 ```
 
 
@@ -75,7 +75,7 @@ func GetClusterParams(clusterDir string, vmConfig types.VMConfig) (map[string]st
 ## func ProcessFile
 
 ```go
-func ProcessFile(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm *jsonnet.VM) (string, error)
+func ProcessFile(inputFile string, outputFile string, kr8Spec types.Kr8pClusterSpec, componentName string, config string, incInfo types.Kr8pComponentSpecIncludeObject, jvm *jsonnet.VM) (string, error)
 ```
 
 Process an includes file. Based on the extension, it will process it differently.
@@ -90,7 +90,7 @@ Process an includes file. Based on the extension, it will process it differently
 ## func SetupAndConfigureVM
 
 ```go
-func SetupAndConfigureVM(vmconfig types.VMConfig, config string, kr8Spec types.Kr8ClusterSpec, componentName string, compSpec types.Kr8ComponentSpec, allConfig *safeString, filters util.PathFilterOptions, paramsFile string, kr8Opts types.Kr8Opts) (*jsonnet.VM, string, error)
+func SetupAndConfigureVM(vmconfig types.VMConfig, config string, kr8Spec types.Kr8pClusterSpec, componentName string, compSpec types.Kr8pComponentSpec, allConfig *safeString, filters util.PathFilterOptions, paramsFile string, kr8Opts types.Kr8pOpts) (*jsonnet.VM, string, error)
 ```
 
 
@@ -99,7 +99,7 @@ func SetupAndConfigureVM(vmconfig types.VMConfig, config string, kr8Spec types.K
 ## func SetupJvmForComponent
 
 ```go
-func SetupJvmForComponent(vmconfig types.VMConfig, config string, kr8Spec types.Kr8ClusterSpec, componentName string) (*jsonnet.VM, error)
+func SetupJvmForComponent(vmconfig types.VMConfig, config string, kr8Spec types.Kr8pClusterSpec, componentName string) (*jsonnet.VM, error)
 ```
 
 This function sets up the JVM for a given component. It registers native functions, sets up post\-processing, and prunes parameters as required. It's faster to create this VM for each component, rather than re\-use. Default postprocessor just copies input to output.

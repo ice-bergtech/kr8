@@ -11,25 +11,25 @@ import "github.com/ice-bergtech/kr8p/pkg/types"
 - [type CmdJsonnetOptions](<#CmdJsonnetOptions>)
 - [type ExtFileVar](<#ExtFileVar>)
 - [type KomposeConvertOptions](<#KomposeConvertOptions>)
-  - [func Create\(inputFiles \[\]string, outDir string, cmp Kr8ComponentJsonnet\) \*KomposeConvertOptions](<#Create>)
+  - [func Create\(inputFiles \[\]string, outDir string, cmp Kr8pComponentJsonnet\) \*KomposeConvertOptions](<#Create>)
   - [func \(k KomposeConvertOptions\) Convert\(\) \(interface\{\}, error\)](<#KomposeConvertOptions.Convert>)
   - [func \(k KomposeConvertOptions\) GenKomposePkgOpts\(\) \*kobject.ConvertOptions](<#KomposeConvertOptions.GenKomposePkgOpts>)
   - [func \(k KomposeConvertOptions\) Validate\(\) error](<#KomposeConvertOptions.Validate>)
-- [type Kr8Cluster](<#Kr8Cluster>)
-- [type Kr8ClusterComponentRef](<#Kr8ClusterComponentRef>)
-- [type Kr8ClusterJsonnet](<#Kr8ClusterJsonnet>)
-- [type Kr8ClusterSpec](<#Kr8ClusterSpec>)
-  - [func CreateClusterSpec\(clusterName string, spec gjson.Result, kr8Opts Kr8Opts, genDirOverride string\) \(Kr8ClusterSpec, error\)](<#CreateClusterSpec>)
-- [type Kr8ComponentJsonnet](<#Kr8ComponentJsonnet>)
-- [type Kr8ComponentSpec](<#Kr8ComponentSpec>)
-  - [func CreateComponentSpec\(spec gjson.Result\) \(Kr8ComponentSpec, error\)](<#CreateComponentSpec>)
-- [type Kr8ComponentSpecIncludeObject](<#Kr8ComponentSpecIncludeObject>)
-- [type Kr8ComponentSpecIncludes](<#Kr8ComponentSpecIncludes>)
-  - [func ExtractIncludes\(spec gjson.Result\) \(Kr8ComponentSpecIncludes, error\)](<#ExtractIncludes>)
-  - [func \(k \*Kr8ComponentSpecIncludes\) UnmarshalJSON\(data \[\]byte\) error](<#Kr8ComponentSpecIncludes.UnmarshalJSON>)
-- [type Kr8Error](<#Kr8Error>)
-  - [func \(e Kr8Error\) Error\(\) string](<#Kr8Error.Error>)
-- [type Kr8Opts](<#Kr8Opts>)
+- [type Kr8pCluster](<#Kr8pCluster>)
+- [type Kr8pClusterComponentRef](<#Kr8pClusterComponentRef>)
+- [type Kr8pClusterJsonnet](<#Kr8pClusterJsonnet>)
+- [type Kr8pClusterSpec](<#Kr8pClusterSpec>)
+  - [func CreateClusterSpec\(clusterName string, spec gjson.Result, kr8Opts Kr8pOpts, genDirOverride string\) \(Kr8pClusterSpec, error\)](<#CreateClusterSpec>)
+- [type Kr8pComponentJsonnet](<#Kr8pComponentJsonnet>)
+- [type Kr8pComponentSpec](<#Kr8pComponentSpec>)
+  - [func CreateComponentSpec\(spec gjson.Result\) \(Kr8pComponentSpec, error\)](<#CreateComponentSpec>)
+- [type Kr8pComponentSpecIncludeObject](<#Kr8pComponentSpecIncludeObject>)
+- [type Kr8pComponentSpecIncludes](<#Kr8pComponentSpecIncludes>)
+  - [func ExtractIncludes\(spec gjson.Result\) \(Kr8pComponentSpecIncludes, error\)](<#ExtractIncludes>)
+  - [func \(k \*Kr8pComponentSpecIncludes\) UnmarshalJSON\(data \[\]byte\) error](<#Kr8pComponentSpecIncludes.UnmarshalJSON>)
+- [type Kr8pError](<#Kr8pError>)
+  - [func \(e Kr8pError\) Error\(\) string](<#Kr8pError.Error>)
+- [type Kr8pOpts](<#Kr8pOpts>)
 - [type VMConfig](<#VMConfig>)
 
 
@@ -165,7 +165,7 @@ type KomposeConvertOptions struct {
 ### func Create
 
 ```go
-func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *KomposeConvertOptions
+func Create(inputFiles []string, outDir string, cmp Kr8pComponentJsonnet) *KomposeConvertOptions
 ```
 
 Initialie Kompose options with sensible defaults.
@@ -203,53 +203,53 @@ func (k KomposeConvertOptions) Validate() error
 
 Validates a set of options for converting a Kubernetes manifest to a Docker Compose file.
 
-<a name="Kr8Cluster"></a>
-## type Kr8Cluster
+<a name="Kr8pCluster"></a>
+## type Kr8pCluster
 
 An object that stores variables that can be referenced by components.
 
 ```go
-type Kr8Cluster struct {
+type Kr8pCluster struct {
     Name string `json:"name"`
     Path string `json:"-"`
 }
 ```
 
-<a name="Kr8ClusterComponentRef"></a>
-## type Kr8ClusterComponentRef
+<a name="Kr8pClusterComponentRef"></a>
+## type Kr8pClusterComponentRef
 
 A reference to a component folder that contains a params.jsonnet file. This is used in the cluster jsonnet file to reference components.
 
 ```go
-type Kr8ClusterComponentRef struct {
+type Kr8pClusterComponentRef struct {
     // The path to a component folder that contains a params.jsonnet file
     Path string `json:"path"`
 }
 ```
 
-<a name="Kr8ClusterJsonnet"></a>
-## type Kr8ClusterJsonnet
+<a name="Kr8pClusterJsonnet"></a>
+## type Kr8pClusterJsonnet
 
 The specification for a clusters.jsonnet file. This describes configuration for a cluster that kr8p should process.
 
 ```go
-type Kr8ClusterJsonnet struct {
+type Kr8pClusterJsonnet struct {
     // kr8p configuration for how to process the cluster
-    ClusterSpec Kr8ClusterSpec `json:"_kr8_spec"`
+    ClusterSpec Kr8pClusterSpec `json:"_kr8_spec"`
     // Cluster Level configuration that components can reference
-    Cluster Kr8Cluster `json:"_cluster"`
+    Cluster Kr8pCluster `json:"_cluster"`
     // Distictly named components.
-    Components map[string]Kr8ClusterComponentRef `json:"_components"`
+    Components map[string]Kr8pClusterComponentRef `json:"_components"`
 }
 ```
 
-<a name="Kr8ClusterSpec"></a>
-## type Kr8ClusterSpec
+<a name="Kr8pClusterSpec"></a>
+## type Kr8pClusterSpec
 
 The specification for how to process a cluster. This is used in the cluster jsonnet file to configure how kr8p should process the cluster.
 
 ```go
-type Kr8ClusterSpec struct {
+type Kr8pClusterSpec struct {
     // The name of the cluster
     Name string `json:"-"`
     // A jsonnet function that each output entry is processed through. Default `function(input) input`
@@ -270,20 +270,20 @@ type Kr8ClusterSpec struct {
 ### func CreateClusterSpec
 
 ```go
-func CreateClusterSpec(clusterName string, spec gjson.Result, kr8Opts Kr8Opts, genDirOverride string) (Kr8ClusterSpec, error)
+func CreateClusterSpec(clusterName string, spec gjson.Result, kr8Opts Kr8pOpts, genDirOverride string) (Kr8pClusterSpec, error)
 ```
 
 This function creates a Kr8ClusterSpec from passed params. If genDirOverride is empty, the value of generate\_dir from the spec is used.
 
-<a name="Kr8ComponentJsonnet"></a>
-## type Kr8ComponentJsonnet
+<a name="Kr8pComponentJsonnet"></a>
+## type Kr8pComponentJsonnet
 
 The specification for component's params.jsonnet file. It contains all the configuration and variables used to generate component resources. This configuration is often modified from the cluster config to add cluster\-specific configuration.
 
 ```go
-type Kr8ComponentJsonnet struct {
+type Kr8pComponentJsonnet struct {
     // Component-specific configuration for how kr8p should process the component (required)
-    Kr8Spec Kr8ComponentSpec `json:"kr8_spec"`
+    Kr8Spec Kr8pComponentSpec `json:"kr8_spec"`
     // The default namespace to deploy the component to
     Namespace string `json:"namespace"`
     // A unique name for the component
@@ -296,13 +296,13 @@ type Kr8ComponentJsonnet struct {
 }
 ```
 
-<a name="Kr8ComponentSpec"></a>
-## type Kr8ComponentSpec
+<a name="Kr8pComponentSpec"></a>
+## type Kr8pComponentSpec
 
 The kr8\_spec object in a cluster config file. This configures how kr8p processes the component.
 
 ```go
-type Kr8ComponentSpec struct {
+type Kr8pComponentSpec struct {
     // If true, includes the parameters of the current cluster when generating this component
     Kr8_allparams bool `json:"enable_kr8_allparams"`
     // If true, includes the parameters of all other clusters when generating this component
@@ -314,7 +314,7 @@ type Kr8ComponentSpec struct {
     // Additional jsonnet libs to the jsonnet vm, component-path scoped
     JPaths []string `json:"jpaths"`
     // A list of filenames to include and output as files
-    Includes Kr8ComponentSpecIncludes `json:"includes"`
+    Includes Kr8pComponentSpecIncludes `json:"includes"`
 }
 ```
 
@@ -322,18 +322,18 @@ type Kr8ComponentSpec struct {
 ### func CreateComponentSpec
 
 ```go
-func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error)
+func CreateComponentSpec(spec gjson.Result) (Kr8pComponentSpec, error)
 ```
 
 Extracts a component spec from a jsonnet object.
 
-<a name="Kr8ComponentSpecIncludeObject"></a>
-## type Kr8ComponentSpecIncludeObject
+<a name="Kr8pComponentSpecIncludeObject"></a>
+## type Kr8pComponentSpecIncludeObject
 
 An includes object which configures how kr8p includes an object. It allows configuring the included file's destination directory and file name. The input file will be processed differently depending on the filetype.
 
 ```go
-type Kr8ComponentSpecIncludeObject struct {
+type Kr8pComponentSpecIncludeObject struct {
     // an input file to process
     // accepted filetypes: .jsonnet .yml .yaml .tmpl .tpl
     File string `json:"file"`
@@ -346,61 +346,61 @@ type Kr8ComponentSpecIncludeObject struct {
 }
 ```
 
-<a name="Kr8ComponentSpecIncludes"></a>
-## type Kr8ComponentSpecIncludes
+<a name="Kr8pComponentSpecIncludes"></a>
+## type Kr8pComponentSpecIncludes
 
-Define Kr8ComponentSpecIncludes to handle dynamic decoding.
+Define Kr8pComponentSpecIncludes to handle dynamic decoding.
 
 ```go
-type Kr8ComponentSpecIncludes []Kr8ComponentSpecIncludeObject
+type Kr8pComponentSpecIncludes []Kr8pComponentSpecIncludeObject
 ```
 
 <a name="ExtractIncludes"></a>
 ### func ExtractIncludes
 
 ```go
-func ExtractIncludes(spec gjson.Result) (Kr8ComponentSpecIncludes, error)
+func ExtractIncludes(spec gjson.Result) (Kr8pComponentSpecIncludes, error)
 ```
 
 Extract jsonnet includes filenames or objects from spec.
 
-<a name="Kr8ComponentSpecIncludes.UnmarshalJSON"></a>
-### func \(\*Kr8ComponentSpecIncludes\) UnmarshalJSON
+<a name="Kr8pComponentSpecIncludes.UnmarshalJSON"></a>
+### func \(\*Kr8pComponentSpecIncludes\) UnmarshalJSON
 
 ```go
-func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error
+func (k *Kr8pComponentSpecIncludes) UnmarshalJSON(data []byte) error
 ```
 
 Implement custom unmarshaling for dynamic decoding.
 
-<a name="Kr8Error"></a>
-## type Kr8Error
+<a name="Kr8pError"></a>
+## type Kr8pError
 
 
 
 ```go
-type Kr8Error struct {
+type Kr8pError struct {
     Message string
     Value   interface{}
 }
 ```
 
-<a name="Kr8Error.Error"></a>
-### func \(Kr8Error\) Error
+<a name="Kr8pError.Error"></a>
+### func \(Kr8pError\) Error
 
 ```go
-func (e Kr8Error) Error() string
+func (e Kr8pError) Error() string
 ```
 
 Error implements error.
 
-<a name="Kr8Opts"></a>
-## type Kr8Opts
+<a name="Kr8pOpts"></a>
+## type Kr8pOpts
 
 
 
 ```go
-type Kr8Opts struct {
+type Kr8pOpts struct {
     // Base directory of kr8p configuration
     BaseDir string
     // Directory where component definitions are stored

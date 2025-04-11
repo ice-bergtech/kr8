@@ -222,7 +222,7 @@
 <li><a href="#FormatJsonnetString">func FormatJsonnetString(input string) (string, error)</a></li>
 <li><a href="#FormatJsonnetStringCustom">func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, error)</a></li>
 <li><a href="#GenErrorIfCheck">func GenErrorIfCheck(message string, err error) error</a></li>
-<li><a href="#GetClusterFilenames">func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error)</a></li>
+<li><a href="#GetClusterFilenames">func GetClusterFilenames(searchDir string) ([]types.Kr8pCluster, error)</a></li>
 <li><a href="#GetClusterParamsFilenames">func GetClusterParamsFilenames(basePath string, targetPath string) []string</a></li>
 <li><a href="#GetClusterPaths">func GetClusterPaths(searchDir string, clusterName string) (string, error)</a></li>
 <li><a href="#GetDefaultFormatOptions">func GetDefaultFormatOptions() formatter.Options</a></li>
@@ -287,7 +287,7 @@
 </code></pre>
 <p><a name="GetClusterFilenames"></a></p>
 <h2 id="func-getclusterfilenames">func GetClusterFilenames</h2>
-<pre><code class="language-go">func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error)
+<pre><code class="language-go">func GetClusterFilenames(searchDir string) ([]types.Kr8pCluster, error)
 </code></pre>
 <p>Get a list of cluster from within a directory. Walks the directory tree, creating a types.Kr8Cluster for each cluster.jsonnet file found.</p>
 <p><a name="GetClusterParamsFilenames"></a></p>

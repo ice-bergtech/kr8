@@ -143,7 +143,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#func-generatereadme">func GenerateReadme</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#type-kr8initoptions">type Kr8InitOptions</a>
+    <li class="toctree-l2"><a class="reference internal" href="#type-kr8pinitoptions">type Kr8pInitOptions</a>
     </li>
     </ul>
                   </li>
@@ -177,25 +177,25 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="kr8init">kr8init</h1>
-<pre><code class="language-go">import &quot;github.com/ice-bergtech/kr8p/pkg/kr8_init&quot;
+                <h1 id="kr8p_init">kr8p_init</h1>
+<pre><code class="language-go">import &quot;github.com/ice-bergtech/kr8p/pkg/kr8p_init&quot;
 </code></pre>
 <h2 id="index">Index</h2>
 <ul>
-<li><a href="#GenerateClusterJsonnet">func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error</a></li>
-<li><a href="#GenerateComponentJsonnet">func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) error</a></li>
+<li><a href="#GenerateClusterJsonnet">func GenerateClusterJsonnet(cSpec types.Kr8pClusterSpec, dstDir string) error</a></li>
+<li><a href="#GenerateComponentJsonnet">func GenerateComponentJsonnet(componentOptions Kr8pInitOptions, dstDir string) error</a></li>
 <li><a href="#GenerateLib">func GenerateLib(fetch bool, dstDir string) error</a></li>
-<li><a href="#GenerateReadme">func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) error</a></li>
-<li><a href="#Kr8InitOptions">type Kr8InitOptions</a></li>
+<li><a href="#GenerateReadme">func GenerateReadme(dstDir string, cmdOptions Kr8pInitOptions, clusterSpec types.Kr8pClusterSpec) error</a></li>
+<li><a href="#Kr8pInitOptions">type Kr8pInitOptions</a></li>
 </ul>
 <p><a name="GenerateClusterJsonnet"></a></p>
 <h2 id="func-generateclusterjsonnet">func GenerateClusterJsonnet</h2>
-<pre><code class="language-go">func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error
+<pre><code class="language-go">func GenerateClusterJsonnet(cSpec types.Kr8pClusterSpec, dstDir string) error
 </code></pre>
 <p>Generate a cluster.jsonnet file based on the provided Kr8ClusterSpec and store it in the specified directory.</p>
 <p><a name="GenerateComponentJsonnet"></a></p>
 <h2 id="func-generatecomponentjsonnet">func GenerateComponentJsonnet</h2>
-<pre><code class="language-go">func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) error
+<pre><code class="language-go">func GenerateComponentJsonnet(componentOptions Kr8pInitOptions, dstDir string) error
 </code></pre>
 <p>Generate default component kr8_spec values and store in params.jsonnet. Based on the type:</p>
 <p>jsonnet: create a component.jsonnet file and reference it from the params.jsonnet file</p>
@@ -208,13 +208,13 @@
 <p>Downloads a starter kr8p jsonnet lib from github. If fetch is true, it will download the repo in the /lib directory. If false, it will print the git commands to run. Repo: https://github.com/ice-bergtech/kr8-libsonnet . return util.FetchRepoUrl("https://github.com/ice-bergtech/kr8-libsonnet", dstDir+"/kr8-lib", !fetch).</p>
 <p><a name="GenerateReadme"></a></p>
 <h2 id="func-generatereadme">func GenerateReadme</h2>
-<pre><code class="language-go">func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) error
+<pre><code class="language-go">func GenerateReadme(dstDir string, cmdOptions Kr8pInitOptions, clusterSpec types.Kr8pClusterSpec) error
 </code></pre>
 <p>Generates a starter readme for the repo, and writes it to the destination directory.</p>
-<p><a name="Kr8InitOptions"></a></p>
-<h2 id="type-kr8initoptions">type Kr8InitOptions</h2>
-<p>Kr8InitOptions defines the options used by the init subcommands.</p>
-<pre><code class="language-go">type Kr8InitOptions struct {
+<p><a name="Kr8pInitOptions"></a></p>
+<h2 id="type-kr8pinitoptions">type Kr8pInitOptions</h2>
+<p>Kr8pInitOptions defines the options used by the init subcommands.</p>
+<pre><code class="language-go">type Kr8pInitOptions struct {
     // URL to fetch the skeleton directory from
     InitUrl string
     // Name of the cluster to initialize
