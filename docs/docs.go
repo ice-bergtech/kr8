@@ -38,18 +38,6 @@ func CopyReadme() {
 	}
 }
 
-func CopyLicenses() {
-	destinationFile := "./README-repo.md"
-	iFile, err := os.ReadFile("../README.md")
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = os.WriteFile(destinationFile, iFile, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
 func GoMarkDoc() {
 	out, err := gomarkdoc.NewRenderer()
 	if err != nil {
