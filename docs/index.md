@@ -18,6 +18,8 @@ By leveraging best practices and providing a structured approach, **kr8+** helps
 * **Simplicity**: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.
 * **Scalability**: Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.
 
+![kr8+ workflow](diagram/kr8-workflow.png)
+
 To get started, check out one of the following:
 
 * [Installation](installation.md)

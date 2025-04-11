@@ -37,6 +37,8 @@ This means that breaking changes will still happen from time to time, but it's s
 * **Simplicity**: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.
 * **Scalability**: Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.
 
+![kr8+ workflow](docs/diagram/kr8-workflow.png)
+
 ## Technical Overview
 
 **kr8+** consists of:

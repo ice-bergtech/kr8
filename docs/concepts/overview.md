@@ -17,6 +17,10 @@ You will have:
 
 For working examples of everything, check out the [ice-bergtech/kr8-examples](https://github.com/ice-bergtech/kr8-examples) repo.
 
+![kr8+ generate](../diagram/kr8-generate-process-design.png)
+
+![kr+ generate process](../diagram/kr8-generate-process-design.png)
+
 ### Components
 
 A component is something you install in your cluster to make it function and work as you expect.
