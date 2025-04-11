@@ -15,16 +15,42 @@ Your component might begin life before kr8+ in one of a few ways:
   - template files, to generate arbitrary files from a golang-style template.
   - a docker image or script to deploy
 
-The root directory of your component will contain a file named `params.jsonnet`, containing configuration parameters consumed by kr8+ and passed to your Jsonnet code.
+The root directory of a component contain a file named `params.jsonnet`.
+containing configuration parameters consumed by kr8+ and passed to your Jsonnet code.
 Additional files can be stored alongside or in folders.
 This is often done to deploy multiple versions of a component at once.
 
-## Params
+At a minimum a component directory contains:
+
+* **params.jsonnet**: Contains component configuration.
+* **includes files**: Files that are processed and placed in the generated output directory
+
+Often there will be additional files
+
+* **vendor/**: Contains versioned vendor files, with each version in it's own directory
+* **Taskfile.yml**: Automate common component tasks to be ran to prepare component for being referenced by a cluster.
+
+
+## params.jsonnet
 
 kr8+'s most useful feature is the ability to easily layer _parameters_ to generate a resource.
 The `params.jsonnet` file in each component can be updated at the cluster level, making it simple to customize the behavior of your component across different environments.
 
+```yaml
+# params.jsonnet
+{
+  release_name: 'cert-manager',
+  namespace: 'cert-manager',
+  kr8_spec: { ... },
+  helm_values: {
+    webhook: { enabled: false },  # this is a value for the helm chart
+  },
+}
+```
+
+
 kr8+ extracts core configuration parameters from the `kr8_spec` key.
+The `kr8_spec` fields are marshaled into the [Kr8ComponentSpec](../godoc/kr8-types.md#Kr8ComponentSpec) struct.
 
 | Field                    | Description                                                                                                                                                        | Example                                                                                                               |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
@@ -46,8 +72,7 @@ When generating a component, multiple types of files can be combined to generate
 * If the input is data consumed by the component, use `extfiles`, 
 * If it's additional jsonnet libs, use `jpaths`
 
-
-### includes
+## includes
 
 The `includes` field allows you to include and process additional files.
 Each item in the list can be either a string (filename) or an object with specific properties.
@@ -56,6 +81,8 @@ When the item is a string, it's treated as a filename to include.
 The output will be placed in the `generate_dir` with the same name and `.yaml` extension.
 
 When the item is an object, it allows for more customization.
+The item is marshaled into a [Kr8ComponentSpecIncludeObject](../godoc/kr8-types.md#Kr8ComponentSpecIncludeObject) struct.
+
 There are the following fields:
 
 * `file`: The filename to include. Required. Allowed extensions: [`jsonnet`, `yaml`, `yml`, `tmpl`, `tpl`]
@@ -65,7 +92,7 @@ There are the following fields:
 
 The `file` value must be a `jsonnet`, `yaml`, or `tpl` type file.
 
-For examples, the following `includes` entries:
+For example, the `includes` entries:
   
 ```yaml
 includes: [
@@ -88,7 +115,7 @@ includes: [
 ]
 ```
 
-Will generate the files:
+Generates the files:
 
 ```sh
 generate_dir:
@@ -106,7 +133,7 @@ generate_dir:
 This will load the specified file into the jsonnet vm external vars.
 These files can then be referenced in your jsonnet code using the function `std.extVar("var_name")` variable.
 
-It will be availble to be used in component jsonnet as a string, but functions like 
+It will be available to be used in component jsonnet as a string, but functions like 
 
 ### jpaths
 
@@ -124,7 +151,7 @@ A taskfile within the component directory can help manage the lifecycle of compo
 A common practice is to create a `fetch` task that downloads all dependencies (e.g., Helm charts or static manifests).
 It can also perform other preparation steps like removing files or resources that are not required.
 
-These tasks will be highly dependent on the particular component - for example, a component using a helm chart will generally have a different set of fetch and generate tasks to a component using a static manifest.
+These tasks are highly dependent on the particular component - for example, a component using a helm chart generally have a different set of fetch and generate tasks to a component using a static manifest.
 
 An example Taskfile might look like this:
 
@@ -218,16 +245,15 @@ if kr8_cluster.cluster_type == "aws" then std.objectValues(
 ) else [] // don't make a storageclass if it's not AWS
 ```
 
-
 ### YAML Component
 
 kr8+ can use a static k8s manifest as a source input.
 You can then manipulate the structure of that YAML using Jsonnet.
 kr8+ takes care of the heavy lifting for you.
 
-This is useful when loading manifests from remote source, and you want to manipulate the mbefore deploying into a cluster.
+This is useful when loading manifests from remote source, and you want to manipulate the resources before deploying into a cluster.
 
-This example can be found here: [kr8-examples echo-test](https://github.com/ice-bergtech/kr8-examples/components/doc-concepts/echo-test/)
+An example can be found here: [kr8-examples echo-test](https://github.com/ice-bergtech/kr8-examples/components/doc-concepts/echo-test/)
 
 ```bash
 components/doc-conepts/jsonnetStorageClasses
@@ -245,149 +271,156 @@ You'll need a taskfile that downloads the original manifests for you in the `fet
 Here's an example:
 
 ```yaml
+# https://taskfile.dev/usage
 version: '3'
 
 vars:
-  VERSION:  v1.0.0
+  NAME: external-dns
+  REPO: 'https://kubernetes-sigs.github.io/external-dns/'
 
 tasks:
   default:
     cmds:
-      - task: fetch
+      - task: fetch-1.15
 
-  fetch:
+  fetch-1.15:
     desc: "fetch component dependencies"
+    vars:
+      THING_VER: v1.15.0
     cmds:
-      - mkdir -p ./vendor/{{.VERSION}} && rm -rf ./vendor/{{.VERSION}}/*
-      - curl https://gist.github.com/alankrantas/63fab63fe14cec872b542eed31092fc6/raw/1b22a4d6f45b4de06bf23503aca85c4b4cd1d965/echo.yaml -o ./vendor/{{.VERSION}}/echo.yaml
+      - task: fetch-chart
+        vars: { VER: '{{.THING_VER}}'}
+
+  fetch-1.14:
+    desc: "fetch component dependencies"
+    vars:
+      THING_VER: v1.14.0
+    cmds:
+      - task: fetch-chart
+        vars: { VER: '{{.THING_VER}}'}
+
+  fetch-chart:
+    desc: "fetch a helm chart"
+    vars:
+      VER: '{{default "unset" .VER}}'
+    cmds:
+      - mkdir -p ./vendor/{{.NAME}}-{{.VER}} && rm -rf ./vendor/{{.NAME}}-{{.VER}}/*
+      - do-fetch and place resulting files in ./vendor/{{.NAME}}-{{.VER}}/ 
 ```
-
-#### Jsonnet
-
-References one of the files in vendored.
-This give us the ability to modify this file.
-Here's how the jsonnet looks:
-
-```go
-local helpers = import "helpers.libsonnet";
-local parseYaml = std.native("parseYaml");
-// this must match the `ext-str-file` value in the taskfile
-// it imports those values with the variable name "deployment"
-local deployment = parseYaml(std.extVar("inputMetricsServerDeploy"));
-
-local args = [
-  "--kubelet-insecure-tls",
-  "--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname",
-]
-
-[
-  // drop all the secrets if they're found, we don't want to check them into git
-  if object.kind == "Secret" then {} else object
-  for object in helpers.list(
-    helpers.named(deployment) + {
-      // grab kind deployment with name metrics-server, and add some more args
-      ["Deployment/kube-system/metrics-server"]+: helpers.patchContainerNamed(
-        "metrics-server",
-        {
-          "args"+: args,
-        }
-      ),
-    }
-  )
-]
-
-```
-
 
 ### Helm
 
 **kr8+** can render helm charts locally and inject parameters as helm values.
 This provides a great degree of flexibility when installing components into clusters.
 
-#### Taskfile
+Working examples of using helm charts with kr8+ can be found in the [kr8-examples](https://github.com/ice-bergtech/kr8-examples/) repo.
 
-An example taskfile for a helm chart might look like this:
+### Processing a chart
 
-```yaml
-version: 3
-
-vars:
-  CHART_VER:  v0.8.1
-  CHART_NAME: cert-manager
-
-tasks:
-  fetch:
-    desc: "fetch component dependencies"
-    cmds:
-      - rm -fr charts vendored; mkdir charts vendored
-      # add the helm repo and fetch it locally into the charts directly
-      - helm fetch --repo https://charts.jetstack.io --untar --untardir ./charts --version "{{.CHART_VER}}" "{{.CHART_NAME}}"
-      - wget --quiet -N https://raw.githubusercontent.com/jetstack/cert-manager/release-0.8/deploy/manifests/00-crds.yaml -O - | grep -v ^# > vendored/00cert-manager-crd.yaml
-```
-
-#### Params
+#### Params and chart config
 
 The `params.jsonnet` for a helm chart directory should include the helm values you want to use.
+A values file is usually a required file for a helm component.
+The values can be stored in a field, usually named `helm_values`.
+
 Here's an example:
 
 ```yaml
+# params.jsonnet
 {
-  release_name: 'cert-manager',
-  namespace: 'cert-manager',
-  kubecfg_gc_enable: true,
-  kubecfg_update_args: '--validate=false',
+  ...
+  # Defined a field to contains helm values
   helm_values: {
-    webhook: { enabled: false },  // this is a value for the helm chart
+    webhook: { enabled: false },  # this is a value for the helm chart
   },
 }
 ```
 
-#### Values file
-
-A values file is a required file for a helm component.
-The name of the file must be `componentname-values.jsonnet` (for example: cert-manager-values.jsonnet).
-It's content would be something like this:
+The chart will be referenced and processed through 
 
 ```go
 local config = std.extVar("kr8");
 
-if "helm_values" in config then config.helm_values else {}
+local helm_template = std.native("helmTemplate")(config.release_name, "./vendor/"+"external-dns-"+config.chart_version, {
+    calledFrom: std.thisFile,
+    namespace: config.namespace,
+    values:  if "helm_values" in config then config.helm_values else {},
+});
+
+std.objectValues(helm_template)
 ```
 
-You can also optionally set the values for the helm chart in here, this would look something like this:
-
-```yaml
-{
-  replicaCount: 2
-}
-```
+The values can also be stored in a separate file, and referenced via `includes` or `extfiles` configuration.
 
 #### Patches
 
-There are certain situations where a configuration option is not available for a helm chart, for example, you might want to add an argument that hasn't quite made it into the helm chart yet, or add something like [pod affinity](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity) where it isn't actually a value option in a helm chart.
+There are certain situations where a configuration option is not available for a helm chart.
+For example, you might want to add an argument that hasn't quite made it into the helm chart yet, or add something like [pod affinity](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity) where it isn't actually a value option in a helm chart.
 
 kr8+ helps you in this situation by providing a mechanism to patch a helm chart.
-You need to use the `helm-render-with-patch` helper and provide a `patches.jsonnet` in the component directory.
+After loading the chart through the 
 
 Here's an example `patches.jsonnet` for [external-dns](https://github.com/kubernetes-incubator/external-dns)
 
 ```go
-local apptio = import "apptio.libsonnet";
-local helpers = import "helpers.libsonnet";  // some helper functions
-local kube = import "kube.libsonnet";
-local config = std.extVar("kr8"); // config is all the config from params.jsonnet
+local config = std.extVar("kr8");
 
-// remove Secret objects and add a namespace
+local helm_template = std.native("helmTemplate")(config.release_name, "./vendor/"+"external-dns-"+config.chart_version, {
+    calledFrom: std.thisFile,
+    namespace: config.namespace,
+    values:  if "helm_values" in config then config.helm_values else {},
+});
+
 [
-  for object in helpers.list(
-    // object list is converted to hash of named objects, then they can be modified by name
-    helpers.named(helpers.helmInput) + {
-      ["Deployment/" + config.release_name]+: helpers.patchContainer({
-        // Injects an extra arg, which wasn't originally in the helm chart
-        [if std.objectHas(config,"assumeRoleArn") then "args"]+: ["--aws-assume-role="+config.assumeRoleArn],
-      }),
-    },
-  )
+    object { metadata+: { labels+: note: "hello", other_thing: "yes" } }
+    for object in std.objectValues(helm_template)
+    if "kind" in object && object.kind != "Secret" // stop from committing secrets to repo
 ]
+```
+
+#### Taskfile
+
+This is used to codify the initial chart fetch, which needs to be performed to fetch new updates and changes.
+An example taskfile for a helm chart might look like this:
+
+```yaml
+# https://taskfile.dev/usage
+version: '3'
+
+vars:
+  CHART_NAME: external-dns
+  CHART_REPO: 'https://kubernetes-sigs.github.io/external-dns/'
+
+tasks:
+  default:
+    cmds:
+      - task: fetch-1.15
+
+  fetch-1.15:
+    desc: "fetch component dependencies"
+    vars:
+      CHART_VER: v1.15.0
+    cmds:
+      - task: fetch-chart
+        vars: { VER: '{{.CHART_VER}}'}
+
+  fetch-1.14:
+    desc: "fetch component dependencies"
+    vars:
+      CHART_VER: v1.14.0
+    cmds:
+      - task: fetch-chart
+        vars: { VER: '{{.CHART_VER}}'}
+
+  fetch-chart:
+    desc: "fetch a helm chart"
+    vars:
+      VER: '{{default "unset" .VER}}'
+    cmds:
+      - mkdir -p ./vendor/{{.CHART_NAME}}-{{.VER}} && rm -rf ./vendor/{{.CHART_NAME}}-{{.VER}}/*
+      - mkdir -p ./vendor/tmp && rm -rf ./vendor/tmp/*
+      # add the helm repo and fetch it locally into vendor directory
+      - helm fetch --repo {{.CHART_REPO}} --untar --untardir ./vendor/tmp --version "{{.VER}}" "{{.CHART_NAME}}"
+      - mv ./vendor/tmp/{{.CHART_NAME}}/* ./vendor/{{.CHART_NAME}}-{{.VER}}/ && rm -rf ./vendor/tmp
 ```
 

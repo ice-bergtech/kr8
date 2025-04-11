@@ -123,7 +123,7 @@ kr8+ looks for the smallest unit of configuration, so if you want one cluster to
 
 ---
 
-A cluster cluster configuration file will include:
+A cluster cluster configuration file includes:
 
 `_kr8_spec` Configuration parameters for kr8+
 | key                    | description | example     |
