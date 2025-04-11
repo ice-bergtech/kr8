@@ -232,96 +232,96 @@
 <li><a href="#PathFilterOptions">type PathFilterOptions</a></li>
 </ul>
 <p><a name="CalculateClusterIncludesExcludes"></a></p>
-<h2 id="func-calculateclusterincludesexcludes">func CalculateClusterIncludesExcludes</h2>
+<h2 id="func-calculateclusterincludesexcludes">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/util.go#L127">CalculateClusterIncludesExcludes</a></h2>
 <pre><code class="language-go">func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string
 </code></pre>
 <p>Using the allClusterParams variable and command flags to create a list of clusters to generate. Clusters can be filtered with "=" for equality or "\~" for regex match.</p>
 <p><a name="CheckObjectMatch"></a></p>
-<h2 id="func-checkobjectmatch">func CheckObjectMatch</h2>
+<h2 id="func-checkobjectmatch">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/util.go#L55">CheckObjectMatch</a></h2>
 <pre><code class="language-go">func CheckObjectMatch(input gjson.Result, filterString string) bool
 </code></pre>
 <p>Checks if a input object matches a filter string. The filter string can be an equality match or a regex match.</p>
 <p><a name="CleanOutputDir"></a></p>
-<h2 id="func-cleanoutputdir">func CleanOutputDir</h2>
+<h2 id="func-cleanoutputdir">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/directories.go#L111">CleanOutputDir</a></h2>
 <pre><code class="language-go">func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error
 </code></pre>
 <p>Given a map of filenames, prunes all *.yaml files that are NOT in the map from the directory.</p>
 <p><a name="Colorize"></a></p>
-<h2 id="func-colorize">func Colorize</h2>
+<h2 id="func-colorize">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/json.go#L42">Colorize</a></h2>
 <pre><code class="language-go">func Colorize(input interface{}, colorNum int, disabled bool) string
 </code></pre>
 <p>Colorize function from zerolog console.go file to replicate their coloring functionality. Source: https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389 Replicated here because it's a private function.</p>
 <p><a name="FatalErrorCheck"></a></p>
-<h2 id="func-fatalerrorcheck">func FatalErrorCheck</h2>
+<h2 id="func-fatalerrorcheck">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/util.go#L109">FatalErrorCheck</a></h2>
 <pre><code class="language-go">func FatalErrorCheck(message string, err error)
 </code></pre>
 <p>Logs an error and exits the program if the error is not nil. Saves 3 lines per use and centralizes fatal errors for rewriting.</p>
 <p><a name="FetchRepoUrl"></a></p>
-<h2 id="func-fetchrepourl">func FetchRepoUrl</h2>
+<h2 id="func-fetchrepourl">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/remote.go#L13">FetchRepoUrl</a></h2>
 <pre><code class="language-go">func FetchRepoUrl(url string, destination string, noop bool) error
 </code></pre>
 <p>Fetch a git repo from a url and clone it to a destination directory. If the noop flag is true, it will log the command that would be run and return without doing anything.</p>
 <p><a name="Filter"></a></p>
-<h2 id="func-filter">func Filter</h2>
+<h2 id="func-filter">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/util.go#L15">Filter</a></h2>
 <pre><code class="language-go">func Filter(vs []string, f func(string) bool) []string
 </code></pre>
 <p>Filter returns a new slice containing only the elements that satisfy the predicate function. From https://gobyexample.com/collection-functions</p>
 <p><a name="FilterItems"></a></p>
-<h2 id="func-filteritems">func FilterItems</h2>
+<h2 id="func-filteritems">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/util.go#L75">FilterItems</a></h2>
 <pre><code class="language-go">func FilterItems(input map[string]string, pfilter PathFilterOptions) []string
 </code></pre>
 <p>Given a map of string, filter them based on the provided options. The map value is parsed as a gjson result and then checked against the provided options.</p>
 <p><a name="FormatJsonnetString"></a></p>
-<h2 id="func-formatjsonnetstring">func FormatJsonnetString</h2>
+<h2 id="func-formatjsonnetstring">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/json.go#L108">FormatJsonnetString</a></h2>
 <pre><code class="language-go">func FormatJsonnetString(input string) (string, error)
 </code></pre>
 <p>Formats a jsonnet string using the default options.</p>
 <p><a name="FormatJsonnetStringCustom"></a></p>
-<h2 id="func-formatjsonnetstringcustom">func FormatJsonnetStringCustom</h2>
+<h2 id="func-formatjsonnetstringcustom">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/json.go#L113">FormatJsonnetStringCustom</a></h2>
 <pre><code class="language-go">func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, error)
 </code></pre>
 <p>Formats a jsonnet string using custom options.</p>
 <p><a name="GenErrorIfCheck"></a></p>
-<h2 id="func-generrorifcheck">func GenErrorIfCheck</h2>
+<h2 id="func-generrorifcheck">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/util.go#L115">GenErrorIfCheck</a></h2>
 <pre><code class="language-go">func GenErrorIfCheck(message string, err error) error
 </code></pre>
 <p><a name="GetClusterFilenames"></a></p>
-<h2 id="func-getclusterfilenames">func GetClusterFilenames</h2>
+<h2 id="func-getclusterfilenames">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/directories.go#L16">GetClusterFilenames</a></h2>
 <pre><code class="language-go">func GetClusterFilenames(searchDir string) ([]types.Kr8pCluster, error)
 </code></pre>
 <p>Get a list of cluster from within a directory. Walks the directory tree, creating a types.Kr8Cluster for each cluster.jsonnet file found.</p>
 <p><a name="GetClusterParamsFilenames"></a></p>
-<h2 id="func-getclusterparamsfilenames">func GetClusterParamsFilenames</h2>
+<h2 id="func-getclusterparamsfilenames">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/directories.go#L72">GetClusterParamsFilenames</a></h2>
 <pre><code class="language-go">func GetClusterParamsFilenames(basePath string, targetPath string) []string
 </code></pre>
 <p>Get all cluster parameters within a directory. Walks through the directory hierarchy and returns all paths to `params.jsonnet` files.</p>
 <p><a name="GetClusterPaths"></a></p>
-<h2 id="func-getclusterpaths">func GetClusterPaths</h2>
+<h2 id="func-getclusterpaths">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/directories.go#L46">GetClusterPaths</a></h2>
 <pre><code class="language-go">func GetClusterPaths(searchDir string, clusterName string) (string, error)
 </code></pre>
 <p>Get a specific cluster within a directory by name. Walks the cluster directory searching for the given clusterName. Returns the path to the cluster.</p>
 <p><a name="GetDefaultFormatOptions"></a></p>
-<h2 id="func-getdefaultformatoptions">func GetDefaultFormatOptions</h2>
+<h2 id="func-getdefaultformatoptions">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/json.go#L90">GetDefaultFormatOptions</a></h2>
 <pre><code class="language-go">func GetDefaultFormatOptions() formatter.Options
 </code></pre>
 <p>Configures the default options for the jsonnet formatter.</p>
 <p><a name="JsonnetPrint"></a></p>
-<h2 id="func-jsonnetprint">func JsonnetPrint</h2>
+<h2 id="func-jsonnetprint">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/json.go#L55">JsonnetPrint</a></h2>
 <pre><code class="language-go">func JsonnetPrint(output string, format string, color bool) error
 </code></pre>
 <p>Print the jsonnet in the specified format. Acceptable formats are: yaml, stream, json.</p>
 <p><a name="Pretty"></a></p>
-<h2 id="func-pretty">func Pretty</h2>
+<h2 id="func-pretty">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/json.go#L18">Pretty</a></h2>
 <pre><code class="language-go">func Pretty(inputJson string, colorOutput bool) (string, error)
 </code></pre>
 <p>Pretty formats the input jsonnet string with indentation and optional color output. Returns an error when the input can't properly format the json string input.</p>
 <p><a name="WriteObjToJsonFile"></a></p>
-<h2 id="func-writeobjtojsonfile">func WriteObjToJsonFile</h2>
+<h2 id="func-writeobjtojsonfile">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/json.go#L120">WriteObjToJsonFile</a></h2>
 <pre><code class="language-go">func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (string, error)
 </code></pre>
 <p>Write out a struct to a specified path and file. Marshals the given interface and generates a formatted json string. It will create all parent directories needed.</p>
 <p><a name="PathFilterOptions"></a></p>
-<h2 id="type-pathfilteroptions">type PathFilterOptions</h2>
+<h2 id="type-pathfilteroptions">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/util/util.go#L27-L51">PathFilterOptions</a></h2>
 <p>Fill with string to include and exclude, using kr8's special parsing.</p>
 <pre><code class="language-go">type PathFilterOptions struct {
     // Comma-separated list of include filters

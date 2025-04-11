@@ -53,9 +53,15 @@ func CopyReadme() {
 }
 
 func GoMarkDoc() {
-	out, err := gomarkdoc.NewRenderer()
+	docRenderrer, err := gomarkdoc.NewRenderer()
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	repo := lang.Repo{
+		Remote:        "https://github.com:icebergtech/kr8p",
+		DefaultBranch: "main",
+		PathFromRoot:  "",
 	}
 
 	err = os.Mkdir("godoc", 0750)
@@ -79,11 +85,11 @@ func GoMarkDoc() {
 		}
 
 		logger := logger.New(logger.DebugLevel)
-		pkg, err := lang.NewPackageFromBuild(logger, buildPkg)
+		pkg, err := lang.NewPackageFromBuild(logger, buildPkg, lang.PackageWithRepositoryOverrides(&repo))
 		if err != nil {
 			log.Fatal(err)
 		}
-		output, err := out.Package(pkg)
+		output, err := docRenderrer.Package(pkg)
 		if err != nil {
 			log.Fatal(err)
 		}

@@ -259,17 +259,17 @@
 <li><a href="#VMConfig">type VMConfig</a></li>
 </ul>
 <p><a name="ExtractExtFiles"></a></p>
-<h2 id="func-extractextfiles">func ExtractExtFiles</h2>
+<h2 id="func-extractextfiles">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L133">ExtractExtFiles</a></h2>
 <pre><code class="language-go">func ExtractExtFiles(spec gjson.Result) map[string]string
 </code></pre>
 <p>Extract jsonnet extVar defintions from spec.</p>
 <p><a name="ExtractJpaths"></a></p>
-<h2 id="func-extractjpaths">func ExtractJpaths</h2>
+<h2 id="func-extractjpaths">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L145">ExtractJpaths</a></h2>
 <pre><code class="language-go">func ExtractJpaths(spec gjson.Result) []string
 </code></pre>
 <p>Extract jsonnet lib paths from spec.</p>
 <p><a name="CmdJsonnetOptions"></a></p>
-<h2 id="type-cmdjsonnetoptions">type CmdJsonnetOptions</h2>
+<h2 id="type-cmdjsonnetoptions">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L280-L287">CmdJsonnetOptions</a></h2>
 <p>Options for running the jsonnet command.</p>
 <pre><code class="language-go">type CmdJsonnetOptions struct {
     Prune         bool
@@ -281,12 +281,12 @@
 }
 </code></pre>
 <p><a name="ExtFileVar"></a></p>
-<h2 id="type-extfilevar">type ExtFileVar</h2>
+<h2 id="type-extfilevar">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L206">ExtFileVar</a></h2>
 <p>Map of external files to load into jsonnet vm as external variables. Keys are the variable names, values are the paths to the files to load as strings into the jsonnet vm. To reference the variable in jsonnet code, use std.extvar("variable_name").</p>
 <pre><code class="language-go">type ExtFileVar map[string]string
 </code></pre>
 <p><a name="KomposeConvertOptions"></a></p>
-<h2 id="type-komposeconvertoptions">type KomposeConvertOptions</h2>
+<h2 id="type-komposeconvertoptions">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/kompose.go#L23-L97">KomposeConvertOptions</a></h2>
 <p>A struct describing a compose file that will be processed by kompose to produce kubernetes manifests.</p>
 <p>Based on https://github.com/kubernetes/kompose/blob/main/cmd/convert.go</p>
 <pre><code class="language-go">type KomposeConvertOptions struct {
@@ -366,17 +366,17 @@
 }
 </code></pre>
 <p><a name="Create"></a></p>
-<h3 id="func-create">func Create</h3>
+<h3 id="func-create">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/kompose.go#L100">Create</a></h3>
 <pre><code class="language-go">func Create(inputFiles []string, outDir string, cmp Kr8pComponentJsonnet) *KomposeConvertOptions
 </code></pre>
 <p>Initialie Kompose options with sensible defaults.</p>
 <p><a name="KomposeConvertOptions.Convert"></a></p>
-<h3 id="func-komposeconvertoptions-convert">func (KomposeConvertOptions) Convert</h3>
+<h3 id="func-komposeconvertoptions-convert">func (KomposeConvertOptions) <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/kompose.go#L208">Convert</a></h3>
 <pre><code class="language-go">func (k KomposeConvertOptions) Convert() (interface{}, error)
 </code></pre>
 <p>Converts a Docker Compose file described by k into a set of kubernetes manifests.</p>
 <p><a name="KomposeConvertOptions.GenKomposePkgOpts"></a></p>
-<h3 id="func-komposeconvertoptions-genkomposepkgopts">func (KomposeConvertOptions) GenKomposePkgOpts</h3>
+<h3 id="func-komposeconvertoptions-genkomposepkgopts">func (KomposeConvertOptions) <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/kompose.go#L132">GenKomposePkgOpts</a></h3>
 <pre><code class="language-go">func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions
 </code></pre>
 <p>Generates a ConvertOptions struct that kompose expects from our commented KomposeConvertOptions</p>
@@ -384,12 +384,12 @@
 <p>https://pkg.go.dev/github.com/kubernetes/kompose@v1.35.0/pkg/kobject#ConvertOptions</p>
 <p>https://github.com/kubernetes/kompose/blob/v1.35.0/pkg/app/app.go#L166</p>
 <p><a name="KomposeConvertOptions.Validate"></a></p>
-<h3 id="func-komposeconvertoptions-validate">func (KomposeConvertOptions) Validate</h3>
+<h3 id="func-komposeconvertoptions-validate">func (KomposeConvertOptions) <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/kompose.go#L196">Validate</a></h3>
 <pre><code class="language-go">func (k KomposeConvertOptions) Validate() error
 </code></pre>
 <p>Validates a set of options for converting a Kubernetes manifest to a Docker Compose file.</p>
 <p><a name="Kr8pCluster"></a></p>
-<h2 id="type-kr8pcluster">type Kr8pCluster</h2>
+<h2 id="type-kr8pcluster">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L14-L17">Kr8pCluster</a></h2>
 <p>An object that stores variables that can be referenced by components.</p>
 <pre><code class="language-go">type Kr8pCluster struct {
     Name string `json:&quot;name&quot;`
@@ -397,7 +397,7 @@
 }
 </code></pre>
 <p><a name="Kr8pClusterComponentRef"></a></p>
-<h2 id="type-kr8pclustercomponentref">type Kr8pClusterComponentRef</h2>
+<h2 id="type-kr8pclustercomponentref">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L41-L44">Kr8pClusterComponentRef</a></h2>
 <p>A reference to a component folder that contains a params.jsonnet file. This is used in the cluster jsonnet file to reference components.</p>
 <pre><code class="language-go">type Kr8pClusterComponentRef struct {
     // The path to a component folder that contains a params.jsonnet file
@@ -405,7 +405,7 @@
 }
 </code></pre>
 <p><a name="Kr8pClusterJsonnet"></a></p>
-<h2 id="type-kr8pclusterjsonnet">type Kr8pClusterJsonnet</h2>
+<h2 id="type-kr8pclusterjsonnet">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L30-L37">Kr8pClusterJsonnet</a></h2>
 <p>The specification for a clusters.jsonnet file. This describes configuration for a cluster that kr8p should process.</p>
 <pre><code class="language-go">type Kr8pClusterJsonnet struct {
     // kr8p configuration for how to process the cluster
@@ -417,7 +417,7 @@
 }
 </code></pre>
 <p><a name="Kr8pClusterSpec"></a></p>
-<h2 id="type-kr8pclusterspec">type Kr8pClusterSpec</h2>
+<h2 id="type-kr8pclusterspec">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L48-L62">Kr8pClusterSpec</a></h2>
 <p>The specification for how to process a cluster. This is used in the cluster jsonnet file to configure how kr8p should process the cluster.</p>
 <pre><code class="language-go">type Kr8pClusterSpec struct {
     // The name of the cluster
@@ -436,12 +436,12 @@
 }
 </code></pre>
 <p><a name="CreateClusterSpec"></a></p>
-<h3 id="func-createclusterspec">func CreateClusterSpec</h3>
+<h3 id="func-createclusterspec">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L66-L71">CreateClusterSpec</a></h3>
 <pre><code class="language-go">func CreateClusterSpec(clusterName string, spec gjson.Result, kr8Opts Kr8pOpts, genDirOverride string) (Kr8pClusterSpec, error)
 </code></pre>
 <p>This function creates a Kr8ClusterSpec from passed params. If genDirOverride is empty, the value of generate_dir from the spec is used.</p>
 <p><a name="Kr8pComponentJsonnet"></a></p>
-<h2 id="type-kr8pcomponentjsonnet">type Kr8pComponentJsonnet</h2>
+<h2 id="type-kr8pcomponentjsonnet">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L101-L113">Kr8pComponentJsonnet</a></h2>
 <p>The specification for component's params.jsonnet file. It contains all the configuration and variables used to generate component resources. This configuration is often modified from the cluster config to add cluster-specific configuration.</p>
 <pre><code class="language-go">type Kr8pComponentJsonnet struct {
     // Component-specific configuration for how kr8p should process the component (required)
@@ -458,7 +458,7 @@
 }
 </code></pre>
 <p><a name="Kr8pComponentSpec"></a></p>
-<h2 id="type-kr8pcomponentspec">type Kr8pComponentSpec</h2>
+<h2 id="type-kr8pcomponentspec">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L117-L130">Kr8pComponentSpec</a></h2>
 <p>The kr8_spec object in a cluster config file. This configures how kr8p processes the component.</p>
 <pre><code class="language-go">type Kr8pComponentSpec struct {
     // If true, includes the parameters of the current cluster when generating this component
@@ -476,12 +476,12 @@
 }
 </code></pre>
 <p><a name="CreateComponentSpec"></a></p>
-<h3 id="func-createcomponentspec">func CreateComponentSpec</h3>
+<h3 id="func-createcomponentspec">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L172">CreateComponentSpec</a></h3>
 <pre><code class="language-go">func CreateComponentSpec(spec gjson.Result) (Kr8pComponentSpec, error)
 </code></pre>
 <p>Extracts a component spec from a jsonnet object.</p>
 <p><a name="Kr8pComponentSpecIncludeObject"></a></p>
-<h2 id="type-kr8pcomponentspecincludeobject">type Kr8pComponentSpecIncludeObject</h2>
+<h2 id="type-kr8pcomponentspecincludeobject">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L211-L221">Kr8pComponentSpecIncludeObject</a></h2>
 <p>An includes object which configures how kr8p includes an object. It allows configuring the included file's destination directory and file name. The input file will be processed differently depending on the filetype.</p>
 <pre><code class="language-go">type Kr8pComponentSpecIncludeObject struct {
     // an input file to process
@@ -496,34 +496,34 @@
 }
 </code></pre>
 <p><a name="Kr8pComponentSpecIncludes"></a></p>
-<h2 id="type-kr8pcomponentspecincludes">type Kr8pComponentSpecIncludes</h2>
+<h2 id="type-kr8pcomponentspecincludes">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L224">Kr8pComponentSpecIncludes</a></h2>
 <p>Define Kr8pComponentSpecIncludes to handle dynamic decoding.</p>
 <pre><code class="language-go">type Kr8pComponentSpecIncludes []Kr8pComponentSpecIncludeObject
 </code></pre>
 <p><a name="ExtractIncludes"></a></p>
-<h3 id="func-extractincludes">func ExtractIncludes</h3>
+<h3 id="func-extractincludes">func <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L156">ExtractIncludes</a></h3>
 <pre><code class="language-go">func ExtractIncludes(spec gjson.Result) (Kr8pComponentSpecIncludes, error)
 </code></pre>
 <p>Extract jsonnet includes filenames or objects from spec.</p>
 <p><a name="Kr8pComponentSpecIncludes.UnmarshalJSON"></a></p>
-<h3 id="func-kr8pcomponentspecincludes-unmarshaljson">func (*Kr8pComponentSpecIncludes) UnmarshalJSON</h3>
+<h3 id="func-kr8pcomponentspecincludes-unmarshaljson">func (*Kr8pComponentSpecIncludes) <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L227">UnmarshalJSON</a></h3>
 <pre><code class="language-go">func (k *Kr8pComponentSpecIncludes) UnmarshalJSON(data []byte) error
 </code></pre>
 <p>Implement custom unmarshaling for dynamic decoding.</p>
 <p><a name="Kr8pError"></a></p>
-<h2 id="type-kr8perror">type Kr8pError</h2>
+<h2 id="type-kr8perror">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L299-L302">Kr8pError</a></h2>
 <pre><code class="language-go">type Kr8pError struct {
     Message string
     Value   interface{}
 }
 </code></pre>
 <p><a name="Kr8pError.Error"></a></p>
-<h3 id="func-kr8perror-error">func (Kr8pError) Error</h3>
+<h3 id="func-kr8perror-error">func (Kr8pError) <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L305">Error</a></h3>
 <pre><code class="language-go">func (e Kr8pError) Error() string
 </code></pre>
 <p>Error implements error.</p>
 <p><a name="Kr8pOpts"></a></p>
-<h2 id="type-kr8popts">type Kr8pOpts</h2>
+<h2 id="type-kr8popts">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L19-L26">Kr8pOpts</a></h2>
 <pre><code class="language-go">type Kr8pOpts struct {
     // Base directory of kr8p configuration
     BaseDir string
@@ -534,7 +534,7 @@
 }
 </code></pre>
 <p><a name="VMConfig"></a></p>
-<h2 id="type-vmconfig">type VMConfig</h2>
+<h2 id="type-vmconfig">type <a href="https://github.com:icebergtech/kr8p/blob/main/pkg/types/types.go#L290-L297">VMConfig</a></h2>
 <p>VMConfig describes configuration to initialize the Jsonnet VM with.</p>
 <pre><code class="language-go">type VMConfig struct {
     // Jpaths is a list of paths to search for Jsonnet libraries (libsonnet files)

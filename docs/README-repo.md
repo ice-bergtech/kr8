@@ -87,7 +87,7 @@ A typical repo that uses **kr8+** has the following parts:
 A cluster is a deployment environment, organized in folders as a tree of configuration.
 Configuration the folders is layered on the parent folder's configuration, allowing you to override or extend configurations.
 
-Cluster Spec: [types.Kr8ClusterJsonnet](./godoc/kr8p-types.md#Kr8ClusterJsonnet)
+Cluster Spec: [types.Kr8ClusterJsonnet](./godoc/kr8p-types.md#Kr8pClusterJsonnet)
 
 More information: [Managing Clusters](./concepts/clusters.md)
 
@@ -96,7 +96,7 @@ More information: [Managing Clusters](./concepts/clusters.md)
 A component is a deployable unit that you wish to install in one or more clusters.
 Components can be declared multiple times within a cluster, as long as they are named distinctly when loaded.
 
-Component Spec: [types.Kr8ComponentJsonnet](./godoc/kr8p-types.md#Kr8ComponentJsonnet)
+Component Spec: [types.Kr8ComponentJsonnet](./godoc/kr8p-types.md#Kr8pComponentJsonnet)
 
 More information: [Managing Components](./concepts/components.md)
 
