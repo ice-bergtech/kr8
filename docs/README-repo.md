@@ -121,7 +121,7 @@ Manifest changes are checked into source control, allowing them to be ingested b
 
 ### Further Information
 
-* [Command Documentation](./cmd/kr8.md)
+* [Command Documentation](./cmd/kr8p.md)
 * **kr8+**
   * [Concepts](./concepts/overview.md)
   * [Managing Clusters](./concepts/clusters.md)

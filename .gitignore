@@ -3,3 +3,5 @@ dist/
 bin
 *.tar.gz
 kr8
+kr8p
+!kr8p/*
