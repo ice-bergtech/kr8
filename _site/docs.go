@@ -34,8 +34,8 @@ func CopyReadme() {
 		log.Fatal(err)
 	}
 
-	fixed := strings.Replace(string(iFile), "docs/", "", -1)
-	err = os.WriteFile(destinationFile, []byte(fixed), 0644)
+	fixed := strings.ReplaceAll(string(iFile), "docs/", "")
+	err = os.WriteFile(destinationFile, []byte(fixed), 0600)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,7 +46,7 @@ func CopyReadme() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = os.WriteFile(destinationFile, iFile, 0644)
+	err = os.WriteFile(destinationFile, iFile, 0600)
 	if err != nil {
 		log.Fatal(err)
 	}
