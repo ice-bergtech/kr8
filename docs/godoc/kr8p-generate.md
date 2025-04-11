@@ -1,7 +1,7 @@
 # generate
 
 ```go
-import "github.com/ice-bergtech/kr8/pkg/generate"
+import "github.com/ice-bergtech/kr8p/pkg/generate"
 ```
 
 ## Index

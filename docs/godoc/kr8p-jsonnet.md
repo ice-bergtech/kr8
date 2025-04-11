@@ -1,7 +1,7 @@
 # jnetvm
 
 ```go
-import "github.com/ice-bergtech/kr8/pkg/jnetvm"
+import "github.com/ice-bergtech/kr8p/pkg/jnetvm"
 ```
 
 Package jvm contains the jsonnet rendering logic.

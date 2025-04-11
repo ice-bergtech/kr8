@@ -25,13 +25,13 @@ Build are produced for:
 
 
 ```sh
-apk add kr8_$VERSION_linux_amd64.apk
+apk add kr8p_$VERSION_linux_amd64.apk
 ```
 
 ```sh
-deb install kr8_$VERSION_linux_amd64.deb
+deb install kr8p_$VERSION_linux_amd64.deb
 ```
 
 ```sh
-rpm install kr8_$VERSION_linux_amd64.rpm
+rpm install kr8p_$VERSION_linux_amd64.rpm
 ```

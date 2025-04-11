@@ -1,7 +1,7 @@
 # kr8init
 
 ```go
-import "github.com/ice-bergtech/kr8/pkg/kr8_init"
+import "github.com/ice-bergtech/kr8p/pkg/kr8_init"
 ```
 
 ## Index

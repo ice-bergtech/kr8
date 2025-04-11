@@ -1,7 +1,7 @@
 # util
 
 ```go
-import "github.com/ice-bergtech/kr8/pkg/util"
+import "github.com/ice-bergtech/kr8p/pkg/util"
 ```
 
 Utility functions for directories and files

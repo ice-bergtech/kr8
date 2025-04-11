@@ -1,7 +1,7 @@
 # types
 
 ```go
-import "github.com/ice-bergtech/kr8/pkg/types"
+import "github.com/ice-bergtech/kr8p/pkg/types"
 ```
 
 ## Index

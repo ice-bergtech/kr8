@@ -18,7 +18,7 @@ By leveraging best practices and providing a structured approach, **kr8+** helps
 * **Simplicity**: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.
 * **Scalability**: Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.
 
-![kr8+ workflow](diagram/kr8-workflow.png)
+![kr8+ workflow](diagram/kr8p-workflow.png)
 
 To get started, check out one of the following:
 
@@ -30,10 +30,10 @@ To get started, check out one of the following:
 
 For documentation of the code, see the godoc directory:
 
-* [cmd](godoc/kr8-cmd.md) - how kr8+ processes commands and flags
-* [pkg/jvm](godoc/kr8-jsonnet.md) - how kr8+ processes jsonnet
-* [pkg/types](godoc/kr8-types.md) - standard types used by kr8+
-* [pkg/util](godoc/kr8-util.md) - utility functions used by kr8+
+* [cmd](godoc/kr8p-cmd.md) - how kr8+ processes commands and flags
+* [pkg/jvm](godoc/kr8p-jsonnet.md) - how kr8+ processes jsonnet
+* [pkg/types](godoc/kr8p-types.md) - standard types used by kr8+
+* [pkg/util](godoc/kr8p-util.md) - utility functions used by kr8+
 
 
-![kr8+ Gopher](./kr8_gopher.png)
+![kr8+ Gopher](./kr8p_gopher.png)

@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	cmd "github.com/ice-bergtech/kr8/cmd"
+	cmd "github.com/ice-bergtech/kr8p/cmd"
 	"github.com/princjef/gomarkdoc"
 	"github.com/princjef/gomarkdoc/lang"
 	"github.com/princjef/gomarkdoc/logger"
@@ -64,12 +64,12 @@ func GoMarkDoc() {
 	}
 
 	docfiles := map[string]string{
-		"../cmd":          "kr8-cmd.md",
-		"../pkg/jnetvm":   "kr8-jsonnet.md",
-		"../pkg/types":    "kr8-types.md",
-		"../pkg/util":     "kr8-util.md",
-		"../pkg/kr8_init": "kr8-init.md",
-		"../pkg/generate": "kr8-generate.md",
+		"../cmd":          "kr8p-cmd.md",
+		"../pkg/jnetvm":   "kr8p-jsonnet.md",
+		"../pkg/types":    "kr8p-types.md",
+		"../pkg/util":     "kr8p-util.md",
+		"../pkg/kr8_init": "kr8p-init.md",
+		"../pkg/generate": "kr8p-generate.md",
 	}
 
 	for pkgPath, pkgDoc := range docfiles {
