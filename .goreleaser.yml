@@ -98,14 +98,17 @@ brews:
     - 'Authorization: bearer #{ENV["HOMEBREW_TAP_GITHUB_TOKEN"]}'
     download_strategy: CurlDownloadStrategy
     repository:
+      # defaults to github
       owner: ice-bergtech
       name: homebrew-icetech
       branch: main
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
       pull_request:
         enabled: true
-      git:
-        url: 'git@github.com:ice-bergtech/homebrew-icetech.git'
+      # git:
+      #   url: 'git@github.com:ice-bergtech/homebrew-icetech.git'
+      #   private_key: '{{ .Env.PRIVATE_KEY_PATH }}'
+
 
     commit_author:
       name: release
