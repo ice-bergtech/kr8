@@ -1,5 +1,4 @@
-name: Goreleaer Build and Publish 
-
+name: Goreleaser Build and Publish 
 on:
   push:
     branches:
