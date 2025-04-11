@@ -116,7 +116,7 @@ brews:
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
 
     homepage: "https://ice-bergtech.github.io/kr8"
-    description: "Opinionated configuration management tool for Kubernetes Cluster"
+    description: "An opinionated configuration management tool for Kubernetes Clusters"
     license: MIT
     install: |
       bin.install "kr8"
@@ -124,3 +124,4 @@ brews:
     dependencies:
       - helm
       - jsonnet
+      # - go-task
