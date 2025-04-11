@@ -105,7 +105,7 @@ func MergeComponentDefaults(componentMap map[string]types.Kr8ClusterComponentRef
 func NativeHelmTemplate() *jsonnet.NativeFunction
 ```
 
-Allows executing helm template to process a helm chart and make available to kr8p configuration.
+Allows executing helm template to process a helm chart and make available to kr8 configuration.
 
 Source: https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L23
 

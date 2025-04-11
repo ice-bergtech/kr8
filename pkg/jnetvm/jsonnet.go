@@ -139,7 +139,7 @@ func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmC
 
 	// Create a new VM instance
 	jvm, _ := JsonnetVM(vmConfig)
-	// Setup kr8p config as external vars
+	// Setup kr8 config as external vars
 	jvm.ExtCode("kr8_cluster", "std.prune("+config+"._cluster)")
 	jvm.ExtCode("kr8_components", "std.prune("+config+"._components)")
 	jvm.ExtCode("kr8", "std.prune("+config+"."+cmdFlagsJsonnet.Component+")")

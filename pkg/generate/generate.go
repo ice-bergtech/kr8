@@ -333,7 +333,7 @@ func GenProcessCluster(
 		return err
 	}
 
-	// get kr8p settings for cluster
+	// get kr8 settings for cluster
 	kr8Spec, err := types.CreateClusterSpec(clusterName, gjson.Parse(renderedKr8Spec),
 		kr8Opts, generateDirOverride,
 	)
