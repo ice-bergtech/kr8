@@ -21,7 +21,7 @@ fi
   [ -d "init-test/clusters" ]
   [ -d "init-test/components" ]
   [ -d "init-test/lib" ]
-  [ -d "init-test/lib/klib" ]
+  [ -d "init-test/lib/kube-lib" ]
   rm -rf ./init-test
 }
 

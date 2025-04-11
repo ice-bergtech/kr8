@@ -1,15 +1,30 @@
 
 # kr8+
 
-<img src="docs/kr8_gopher.png" alt="kr8+ Gopher" width="400" align="right" >
+<img src="./docs/kr8_gopher.png" alt="kr8+ Gopher" width="400" align="right" >
 
 [![CI status](https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg)](https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI)
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.24-61CFDD.svg?style=flat-square)
 
-**kr8+** is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters. By leveraging best practices and providing a structured approach, **kr8+** helps DevOps teams streamline their workflows and maintain consistency across multiple environments.
+**kr8+** is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.By leveraging best practices and providing a structured approach, **kr8+** helps DevOps teams streamline their workflows and maintain consistency across multiple environments.
 
 **kr8+** is `pre-1.0`.
-This means that breaking changes will still happen from time to time, but it's stable enough for both scripting and interactive use.
+This means that breaking changes still happen from time to time, but it's stable enough for both scripting and interactive use in production environments.
+
+<p align="center">
+   <a href="https://github.com/ice-bergtech/kr8/releases">Releases</a> ·
+	<a href="./docs/index.md">Documentation</a> ·
+	<a href="https://github.com/ice-bergtech/kr8/issues">Get Help</a>
+</p>
+
+## Menu
+
+* [Key Features](#key-features)
+* [Technical Overview](#technical-overview)
+* [Installation](#installation)
+  * [configuration](#configuration)
+* [Full Documentation](./docs/index.md)
+* [Development](#development)
 
 ## Key Features
 
@@ -18,6 +33,11 @@ This means that breaking changes will still happen from time to time, but it's s
 * **Jsonnet Native Funcitons**: Use jsonnet to render and override component config from multiple sources, such as templates, docker-compose files, Kustomize, and Helm.
 * **Extensibility**: Easily extensible to meet the needs of diverse Kubernetes environments.
 * **CI/CD Friendly**: Statically define all your configuration in a single source of truth, making it easy to integrate with CI/CD pipelines and deployment automation like ArgoCD.
+* **Standardization**: Ensures consistency across Kubernetes clusters, reducing errors and improving maintainability.
+* **Simplicity**: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.
+* **Scalability**: Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.
+
+![kr8+ workflow](./docs/diagram/kr8-workflow.png)
 
 ## Technical Overview
 
@@ -27,32 +47,30 @@ This means that breaking changes will still happen from time to time, but it's s
 - [go-jsonnet](https://pkg.go.dev/github.com/google/go-jsonnet) `v0.20.0`
 - [ghodss/yaml](https://github.com/ghodss/yaml) `v1.0.0`
 - [Grafana/tanka helm](https://github.com/grafana/tanka/pkg/helm) `v0.27.1`
-- [kompose](https://github.com/kubernetes/kompose) `v1.35.0`
+- [kubernetes/kompose](https://github.com/kubernetes/kompose) `v1.35.0`
 - [Masterminds/sprig v3 Template Library](https://pkg.go.dev/github.com/Masterminds/sprig#section-readme) - [Template Documentation](https://masterminds.github.io/sprig/) `v3.2.3`
 
-## Why use kr8+?
 
-* **Standardization**: Ensures consistency across Kubernetes clusters, reducing errors and improving maintainability.
-* **Simplicity**: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.
-* **Scalability**: Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.
-
-
-## Getting Started
-
-An example of a repo can be found in the [example](./example) folder.
-
-### Installation
+## Installation
 
 The latest version is available for download from the [Github releases page](https://github.com/ice-bergtech/kr8/releases).
 
-Once installed, you can use `kr8 init` commands to setup the initial structure and configurations.
+Once installed, use `kr8 init` commands to setup the initial structure and configurations.
+
+## Getting Started
+
+An working example of a repo is found at [ice-bergtech/kr8-examples](https://github.com/ice-bergtech/kr8-examples):
+
+```sh
+git clone git@github.com:ice-bergtech/kr8-examples.git
+```
 
 ### Configuration
 
 All configuration for **kr8+** is written in [Jsonnet](https://jsonnet.org/).
 Jsonnet was chosen because it allows us to use code for configuration, while staying as close to JSON as possible.
 
-A typical repo that uses **kr8+** will have the following parts:
+A typical repo that uses **kr8+** has the following parts:
 
 * Cluster Configurations
 * Component Configurations
@@ -63,18 +81,18 @@ A typical repo that uses **kr8+** will have the following parts:
 A cluster is a deployment environment, organized in folders as a tree of configuration.
 Configuration the folders is layered on the parent folder's configuration, allowing you to override or extend configurations.
 
-Cluster Spec: [types.Kr8ClusterJsonnet](docs/godoc/kr8-types.md#Kr8ClusterJsonnet)
+Cluster Spec: [types.Kr8ClusterJsonnet](./docs/godoc/kr8-types.md#Kr8ClusterJsonnet)
 
-More information: [Managing Clusters](docs/concepts/clusters.md)
+More information: [Managing Clusters](./docs/concepts/clusters.md)
 
 #### Conponents Configurations
 
 A component is a deployable unit that you wish to install in one or more clusters.
 Components can be declared multiple times within a cluster, as long as they are named distinctly when loaded.
 
-Component Spec: [types.Kr8ComponentJsonnet](docs/godoc/kr8-types.md#Kr8ComponentJsonnet)
+Component Spec: [types.Kr8ComponentJsonnet](./docs/godoc/kr8-types.md#Kr8ComponentJsonnet)
 
-More information: [Managing Components](docs/concepts/components.md)
+More information: [Managing Components](./docs/concepts/components.md)
 
 #### Jsonnet Libraries
 
@@ -86,31 +104,31 @@ Common libraries include:
 * [kr8-libesonnet](https://github.com/ice-bergtech/kr8-libsonnet)
 * [kube-libsonnet](https://github.com/kube-libsonnet/kube-libsonnet)
 
-More information: [Jsonnet Libraries](docs/concepts/jsonnetlibs.md)
+More information: [Jsonnet Libraries](./docs/concepts/overview.md)
 
 ### Deployment
 
 To generate the final configured manifests, just run `kr8 generate`.
-This will read the configuration files and generate the final manifests based on the parameters provided.
+**kr8+** reads the cluster and components configuration files and generates the final manifests based on the parameters provided.
 
-These manifests can then be checking into source control, and ingested by tools like ArgoCD, Portainer, Rancher etc.
+Manifest changes are checked into source control, allowing them to be ingested by tools like ArgoCD, Portainer, Rancher etc.
 
 ### Further Information
 
-* [Command Documentation](docs/cmd/kr8.md)
+* [Command Documentation](./docs/cmd/kr8.md)
 * **kr8+**
-  * [Concepts](docs/concepts/overview.md)
-  * [Managing Clusters](docs/concepts/clusters.md)
-  * [Creating Components](docs/concepts/components.md)
-  * [Native Functions](docs/components/nativefuncs.md)
-* [Code Documentation](docs/godoc)
+  * [Concepts](./docs/concepts/overview.md)
+  * [Managing Clusters](./docs/concepts/clusters.md)
+  * [Creating Components](./docs/concepts/components.md)
+  * [Native Functions](./docs/concepts/nativefuncs.md)
+* [Code Documentation](./docs/godoc)
 
 ## Development
 
 **kr8+** is coded in [Golang](https://golang.org/).
 Currently, version `1.24.2` is used.
 
-Common tasks are described in [Taskfile.yml](Taskfile.yml), and can be executed with `go-task`.
+Common tasks are described in [Taskfile.yml](Taskfile.yml), and can be executed with [go-task](https://taskfile.dev/installation/).
 
 ### Dependencies
 
@@ -123,7 +141,7 @@ Common tasks are described in [Taskfile.yml](Taskfile.yml), and can be executed 
 
 ### Setup
 
-Once `go-task` is [installed](https://taskfile.dev/installation/), you can easily your environment by running:
+Once [`go-task` is installed](https://taskfile.dev/installation/), you can easily setup your environment by running:
 
 ```sh
 # Install dev tools
@@ -162,16 +180,16 @@ task build-snapshot
 
 ### Tests
 
-There are few sets of tests:
+There are a few sets of tests:
 
 - Unit Tests: `go test ./...` or `task test`
 - Integration Tests using `bats`: `task test-package`
-- Generate examples: `./kr8 generate -B example` or `task gen`
+- Generate examples repo: `./kr8 generate -B examples` or `task gen`
 
 ### Build Troubleshooting
 
-* Dependencies download fail: There is a big number of reasons this could fail but the most important might be:
-   * Networking problems: Check your connection to: github.com, golang.org and k8s.io.
+* Dependencies download fail: There is a large number of reasons why this could fail.  Be sure to check:
+   * Networking problems: Check your connection to: `github.com`, `golang.org` and `k8s.io`.
    * Disk space: If no space is available on the disk, this step might fail.
 * The comand `go build` does not start the build:
    * Confirm you are in the correct project directory
@@ -198,7 +216,17 @@ Parts of the code are derived from:
 **kr8+** is a fork of [kr8](https://github.com/apptio/kr8) with some additional features and improvements.
 **kr8** was used in production to great success at Apptio for managing components of multiple Kubernetes clusters.
 
+VSCode plugins:
+
+* [EditorConfig](https://open-vsx.org/vscode/item?itemName=EditorConfig.EditorConfig)
+* [Jsonnet Language Server](https://open-vsx.org/vscode/item?itemName=Grafana.vscode-jsonnet)
+
+
+Docs:
+
 * [Jsonnet Standard Library](https://jsonnet.org/ref/stdlib.html)
 * [Jsonnet Language Reference](https://jsonnet.org/ref/language.html)
 * [Sprig Template Documentation](https://masterminds.github.io/sprig/)
 * [The growing need for Kubernetes Configuration Management](https://leebriggs.co.uk/blog/2018/05/08/kubernetes-config-mgmt.html)
+
+Alternatives:

@@ -108,9 +108,11 @@ var FormatCmd = &cobra.Command{
 
 ```go
 var GenerateCmd = &cobra.Command{
-    Use:   "generate [flags]",
-    Short: "Generate components",
-    Long:  `Generate components in clusters`,
+    Use:     "generate [flags]",
+    Aliases: []string{"gen"},
+    Short:   "Generate components",
+    Long:    `Generate components in clusters`,
+    Example: "kr8 generate",
 
     Args: cobra.MinimumNArgs(0),
     Run:  GenerateCommand,
@@ -407,7 +409,7 @@ and initialize a git repo so you can get started`,
         if cmdInitFlags.InitUrl != "" {
             util.FatalErrorCheck(
                 "Issue fetching repo",
-                util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, cmdInitFlags.Fetch),
+                util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, !cmdInitFlags.Fetch),
             )
 
             return
@@ -614,7 +616,7 @@ func Execute(ver string)
 Execute adds all child commands to the root command sets flags appropriately. This is called by main.main\(\). It only needs to happen once to the rootCmd.
 
 <a name="GenerateCommand"></a>
-## func [GenerateCommand](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L63>)
+## func [GenerateCommand](<https://github.com/ice-bergtech/kr8/blob/main/cmd/generate.go#L65>)
 
 ```go
 func GenerateCommand(cmd *cobra.Command, args []string)

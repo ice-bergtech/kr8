@@ -23,7 +23,7 @@ func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error) {
 		return err
 	})
 	if err != nil {
-		return ClusterData, GenErrorIfCheck("Error building cluster list", err)
+		return ClusterData, GenErrorIfCheck("error building cluster list", err)
 	}
 
 	for _, file := range fileList {
@@ -41,6 +41,7 @@ func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error) {
 }
 
 // Get a specific cluster within a directory by name.
+// Walks the cluster directory searching for the given clusterName.
 // Returns the path to the cluster.
 func GetClusterPaths(searchDir string, clusterName string) (string, error) {
 	clusterPath := ""
@@ -57,10 +58,10 @@ func GetClusterPaths(searchDir string, clusterName string) (string, error) {
 		}
 	})
 	if err != nil {
-		return "", GenErrorIfCheck("Error building cluster list", err)
+		return "", GenErrorIfCheck("error building cluster list", err)
 	}
 	if clusterPath == "" {
-		return "", types.Kr8Error{Message: "Could not find cluster: " + clusterName, Value: ""}
+		return "", types.Kr8Error{Message: "error: could not find cluster: " + clusterName, Value: ""}
 	}
 
 	return clusterPath, nil
@@ -106,6 +107,7 @@ func GetClusterParamsFilenames(basePath string, targetPath string) []string {
 	return results
 }
 
+// Given a map of filenames, prunes all *.yaml files that are NOT in the map from the directory.
 func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error {
 	// clean component dir
 	dir, err := os.Open(filepath.Clean(componentOutputDir))

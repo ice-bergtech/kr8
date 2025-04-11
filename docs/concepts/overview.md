@@ -15,6 +15,12 @@ You will have:
 * components that are only installed on _some_ clusters (services, hardware dependent workloads)
 * components that have multiple versions/deployments installed on a single cluster (upgrades, namespacing)
 
+For working examples of everything, check out the [ice-bergtech/kr8-examples](https://github.com/ice-bergtech/kr8-examples) repo.
+
+![kr8+ generate](../diagram/kr8-generate-process-design.png)
+
+![kr+ generate process](../diagram/kr8-generate-process-design.png)
+
 ### Components
 
 A component is something you install in your cluster to make it function and work as you expect.
@@ -54,8 +60,8 @@ clusters
     │   │   └── cluster.jsonnet
     │   └── prod
     │       ├── cluster.jsonnet # prod-level configs
-            ├── workloads-1
-            │   └── cluster.jsonnet
+    │       ├── workloads-1
+    │       │   └── cluster.jsonnet
     │       └── workloads-2
     │           └── cluster.jsonnet
     └── region-2

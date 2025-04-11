@@ -20,8 +20,8 @@ std.native("template")(config json, str string) (string)
 
 Example:
 
-```jsonnet
-local templateOutput = std.native('template')(config.data, "Hello {{ .Name }}");
+```go
+local templateOutput = std.native("template")(config.data, "Hello {{ .Name }}");
 ```
 
 
@@ -40,8 +40,8 @@ std.native("helmTemplate")(name string, chart string, opts TemplateOpts) (manife
 
 Example:
 
-```jsonnet
-local helm_template = std.native('helmTemplate')(config.release_name, "./vendor/"+config.chart_version, {
+```go
+local helm_template = std.native("helmTemplate")(config.release_name, "./vendor/"+config.chart_version, {
     calledFrom: std.thisFile,
     namespace: config.namespace,
     values: config.helm_values,
@@ -50,7 +50,7 @@ local helm_template = std.native('helmTemplate')(config.release_name, "./vendor/
 [
     object
     for object in std.objectValues(helm_template)
-    if 'kind' in object && object.kind != 'Secret'
+    if "kind" in object && object.kind != "Secret"
 ]
 ```
 
@@ -70,8 +70,8 @@ std.native("escapeStringRegex")(str string) (string)
 
 Example:
 
-```jsonnet
-local clean_string = std.native('escapeStringRegex')(config.knarly_string);
+```go
+local clean_string = std.native("escapeStringRegex")(config.knarly_string);
 ```
 
 ## regexMatch
@@ -86,7 +86,8 @@ std.native("regexMatch")(regex string, str string) (bool)
 
 Example:
 
-```jsonnet
+```go
+// check if a string is numbers
 if std.native("regexMatch")("\d+", config.thing) then config.thing else ""
 ```
 
@@ -102,6 +103,6 @@ std.native("regexSubst")(regex string, src string, repl string) (string)
 
 Example:
 
-```jsonnet
+```go
 local stringVar = std.native("regexSubst")("\d", config.thing, "<num>");
 ```

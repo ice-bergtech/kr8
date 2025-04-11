@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Iceberg Tech" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Repo Readme - kr8+ Docs</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Repo Readme";
+        var mkdocs_page_input_path = "README-repo.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> kr8+ Docs
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Repo Readme</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#menu">Menu</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-features">Key Features</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#technical-overview">Technical Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#clusters-configurations">Clusters Configurations</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#conponents-configurations">Conponents Configurations</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#jsonnet-libraries">Jsonnet Libraries</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#deployment">Deployment</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#further-information">Further Information</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#development">Development</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#dependencies">Dependencies</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#setup">Setup</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#running-tasks">Running Tasks</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tests">Tests</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#build-troubleshooting">Build Troubleshooting</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#license">License</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#references-and-additional-resources">References and Additional Resources</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/ice-bergtech/kr8-examples">Examples 🔗</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Concepts</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../concepts/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../concepts/clusters/">Clusters</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../concepts/components/">Components</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../concepts/nativefuncs/">Native Funcs</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../helpers/">Helpers</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Cmd Docs</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cmd/kr8/">kr8</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cmd/kr8_version/">kr8 version</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cmd/kr8_generate/">kr8 generate</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cmd/kr8_format/">kr8 format</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >kr8 get</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_get/">kr8 get</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_get_clusters/">kr8 get clusters</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_get_components/">kr8 get components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_get_params/">kr8 get params</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >kr8 init</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_init/">kr8 init</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_init_cluster/">kr8 init cluster</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_init_component/">kr8 init component</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_init_repo/">kr8 init repo</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >kr8 jsonnet</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_jsonnet/">kr8 jsonnet</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_jsonnet_render/">kr8 jsonnet render</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >kr8 render</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_render/">kr8 render</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_render_helm/">kr8 render helm</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../cmd/kr8_render_jsonnet/">kr8 render jsonnet</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Godocs</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../godoc/kr8-cmd/">kr8-cmd</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../godoc/kr8-generate/">kr8-generate</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../godoc/kr8-init/">kr8-init</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../godoc/kr8-jsonnet/">kr8-jsonnet</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../godoc/kr8-types/">kr8-types</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../godoc/kr8-util/">kr8-util</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">kr8+ Docs</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Repo Readme</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/ice-bergtech/kr8/blob/main/docs/README-repo.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="kr8">kr8+</h1>
+<p><img src="./kr8_gopher.png" alt="kr8+ Gopher" width="400" align="right" ></p>
+<p><a href="https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI"><img alt="CI status" src="https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg" /></a>
+<img alt="Go Version" src="https://img.shields.io/badge/go%20version-%3E=1.24-61CFDD.svg?style=flat-square" /></p>
+<p><strong>kr8+</strong> is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.By leveraging best practices and providing a structured approach, <strong>kr8+</strong> helps DevOps teams streamline their workflows and maintain consistency across multiple environments.</p>
+<p><strong>kr8+</strong> is <code>pre-1.0</code>.
+This means that breaking changes still happen from time to time, but it's stable enough for both scripting and interactive use in production environments.</p>
+<p align="center">
+   <a href="https://github.com/ice-bergtech/kr8/releases">Releases</a> ·
+    <a href="./index.md">Documentation</a> ·
+    <a href="https://github.com/ice-bergtech/kr8/issues">Get Help</a>
+</p>
+
+<h2 id="menu">Menu</h2>
+<ul>
+<li><a href="#key-features">Key Features</a></li>
+<li><a href="#technical-overview">Technical Overview</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#configuration">configuration</a></li>
+<li><a href="../">Full Documentation</a></li>
+<li><a href="#development">Development</a></li>
+</ul>
+<h2 id="key-features">Key Features</h2>
+<ul>
+<li><strong>Cluster Configuration Management</strong>: Manage Kubernetes clusters across environments, regions and platforms with a declarative and centralized approach.</li>
+<li><strong>Opinionated Structure</strong>: Enforces best practices for consistent and reliable cluster configurations.</li>
+<li><strong>Jsonnet Native Funcitons</strong>: Use jsonnet to render and override component config from multiple sources, such as templates, docker-compose files, Kustomize, and Helm.</li>
+<li><strong>Extensibility</strong>: Easily extensible to meet the needs of diverse Kubernetes environments.</li>
+<li><strong>CI/CD Friendly</strong>: Statically define all your configuration in a single source of truth, making it easy to integrate with CI/CD pipelines and deployment automation like ArgoCD.</li>
+<li><strong>Standardization</strong>: Ensures consistency across Kubernetes clusters, reducing errors and improving maintainability.</li>
+<li><strong>Simplicity</strong>: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.</li>
+<li><strong>Scalability</strong>: Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.</li>
+</ul>
+<p><img alt="kr8+ workflow" src="../diagram/kr8-workflow.png" /></p>
+<h2 id="technical-overview">Technical Overview</h2>
+<p><strong>kr8+</strong> consists of:</p>
+<ul>
+<li><strong>kr8+</strong> - a Go binary for rendering manifests</li>
+<li><a href="https://pkg.go.dev/github.com/google/go-jsonnet">go-jsonnet</a> <code>v0.20.0</code></li>
+<li><a href="https://github.com/ghodss/yaml">ghodss/yaml</a> <code>v1.0.0</code></li>
+<li><a href="https://github.com/grafana/tanka/pkg/helm">Grafana/tanka helm</a> <code>v0.27.1</code></li>
+<li><a href="https://github.com/kubernetes/kompose">kubernetes/kompose</a> <code>v1.35.0</code></li>
+<li><a href="https://pkg.go.dev/github.com/Masterminds/sprig#section-readme">Masterminds/sprig v3 Template Library</a> - <a href="https://masterminds.github.io/sprig/">Template Documentation</a> <code>v3.2.3</code></li>
+</ul>
+<h2 id="installation">Installation</h2>
+<p>The latest version is available for download from the <a href="https://github.com/ice-bergtech/kr8/releases">Github releases page</a>.</p>
+<p>Once installed, use <code>kr8 init</code> commands to setup the initial structure and configurations.</p>
+<h2 id="getting-started">Getting Started</h2>
+<p>An working example of a repo is found at <a href="https://github.com/ice-bergtech/kr8-examples">ice-bergtech/kr8-examples</a>:</p>
+<pre><code class="language-sh">git clone git@github.com:ice-bergtech/kr8-examples.git
+</code></pre>
+<h3 id="configuration">Configuration</h3>
+<p>All configuration for <strong>kr8+</strong> is written in <a href="https://jsonnet.org/">Jsonnet</a>.
+Jsonnet was chosen because it allows us to use code for configuration, while staying as close to JSON as possible.</p>
+<p>A typical repo that uses <strong>kr8+</strong> has the following parts:</p>
+<ul>
+<li>Cluster Configurations</li>
+<li>Component Configurations</li>
+<li>Jsonnet Libraries</li>
+</ul>
+<h4 id="clusters-configurations">Clusters Configurations</h4>
+<p>A cluster is a deployment environment, organized in folders as a tree of configuration.
+Configuration the folders is layered on the parent folder's configuration, allowing you to override or extend configurations.</p>
+<p>Cluster Spec: <a href="../godoc/kr8-types/#Kr8ClusterJsonnet">types.Kr8ClusterJsonnet</a></p>
+<p>More information: <a href="../concepts/clusters/">Managing Clusters</a></p>
+<h4 id="conponents-configurations">Conponents Configurations</h4>
+<p>A component is a deployable unit that you wish to install in one or more clusters.
+Components can be declared multiple times within a cluster, as long as they are named distinctly when loaded.</p>
+<p>Component Spec: <a href="../godoc/kr8-types/#Kr8ComponentJsonnet">types.Kr8ComponentJsonnet</a></p>
+<p>More information: <a href="../concepts/components/">Managing Components</a></p>
+<h4 id="jsonnet-libraries">Jsonnet Libraries</h4>
+<p>Jsonnet libraries are reusable code that can be imported into your Jsonnet files.
+They allow you to write modular and maintainable configuration.</p>
+<p>Common libraries include:</p>
+<ul>
+<li><a href="https://github.com/ice-bergtech/kr8-libsonnet">kr8-libesonnet</a></li>
+<li><a href="https://github.com/kube-libsonnet/kube-libsonnet">kube-libsonnet</a></li>
+</ul>
+<p>More information: <a href="../concepts/overview/">Jsonnet Libraries</a></p>
+<h3 id="deployment">Deployment</h3>
+<p>To generate the final configured manifests, just run <code>kr8 generate</code>.
+<strong>kr8+</strong> reads the cluster and components configuration files and generates the final manifests based on the parameters provided.</p>
+<p>Manifest changes are checked into source control, allowing them to be ingested by tools like ArgoCD, Portainer, Rancher etc.</p>
+<h3 id="further-information">Further Information</h3>
+<ul>
+<li><a href="../cmd/kr8/">Command Documentation</a></li>
+<li><strong>kr8+</strong></li>
+<li><a href="../concepts/overview/">Concepts</a></li>
+<li><a href="../concepts/clusters/">Managing Clusters</a></li>
+<li><a href="../concepts/components/">Creating Components</a></li>
+<li><a href="../concepts/nativefuncs/">Native Functions</a></li>
+<li><a href="./godoc">Code Documentation</a></li>
+</ul>
+<h2 id="development">Development</h2>
+<p><strong>kr8+</strong> is coded in <a href="https://golang.org/">Golang</a>.
+Currently, version <code>1.24.2</code> is used.</p>
+<p>Common tasks are described in <a href="../Taskfile.yml">Taskfile.yml</a>, and can be executed with <a href="https://taskfile.dev/installation/">go-task</a>.</p>
+<h3 id="dependencies">Dependencies</h3>
+<ul>
+<li>Golang version  <code>1.24</code> or later (<a href="https://go.dev/doc/install">installation</a>)</li>
+<li><code>git</code> for cloning submodules</li>
+<li><a href="https://taskfile.dev/installation/">go-task</a> for task automation</li>
+<li><a href="https://golangci-lint.run/welcome/install/">golangci-lint</a> for linting</li>
+<li><a href="https://bats-core.readthedocs.io/en/stable/installation.html">Bats</a> for binary testing</li>
+<li><a href="https://goreleaser.com/intro/">Goreleaser</a> for release packaging</li>
+</ul>
+<h3 id="setup">Setup</h3>
+<p>Once <a href="https://taskfile.dev/installation/"><code>go-task</code> is installed</a>, you can easily setup your environment by running:</p>
+<pre><code class="language-sh"># Install dev tools
+task setup
+</code></pre>
+<h3 id="running-tasks">Running Tasks</h3>
+<pre><code class="language-sh"># View available tasks
+task -l
+task: Available tasks for this project:
+* 01_setup:                     Instal dev tools                                         (aliases: setup, s)
+* 01_setup-bats:                Install bats testing tools                               (aliases: setup-bats)
+* 02_build:                     Build kr8+ for your local system                         (aliases: build, b)
+* 03_build-snapshot:            Build a snapshot for all platforms using goreleaser      (aliases: build-snapshot, bs)
+* 03_generate-bats-tests:       Generate resources to test against                       (aliases: gt)
+* 03_test-go:                   Tesk kr8+ for your local system                          (aliases: test, t)
+* 03_test-package:              Test compiled kr8+ binary against test inputs            (aliases: test-package, tp)
+* 04_generate-examples:         Generate example clusters and components with kr8+       (aliases: ge, gen)
+</code></pre>
+<h4 id="examples">Examples</h4>
+<pre><code class="language-sh">
+# Build kr8+ for your local system
+task build
+
+# Run tests
+task test
+
+# Build snapshot
+task build-snapshot
+</code></pre>
+<h3 id="tests">Tests</h3>
+<p>There are a few sets of tests:</p>
+<ul>
+<li>Unit Tests: <code>go test ./...</code> or <code>task test</code></li>
+<li>Integration Tests using <code>bats</code>: <code>task test-package</code></li>
+<li>Generate examples repo: <code>./kr8 generate -B examples</code> or <code>task gen</code></li>
+</ul>
+<h3 id="build-troubleshooting">Build Troubleshooting</h3>
+<ul>
+<li>Dependencies download fail: There is a large number of reasons why this could fail.  Be sure to check:</li>
+<li>Networking problems: Check your connection to: <code>github.com</code>, <code>golang.org</code> and <code>k8s.io</code>.</li>
+<li>Disk space: If no space is available on the disk, this step might fail.</li>
+<li>The comand <code>go build</code> does not start the build:</li>
+<li>Confirm you are in the correct project directory</li>
+<li>Make sure your go installation works: <code>go --version</code></li>
+</ul>
+<h2 id="contributing">Contributing</h2>
+<p>We welcome contributions from the community to enhance <strong>kr8+</strong>.</p>
+<p>Fork the repo in github and send a merge request!</p>
+<h2 id="license">License</h2>
+<p>The project is licensed under the <a href="../LICENSE">MIT license</a>.</p>
+<p>Parts of the code are derived from:</p>
+<ul>
+<li><a href="https://github.com/apptio/kr8">kr8</a> - <a href="../LICENSE-apptio">MIT License</a></li>
+<li><a href="https://leebriggs.co.uk/">Lee Briggs</a> - <a href="../LICENSE-briggs">MIT License</a></li>
+<li><a href="https://github.com/kubecfg/kubecfg">kubecfg</a> - <a href="../LICENSE-kubecfg">Apache 2.0</a></li>
+</ul>
+<h2 id="references-and-additional-resources">References and Additional Resources</h2>
+<p><strong>kr8+</strong> is a fork of <a href="https://github.com/apptio/kr8">kr8</a> with some additional features and improvements.
+<strong>kr8</strong> was used in production to great success at Apptio for managing components of multiple Kubernetes clusters.</p>
+<p>VSCode plugins:</p>
+<ul>
+<li><a href="https://open-vsx.org/vscode/item?itemName=EditorConfig.EditorConfig">EditorConfig</a></li>
+<li><a href="https://open-vsx.org/vscode/item?itemName=Grafana.vscode-jsonnet">Jsonnet Language Server</a></li>
+</ul>
+<p>Docs:</p>
+<ul>
+<li><a href="https://jsonnet.org/ref/stdlib.html">Jsonnet Standard Library</a></li>
+<li><a href="https://jsonnet.org/ref/language.html">Jsonnet Language Reference</a></li>
+<li><a href="https://masterminds.github.io/sprig/">Sprig Template Documentation</a></li>
+<li><a href="https://leebriggs.co.uk/blog/2018/05/08/kubernetes-config-mgmt.html">The growing need for Kubernetes Configuration Management</a></li>
+</ul>
+<p>Alternatives:</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../installation/" class="btn btn-neutral float-right" title="Installation">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/ice-bergtech/kr8/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../installation/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

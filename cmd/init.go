@@ -126,7 +126,7 @@ and initialize a git repo so you can get started`,
 		if cmdInitFlags.InitUrl != "" {
 			util.FatalErrorCheck(
 				"Issue fetching repo",
-				util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, cmdInitFlags.Fetch),
+				util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, !cmdInitFlags.Fetch),
 			)
 
 			return

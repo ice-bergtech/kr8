@@ -1,0 +1,62 @@
+name: Goreleaser Build and Publish 
+on:
+  push:
+    branches:
+      - "main"
+    tags:
+      - "v*"
+    paths:
+      - .github/workflows/build.yml
+      - '*.go'
+      - 'cmd/*'
+      - 'go.mod'
+      - 'go.sum'
+      - '.goreleaser.yml'
+  workflow_dispatch:
+
+# for signing
+permissions:
+  contents: write
+  packages: write
+  issues: write
+  id-token: write
+
+jobs:
+  build-publish:
+    name: Goreleaser build and Publish
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.24.2
+      # only needed if using signing
+      - uses: sigstore/cosign-installer@v3.8.1
+      # for SBOM
+      - uses: anchore/sbom-action/download-syft@v0.18.0
+      # only needed if using docker
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - name: Docker Login
+        uses: docker/login-action@v3
+        if: success() && startsWith(github.ref, 'refs/tags/')
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        if: success() && startsWith(github.ref, 'refs/tags/')
+        with:
+          version: ~> v2
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Needed to allow goreleaser to create PRs that trigger automations
+          # https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#triggering-further-workflow-runs
+          HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}

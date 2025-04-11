@@ -25,16 +25,48 @@ archives:
 snapshot:
   version_template: SNAPSHOT-{{ .Commit }}
 dist: dist
+sboms:
+  - artifacts: archive
 dockers:
   -
     image_templates: 
-      - 'ghcr.io/ice-bergtech/kr8:{{ .Tag }}'
-      - 'ghcr.io/ice-bergtech/kr8:latest'
+      - 'ghcr.io/ice-bergtech/kr8:{{ .Tag }}-arm64'
+      - 'ghcr.io/ice-bergtech/kr8:latest-arm64'
     dockerfile: docker/Dockerfile-goreleaser
+    goarch: arm64
+    use: buildx
     build_flag_templates:
+      - "--platform=linux/arm64"
       - "--label=org.label-schema.schema-version=1.0"
       - "--label=org.label-schema.version={{.Version}}"
       - "--label=org.label-schema.name={{.ProjectName}}"
+  - image_templates: 
+      - 'ghcr.io/ice-bergtech/kr8:{{ .Tag }}-amd64'
+      - 'ghcr.io/ice-bergtech/kr8:latest-amd64'
+    dockerfile: docker/Dockerfile-goreleaser
+    goarch: amd64
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--label=org.label-schema.schema-version=1.0"
+      - "--label=org.label-schema.version={{.Version}}"
+      - "--label=org.label-schema.name={{.ProjectName}}"
+docker_manifests:
+  - name_template: 'ghcr.io/ice-bergtech/kr8:{{ .Tag }}'
+    image_templates:
+      - 'ghcr.io/ice-bergtech/kr8:{{ .Tag }}-amd64'
+      - 'ghcr.io/ice-bergtech/kr8:{{ .Tag }}-arm64'
+  - name_template: 'ghcr.io/ice-bergtech/kr8:latest'
+    image_templates:
+      - 'ghcr.io/ice-bergtech/kr8:latest-amd64'
+      - 'ghcr.io/ice-bergtech/kr8:latest-arm64'
+docker_signs:
+  - cmd: cosign
+    artifacts: manifests
+    args:
+      - "sign"
+      - "${artifact}"
+      - "--yes"
 nfpms:
   -
     vendor: 'Iceberg Tech'
@@ -45,7 +77,18 @@ nfpms:
     formats:
       - rpm
       - deb
+      - apk
     bindir: /usr/local/bin
+signs:
+  - cmd: cosign
+    certificate: "${artifact}.pem"
+    artifacts: checksum
+    args:
+      - sign-blob
+      - "--output-certificate=${certificate}"
+      - "--output-signature=${signature}"
+      - "${artifact}"
+      - "--yes"
 brews:
   # https://goreleaser.com/customization/homebrew/
   - name: kr8

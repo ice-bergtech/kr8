@@ -9,9 +9,9 @@ import (
 )
 
 // Fetch a git repo from a url and clone it to a destination directory.
-// If the performFetch flag is false, it will log the command that would be run and return without doing anything.
+// If the noop flag is true, it will log the command that would be run and return without doing anything.
 func FetchRepoUrl(url string, destination string, noop bool) error {
-	if !noop {
+	if noop {
 		gitCommand := "git clone -- " + url + " " + destination
 		cleanupCmd := "rm -rf \"" + filepath.Join(destination, ".git") + "\""
 		log.Info().Msg("Fetch disabled. Would have ran: ")

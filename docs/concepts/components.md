@@ -63,40 +63,41 @@ There are the following fields:
 * `dest_name`: The name of the output file (without extension). Optional.
 * `dest_ext`: The extension of the output file. Optional.
 
-The `file` value must be a `jsonnet`, `yaml`, or `tpl` filename.
+The `file` value must be a `jsonnet`, `yaml`, or `tpl` type file.
 
-<detail>
-<summary>Examples of `includes` entries</summary>
-  ```jsonnet
-  includes: [
-    "filename.jsonnet",
-    {
-      file: "filename.jsonnet",
-      dest_dir: "altDir",
-      dest_name: "altname1",
-      dest_ext: "txt"
-    },
-    {
-      file: "filename.jsonnet",
-      dest_name: "altname2",
-    },
-    {
-      file: "filename.jsonnet",
-      dest_name: "altname3",
-      dest_ext: "txt"
-    },
-  ]
-  ```
-  Will generate the following files:
-  ```
-  generate_dir:
-    filename.jsonnet
-    altname2.jsonnet
-    altname3.txt
-    altDir:
-      altname1.txt
-  ``` 
-</detail>
+For examples, the following `includes` entries:
+  
+```yaml
+includes: [
+  "filename.jsonnet",
+  {
+    file: "filename.jsonnet",
+    dest_dir: "altDir",
+    dest_name: "altname1",
+    dest_ext: "txt"
+  },
+  {
+    file: "filename.jsonnet",
+    dest_name: "altname2",
+  },
+  {
+    file: "filename.jsonnet",
+    dest_name: "altname3",
+    dest_ext: "txt"
+  },
+]
+```
+
+Will generate the files:
+
+```sh
+generate_dir:
+├── filename.jsonnet
+├── altname2.jsonnet
+├── altname3.txt
+└── altDir:
+    └── altname1.txt
+``` 
 
 ### extfiles
 
@@ -156,14 +157,14 @@ Consider the situation whereby you might have two clusters, one in AWS and one i
 You need to set a default storageclass.
 You could do this with jsonnet.
 
-This example is located in [example/components/doc-conepts/jsonnetStorageClasses](https://github.com/ice-bergtech/kr8/tree/main/example/components/doc-concepts/jsonnetStorageClasses/).
+This example is located in [kr8-examples jsonnetStorageClasses](https://github.com/ice-bergtech/kr8-examples/components/doc-concepts/jsonnetStorageClasses/).
 
 Your jsonnet component would look like this:
 
 ```bash
 components/doc-conepts/jsonnetStorageClasses
 ├── params.jsonnet
-├── storageclasses.jsonnet
+└── storageclasses.jsonnet
 ```
 
 #### Params
@@ -189,18 +190,18 @@ We also need to tell kr8+ what files to include for the component:
 
 Your jsonnet manifest looks like this:
 
-```jsonnet
-# a jsonnet external variable from kr8 that gets contains cluster-level configuration
-local kr8_cluster = std.extVar('kr8_cluster');
+```go
+// a jsonnet external variable from kr8 that gets contains cluster-level configuration
+local kr8_cluster = std.extVar("kr8_cluster");
 
-# a jsonnet function for creating a storageclass
+// a jsonnet function for creating a storageclass
 local StorageClass(name, type, default=false) = {
-  apiVersion: 'storage.k8s.io/v1',
-  kind: 'StorageClass',
+  apiVersion: "storage.k8s.io/v1",
+  kind: "StorageClass",
   metadata: {
     name: name,
     annotations: {
-      'storageclass.kubernetes.io/is-default-class': if default then 'true' else 'false',
+      "storageclass.kubernetes.io/is-default-class": if default then "true" else "false",
     },
   },
   parameters: {
@@ -208,13 +209,13 @@ local StorageClass(name, type, default=false) = {
   },
 };
 
-# check the cluster configuration for a type, if it's AWS make a gp2 type storageclass
-if kr8_cluster.cluster_type == 'aws' then std.objectValues(
+// check the cluster configuration for a type, if it's AWS make a gp2 type storageclass
+if kr8_cluster.cluster_type == "aws" then std.objectValues(
   {
     // default gp2 storage class, not tied to a zone
-    ebs_gp2: StorageClass('gp2', 'gp2', true) {},
+    ebs_gp2: StorageClass("gp2", "gp2", true) {},
   }
-) else [] # don't make a storageclass if it's not AWS
+) else [] // don't make a storageclass if it's not AWS
 ```
 
 
@@ -226,16 +227,16 @@ kr8+ takes care of the heavy lifting for you.
 
 This is useful when loading manifests from remote source, and you want to manipulate the mbefore deploying into a cluster.
 
-This example can be found here: [example/components/doc-concepts/echo-test/](https://github.com/ice-bergtech/kr8/tree/main/example/components/doc-concepts/echo-test/)
+This example can be found here: [kr8-examples echo-test](https://github.com/ice-bergtech/kr8-examples/components/doc-concepts/echo-test/)
 
 ```bash
 components/doc-conepts/jsonnetStorageClasses
 ├── Taskfile.yml
 ├── params.jsonnet
 ├── echo.jsonnet
-├── vendor
-    ├── {{.Version}}
-        ├── echo.yml
+└── vendor
+    └── {{.Version}}
+        └── echo.yml
 ```
 
 #### Taskfile
@@ -267,12 +268,12 @@ References one of the files in vendored.
 This give us the ability to modify this file.
 Here's how the jsonnet looks:
 
-```jsonnet
-local helpers = import 'helpers.libsonnet';
-local parseYaml = std.native('parseYaml');
-# this must match the `ext-str-file` value in the taskfile
-# it imports those values with the variable name "deployment"
-local deployment = parseYaml(std.extVar('inputMetricsServerDeploy'));
+```go
+local helpers = import "helpers.libsonnet";
+local parseYaml = std.native("parseYaml");
+// this must match the `ext-str-file` value in the taskfile
+// it imports those values with the variable name "deployment"
+local deployment = parseYaml(std.extVar("inputMetricsServerDeploy"));
 
 local args = [
   "--kubelet-insecure-tls",
@@ -280,12 +281,12 @@ local args = [
 ]
 
 [
-  # drop all the secrets if they're found, we don't want to check them into git
-  if object.kind == 'Secret' then {} else object
+  // drop all the secrets if they're found, we don't want to check them into git
+  if object.kind == "Secret" then {} else object
   for object in helpers.list(
     helpers.named(deployment) + {
-      # grab kind deployment with name metrics-server, and add some more args
-      ['Deployment/kube-system/metrics-server']+: helpers.patchContainerNamed(
+      // grab kind deployment with name metrics-server, and add some more args
+      ["Deployment/kube-system/metrics-server"]+: helpers.patchContainerNamed(
         "metrics-server",
         {
           "args"+: args,
@@ -329,7 +330,7 @@ tasks:
 The `params.jsonnet` for a helm chart directory should include the helm values you want to use.
 Here's an example:
 
-```jsonnet
+```yaml
 {
   release_name: 'cert-manager',
   namespace: 'cert-manager',
@@ -347,15 +348,15 @@ A values file is a required file for a helm component.
 The name of the file must be `componentname-values.jsonnet` (for example: cert-manager-values.jsonnet).
 It's content would be something like this:
 
-```jsonnet
-local config = std.extVar('kr8');
+```go
+local config = std.extVar("kr8");
 
-if 'helm_values' in config then config.helm_values else {}
+if "helm_values" in config then config.helm_values else {}
 ```
 
 You can also optionally set the values for the helm chart in here, this would look something like this:
 
-```jsonnet
+```yaml
 {
   replicaCount: 2
 }
@@ -370,20 +371,20 @@ You need to use the `helm-render-with-patch` helper and provide a `patches.jsonn
 
 Here's an example `patches.jsonnet` for [external-dns](https://github.com/kubernetes-incubator/external-dns)
 
-```jsonnet
-local apptio = import 'apptio.libsonnet';
-local helpers = import 'helpers.libsonnet';  // some helper functions
-local kube = import 'kube.libsonnet';
-local config = std.extVar('kr8'); // config is all the config from params.jsonnet
+```go
+local apptio = import "apptio.libsonnet";
+local helpers = import "helpers.libsonnet";  // some helper functions
+local kube = import "kube.libsonnet";
+local config = std.extVar("kr8"); // config is all the config from params.jsonnet
 
 // remove Secret objects and add a namespace
 [
   for object in helpers.list(
     // object list is converted to hash of named objects, then they can be modified by name
     helpers.named(helpers.helmInput) + {
-      ['Deployment/' + config.release_name]+: helpers.patchContainer({
+      ["Deployment/" + config.release_name]+: helpers.patchContainer({
         // Injects an extra arg, which wasn't originally in the helm chart
-        [if std.objectHas(config,'assumeRoleArn') then 'args']+: ['--aws-assume-role='+config.assumeRoleArn],
+        [if std.objectHas(config,"assumeRoleArn") then "args"]+: ["--aws-assume-role="+config.assumeRoleArn],
       }),
     },
   )
