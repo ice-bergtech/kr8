@@ -40,7 +40,7 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) er
 	return nil
 }
 
-func setupClusterGenerateDirs(kr8Spec types.Kr8ClusterSpec) ([]string, error) {
+func setupClusterGenerateDirs(kr8Spec types.Kr8pClusterSpec) ([]string, error) {
 	// create cluster dir
 	if _, err := os.Stat(kr8Spec.ClusterDir); os.IsNotExist(err) {
 		err = os.MkdirAll(kr8Spec.ClusterDir, 0750)

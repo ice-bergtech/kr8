@@ -97,7 +97,7 @@ type KomposeConvertOptions struct {
 }
 
 // Initialie Kompose options with sensible defaults.
-func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *KomposeConvertOptions {
+func Create(inputFiles []string, outDir string, cmp Kr8pComponentJsonnet) *KomposeConvertOptions {
 	return &KomposeConvertOptions{
 		CreateChart: false,
 		Controller:  "deployment",

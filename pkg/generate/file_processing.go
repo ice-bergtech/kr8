@@ -20,12 +20,12 @@ import (
 func processIncludesFile(
 	jvm *jsonnet.VM,
 	config string,
-	kr8Spec types.Kr8ClusterSpec,
-	kr8Opts types.Kr8Opts,
+	kr8Spec types.Kr8pClusterSpec,
+	kr8Opts types.Kr8pOpts,
 	componentName string,
 	componentPath string,
 	componentOutputDir string,
-	incInfo types.Kr8ComponentSpecIncludeObject,
+	incInfo types.Kr8pComponentSpecIncludeObject,
 	outputFileMap map[string]bool,
 ) error {
 	// ensure this directory exists
@@ -84,10 +84,10 @@ func processIncludesFile(
 func ProcessFile(
 	inputFile string,
 	outputFile string,
-	kr8Spec types.Kr8ClusterSpec,
+	kr8Spec types.Kr8pClusterSpec,
 	componentName string,
 	config string,
-	incInfo types.Kr8ComponentSpecIncludeObject,
+	incInfo types.Kr8pComponentSpecIncludeObject,
 	jvm *jsonnet.VM,
 ) (string, error) {
 	log.Debug().Str("cluster", kr8Spec.Name).

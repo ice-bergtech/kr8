@@ -20,7 +20,7 @@ import (
 func SetupJvmForComponent(
 	vmconfig types.VMConfig,
 	config string,
-	kr8Spec types.Kr8ClusterSpec,
+	kr8Spec types.Kr8pClusterSpec,
 	componentName string,
 ) (*jsonnet.VM, error) {
 	jvm, err := jnetvm.JsonnetVM(vmconfig)
@@ -49,7 +49,7 @@ func SetupJvmForComponent(
 
 // jPathResults always includes base lib.
 // Adds jpaths from spec if set.
-func loadJPathsIntoVM(compSpec types.Kr8ComponentSpec, compPath string, baseDir string, jvm *jsonnet.VM) {
+func loadJPathsIntoVM(compSpec types.Kr8pComponentSpec, compPath string, baseDir string, jvm *jsonnet.VM) {
 	jPathResults := []string{filepath.Join(baseDir, "lib")}
 	for _, jPath := range compSpec.JPaths {
 		jPathResults = append(jPathResults, filepath.Join(baseDir, compPath, jPath))
@@ -60,10 +60,10 @@ func loadJPathsIntoVM(compSpec types.Kr8ComponentSpec, compPath string, baseDir 
 }
 
 func loadExtFilesIntoVars(
-	compSpec types.Kr8ComponentSpec,
+	compSpec types.Kr8pComponentSpec,
 	compPath string,
-	kr8Spec types.Kr8ClusterSpec,
-	kr8Opts types.Kr8Opts,
+	kr8Spec types.Kr8pClusterSpec,
+	kr8Opts types.Kr8pOpts,
 	componentName string,
 	jvm *jsonnet.VM,
 ) error {

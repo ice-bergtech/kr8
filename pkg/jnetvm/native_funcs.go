@@ -185,13 +185,13 @@ func NativeKompose() *jsonnet.NativeFunction {
 	}
 }
 
-func parseOpts(data interface{}) (*types.Kr8ComponentJsonnet, error) {
+func parseOpts(data interface{}) (*types.Kr8pComponentJsonnet, error) {
 	component, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
 
-	opts := types.Kr8ComponentJsonnet{}
+	opts := types.Kr8pComponentJsonnet{}
 
 	if err := json.Unmarshal(component, &opts); err != nil {
 		return nil, err

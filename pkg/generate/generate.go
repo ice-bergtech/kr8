@@ -101,8 +101,8 @@ func buildComponentList(
 func GenProcessComponent(
 	vmconfig types.VMConfig,
 	componentName string,
-	kr8Spec types.Kr8ClusterSpec,
-	kr8Opts types.Kr8Opts,
+	kr8Spec types.Kr8pClusterSpec,
+	kr8Opts types.Kr8pOpts,
 	config string,
 	allConfig *safeString,
 	filters util.PathFilterOptions,
@@ -169,13 +169,13 @@ func GenProcessComponent(
 func SetupAndConfigureVM(
 	vmconfig types.VMConfig,
 	config string,
-	kr8Spec types.Kr8ClusterSpec,
+	kr8Spec types.Kr8pClusterSpec,
 	componentName string,
-	compSpec types.Kr8ComponentSpec,
+	compSpec types.Kr8pComponentSpec,
 	allConfig *safeString,
 	filters util.PathFilterOptions,
 	paramsFile string,
-	kr8Opts types.Kr8Opts,
+	kr8Opts types.Kr8pOpts,
 ) (*jsonnet.VM, string, error) {
 	jvm, err := SetupJvmForComponent(vmconfig, config, kr8Spec, componentName)
 	if err := util.GenErrorIfCheck("error setting up JVM for component", err); err != nil {
@@ -236,7 +236,7 @@ func getAllComponentParamsThreadsafe(
 	allConfig *safeString,
 	config string,
 	vmconfig types.VMConfig,
-	kr8Spec types.Kr8ClusterSpec,
+	kr8Spec types.Kr8pClusterSpec,
 	filters util.PathFilterOptions,
 	paramsFile string,
 	jvm *jsonnet.VM,
@@ -268,9 +268,9 @@ func getAllComponentParamsThreadsafe(
 }
 
 func GenerateIncludesFiles(
-	includesFiles []types.Kr8ComponentSpecIncludeObject,
-	kr8Spec types.Kr8ClusterSpec,
-	kr8Opts types.Kr8Opts,
+	includesFiles []types.Kr8pComponentSpecIncludeObject,
+	kr8Spec types.Kr8pClusterSpec,
+	kr8Opts types.Kr8pOpts,
 	config string,
 	componentName string,
 	compPath string,
@@ -315,7 +315,7 @@ func GenProcessCluster(
 	clusterdir string,
 	baseDir string,
 	generateDirOverride string,
-	kr8Opts types.Kr8Opts,
+	kr8Opts types.Kr8pOpts,
 	clusterParamsFile string,
 	filters util.PathFilterOptions,
 	vmConfig types.VMConfig,
@@ -374,11 +374,11 @@ func GenProcessCluster(
 func renderComponents(
 	config string,
 	vmConfig types.VMConfig,
-	kr8Spec types.Kr8ClusterSpec,
+	kr8Spec types.Kr8pClusterSpec,
 	compList []string,
 	clusterParamsFile string,
 	pool *ants.Pool,
-	kr8Opts types.Kr8Opts,
+	kr8Opts types.Kr8pOpts,
 	filters util.PathFilterOptions,
 ) error {
 	var allconfig safeString

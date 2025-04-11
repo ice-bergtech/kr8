@@ -2,14 +2,14 @@ package cmd
 
 import (
 	"github.com/AlecAivazis/survey/v2"
-	kr8init "github.com/ice-bergtech/kr8p/pkg/kr8_init"
+	kr8init "github.com/ice-bergtech/kr8p/pkg/kr8p_init"
 	types "github.com/ice-bergtech/kr8p/pkg/types"
 	util "github.com/ice-bergtech/kr8p/pkg/util"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
-var cmdInitFlags kr8init.Kr8InitOptions
+var cmdInitFlags kr8init.Kr8pInitOptions
 
 func init() {
 	RootCmd.AddCommand(InitCmd)
@@ -57,7 +57,7 @@ var InitClusterCmd = &cobra.Command{
 	Short: "Init a new cluster config file",
 	Long:  "Initialize a new cluster configuration file",
 	Run: func(cmd *cobra.Command, args []string) {
-		cSpec := types.Kr8ClusterSpec{
+		cSpec := types.Kr8pClusterSpec{
 			Name:               cmdInitFlags.ClusterName,
 			PostProcessor:      "function(input) input",
 			GenerateDir:        "generated",
@@ -132,7 +132,7 @@ and initialize a git repo so you can get started`,
 			return
 		}
 		// struct for component and clusters
-		cmdInitOptions := kr8init.Kr8InitOptions{
+		cmdInitOptions := kr8init.Kr8pInitOptions{
 			InitUrl:       cmdInitFlags.InitUrl,
 			ClusterName:   cmdInitFlags.ClusterName,
 			ComponentName: "example-component",
@@ -140,7 +140,7 @@ and initialize a git repo so you can get started`,
 			Interactive:   false,
 			Fetch:         false,
 		}
-		clusterOptions := types.Kr8ClusterSpec{
+		clusterOptions := types.Kr8pClusterSpec{
 			Name:               cmdInitFlags.ClusterName,
 			PostProcessor:      "",
 			GenerateDir:        "generated",

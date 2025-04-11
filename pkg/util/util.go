@@ -116,7 +116,7 @@ func GenErrorIfCheck(message string, err error) error {
 	if err != nil {
 		log.Error().Err(err).Msg(message)
 
-		return types.Kr8Error{Message: message, Value: err}
+		return types.Kr8pError{Message: message, Value: err}
 	}
 
 	return nil

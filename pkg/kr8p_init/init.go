@@ -1,4 +1,4 @@
-package kr8init
+package kr8p_init
 
 import (
 	"os"
@@ -8,8 +8,8 @@ import (
 	util "github.com/ice-bergtech/kr8p/pkg/util"
 )
 
-// Kr8InitOptions defines the options used by the init subcommands.
-type Kr8InitOptions struct {
+// Kr8pInitOptions defines the options used by the init subcommands.
+type Kr8pInitOptions struct {
 	// URL to fetch the skeleton directory from
 	InitUrl string
 	// Name of the cluster to initialize
@@ -25,13 +25,13 @@ type Kr8InitOptions struct {
 }
 
 // Generate a cluster.jsonnet file based on the provided Kr8ClusterSpec and store it in the specified directory.
-func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error {
+func GenerateClusterJsonnet(cSpec types.Kr8pClusterSpec, dstDir string) error {
 	filename := "cluster.jsonnet"
-	clusterJson := types.Kr8ClusterJsonnet{
+	clusterJson := types.Kr8pClusterJsonnet{
 		ClusterSpec: cSpec,
 		// Bug() Unsure if Path is correct
-		Cluster:    types.Kr8Cluster{Name: cSpec.Name, Path: cSpec.ClusterDir},
-		Components: map[string]types.Kr8ClusterComponentRef{},
+		Cluster:    types.Kr8pCluster{Name: cSpec.Name, Path: cSpec.ClusterDir},
+		Components: map[string]types.Kr8pClusterComponentRef{},
 	}
 	_, err := util.WriteObjToJsonFile(filename, dstDir+"/"+cSpec.Name, clusterJson)
 
@@ -46,13 +46,13 @@ func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error {
 // yml: leave a note in the params.jsonnet file about where and how the yml files can be referenced
 //
 // chart: generate a simple taskfile that handles vendoring the chart data
-func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) error {
-	compJson := types.Kr8ComponentJsonnet{
-		Kr8Spec: types.Kr8ComponentSpec{
+func GenerateComponentJsonnet(componentOptions Kr8pInitOptions, dstDir string) error {
+	compJson := types.Kr8pComponentJsonnet{
+		Kr8Spec: types.Kr8pComponentSpec{
 			Kr8_allparams:         false,
 			Kr8_allclusters:       false,
 			DisableOutputDirClean: false,
-			Includes:              []types.Kr8ComponentSpecIncludeObject{},
+			Includes:              []types.Kr8pComponentSpecIncludeObject{},
 			ExtFiles:              map[string]string{},
 			JPaths:                []string{},
 		},
@@ -65,11 +65,11 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 	case "jsonnet":
 		compJson.Kr8Spec.Includes = append(
 			compJson.Kr8Spec.Includes,
-			types.Kr8ComponentSpecIncludeObject{File: "component.jsonnet", DestName: "component", DestExt: "yaml"},
+			types.Kr8pComponentSpecIncludeObject{File: "component.jsonnet", DestName: "component", DestExt: "yaml"},
 		)
 	case "yml":
 		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes,
-			types.Kr8ComponentSpecIncludeObject{
+			types.Kr8pComponentSpecIncludeObject{
 				File:     "input.yml",
 				DestDir:  "",
 				DestName: "glhf",
@@ -78,7 +78,7 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 		)
 	case "tpl":
 		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes,
-			types.Kr8ComponentSpecIncludeObject{
+			types.Kr8pComponentSpecIncludeObject{
 				File:     "README.tpl",
 				DestDir:  "docs",
 				DestName: "ReadMe",
@@ -110,7 +110,7 @@ func GenerateLib(fetch bool, dstDir string) error {
 }
 
 // Generates a starter readme for the repo, and writes it to the destination directory.
-func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) error {
+func GenerateReadme(dstDir string, cmdOptions Kr8pInitOptions, clusterSpec types.Kr8pClusterSpec) error {
 	var fetch string
 	if cmdOptions.Fetch {
 		fetch = "true"
