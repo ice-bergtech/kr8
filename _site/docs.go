@@ -26,6 +26,18 @@ func CobraDocs() {
 	}
 }
 
+func CopyReadme() {
+	destinationFile := "./README-repo.md"
+	iFile, err := os.ReadFile("../README.md")
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = os.WriteFile(destinationFile, iFile, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func GoMarkDoc() {
 	out, err := gomarkdoc.NewRenderer()
 	if err != nil {
@@ -71,4 +83,5 @@ func GoMarkDoc() {
 func main() {
 	CobraDocs()
 	GoMarkDoc()
+	CopyReadme()
 }
