@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var cmdInitFlags kr8init.Kr8pInitOptions
+var cmdInitFlags kr8init.Kr8InitOptions
 
 func init() {
 	RootCmd.AddCommand(InitCmd)
@@ -57,7 +57,7 @@ var InitClusterCmd = &cobra.Command{
 	Short: "Init a new cluster config file",
 	Long:  "Initialize a new cluster configuration file",
 	Run: func(cmd *cobra.Command, args []string) {
-		cSpec := types.Kr8pClusterSpec{
+		cSpec := types.Kr8ClusterSpec{
 			Name:               cmdInitFlags.ClusterName,
 			PostProcessor:      "function(input) input",
 			GenerateDir:        "generated",
@@ -132,7 +132,7 @@ and initialize a git repo so you can get started`,
 			return
 		}
 		// struct for component and clusters
-		cmdInitOptions := kr8init.Kr8pInitOptions{
+		cmdInitOptions := kr8init.Kr8InitOptions{
 			InitUrl:       cmdInitFlags.InitUrl,
 			ClusterName:   cmdInitFlags.ClusterName,
 			ComponentName: "example-component",
@@ -140,7 +140,7 @@ and initialize a git repo so you can get started`,
 			Interactive:   false,
 			Fetch:         false,
 		}
-		clusterOptions := types.Kr8pClusterSpec{
+		clusterOptions := types.Kr8ClusterSpec{
 			Name:               cmdInitFlags.ClusterName,
 			PostProcessor:      "",
 			GenerateDir:        "generated",

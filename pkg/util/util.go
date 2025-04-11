@@ -7,7 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 
-	types "github.com/ice-bergtech/kr8p/pkg/types"
+	types "github.com/ice-bergtech/kr8/pkg/types"
 )
 
 // Filter returns a new slice containing only the elements that satisfy the predicate function.
@@ -116,7 +116,7 @@ func GenErrorIfCheck(message string, err error) error {
 	if err != nil {
 		log.Error().Err(err).Msg(message)
 
-		return types.Kr8pError{Message: message, Value: err}
+		return types.Kr8Error{Message: message, Value: err}
 	}
 
 	return nil

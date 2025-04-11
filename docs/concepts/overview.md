@@ -17,11 +17,11 @@ You will have:
 
 For working examples of everything, check out the [ice-bergtech/kr8-examples](https://github.com/ice-bergtech/kr8p-examples) repo.
 
-![kr8+ generate](../diagram/kr8p-workflow.png)
+![kr8+ generate](../diagram/kr8-workflow.png)
 
-![kr8+ generate process](../diagram/kr8p-generate-process-design.png)
+![kr8+ generate process](../diagram/kr8-generate-process-design.png)
 
-![kr8+ code pkg stucture](../diagram/kr8p-code-package-design.png)
+![kr8+ code pkg stucture](../diagram/kr8-code-package-design.png)
 
 ### Components
 

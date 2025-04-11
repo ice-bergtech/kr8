@@ -15,7 +15,7 @@ import (
 	"github.com/rs/zerolog/log"
 	kompose_logger "github.com/sirupsen/logrus"
 
-	types "github.com/ice-bergtech/kr8p/pkg/types"
+	types "github.com/ice-bergtech/kr8/pkg/types"
 )
 
 // Registers additional native functions in the jsonnet VM.
@@ -185,13 +185,13 @@ func NativeKompose() *jsonnet.NativeFunction {
 	}
 }
 
-func parseOpts(data interface{}) (*types.Kr8pComponentJsonnet, error) {
+func parseOpts(data interface{}) (*types.Kr8ComponentJsonnet, error) {
 	component, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
 
-	opts := types.Kr8pComponentJsonnet{}
+	opts := types.Kr8ComponentJsonnet{}
 
 	if err := json.Unmarshal(component, &opts); err != nil {
 		return nil, err

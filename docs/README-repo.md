@@ -1,20 +1,20 @@
 
 # kr8+
 
-<img src="./kr8p_gopher.png" alt="kr8+ Gopher" width="400" align="right" >
+<img src="./kr8_gopher.png" alt="kr8+ Gopher" width="400" align="right" >
 
-[![CI status](https://github.com/ice-bergtech/kr8p/workflows/CI/badge.svg)](https://github.com/ice-bergtech/kr8p/actions?query=workflow%3ACI)
+[![CI status](https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg)](https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI)
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.24-61CFDD.svg?style=flat-square)
 
-**kr8+** or `kr8p` is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.By leveraging best practices and providing a structured approach, **kr8+** helps DevOps teams streamline their workflows and maintain consistency across multiple environments.
+**kr8+** or `kr8` is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.By leveraging best practices and providing a structured approach, **kr8+** helps DevOps teams streamline their workflows and maintain consistency across multiple environments.
 
 **kr8+** is `pre-1.0`.
 This means that breaking changes still happen from time to time, but it's stable enough for both scripting and interactive use in production environments.
 
 <p align="center">
-   <a href="https://github.com/ice-bergtech/kr8p/releases">Releases</a> ·
+   <a href="https://github.com/ice-bergtech/kr8/releases">Releases</a> ·
 	<a href="./index.md">Documentation</a> ·
-	<a href="https://github.com/ice-bergtech/kr8p/issues">Get Help</a>
+	<a href="https://github.com/ice-bergtech/kr8/issues">Get Help</a>
 </p>
 
 ## Menu
@@ -37,7 +37,7 @@ This means that breaking changes still happen from time to time, but it's stable
 * **Simplicity**: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.
 * **Scalability**: Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.
 
-![kr8+ workflow](./diagram/kr8p-workflow.png)
+![kr8+ workflow](./diagram/kr8-workflow.png)
 
 ## Technical Overview
 
@@ -53,22 +53,22 @@ This means that breaking changes still happen from time to time, but it's stable
 
 ## Installation
 
-The latest version is available for download from the [Github releases page](https://github.com/ice-bergtech/kr8p/releases)
+The latest version is available for download from the [Github releases page](https://github.com/ice-bergtech/kr8/releases)
 To install via Homebrew, add the [icetech github tap](https://github.com/ice-bergtech/homebrew-icetech) and install::
 
 ```sh
 brew tap ice-bergtech/icetech
-brew install kr8p
+brew install kr8
 ```
 
-Once installed, use `kr8p init` commands to setup the initial structure and configurations.
+Once installed, use `kr8 init` commands to setup the initial structure and configurations.
 
 ## Getting Started
 
-An working example of a repo is found at [ice-bergtech/kr8p-examples](https://github.com/ice-bergtech/kr8p-examples):
+An working example of a repo is found at [ice-bergtech/kr8-examples](https://github.com/ice-bergtech/kr8-examples):
 
 ```sh
-git clone git@github.com:ice-bergtech/kr8p-examples.git
+git clone git@github.com:ice-bergtech/kr8-examples.git
 ```
 
 ### Configuration
@@ -87,7 +87,7 @@ A typical repo that uses **kr8+** has the following parts:
 A cluster is a deployment environment, organized in folders as a tree of configuration.
 Configuration the folders is layered on the parent folder's configuration, allowing you to override or extend configurations.
 
-Cluster Spec: [types.Kr8ClusterJsonnet](./godoc/kr8p-types.md#Kr8pClusterJsonnet)
+Cluster Spec: [types.Kr8ClusterJsonnet](./godoc/kr8-types.md#Kr8ClusterJsonnet)
 
 More information: [Managing Clusters](./concepts/clusters.md)
 
@@ -96,7 +96,7 @@ More information: [Managing Clusters](./concepts/clusters.md)
 A component is a deployable unit that you wish to install in one or more clusters.
 Components can be declared multiple times within a cluster, as long as they are named distinctly when loaded.
 
-Component Spec: [types.Kr8ComponentJsonnet](./godoc/kr8p-types.md#Kr8pComponentJsonnet)
+Component Spec: [types.Kr8ComponentJsonnet](./godoc/kr8-types.md#Kr8ComponentJsonnet)
 
 More information: [Managing Components](./concepts/components.md)
 
@@ -107,21 +107,21 @@ They allow you to write modular and maintainable configuration.
 
 Common libraries include:
 
-* [kr8p-libesonnet](https://github.com/ice-bergtech/kr8p-libsonnet)
+* [kr8-libesonnet](https://github.com/ice-bergtech/kr8-libsonnet)
 * [kube-libsonnet](https://github.com/kube-libsonnet/kube-libsonnet)
 
 More information: [Jsonnet Libraries](./concepts/overview.md)
 
 ### Deployment
 
-To generate the final configured manifests, just run `kr8p generate`.
+To generate the final configured manifests, just run `kr8 generate`.
 **kr8+** reads the cluster and components configuration files and generates the final manifests based on the parameters provided.
 
 Manifest changes are checked into source control, allowing them to be ingested by tools like ArgoCD, Portainer, Rancher etc.
 
 ### Further Information
 
-* [Command Documentation](./cmd/kr8p.md)
+* [Command Documentation](./cmd/kr8.md)
 * **kr8+**
   * [Concepts](./concepts/overview.md)
   * [Managing Clusters](./concepts/clusters.md)
@@ -218,7 +218,7 @@ There are a few sets of tests:
 
 - Unit Tests: `go test ./...` or `task test`
 - Integration Tests using `bats`: `task test-package`
-- Generate examples repo: `./kr8p generate -B examples` or `task gen`
+- Generate examples repo: `./kr8 generate -B examples` or `task gen`
 
 ### Build Troubleshooting
 

@@ -76,7 +76,7 @@ func GenerateCommand(cmd *cobra.Command, args []string) {
 		clusterList = maps.Keys(allClusterParams)
 	}
 
-	kr8Opts := types.Kr8pOpts{
+	kr8Opts := types.Kr8Opts{
 		BaseDir:      RootConfig.BaseDir,
 		ComponentDir: RootConfig.ComponentDir,
 		ClusterDir:   RootConfig.ClusterDir,
