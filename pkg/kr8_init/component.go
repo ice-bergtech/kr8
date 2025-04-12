@@ -7,6 +7,7 @@ import (
 
 	types "github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
+	"github.com/rs/zerolog/log"
 )
 
 // Generate default component kr8_spec values and store in params.jsonnet.
@@ -57,8 +58,16 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 			},
 		)
 	case "chart":
-		GenerateChartJsonnet(compJson, componentOptions, dstDir)
-		GenerateChartTaskfile(compJson, componentOptions, dstDir)
+		folderDir := filepath.Join(dstDir, componentOptions.ComponentName)
+		if err := os.MkdirAll(folderDir, 0750); err != nil {
+			log.Error().Err(err).Msg("component directory not created")
+		}
+		if err := GenerateChartJsonnet(compJson, componentOptions, folderDir); err != nil {
+			log.Error().Err(err).Msg("component directory not created")
+		}
+		if err := GenerateChartTaskfile(compJson, componentOptions, folderDir); err != nil {
+			log.Error().Err(err).Msg("component directory not created")
+		}
 		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes,
 			types.Kr8ComponentSpecIncludeObject{
 				File:     componentOptions.ComponentName + ".jsonnet",
@@ -76,7 +85,7 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 	return err
 }
 
-func GenerateChartJsonnet(compJson types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, dstDir string) error {
+func GenerateChartJsonnet(compJson types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error {
 	chartJsonnetText := strings.Join([]string{
 		"# This loads the component configuration into the `config` var",
 		"local config = std.extVar('kr8');",
@@ -94,10 +103,10 @@ func GenerateChartJsonnet(compJson types.Kr8ComponentJsonnet, componentOptions K
 		"]",
 	}, "\n")
 
-	return os.WriteFile(filepath.Join(dstDir, componentOptions.ComponentName)+"/"+componentOptions.ComponentName+".jsonnet", []byte(chartJsonnetText), 0600)
+	return os.WriteFile(filepath.Join(folderDir, componentOptions.ComponentName+".jsonnet"), []byte(chartJsonnetText), 0600)
 }
 
-func GenerateChartTaskfile(comp types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, dstDir string) error {
+func GenerateChartTaskfile(comp types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error {
 	taskfileText := strings.Join([]string{
 		"# https://taskfile.dev/usage",
 		"version: '3'",
@@ -132,5 +141,5 @@ func GenerateChartTaskfile(comp types.Kr8ComponentJsonnet, componentOptions Kr8I
 		"      - mv ./vendor/tmp/{{.CHART_NAME}}/* ./vendor/{{.CHART_NAME}}-{{.VER}}/ && rm -rf ./vendor/tmp",
 	}, "\n")
 
-	return os.WriteFile(filepath.Join(dstDir, componentOptions.ComponentName, "Taskfile.yml"), []byte(taskfileText), 0600)
+	return os.WriteFile(filepath.Join(folderDir, "Taskfile.yml"), []byte(taskfileText), 0600)
 }
