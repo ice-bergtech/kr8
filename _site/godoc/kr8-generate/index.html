@@ -222,13 +222,15 @@
 <pre><code class="language-go">func GetClusterParams(clusterDir string, vmConfig types.VMConfig) (map[string]string, error)
 </code></pre>
 <p><a name="ProcessFile"></a></p>
-<h2 id="func-processfile">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L84-L92">ProcessFile</a></h2>
+<h2 id="func-processfile">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L81-L89">ProcessFile</a></h2>
 <pre><code class="language-go">func ProcessFile(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm *jsonnet.VM) (string, error)
 </code></pre>
-<p>Process an includes file. Based on the extension, it will process it differently.</p>
-<p>.jsonnet: Imported and processed using jsonnet VM.</p>
-<p>.yml, .yaml: Imported and processed through native function ParseYaml.</p>
-<p>.tpl, .tmpl: Processed using component config and Sprig templating.</p>
+<p>Process an includes file. Based on the extension, the file is processed differently.</p>
+<ul>
+<li>.jsonnet: Imported and processed using jsonnet VM.</li>
+<li>.yml, .yaml: Imported and processed through native function ParseYaml.</li>
+<li>.tpl, .tmpl: Processed using component config and Sprig templating.</li>
+</ul>
 <p><a name="SetupAndConfigureVM"></a></p>
 <h2 id="func-setupandconfigurevm">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L169-L179">SetupAndConfigureVM</a></h2>
 <pre><code class="language-go">func SetupAndConfigureVM(vmconfig types.VMConfig, config string, kr8Spec types.Kr8ClusterSpec, componentName string, compSpec types.Kr8ComponentSpec, allConfig *safeString, filters util.PathFilterOptions, paramsFile string, kr8Opts types.Kr8Opts) (*jsonnet.VM, string, error)

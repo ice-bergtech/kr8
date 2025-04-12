@@ -72,19 +72,17 @@ func GetClusterParams(clusterDir string, vmConfig types.VMConfig) (map[string]st
 
 
 <a name="ProcessFile"></a>
-## func [ProcessFile](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L84-L92>)
+## func [ProcessFile](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L81-L89>)
 
 ```go
 func ProcessFile(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm *jsonnet.VM) (string, error)
 ```
 
-Process an includes file. Based on the extension, it will process it differently.
+Process an includes file. Based on the extension, the file is processed differently.
 
-.jsonnet: Imported and processed using jsonnet VM.
-
-.yml, .yaml: Imported and processed through native function ParseYaml.
-
-.tpl, .tmpl: Processed using component config and Sprig templating.
+- .jsonnet: Imported and processed using jsonnet VM.
+- .yml, .yaml: Imported and processed through native function ParseYaml.
+- .tpl, .tmpl: Processed using component config and Sprig templating.
 
 <a name="SetupAndConfigureVM"></a>
 ## func [SetupAndConfigureVM](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L169-L179>)

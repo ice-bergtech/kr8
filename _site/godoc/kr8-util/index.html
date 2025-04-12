@@ -256,7 +256,7 @@
 <h2 id="func-fetchrepourl">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/remote.go#L13">FetchRepoUrl</a></h2>
 <pre><code class="language-go">func FetchRepoUrl(url string, destination string, noop bool) error
 </code></pre>
-<p>Fetch a git repo from a url and clone it to a destination directory. If the noop flag is true, it will log the command that would be run and return without doing anything.</p>
+<p>Fetch a git repo from a url and clone it to a destination directory. If the noop flag is true, it print commands to fetch manually without doing anything.</p>
 <p><a name="Filter"></a></p>
 <h2 id="func-filter">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L15">Filter</a></h2>
 <pre><code class="language-go">func Filter(vs []string, f func(string) bool) []string
@@ -315,7 +315,7 @@
 <h2 id="func-writeobjtojsonfile">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/json.go#L120">WriteObjToJsonFile</a></h2>
 <pre><code class="language-go">func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (string, error)
 </code></pre>
-<p>Write out a struct to a specified path and file. Marshals the given interface and generates a formatted json string. It will create all parent directories needed.</p>
+<p>Write out a struct to a specified path and file. Marshals the given interface and generates a formatted json string. All parent directories needed are created.</p>
 <p><a name="PathFilterOptions"></a></p>
 <h2 id="type-pathfilteroptions">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L27-L51">PathFilterOptions</a></h2>
 <p>Fill with string to include and exclude, using kr8's special parsing.</p>

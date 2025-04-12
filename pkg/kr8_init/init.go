@@ -97,8 +97,8 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 }
 
 // Downloads a starter kr8 jsonnet lib from github.
-// If fetch is true, it will download the repo in the /lib directory.
-// If false, it will print the git commands to run.
+// If fetch is true, downloads the repo in the /lib directory.
+// If false, prints the git commands to run.
 // Repo: https://github.com/ice-bergtech/kr8-libsonnet .
 // return util.FetchRepoUrl("https://github.com/ice-bergtech/kr8-libsonnet", dstDir+"/kr8-lib", !fetch).
 func GenerateLib(fetch bool, dstDir string) error {

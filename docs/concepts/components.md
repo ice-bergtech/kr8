@@ -25,10 +25,10 @@ At a minimum a component directory contains:
 * **params.jsonnet**: Contains component configuration.
 * **includes files**: Files that are processed and placed in the generated output directory
 
-Often there will be additional files
+Often there are additional files
 
 * **vendor/**: Contains versioned vendor files, with each version in it's own directory
-* **Taskfile.yml**: Automate common component tasks to be ran to prepare component for being referenced by a cluster.
+* **Taskfile.yml**: Automate component version fetching for structured updates.
 
 
 ## params.jsonnet
@@ -78,7 +78,7 @@ The `includes` field allows you to include and process additional files.
 Each item in the list can be either a string (filename) or an object with specific properties.
 
 When the item is a string, it's treated as a filename to include.
-The output will be placed in the `generate_dir` with the same name and `.yaml` extension.
+The output is placed in the `generate_dir` with the same name and `.yaml` extension.
 
 When the item is an object, it allows for more customization.
 The item is marshaled into a [Kr8ComponentSpecIncludeObject](../godoc/kr8-types.md#Kr8ComponentSpecIncludeObject) struct.
@@ -130,10 +130,11 @@ generate_dir:
 
 `kr8_spec.extfiles: [var_name:"filename.jsonnet"]`
 
-This will load the specified file into the jsonnet vm external vars.
+This loads the specified file into the jsonnet vm external vars.
 These files can then be referenced in your jsonnet code using the function `std.extVar("var_name")` variable.
 
-It will be available to be used in component jsonnet as a string, but functions like 
+the file contents is made available as a string to be used in component configuration.
+It can be marshaled into an object using the jsonnet std.lib.
 
 ### jpaths
 
@@ -143,7 +144,7 @@ The `jpaths` parameter allows you to specify additional paths that kr8+ should s
 This is useful for component-specific jsonnet libraries.
 In most cases, it is better to have a shared library that all components can use, but sometimes it is necessary to have a custom library for a specific component.
 
-Each directory string will be passed to the jsonnet vm during processing.
+Each directory string is passed to the jsonnet vm during processing.
 
 ## Taskfile
 
@@ -336,7 +337,8 @@ Here's an example:
 }
 ```
 
-The chart will be referenced and processed through 
+The chart is be referenced and processed through the `helmTemplate` native function.
+The documentation for this native function can be found [here](../godoc/kr8-jsonnet.md#NativeHelmTemplate)
 
 ```go
 local config = std.extVar("kr8");

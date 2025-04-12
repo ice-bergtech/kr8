@@ -338,13 +338,13 @@
 <h2 id="func-nativenetaddresscalcsubnetsv4">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L510">NativeNetAddressCalcSubnetsV4</a></h2>
 <pre><code class="language-go">func NativeNetAddressCalcSubnetsV4() *jsonnet.NativeFunction
 </code></pre>
-<p>Return a list of networks of a given masklen that can be extracted from an IPv4 CIDR. The mask provided must be a larger-integer than the current mask. If set to 0 Subnet will carve the network in half.</p>
+<p>Return a list of networks of a given masklen that can be extracted from an IPv4 CIDR. The mask provided must be a larger-integer than the current mask. If set to 0 Subnet carves the network in half.</p>
 <p>Inputs: "ip4Net", "maskLen".</p>
 <p><a name="NativeNetAddressCalcSubnetsV6"></a></p>
 <h2 id="func-nativenetaddresscalcsubnetsv6">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L543">NativeNetAddressCalcSubnetsV6</a></h2>
 <pre><code class="language-go">func NativeNetAddressCalcSubnetsV6() *jsonnet.NativeFunction
 </code></pre>
-<p>Return a list of networks of a given masklen that can be extracted from an IPv6 CIDR. The mask provided must be a larger-integer than the current mask. If set to 0 Subnet will carve the network in half. Hostmask must be provided if desired.</p>
+<p>Return a list of networks of a given masklen that can be extracted from an IPv6 CIDR. The mask provided must be a larger-integer than the current mask. If set to 0 Subnet carves the network in half. Hostmask must be provided if desired.</p>
 <p>Inputs: "ip6Net", "netMaskLen", "hostMaskLen".</p>
 <p><a name="NativeNetAddressCompare"></a></p>
 <h2 id="func-nativenetaddresscompare">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L196">NativeNetAddressCompare</a></h2>
@@ -356,13 +356,13 @@
 <h2 id="func-nativenetaddressdec">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L348">NativeNetAddressDec</a></h2>
 <pre><code class="language-go">func NativeNetAddressDec() *jsonnet.NativeFunction
 </code></pre>
-<p>PreviousIP returns a net.IP decremented by one from the input address. If you underflow the IP space it will return the zero address.</p>
+<p>PreviousIP returns a net.IP decremented by one from the input address. If you underflow the IP space the zero address is returned.</p>
 <p>Inputs: "rawIP".</p>
 <p><a name="NativeNetAddressDecBy"></a></p>
 <h2 id="func-nativenetaddressdecby">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L370">NativeNetAddressDecBy</a></h2>
 <pre><code class="language-go">func NativeNetAddressDecBy() *jsonnet.NativeFunction
 </code></pre>
-<p>Returns a net.IP that is lower than the supplied net.IP by the supplied integer value. If you underflow the IP space it will return the zero address.</p>
+<p>Returns a net.IP that is lower than the supplied net.IP by the supplied integer value. If you underflow the IP space the zero address is returned.</p>
 <p>Inputs: "rawIP", "count".</p>
 <p><a name="NativeNetAddressDelta"></a></p>
 <h2 id="func-nativenetaddressdelta">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L228">NativeNetAddressDelta</a></h2>
@@ -380,13 +380,13 @@
 <h2 id="func-nativenetaddressinc">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L296">NativeNetAddressInc</a></h2>
 <pre><code class="language-go">func NativeNetAddressInc() *jsonnet.NativeFunction
 </code></pre>
-<p>NextIP returns a net.IP incremented by one from the input address. If you overflow the IP space it will return the all-ones address.</p>
+<p>NextIP returns a net.IP incremented by one from the input address. If you overflow the IP space the all-ones address is returned.</p>
 <p>Inputs: "rawIP".</p>
 <p><a name="NativeNetAddressIncBy"></a></p>
 <h2 id="func-nativenetaddressincby">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L318">NativeNetAddressIncBy</a></h2>
 <pre><code class="language-go">func NativeNetAddressIncBy() *jsonnet.NativeFunction
 </code></pre>
-<p>Returns a net.IP that is greater than the supplied net.IP by the supplied integer value. If you overflow the IP space it will return the all-ones address.</p>
+<p>Returns a net.IP that is greater than the supplied net.IP by the supplied integer value. If you overflow the IP space the all-ones address is returned.</p>
 <p>Inputs: "rawIP", "count".</p>
 <p><a name="NativeNetAddressNetsBetween"></a></p>
 <h2 id="func-nativenetaddressnetsbetween">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs_net.go#L465">NativeNetAddressNetsBetween</a></h2>

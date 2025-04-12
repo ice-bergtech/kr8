@@ -119,7 +119,7 @@ type Kr8ComponentSpec struct {
 	Kr8_allparams bool `json:"enable_kr8_allparams"`
 	// If true, includes the parameters of all other clusters when generating this component
 	Kr8_allclusters bool `json:"enable_kr8_allclusters"`
-	// If false, all non-generated files present in the output directory will be removed
+	// If false, all non-generated files present in the output directory are removed
 	DisableOutputDirClean bool `json:"disable_output_clean"`
 	// A list of filenames to include as jsonnet vm external vars
 	ExtFiles ExtFileVar `json:"extfiles"`
@@ -207,7 +207,7 @@ type ExtFileVar map[string]string
 
 // An includes object which configures how kr8 includes an object.
 // It allows configuring the included file's destination directory and file name.
-// The input file will be processed differently depending on the filetype.
+// The input files are processed differently depending on the filetype.
 type Kr8ComponentSpecIncludeObject struct {
 	// an input file to process
 	// accepted filetypes: .jsonnet .yml .yaml .tmpl .tpl

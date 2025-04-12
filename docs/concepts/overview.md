@@ -9,7 +9,7 @@ A deployment consists of 2 parts:
   - [clusters](./clusters.md) - a deployment environment, organized as a tree of configuration
 
 The relationship between components and clusters are simple: components are installed on clusters.
-You will have:
+A complete deployment with mutliplte clusters has:
 
 * components that are installed on all clusters (auth, cert management, secrets, monitoring)
 * components that are only installed on _some_ clusters (services, hardware dependent workloads)
@@ -37,9 +37,9 @@ for more information on components see the [Components](./components.md) documen
 ### Cluster Config
 
 A cluster is a Kubernetes cluster running in a cloud provider, datacenter or elsewhere.
-You will more than likely have multiple clusters across multiple environments and regions.
+If you are using this tool than you likely have multiple clusters across multiple environments and regions.
 
-By design, configuration is able to be layered and overridden at different levels.
+By design, configuration is able to be layered and overridden at different levels in a tree structure.
 This is the strength of jsonnet and allows for a lot of flexibility in managing your cluster configurations.
 
 Cluster names are based on the directory structure under `./clusters` by default, or the directory specified by the `--clusterdir`, `-D` flags.

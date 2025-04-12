@@ -227,10 +227,10 @@ This is often done to deploy multiple versions of a component at once.</p>
 <li><strong>params.jsonnet</strong>: Contains component configuration.</li>
 <li><strong>includes files</strong>: Files that are processed and placed in the generated output directory</li>
 </ul>
-<p>Often there will be additional files</p>
+<p>Often there are additional files</p>
 <ul>
 <li><strong>vendor/</strong>: Contains versioned vendor files, with each version in it's own directory</li>
-<li><strong>Taskfile.yml</strong>: Automate common component tasks to be ran to prepare component for being referenced by a cluster.</li>
+<li><strong>Taskfile.yml</strong>: Automate component version fetching for structured updates.</li>
 </ul>
 <h2 id="paramsjsonnet">params.jsonnet</h2>
 <p>kr8+'s most useful feature is the ability to easily layer <em>parameters</em> to generate a resource.
@@ -309,7 +309,7 @@ The <code>kr8_spec</code> fields are marshaled into the <a href="../../godoc/kr8
 <p>The <code>includes</code> field allows you to include and process additional files.
 Each item in the list can be either a string (filename) or an object with specific properties.</p>
 <p>When the item is a string, it's treated as a filename to include.
-The output will be placed in the <code>generate_dir</code> with the same name and <code>.yaml</code> extension.</p>
+The output is placed in the <code>generate_dir</code> with the same name and <code>.yaml</code> extension.</p>
 <p>When the item is an object, it allows for more customization.
 The item is marshaled into a <a href="../../godoc/kr8-types/#Kr8ComponentSpecIncludeObject">Kr8ComponentSpecIncludeObject</a> struct.</p>
 <p>There are the following fields:</p>
@@ -350,15 +350,16 @@ The item is marshaled into a <a href="../../godoc/kr8-types/#Kr8ComponentSpecInc
 </code></pre>
 <h3 id="extfiles">extfiles</h3>
 <p><code>kr8_spec.extfiles: [var_name:"filename.jsonnet"]</code></p>
-<p>This will load the specified file into the jsonnet vm external vars.
+<p>This loads the specified file into the jsonnet vm external vars.
 These files can then be referenced in your jsonnet code using the function <code>std.extVar("var_name")</code> variable.</p>
-<p>It will be available to be used in component jsonnet as a string, but functions like </p>
+<p>the file contents is made available as a string to be used in component configuration.
+It can be marshaled into an object using the jsonnet std.lib.</p>
 <h3 id="jpaths">jpaths</h3>
 <p><code>kr8_spec.jpaths: ["path/to/dir/"]</code></p>
 <p>The <code>jpaths</code> parameter allows you to specify additional paths that kr8+ should search for components.
 This is useful for component-specific jsonnet libraries.
 In most cases, it is better to have a shared library that all components can use, but sometimes it is necessary to have a custom library for a specific component.</p>
-<p>Each directory string will be passed to the jsonnet vm during processing.</p>
+<p>Each directory string is passed to the jsonnet vm during processing.</p>
 <h2 id="taskfile">Taskfile</h2>
 <p>A taskfile within the component directory can help manage the lifecycle of components, especially when dealing with dependencies and version management for more complex updates.
 A common practice is to create a <code>fetch</code> task that downloads all dependencies (e.g., Helm charts or static manifests).
@@ -509,7 +510,8 @@ The values can be stored in a field, usually named <code>helm_values</code>.</p>
   },
 }
 </code></pre>
-<p>The chart will be referenced and processed through </p>
+<p>The chart is be referenced and processed through the <code>helmTemplate</code> native function.
+The documentation for this native function can be found <a href="../../godoc/kr8-jsonnet/#NativeHelmTemplate">here</a></p>
 <pre><code class="language-go">local config = std.extVar(&quot;kr8&quot;);
 
 local helm_template = std.native(&quot;helmTemplate&quot;)(config.release_name, &quot;./vendor/&quot;+&quot;external-dns-&quot;+config.chart_version, {

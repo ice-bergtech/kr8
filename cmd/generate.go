@@ -60,7 +60,7 @@ var GenerateCmd = &cobra.Command{
 	Run:  GenerateCommand,
 }
 
-// This function will generate the components for each cluster in parallel.
+// This function generates the components for each cluster in parallel.
 // It uses a wait group to ensure that all clusters have been processed before exiting.
 func GenerateCommand(cmd *cobra.Command, args []string) {
 	// get list of all clusters, render cluster level params for all of them

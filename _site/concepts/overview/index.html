@@ -174,7 +174,7 @@ It is designed to easily layer config from multiple sources.</p>
 <li><a href="../clusters/">clusters</a> - a deployment environment, organized as a tree of configuration</li>
 </ul>
 <p>The relationship between components and clusters are simple: components are installed on clusters.
-You will have:</p>
+A complete deployment with mutliplte clusters has:</p>
 <ul>
 <li>components that are installed on all clusters (auth, cert management, secrets, monitoring)</li>
 <li>components that are only installed on <em>some</em> clusters (services, hardware dependent workloads)</li>
@@ -195,8 +195,8 @@ Some examples of components might be:</p>
 <p>for more information on components see the <a href="../components/">Components</a> documentation.</p>
 <h3 id="cluster-config">Cluster Config</h3>
 <p>A cluster is a Kubernetes cluster running in a cloud provider, datacenter or elsewhere.
-You will more than likely have multiple clusters across multiple environments and regions.</p>
-<p>By design, configuration is able to be layered and overridden at different levels.
+If you are using this tool than you likely have multiple clusters across multiple environments and regions.</p>
+<p>By design, configuration is able to be layered and overridden at different levels in a tree structure.
 This is the strength of jsonnet and allows for a lot of flexibility in managing your cluster configurations.</p>
 <p>Cluster names are based on the directory structure under <code>./clusters</code> by default, or the directory specified by the <code>--clusterdir</code>, <code>-D</code> flags.</p>
 <p>A typical cluster config folder layout may look like:</p>

@@ -81,7 +81,7 @@ Logs an error and exits the program if the error is not nil. Saves 3 lines per u
 func FetchRepoUrl(url string, destination string, noop bool) error
 ```
 
-Fetch a git repo from a url and clone it to a destination directory. If the noop flag is true, it will log the command that would be run and return without doing anything.
+Fetch a git repo from a url and clone it to a destination directory. If the noop flag is true, it print commands to fetch manually without doing anything.
 
 <a name="Filter"></a>
 ## func [Filter](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L15>)
@@ -189,7 +189,7 @@ Pretty formats the input jsonnet string with indentation and optional color outp
 func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (string, error)
 ```
 
-Write out a struct to a specified path and file. Marshals the given interface and generates a formatted json string. It will create all parent directories needed.
+Write out a struct to a specified path and file. Marshals the given interface and generates a formatted json string. All parent directories needed are created.
 
 <a name="PathFilterOptions"></a>
 ## type [PathFilterOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L27-L51>)

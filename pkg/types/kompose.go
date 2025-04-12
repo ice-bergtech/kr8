@@ -17,7 +17,7 @@ import (
 	sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 )
 
-// A struct describing a compose file that will be processed by kompose to produce kubernetes manifests.
+// A struct describing a compose file to be processed by kompose to produce kubernetes manifests.
 //
 // Based on https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
 type KomposeConvertOptions struct {
@@ -30,7 +30,8 @@ type KomposeConvertOptions struct {
 	// List of compose file filenames.
 	// Filenames should be in the format `[docker-]compose.ym[a]l`
 	InputFiles []string
-	// Specify a file name or directory to save objects to (if path does not exist, a file will be created)
+	// Specify a file name or directory to save objects to.
+	// if path does not exist, a file is created)
 	OutFile string
 	// Generate a Helm chart for converted objects
 	CreateChart bool
@@ -92,7 +93,7 @@ type KomposeConvertOptions struct {
 	ImageBuildCommand string
 	// Command used to push image
 	ImagePushCommand string
-	// Specify registry for pushing image, which will override registry from image name
+	// Specify registry for pushing image, which overrides the registry derived from image name
 	ImagePushRegistry string
 }
 
