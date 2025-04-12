@@ -17,20 +17,37 @@ This means that breaking changes still happen from time to time, but it's stable
 	<a href="https://github.com/ice-bergtech/kr8/issues">Get Help</a>
 </p>
 
-## Menu
+## Table of Contents
 
-* [Key Features](#key-features)
-* [Technical Overview](#technical-overview)
-* [Installation](#installation)
-  * [configuration](#configuration)
-* [Full Documentation](./docs/index.md)
-* [Development](#development)
+- [kr8+](#kr8)
+  - [Table of Contents](#table-of-contents)
+  - [Key Features](#key-features)
+  - [Technical Overview](#technical-overview)
+  - [Installation](#installation)
+    - [Getting Started](#getting-started)
+    - [Configuration](#configuration)
+      - [Clusters Configurations](#clusters-configurations)
+      - [Component Configurations](#component-configurations)
+      - [Jsonnet Libraries](#jsonnet-libraries)
+    - [Deployment](#deployment)
+  - [Documentation and Additional Resources](#documentation-and-additional-resources)
+    - [History and Theory](#history-and-theory)
+    - [Alternatives tools](#alternatives-tools)
+  - [Development](#development)
+    - [Dependencies](#dependencies)
+    - [Setup](#setup)
+    - [Running Tasks](#running-tasks)
+      - [Examples](#examples)
+    - [Tests](#tests)
+    - [Build Troubleshooting](#build-troubleshooting)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 ## Key Features
 
-* **Cluster Configuration Management**: Manage Kubernetes clusters across environments, regions and platforms with a declarative and centralized approach.
+* **Cluster Configuration Management**: Manage Kubernetes clusters across environments, regions, and platforms with a declarative and centralized approach.
 * **Opinionated Structure**: Enforces best practices for consistent and reliable cluster configurations.
-* **Jsonnet Native Functions**: Use jsonnet to render and override component config from multiple sources, such as templates, docker-compose files, Kustomize, and Helm.
+* **Jsonnet Native Functions**: Use Jsonnet to render and override component config from multiple sources such as templates, docker-compose files, Kustomize, and Helm.
 * **Extensibility**: Easily extensible to meet the needs of diverse Kubernetes environments.
 * **CI/CD Friendly**: Statically define all your configuration in a single source of truth, making it easy to integrate with CI/CD pipelines and deployment automation like ArgoCD.
 * **Standardization**: Ensures consistency across Kubernetes clusters, reducing errors and improving maintainability.
@@ -48,13 +65,12 @@ This means that breaking changes still happen from time to time, but it's stable
 - [ghodss/yaml](https://github.com/ghodss/yaml) `v1.0.0`
 - [Grafana/tanka helm](https://github.com/grafana/tanka/pkg/helm) `v0.27.1`
 - [kubernetes/kompose](https://github.com/kubernetes/kompose) `v1.35.0`
-- [Masterminds/sprig v3 Template Library](https://pkg.go.dev/github.com/Masterminds/sprig#section-readme) - [Template Documentation](https://masterminds.github.io/sprig/) `v3.2.3`
-
+- [Masterminds/sprig v3 Template Library](https://pkg.go.dev/github.com/Masterminds/sprig#section-readme) `v3.2.3` - [Template Documentation](https://masterminds.github.io/sprig/)
 
 ## Installation
 
 The latest version is available for download from the [Github releases page](https://github.com/ice-bergtech/kr8/releases)
-To install via Homebrew, add the [ice-bergtech github tap](https://github.com/ice-bergtech/homebrew-tap) and install::
+To install via Homebrew, add the [ice-bergtech github tap](https://github.com/ice-bergtech/homebrew-tap) and install:
 
 ```sh
 brew tap ice-bergtech/tap
@@ -63,7 +79,7 @@ brew install kr8
 
 Once installed, use `kr8 init` commands to setup the initial structure and configurations.
 
-## Getting Started
+### Getting Started
 
 An working example of a repo is found at [ice-bergtech/kr8-examples](https://github.com/ice-bergtech/kr8-examples):
 
@@ -119,40 +135,34 @@ To generate the final configured manifests, just run `kr8 generate`.
 
 Manifest changes are checked into source control, allowing them to be ingested by tools like ArgoCD, Portainer, Rancher etc.
 
-### Further Information
+## Documentation and Additional Resources
+
+kr8+ documentation
 
 * [Command Documentation](./docs/cmd/kr8.md)
-* **kr8+**
-  * [Concepts](./docs/concepts/overview.md)
-  * [Managing Clusters](./docs/concepts/clusters.md)
-  * [Creating Components](./docs/concepts/components.md)
-  * [Native Functions](./docs/concepts/nativefuncs.md)
+* [Concepts](./docs/concepts/overview.md)
+* [Managing Clusters](./docs/concepts/clusters.md)
+* [Creating Components](./docs/concepts/components.md)
+* [Native Functions](./docs/concepts/nativefuncs.md)
 * [Code Documentation](./docs/godoc)
 
-## References and Additional Resources
-
-**kr8+** is a fork of [kr8](https://github.com/apptio/kr8) with some additional features and improvements.
-**kr8** was used in production to great success at Apptio for managing components across multiple Kubernetes cluster tiers, regions, and environments.
-
-## Cluster and Component Configuration
+Other Documentation
 
 * [Jsonnet Standard Library](https://jsonnet.org/ref/stdlib.html)
 * [Jsonnet Language Reference](https://jsonnet.org/ref/language.html)
 * [Sprig Template Documentation](https://masterminds.github.io/sprig/)
 
-## Dev Environment
+### History and Theory
 
-* VSCode plugin [EditorConfig](https://open-vsx.org/vscode/item?itemName=EditorConfig.EditorConfig)
-* VSCode plugins [Grafana Jsonnet Language Server](https://open-vsx.org/vscode/item?itemName=Grafana.vscode-jsonnet)
-
-
-## Theory
+**kr8+** is a fork of [kr8](https://github.com/apptio/kr8) with some additional features and improvements.
+**kr8** was used in production to great success at Apptio for managing components across multiple Kubernetes cluster tiers, regions, and environments.
 
 * [The growing need for Kubernetes Configuration Management](https://leebriggs.co.uk/blog/2018/05/08/kubernetes-config-mgmt.html)
 
-## Alternatives tools
+### Alternatives tools
 
 * [Bazel](https://bazel.build/about)
+* [kubecfg](https://github.com/kubecfg/kubecfg)
 * [helm](https://helm.sh/)
 * [kustomize](https://kustomize.io/)
 * raw [jsonnet](https://github.com/jsonnet/go-jsonnet)
@@ -230,12 +240,15 @@ There are a few sets of tests:
 * The command `go build` does not start the build:
    * Confirm you are in the correct project directory
    * Make sure your go installation works: `go --version`
+* Linting issues
+   * Linting issues are placed in [docs/lint/kr8-linting](./docs/lint/kr8-linting.txt)
+   * Can temporarily comment out linter checks or add exclusions in `.golangci.yml`
 
 ## Contributing
 
 We welcome contributions from the community to enhance **kr8+**.
 
-Fork the repo in github and send a merge request!
+Fork the repo in github and open a pull request!
 
 ## License
 
