@@ -277,7 +277,39 @@ go mod download
 go build
 </code></pre>
 <p>This will create a binary named <code>kr8</code> which can be placed in your <code>/bin</code> of choice.</p>
-<p>Once installed, use <code>kr8 init</code> commands to setup the initial structure and configurations.</p>
+<p>Once installed, use <code>kr8 help</code> to show the available commands.</p>
+<pre><code class="language-sh">&gt; ./kr8 help
+An opinionated configuration management tool for Kubernetes Clusters powered by jsonnet
+
+Usage:
+  kr8 [command]
+
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  format      Format jsonnet files
+  generate    Generate components
+  get         Display one or many kr8 resources
+  help        Help about any command
+  init        Initialize kr8 config repos, components and clusters
+  jsonnet     Jsonnet utilities
+  render      Render files
+  version     Return the current version of kr8+
+
+Flags:
+  -B, --base string            kr8 config base directory (default &quot;./&quot;)
+  -D, --clusterdir string      kr8 cluster directory
+      --color                  enable colorized output. Set to false to disable (default true)
+  -d, --componentdir string    kr8 component directory
+      --config string          A config file with kr8 configuration
+      --debug                  log more information about what kr8 is doing. Overrides --loglevel
+      --ext-str-file strings   Set jsonnet extvar from file contents
+  -h, --help                   help for kr8
+  -J, --jpath stringArray      Directories to add to jsonnet include path. Repeat arg for multiple directories
+  -L, --loglevel string        set log level (default &quot;info&quot;)
+      --parallel int           parallelism - defaults to runtime.GOMAXPROCS(0) (default -1)
+
+Use &quot;kr8 [command] --help&quot; for more information about a command.
+</code></pre>
 <h3 id="getting-started">Getting Started</h3>
 <p>An working example of a repo is found at <a href="https://github.com/ice-bergtech/kr8-examples">ice-bergtech/kr8-examples</a>:</p>
 <pre><code class="language-sh">git clone git@github.com:ice-bergtech/kr8-examples.git
