@@ -1,3 +1,9 @@
+// Package util contains utility functions for various tasks.
+// It includes functions for
+// formatting JSON,
+// writing to files,
+// directory management,
+// and go control-flow helpers
 package util
 
 import (

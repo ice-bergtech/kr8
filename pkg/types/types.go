@@ -32,7 +32,7 @@ type Kr8ClusterJsonnet struct {
 	ClusterSpec Kr8ClusterSpec `json:"_kr8_spec"`
 	// Cluster Level configuration that components can reference
 	Cluster Kr8Cluster `json:"_cluster"`
-	// Distictly named components.
+	// Distinctly named components.
 	Components map[string]Kr8ClusterComponentRef `json:"_components"`
 }
 
