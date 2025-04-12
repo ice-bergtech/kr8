@@ -38,7 +38,7 @@ tasks:
       - ./GEN_ALL.sh
 
   03_test-go:
-    desc: Tesk kr8+ for your local system
+    desc: Test kr8+ for your local system
     aliases:
       - test
       - t

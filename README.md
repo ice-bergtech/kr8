@@ -30,7 +30,7 @@ This means that breaking changes still happen from time to time, but it's stable
 
 * **Cluster Configuration Management**: Manage Kubernetes clusters across environments, regions and platforms with a declarative and centralized approach.
 * **Opinionated Structure**: Enforces best practices for consistent and reliable cluster configurations.
-* **Jsonnet Native Funcitons**: Use jsonnet to render and override component config from multiple sources, such as templates, docker-compose files, Kustomize, and Helm.
+* **Jsonnet Native Functions**: Use jsonnet to render and override component config from multiple sources, such as templates, docker-compose files, Kustomize, and Helm.
 * **Extensibility**: Easily extensible to meet the needs of diverse Kubernetes environments.
 * **CI/CD Friendly**: Statically define all your configuration in a single source of truth, making it easy to integrate with CI/CD pipelines and deployment automation like ArgoCD.
 * **Standardization**: Ensures consistency across Kubernetes clusters, reducing errors and improving maintainability.
@@ -54,10 +54,10 @@ This means that breaking changes still happen from time to time, but it's stable
 ## Installation
 
 The latest version is available for download from the [Github releases page](https://github.com/ice-bergtech/kr8/releases)
-To install via Homebrew, add the [icetech github tap](https://github.com/ice-bergtech/homebrew-icetech) and install::
+To install via Homebrew, add the [ice-bergtech github tap](https://github.com/ice-bergtech/homebrew-tap) and install::
 
 ```sh
-brew tap ice-bergtech/icetech
+brew tap ice-bergtech/tap
 brew install kr8
 ```
 
@@ -91,7 +91,7 @@ Cluster Spec: [types.Kr8ClusterJsonnet](./docs/godoc/kr8-types.md#Kr8ClusterJson
 
 More information: [Managing Clusters](./docs/concepts/clusters.md)
 
-#### Conponents Configurations
+#### Component Configurations
 
 A component is a deployable unit that you wish to install in one or more clusters.
 Components can be declared multiple times within a cluster, as long as they are named distinctly when loaded.
@@ -107,7 +107,7 @@ They allow you to write modular and maintainable configuration.
 
 Common libraries include:
 
-* [kr8-libesonnet](https://github.com/ice-bergtech/kr8-libsonnet)
+* [kr8-libsonnet](https://github.com/ice-bergtech/kr8-libsonnet)
 * [kube-libsonnet](https://github.com/kube-libsonnet/kube-libsonnet)
 
 More information: [Jsonnet Libraries](./docs/concepts/overview.md)
@@ -195,7 +195,7 @@ task: Available tasks for this project:
 * 02_build-mkdocs:              Uses mkdocs to build documentation site from docs        (aliases: bmd)
 * 03_build-snapshot:            Build a snapshot for all platforms using goreleaser      (aliases: build-snapshot, bs)
 * 03_generate-bats-tests:       Generate resources to test against                       (aliases: gt)
-* 03_test-go:                   Tesk kr8+ for your local system                          (aliases: test, t)
+* 03_test-go:                   Test kr8+ for your local system                          (aliases: test, t)
 * 03_test-package:              Test compiled kr8+ binary against test inputs            (aliases: test-package, tp)
 * 04_generate-examples:         Generate example clusters and components with kr8+       (aliases: ge, gen)
 ```
@@ -227,7 +227,7 @@ There are a few sets of tests:
 * Dependencies download fail: There is a large number of reasons why this could fail.  Be sure to check:
    * Networking problems: Check your connection to: `github.com`, `golang.org` and `k8s.io`.
    * Disk space: If no space is available on the disk, this step might fail.
-* The comand `go build` does not start the build:
+* The command `go build` does not start the build:
    * Confirm you are in the correct project directory
    * Make sure your go installation works: `go --version`
 

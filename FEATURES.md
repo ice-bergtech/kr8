@@ -12,7 +12,7 @@
   * Ensures consistency across Kubernetes clusters, reducing errors and improving maintainability.
   * Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.
   * Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.
-* **Jsonnet Native Funcitons**: Use jsonnet to render and override component config from multiple sources
+* **Jsonnet Native Functions**: Use jsonnet to render and override component config from multiple sources
   * Go-templates: Able to output text files templated based off of component configuration.  Integrated with sprig templating functions
   * Docker-compose: Able to process docker-compose as yaml, or through [kubernetes/kompose]() to output kubernetes resources
   * Kustomize: Able to process kustomize files and output kubernetes resources
