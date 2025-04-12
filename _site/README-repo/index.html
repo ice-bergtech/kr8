@@ -46,21 +46,21 @@
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="#">Repo Readme</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#menu">Menu</a>
+    <li class="toctree-l2"><a class="reference internal" href="#table-of-contents">Table of Contents</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#key-features">Key Features</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#technical-overview">Technical Overview</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a>
         <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#getting-started">Getting Started</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a>
         <ul>
     <li class="toctree-l4"><a class="reference internal" href="#clusters-configurations">Clusters Configurations</a>
     </li>
-    <li class="toctree-l4"><a class="reference internal" href="#conponents-configurations">Conponents Configurations</a>
+    <li class="toctree-l4"><a class="reference internal" href="#component-configurations">Component Configurations</a>
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#jsonnet-libraries">Jsonnet Libraries</a>
     </li>
@@ -68,19 +68,15 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#deployment">Deployment</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#further-information">Further Information</a>
-    </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#references-and-additional-resources">References and Additional Resources</a>
+    <li class="toctree-l2"><a class="reference internal" href="#documentation-and-additional-resources">Documentation and Additional Resources</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#history-and-theory">History and Theory</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#cluster-and-component-configuration">Cluster and Component Configuration</a>
+    <li class="toctree-l3"><a class="reference internal" href="#alternatives-tools">Alternatives tools</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#dev-environment">Dev Environment</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#theory">Theory</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#alternatives-tools">Alternatives tools</a>
+        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#development">Development</a>
         <ul>
@@ -231,20 +227,43 @@ This means that breaking changes still happen from time to time, but it's stable
     <a href="https://github.com/ice-bergtech/kr8/issues">Get Help</a>
 </p>
 
-<h2 id="menu">Menu</h2>
+<h2 id="table-of-contents">Table of Contents</h2>
 <ul>
+<li><a href="#kr8">kr8+</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
 <li><a href="#key-features">Key Features</a></li>
 <li><a href="#technical-overview">Technical Overview</a></li>
-<li><a href="#installation">Installation</a></li>
-<li><a href="#configuration">configuration</a></li>
-<li><a href="../">Full Documentation</a></li>
-<li><a href="#development">Development</a></li>
+<li><a href="#installation">Installation</a><ul>
+<li><a href="#getting-started">Getting Started</a></li>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#clusters-configurations">Clusters Configurations</a></li>
+<li><a href="#component-configurations">Component Configurations</a></li>
+<li><a href="#jsonnet-libraries">Jsonnet Libraries</a></li>
+<li><a href="#deployment">Deployment</a></li>
+</ul>
+</li>
+<li><a href="#documentation-and-additional-resources">Documentation and Additional Resources</a><ul>
+<li><a href="#history-and-theory">History and Theory</a></li>
+<li><a href="#alternatives-tools">Alternatives tools</a></li>
+</ul>
+</li>
+<li><a href="#development">Development</a><ul>
+<li><a href="#dependencies">Dependencies</a></li>
+<li><a href="#setup">Setup</a></li>
+<li><a href="#running-tasks">Running Tasks</a></li>
+<li><a href="#examples">Examples</a></li>
+<li><a href="#tests">Tests</a></li>
+<li><a href="#build-troubleshooting">Build Troubleshooting</a></li>
+</ul>
+</li>
+<li><a href="#contributing">Contributing</a></li>
+<li><a href="#license">License</a></li>
 </ul>
 <h2 id="key-features">Key Features</h2>
 <ul>
-<li><strong>Cluster Configuration Management</strong>: Manage Kubernetes clusters across environments, regions and platforms with a declarative and centralized approach.</li>
+<li><strong>Cluster Configuration Management</strong>: Manage Kubernetes clusters across environments, regions, and platforms with a declarative and centralized approach.</li>
 <li><strong>Opinionated Structure</strong>: Enforces best practices for consistent and reliable cluster configurations.</li>
-<li><strong>Jsonnet Native Funcitons</strong>: Use jsonnet to render and override component config from multiple sources, such as templates, docker-compose files, Kustomize, and Helm.</li>
+<li><strong>Jsonnet Native Functions</strong>: Use Jsonnet to render and override component config from multiple sources such as templates, docker-compose files, Kustomize, and Helm.</li>
 <li><strong>Extensibility</strong>: Easily extensible to meet the needs of diverse Kubernetes environments.</li>
 <li><strong>CI/CD Friendly</strong>: Statically define all your configuration in a single source of truth, making it easy to integrate with CI/CD pipelines and deployment automation like ArgoCD.</li>
 <li><strong>Standardization</strong>: Ensures consistency across Kubernetes clusters, reducing errors and improving maintainability.</li>
@@ -260,16 +279,16 @@ This means that breaking changes still happen from time to time, but it's stable
 <li><a href="https://github.com/ghodss/yaml">ghodss/yaml</a> <code>v1.0.0</code></li>
 <li><a href="https://github.com/grafana/tanka/pkg/helm">Grafana/tanka helm</a> <code>v0.27.1</code></li>
 <li><a href="https://github.com/kubernetes/kompose">kubernetes/kompose</a> <code>v1.35.0</code></li>
-<li><a href="https://pkg.go.dev/github.com/Masterminds/sprig#section-readme">Masterminds/sprig v3 Template Library</a> - <a href="https://masterminds.github.io/sprig/">Template Documentation</a> <code>v3.2.3</code></li>
+<li><a href="https://pkg.go.dev/github.com/Masterminds/sprig#section-readme">Masterminds/sprig v3 Template Library</a> <code>v3.2.3</code> - <a href="https://masterminds.github.io/sprig/">Template Documentation</a></li>
 </ul>
 <h2 id="installation">Installation</h2>
 <p>The latest version is available for download from the <a href="https://github.com/ice-bergtech/kr8/releases">Github releases page</a>
-To install via Homebrew, add the <a href="https://github.com/ice-bergtech/homebrew-icetech">icetech github tap</a> and install::</p>
-<pre><code class="language-sh">brew tap ice-bergtech/icetech
+To install via Homebrew, add the <a href="https://github.com/ice-bergtech/homebrew-tap">ice-bergtech github tap</a> and install:</p>
+<pre><code class="language-sh">brew tap ice-bergtech/tap
 brew install kr8
 </code></pre>
 <p>Once installed, use <code>kr8 init</code> commands to setup the initial structure and configurations.</p>
-<h2 id="getting-started">Getting Started</h2>
+<h3 id="getting-started">Getting Started</h3>
 <p>An working example of a repo is found at <a href="https://github.com/ice-bergtech/kr8-examples">ice-bergtech/kr8-examples</a>:</p>
 <pre><code class="language-sh">git clone git@github.com:ice-bergtech/kr8-examples.git
 </code></pre>
@@ -287,7 +306,7 @@ Jsonnet was chosen because it allows us to use code for configuration, while sta
 Configuration the folders is layered on the parent folder's configuration, allowing you to override or extend configurations.</p>
 <p>Cluster Spec: <a href="../godoc/kr8-types/#Kr8ClusterJsonnet">types.Kr8ClusterJsonnet</a></p>
 <p>More information: <a href="../concepts/clusters/">Managing Clusters</a></p>
-<h4 id="conponents-configurations">Conponents Configurations</h4>
+<h4 id="component-configurations">Component Configurations</h4>
 <p>A component is a deployable unit that you wish to install in one or more clusters.
 Components can be declared multiple times within a cluster, as long as they are named distinctly when loaded.</p>
 <p>Component Spec: <a href="../godoc/kr8-types/#Kr8ComponentJsonnet">types.Kr8ComponentJsonnet</a></p>
@@ -297,7 +316,7 @@ Components can be declared multiple times within a cluster, as long as they are 
 They allow you to write modular and maintainable configuration.</p>
 <p>Common libraries include:</p>
 <ul>
-<li><a href="https://github.com/ice-bergtech/kr8-libsonnet">kr8-libesonnet</a></li>
+<li><a href="https://github.com/ice-bergtech/kr8-libsonnet">kr8-libsonnet</a></li>
 <li><a href="https://github.com/kube-libsonnet/kube-libsonnet">kube-libsonnet</a></li>
 </ul>
 <p>More information: <a href="../concepts/overview/">Jsonnet Libraries</a></p>
@@ -305,37 +324,32 @@ They allow you to write modular and maintainable configuration.</p>
 <p>To generate the final configured manifests, just run <code>kr8 generate</code>.
 <strong>kr8+</strong> reads the cluster and components configuration files and generates the final manifests based on the parameters provided.</p>
 <p>Manifest changes are checked into source control, allowing them to be ingested by tools like ArgoCD, Portainer, Rancher etc.</p>
-<h3 id="further-information">Further Information</h3>
+<h2 id="documentation-and-additional-resources">Documentation and Additional Resources</h2>
+<p>kr8+ documentation</p>
 <ul>
 <li><a href="../cmd/kr8/">Command Documentation</a></li>
-<li><strong>kr8+</strong></li>
 <li><a href="../concepts/overview/">Concepts</a></li>
 <li><a href="../concepts/clusters/">Managing Clusters</a></li>
 <li><a href="../concepts/components/">Creating Components</a></li>
 <li><a href="../concepts/nativefuncs/">Native Functions</a></li>
 <li><a href="./godoc">Code Documentation</a></li>
 </ul>
-<h2 id="references-and-additional-resources">References and Additional Resources</h2>
-<p><strong>kr8+</strong> is a fork of <a href="https://github.com/apptio/kr8">kr8</a> with some additional features and improvements.
-<strong>kr8</strong> was used in production to great success at Apptio for managing components across multiple Kubernetes cluster tiers, regions, and environments.</p>
-<h2 id="cluster-and-component-configuration">Cluster and Component Configuration</h2>
+<p>Other Documentation</p>
 <ul>
 <li><a href="https://jsonnet.org/ref/stdlib.html">Jsonnet Standard Library</a></li>
 <li><a href="https://jsonnet.org/ref/language.html">Jsonnet Language Reference</a></li>
 <li><a href="https://masterminds.github.io/sprig/">Sprig Template Documentation</a></li>
 </ul>
-<h2 id="dev-environment">Dev Environment</h2>
-<ul>
-<li>VSCode plugin <a href="https://open-vsx.org/vscode/item?itemName=EditorConfig.EditorConfig">EditorConfig</a></li>
-<li>VSCode plugins <a href="https://open-vsx.org/vscode/item?itemName=Grafana.vscode-jsonnet">Grafana Jsonnet Language Server</a></li>
-</ul>
-<h2 id="theory">Theory</h2>
+<h3 id="history-and-theory">History and Theory</h3>
+<p><strong>kr8+</strong> is a fork of <a href="https://github.com/apptio/kr8">kr8</a> with some additional features and improvements.
+<strong>kr8</strong> was used in production to great success at Apptio for managing components across multiple Kubernetes cluster tiers, regions, and environments.</p>
 <ul>
 <li><a href="https://leebriggs.co.uk/blog/2018/05/08/kubernetes-config-mgmt.html">The growing need for Kubernetes Configuration Management</a></li>
 </ul>
-<h2 id="alternatives-tools">Alternatives tools</h2>
+<h3 id="alternatives-tools">Alternatives tools</h3>
 <ul>
 <li><a href="https://bazel.build/about">Bazel</a></li>
+<li><a href="https://github.com/kubecfg/kubecfg">kubecfg</a></li>
 <li><a href="https://helm.sh/">helm</a></li>
 <li><a href="https://kustomize.io/">kustomize</a></li>
 <li>raw <a href="https://github.com/jsonnet/go-jsonnet">jsonnet</a></li>
@@ -361,13 +375,15 @@ task setup
 <h3 id="running-tasks">Running Tasks</h3>
 <pre><code class="language-sh"># View available tasks
 task -l
+# Output:
 task: Available tasks for this project:
 * 01_setup:                     Instal dev tools                                         (aliases: setup, s)
 * 01_setup-bats:                Install bats testing tools                               (aliases: setup-bats)
 * 02_build:                     Build kr8+ for your local system                         (aliases: build, b)
+* 02_build-mkdocs:              Uses mkdocs to build documentation site from docs        (aliases: bmd)
 * 03_build-snapshot:            Build a snapshot for all platforms using goreleaser      (aliases: build-snapshot, bs)
 * 03_generate-bats-tests:       Generate resources to test against                       (aliases: gt)
-* 03_test-go:                   Tesk kr8+ for your local system                          (aliases: test, t)
+* 03_test-go:                   Test kr8+ for your local system                          (aliases: test, t)
 * 03_test-package:              Test compiled kr8+ binary against test inputs            (aliases: test-package, tp)
 * 04_generate-examples:         Generate example clusters and components with kr8+       (aliases: ge, gen)
 </code></pre>
@@ -394,13 +410,16 @@ task build-snapshot
 <li>Dependencies download fail: There is a large number of reasons why this could fail.  Be sure to check:</li>
 <li>Networking problems: Check your connection to: <code>github.com</code>, <code>golang.org</code> and <code>k8s.io</code>.</li>
 <li>Disk space: If no space is available on the disk, this step might fail.</li>
-<li>The comand <code>go build</code> does not start the build:</li>
+<li>The command <code>go build</code> does not start the build:</li>
 <li>Confirm you are in the correct project directory</li>
 <li>Make sure your go installation works: <code>go --version</code></li>
+<li>Linting issues</li>
+<li>Linting issues are placed in <a href="../lint/kr8-linting.txt">lint/kr8-linting</a></li>
+<li>Can temporarily comment out linter checks or add exclusions in <code>.golangci.yml</code></li>
 </ul>
 <h2 id="contributing">Contributing</h2>
 <p>We welcome contributions from the community to enhance <strong>kr8+</strong>.</p>
-<p>Fork the repo in github and send a merge request!</p>
+<p>Fork the repo in github and open a pull request!</p>
 <h2 id="license">License</h2>
 <p>The project is licensed under the <a href="../LICENSE">MIT license</a>.</p>
 <p>Parts of the code are derived from:</p>
