@@ -160,7 +160,7 @@ Inputs: "rawIP".
 func NativeNetAddressCalcSubnetsV4() *jsonnet.NativeFunction
 ```
 
-Return a list of networks of a given masklen that can be extracted from an IPv4 CIDR. The mask provided must be a larger\-integer than the current mask. If set to 0 Subnet will carve the network in half.
+Return a list of networks of a given masklen that can be extracted from an IPv4 CIDR. The mask provided must be a larger\-integer than the current mask. If set to 0 Subnet carves the network in half.
 
 Inputs: "ip4Net", "maskLen".
 
@@ -171,7 +171,7 @@ Inputs: "ip4Net", "maskLen".
 func NativeNetAddressCalcSubnetsV6() *jsonnet.NativeFunction
 ```
 
-Return a list of networks of a given masklen that can be extracted from an IPv6 CIDR. The mask provided must be a larger\-integer than the current mask. If set to 0 Subnet will carve the network in half. Hostmask must be provided if desired.
+Return a list of networks of a given masklen that can be extracted from an IPv6 CIDR. The mask provided must be a larger\-integer than the current mask. If set to 0 Subnet carves the network in half. Hostmask must be provided if desired.
 
 Inputs: "ip6Net", "netMaskLen", "hostMaskLen".
 
@@ -193,7 +193,7 @@ Compare two addresses.
 func NativeNetAddressDec() *jsonnet.NativeFunction
 ```
 
-PreviousIP returns a net.IP decremented by one from the input address. If you underflow the IP space it will return the zero address.
+PreviousIP returns a net.IP decremented by one from the input address. If you underflow the IP space the zero address is returned.
 
 Inputs: "rawIP".
 
@@ -204,7 +204,7 @@ Inputs: "rawIP".
 func NativeNetAddressDecBy() *jsonnet.NativeFunction
 ```
 
-Returns a net.IP that is lower than the supplied net.IP by the supplied integer value. If you underflow the IP space it will return the zero address.
+Returns a net.IP that is lower than the supplied net.IP by the supplied integer value. If you underflow the IP space the zero address is returned.
 
 Inputs: "rawIP", "count".
 
@@ -237,7 +237,7 @@ Inputs: "rawIP".
 func NativeNetAddressInc() *jsonnet.NativeFunction
 ```
 
-NextIP returns a net.IP incremented by one from the input address. If you overflow the IP space it will return the all\-ones address.
+NextIP returns a net.IP incremented by one from the input address. If you overflow the IP space the all\-ones address is returned.
 
 Inputs: "rawIP".
 
@@ -248,7 +248,7 @@ Inputs: "rawIP".
 func NativeNetAddressIncBy() *jsonnet.NativeFunction
 ```
 
-Returns a net.IP that is greater than the supplied net.IP by the supplied integer value. If you overflow the IP space it will return the all\-ones address.
+Returns a net.IP that is greater than the supplied net.IP by the supplied integer value. If you overflow the IP space the all\-ones address is returned.
 
 Inputs: "rawIP", "count".
 

@@ -22,7 +22,6 @@ nav:
     - Clusters: concepts/clusters.md
     - Components: concepts/components.md
     - Native Funcs: concepts/nativefuncs.md
-  - Helpers: helpers.md
   - Cmd Docs:
     - kr8: cmd/kr8.md
     - kr8 version: cmd/kr8_version.md  

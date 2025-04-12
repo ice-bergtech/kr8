@@ -29,8 +29,8 @@ The clusters are given names and then grouped together inside a directory tree.
 
 There are two jsonnet files you'll notice here:
 
- - `cluster.jsonnet` - this defines a named cluster, kr8+ will stop going down through the directory tree when it finds this file
- - `params.jsonnet` - this is a file which can have components and parameters defined for clustes lower down in the hierarchy. We'll go into more detail about this shortly.
+ - `cluster.jsonnet` - this defines a named cluster, kr8+ stops going down the directory tree when it finds this file
+ - `params.jsonnet` - this file contains components and parameters defined for clusters. We'll go into more detail about this shortly.
 
 ## Components in clusters
 
@@ -44,7 +44,7 @@ _components+: {
 },
 ```
 
-Notice we're using the jsonnet `+` operator to make sure we're appending this to the list of components for that cluster, which will ensure the inheritance system works
+Notice we're using the jsonnet `+` operator to append the `sealed_secrets` field to the `_components` object.
 
 ## Cluster parameters
 
@@ -119,11 +119,11 @@ clusters
         └── cluster.jsonnet
 ```
 
-kr8+ will look for the smallest unit of configuration, so if you want one cluster to be slightly different inside a hierarchy unit, you can continue to override components and parameters inside a clusters' `cluster.jsonnet` file.
+kr8+ looks for the smallest unit of configuration, so if you want one cluster to be slightly different inside a hierarchy unit, you can continue to override components and parameters inside a clusters' `cluster.jsonnet` file.
 
 ---
 
-A cluster cluster configuration file will include:
+A cluster cluster configuration file includes:
 
 `_kr8_spec` Configuration parameters for kr8+
 | key                    | description | example     |

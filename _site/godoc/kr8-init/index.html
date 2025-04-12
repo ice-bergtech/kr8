@@ -66,10 +66,6 @@
                   <li class="toctree-l1"><a class="reference internal" href="../../concepts/nativefuncs/">Native Funcs</a>
                   </li>
               </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../../helpers/">Helpers</a>
-                </li>
-              </ul>
               <p class="caption"><span class="caption-text">Cmd Docs</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8/">kr8</a>
@@ -205,7 +201,7 @@
 <h2 id="func-generatelib">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/init.go#L104">GenerateLib</a></h2>
 <pre><code class="language-go">func GenerateLib(fetch bool, dstDir string) error
 </code></pre>
-<p>Downloads a starter kr8 jsonnet lib from github. If fetch is true, it will download the repo in the /lib directory. If false, it will print the git commands to run. Repo: https://github.com/ice-bergtech/kr8-libsonnet . return util.FetchRepoUrl("https://github.com/ice-bergtech/kr8-libsonnet", dstDir+"/kr8-lib", !fetch).</p>
+<p>Downloads a starter kr8 jsonnet lib from github. If fetch is true, downloads the repo in the /lib directory. If false, prints the git commands to run. Repo: https://github.com/ice-bergtech/kr8-libsonnet . return util.FetchRepoUrl("https://github.com/ice-bergtech/kr8-libsonnet", dstDir+"/kr8-lib", !fetch).</p>
 <p><a name="GenerateReadme"></a></p>
 <h2 id="func-generatereadme">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/init.go#L113">GenerateReadme</a></h2>
 <pre><code class="language-go">func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) error

@@ -116,7 +116,7 @@ func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, er
 
 // Write out a struct to a specified path and file.
 // Marshals the given interface and generates a formatted json string.
-// It will create all parent directories needed.
+// All parent directories needed are created.
 func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (string, error) {
 	jsonStr, err := json.MarshalIndent(objStruct, "", "  ")
 	if err != nil {

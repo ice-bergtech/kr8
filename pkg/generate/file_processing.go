@@ -74,13 +74,10 @@ func processIncludesFile(
 }
 
 // Process an includes file.
-// Based on the extension, it will process it differently.
-//
-// .jsonnet: Imported and processed using jsonnet VM.
-//
-// .yml, .yaml: Imported and processed through native function ParseYaml.
-//
-// .tpl, .tmpl: Processed using component config and Sprig templating.
+// Based on the extension, the file is processed differently.
+//   - .jsonnet: Imported and processed using jsonnet VM.
+//   - .yml, .yaml: Imported and processed through native function ParseYaml.
+//   - .tpl, .tmpl: Processed using component config and Sprig templating.
 func ProcessFile(
 	inputFile string,
 	outputFile string,

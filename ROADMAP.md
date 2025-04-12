@@ -17,3 +17,4 @@ However, there are always things to improve:
 * integrate `kr8-helpers` scripts into the main kr8 binary
 * integrate `go-task` for preparing remote resource definition fetching scripts for user
 * Register a domain for documentation
+* Create configuration plan before generating clusters. Create a tree of based on cluster config files, and deep copy jvm each layer.  Perform breadth-first "search" until all leafs (`cluster.jsonnet` files) are generated.  Need different solution for component jvm mgmt.  Only thread pool componetent generation but process cluster serially.  perfmon.

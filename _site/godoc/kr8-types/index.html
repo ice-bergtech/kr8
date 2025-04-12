@@ -66,10 +66,6 @@
                   <li class="toctree-l1"><a class="reference internal" href="../../concepts/nativefuncs/">Native Funcs</a>
                   </li>
               </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../../helpers/">Helpers</a>
-                </li>
-              </ul>
               <p class="caption"><span class="caption-text">Cmd Docs</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8/">kr8</a>
@@ -286,8 +282,8 @@
 <pre><code class="language-go">type ExtFileVar map[string]string
 </code></pre>
 <p><a name="KomposeConvertOptions"></a></p>
-<h2 id="type-komposeconvertoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L23-L97">KomposeConvertOptions</a></h2>
-<p>A struct describing a compose file that will be processed by kompose to produce kubernetes manifests.</p>
+<h2 id="type-komposeconvertoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L23-L98">KomposeConvertOptions</a></h2>
+<p>A struct describing a compose file to be processed by kompose to produce kubernetes manifests.</p>
 <p>Based on https://github.com/kubernetes/kompose/blob/main/cmd/convert.go</p>
 <pre><code class="language-go">type KomposeConvertOptions struct {
     // Kubernetes: Set the output controller (&quot;deployment&quot;|&quot;daemonSet&quot;|&quot;replicationController&quot;)
@@ -299,7 +295,8 @@
     // List of compose file filenames.
     // Filenames should be in the format `[docker-]compose.ym[a]l`
     InputFiles []string
-    // Specify a file name or directory to save objects to (if path does not exist, a file will be created)
+    // Specify a file name or directory to save objects to.
+    // if path does not exist, a file is created)
     OutFile string
     // Generate a Helm chart for converted objects
     CreateChart bool
@@ -361,22 +358,22 @@
     ImageBuildCommand string
     // Command used to push image
     ImagePushCommand string
-    // Specify registry for pushing image, which will override registry from image name
+    // Specify registry for pushing image, which overrides the registry derived from image name
     ImagePushRegistry string
 }
 </code></pre>
 <p><a name="Create"></a></p>
-<h3 id="func-create">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L100">Create</a></h3>
+<h3 id="func-create">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L101">Create</a></h3>
 <pre><code class="language-go">func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *KomposeConvertOptions
 </code></pre>
 <p>Initialie Kompose options with sensible defaults.</p>
 <p><a name="KomposeConvertOptions.Convert"></a></p>
-<h3 id="func-komposeconvertoptions-convert">func (KomposeConvertOptions) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L208">Convert</a></h3>
+<h3 id="func-komposeconvertoptions-convert">func (KomposeConvertOptions) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L209">Convert</a></h3>
 <pre><code class="language-go">func (k KomposeConvertOptions) Convert() (interface{}, error)
 </code></pre>
 <p>Converts a Docker Compose file described by k into a set of kubernetes manifests.</p>
 <p><a name="KomposeConvertOptions.GenKomposePkgOpts"></a></p>
-<h3 id="func-komposeconvertoptions-genkomposepkgopts">func (KomposeConvertOptions) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L132">GenKomposePkgOpts</a></h3>
+<h3 id="func-komposeconvertoptions-genkomposepkgopts">func (KomposeConvertOptions) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L133">GenKomposePkgOpts</a></h3>
 <pre><code class="language-go">func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions
 </code></pre>
 <p>Generates a ConvertOptions struct that kompose expects from our commented KomposeConvertOptions</p>
@@ -384,7 +381,7 @@
 <p>https://pkg.go.dev/github.com/kubernetes/kompose@v1.35.0/pkg/kobject#ConvertOptions</p>
 <p>https://github.com/kubernetes/kompose/blob/v1.35.0/pkg/app/app.go#L166</p>
 <p><a name="KomposeConvertOptions.Validate"></a></p>
-<h3 id="func-komposeconvertoptions-validate">func (KomposeConvertOptions) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L196">Validate</a></h3>
+<h3 id="func-komposeconvertoptions-validate">func (KomposeConvertOptions) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L197">Validate</a></h3>
 <pre><code class="language-go">func (k KomposeConvertOptions) Validate() error
 </code></pre>
 <p>Validates a set of options for converting a Kubernetes manifest to a Docker Compose file.</p>
@@ -465,7 +462,7 @@
     Kr8_allparams bool `json:&quot;enable_kr8_allparams&quot;`
     // If true, includes the parameters of all other clusters when generating this component
     Kr8_allclusters bool `json:&quot;enable_kr8_allclusters&quot;`
-    // If false, all non-generated files present in the output directory will be removed
+    // If false, all non-generated files present in the output directory are removed
     DisableOutputDirClean bool `json:&quot;disable_output_clean&quot;`
     // A list of filenames to include as jsonnet vm external vars
     ExtFiles ExtFileVar `json:&quot;extfiles&quot;`
@@ -482,7 +479,7 @@
 <p>Extracts a component spec from a jsonnet object.</p>
 <p><a name="Kr8ComponentSpecIncludeObject"></a></p>
 <h2 id="type-kr8componentspecincludeobject">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L211-L221">Kr8ComponentSpecIncludeObject</a></h2>
-<p>An includes object which configures how kr8 includes an object. It allows configuring the included file's destination directory and file name. The input file will be processed differently depending on the filetype.</p>
+<p>An includes object which configures how kr8 includes an object. It allows configuring the included file's destination directory and file name. The input files are processed differently depending on the filetype.</p>
 <pre><code class="language-go">type Kr8ComponentSpecIncludeObject struct {
     // an input file to process
     // accepted filetypes: .jsonnet .yml .yaml .tmpl .tpl

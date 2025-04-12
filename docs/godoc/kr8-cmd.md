@@ -622,7 +622,7 @@ Execute adds all child commands to the root command sets flags appropriately. Th
 func GenerateCommand(cmd *cobra.Command, args []string)
 ```
 
-This function will generate the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.
+This function generates the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.
 
 <a name="InitConfig"></a>
 ## func [InitConfig](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L137>)

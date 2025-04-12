@@ -77,9 +77,9 @@ type ExtFileVar map[string]string
 ```
 
 <a name="KomposeConvertOptions"></a>
-## type [KomposeConvertOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L23-L97>)
+## type [KomposeConvertOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L23-L98>)
 
-A struct describing a compose file that will be processed by kompose to produce kubernetes manifests.
+A struct describing a compose file to be processed by kompose to produce kubernetes manifests.
 
 Based on https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
 
@@ -94,7 +94,8 @@ type KomposeConvertOptions struct {
     // List of compose file filenames.
     // Filenames should be in the format `[docker-]compose.ym[a]l`
     InputFiles []string
-    // Specify a file name or directory to save objects to (if path does not exist, a file will be created)
+    // Specify a file name or directory to save objects to.
+    // if path does not exist, a file is created)
     OutFile string
     // Generate a Helm chart for converted objects
     CreateChart bool
@@ -156,13 +157,13 @@ type KomposeConvertOptions struct {
     ImageBuildCommand string
     // Command used to push image
     ImagePushCommand string
-    // Specify registry for pushing image, which will override registry from image name
+    // Specify registry for pushing image, which overrides the registry derived from image name
     ImagePushRegistry string
 }
 ```
 
 <a name="Create"></a>
-### func [Create](<https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L100>)
+### func [Create](<https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L101>)
 
 ```go
 func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *KomposeConvertOptions
@@ -171,7 +172,7 @@ func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *Kompos
 Initialie Kompose options with sensible defaults.
 
 <a name="KomposeConvertOptions.Convert"></a>
-### func \(KomposeConvertOptions\) [Convert](<https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L208>)
+### func \(KomposeConvertOptions\) [Convert](<https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L209>)
 
 ```go
 func (k KomposeConvertOptions) Convert() (interface{}, error)
@@ -180,7 +181,7 @@ func (k KomposeConvertOptions) Convert() (interface{}, error)
 Converts a Docker Compose file described by k into a set of kubernetes manifests.
 
 <a name="KomposeConvertOptions.GenKomposePkgOpts"></a>
-### func \(KomposeConvertOptions\) [GenKomposePkgOpts](<https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L132>)
+### func \(KomposeConvertOptions\) [GenKomposePkgOpts](<https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L133>)
 
 ```go
 func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions
@@ -195,7 +196,7 @@ https://pkg.go.dev/github.com/kubernetes/kompose@v1.35.0/pkg/kobject#ConvertOpti
 https://github.com/kubernetes/kompose/blob/v1.35.0/pkg/app/app.go#L166
 
 <a name="KomposeConvertOptions.Validate"></a>
-### func \(KomposeConvertOptions\) [Validate](<https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L196>)
+### func \(KomposeConvertOptions\) [Validate](<https://github.com:icebergtech/kr8/blob/main/pkg/types/kompose.go#L197>)
 
 ```go
 func (k KomposeConvertOptions) Validate() error
@@ -307,7 +308,7 @@ type Kr8ComponentSpec struct {
     Kr8_allparams bool `json:"enable_kr8_allparams"`
     // If true, includes the parameters of all other clusters when generating this component
     Kr8_allclusters bool `json:"enable_kr8_allclusters"`
-    // If false, all non-generated files present in the output directory will be removed
+    // If false, all non-generated files present in the output directory are removed
     DisableOutputDirClean bool `json:"disable_output_clean"`
     // A list of filenames to include as jsonnet vm external vars
     ExtFiles ExtFileVar `json:"extfiles"`
@@ -330,7 +331,7 @@ Extracts a component spec from a jsonnet object.
 <a name="Kr8ComponentSpecIncludeObject"></a>
 ## type [Kr8ComponentSpecIncludeObject](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L211-L221>)
 
-An includes object which configures how kr8 includes an object. It allows configuring the included file's destination directory and file name. The input file will be processed differently depending on the filetype.
+An includes object which configures how kr8 includes an object. It allows configuring the included file's destination directory and file name. The input files are processed differently depending on the filetype.
 
 ```go
 type Kr8ComponentSpecIncludeObject struct {

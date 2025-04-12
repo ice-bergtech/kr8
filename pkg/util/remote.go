@@ -9,7 +9,7 @@ import (
 )
 
 // Fetch a git repo from a url and clone it to a destination directory.
-// If the noop flag is true, it will log the command that would be run and return without doing anything.
+// If the noop flag is true, it print commands to fetch manually without doing anything.
 func FetchRepoUrl(url string, destination string, noop bool) error {
 	if noop {
 		gitCommand := "git clone -- " + url + " " + destination
