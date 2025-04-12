@@ -85,6 +85,7 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 	return err
 }
 
+// Generates a jsonnet files that references a local helm chart.
 func GenerateChartJsonnet(compJson types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error {
 	chartJsonnetText := strings.Join([]string{
 		"# This loads the component configuration into the `config` var",
@@ -106,6 +107,7 @@ func GenerateChartJsonnet(compJson types.Kr8ComponentJsonnet, componentOptions K
 	return os.WriteFile(filepath.Join(folderDir, componentOptions.ComponentName+".jsonnet"), []byte(chartJsonnetText), 0600)
 }
 
+// Generates a go-task taskfile that's setup to download a helm chart into a local `vendor` directory.
 func GenerateChartTaskfile(comp types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error {
 	taskfileText := strings.Join([]string{
 		"# https://taskfile.dev/usage",

@@ -104,14 +104,10 @@ var InitClusterCmd = &cobra.Command{
 // Initializes a new kr8 configuration repository
 //
 // Directory tree:
-//
-//	components/
-//
-//	clusters/
-//
-//	lib/
-//
-//	generated/
+//   - components/
+//   - clusters/
+//   - lib/
+//   - generated/
 var InitRepoCmd = &cobra.Command{
 	Use:   "repo [flags] dir",
 	Args:  cobra.MinimumNArgs(1),
