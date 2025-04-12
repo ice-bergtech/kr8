@@ -30,7 +30,7 @@ Displays information about kr8 resources such as clusters and components
 
 ### SEE ALSO
 
-* [kr8](kr8.md)	 - Kubernetes config parameter framework
+* [kr8](kr8.md)	 - A jsonnet-powered config management tool
 * [kr8 get clusters](kr8_get_clusters.md)	 - Get all clusters
 * [kr8 get components](kr8_get_components.md)	 - Get all components
 * [kr8 get params](kr8_get_params.md)	 - Get parameter for components and clusters

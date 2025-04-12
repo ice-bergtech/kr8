@@ -72,7 +72,7 @@ nfpms:
     vendor: 'Iceberg Tech'
     homepage: "https://github.com/ice-bergtech/kr8"
     maintainer: 'Iceberg Tech LLC'
-    description: "Opinionated configuration management tool for Kubernetes Cluster"
+    description: "An opinionated configuration management tool for Kubernetes Cluster"
     license: MIT
     formats:
       - rpm

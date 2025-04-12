@@ -565,9 +565,8 @@ var RenderJsonnetCmd = &cobra.Command{
 ```go
 var RootCmd = &cobra.Command{
     Use:   "kr8",
-    Short: "Kubernetes config parameter framework",
-    Long: `A tool to generate Kubernetes configuration from a hierarchy
-	of jsonnet files`,
+    Short: "A jsonnet-powered config management tool",
+    Long:  `An opinionated configuration management tool for Kubernetes Clusters powered by jsonnet`,
 }
 ```
 
@@ -598,7 +597,7 @@ var VersionCmd = &cobra.Command{
 ```
 
 <a name="ConfigureLogger"></a>
-## func [ConfigureLogger](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L98>)
+## func [ConfigureLogger](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L97>)
 
 ```go
 func ConfigureLogger(debug bool)
@@ -607,7 +606,7 @@ func ConfigureLogger(debug bool)
 
 
 <a name="Execute"></a>
-## func [Execute](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L33>)
+## func [Execute](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L32>)
 
 ```go
 func Execute(ver string)
@@ -625,7 +624,7 @@ func GenerateCommand(cmd *cobra.Command, args []string)
 This function generates the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.
 
 <a name="InitConfig"></a>
-## func [InitConfig](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L137>)
+## func [InitConfig](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L136>)
 
 ```go
 func InitConfig()
@@ -693,7 +692,7 @@ type CmdRenderOptions struct {
 ```
 
 <a name="CmdRootOptions"></a>
-## type [CmdRootOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L42-L61>)
+## type [CmdRootOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L41-L60>)
 
 Default options that are available to all commands.
 

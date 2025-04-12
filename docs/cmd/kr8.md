@@ -1,11 +1,10 @@
 ## kr8
 
-Kubernetes config parameter framework
+A jsonnet-powered config management tool
 
 ### Synopsis
 
-A tool to generate Kubernetes configuration from a hierarchy
-	of jsonnet files
+An opinionated configuration management tool for Kubernetes Clusters powered by jsonnet
 
 ### Options
 

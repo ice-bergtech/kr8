@@ -29,7 +29,7 @@ Render files in jsonnet or YAML
 
 ### SEE ALSO
 
-* [kr8](kr8.md)	 - Kubernetes config parameter framework
+* [kr8](kr8.md)	 - A jsonnet-powered config management tool
 * [kr8 render helm](kr8_render_helm.md)	 - Clean YAML stream from Helm Template output - Reads from Stdin
 * [kr8 render jsonnet](kr8_render_jsonnet.md)	 - Render a jsonnet file
 
