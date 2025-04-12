@@ -187,10 +187,12 @@ task setup
 ```sh
 # View available tasks
 task -l
+# Output:
 task: Available tasks for this project:
 * 01_setup:                     Instal dev tools                                         (aliases: setup, s)
 * 01_setup-bats:                Install bats testing tools                               (aliases: setup-bats)
 * 02_build:                     Build kr8+ for your local system                         (aliases: build, b)
+* 02_build-mkdocs:              Uses mkdocs to build documentation site from docs        (aliases: bmd)
 * 03_build-snapshot:            Build a snapshot for all platforms using goreleaser      (aliases: build-snapshot, bs)
 * 03_generate-bats-tests:       Generate resources to test against                       (aliases: gt)
 * 03_test-go:                   Tesk kr8+ for your local system                          (aliases: test, t)

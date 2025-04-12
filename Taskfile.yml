@@ -68,11 +68,13 @@ tasks:
       - go fmt
       - go generate ./docs
       - go build
-      - task: 02_build_mkdocs
+      - task: 02_build-mkdocs
 
-  02_build_mkdocs:
+  02_build-mkdocs:
     desc: Uses mkdocs to build documentation site from docs
+    aliases: ["bmd"]
     cmds:
+      # references mkdocs.yml
       - mkdocs build
 
   03_build-snapshot:
