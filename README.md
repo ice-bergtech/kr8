@@ -6,7 +6,8 @@
 [![CI status](https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg)](https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI)
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.24-61CFDD.svg?style=flat-square)
 
-**kr8+** or `kr8` is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.By leveraging best practices and providing a structured approach, **kr8+** helps DevOps teams streamline their workflows and maintain consistency across multiple environments.
+**kr8+** or `kr8` is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.
+By leveraging best practices and providing a structured approach, **kr8+** helps DevOps teams streamline their workflows and maintain consistency across multiple environments.
 
 **kr8+** is `pre-1.0`.
 This means that breaking changes still happen from time to time, but it's stable enough for both scripting and interactive use in production environments.
@@ -26,18 +27,12 @@ This means that breaking changes still happen from time to time, but it's stable
   - [Installation](#installation)
     - [Getting Started](#getting-started)
     - [Configuration](#configuration)
-      - [Clusters Configurations](#clusters-configurations)
-      - [Component Configurations](#component-configurations)
-      - [Jsonnet Libraries](#jsonnet-libraries)
     - [Deployment](#deployment)
   - [Documentation and Additional Resources](#documentation-and-additional-resources)
     - [History and Theory](#history-and-theory)
     - [Alternatives tools](#alternatives-tools)
   - [Development](#development)
-    - [Dependencies](#dependencies)
     - [Setup](#setup)
-    - [Running Tasks](#running-tasks)
-      - [Examples](#examples)
     - [Tests](#tests)
     - [Build Troubleshooting](#build-troubleshooting)
   - [Contributing](#contributing)
@@ -50,9 +45,6 @@ This means that breaking changes still happen from time to time, but it's stable
 * **Jsonnet Native Functions**: Use Jsonnet to render and override component config from multiple sources such as templates, docker-compose files, Kustomize, and Helm.
 * **Extensibility**: Easily extensible to meet the needs of diverse Kubernetes environments.
 * **CI/CD Friendly**: Statically define all your configuration in a single source of truth, making it easy to integrate with CI/CD pipelines and deployment automation like ArgoCD.
-* **Standardization**: Ensures consistency across Kubernetes clusters, reducing errors and improving maintainability.
-* **Simplicity**: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.
-* **Scalability**: Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.
 
 ![kr8+ workflow](./docs/diagram/kr8-workflow.png)
 
@@ -174,7 +166,7 @@ Currently, version `1.24.2` is used.
 
 Common tasks are described in [Taskfile.yml](Taskfile.yml), and can be executed with [go-task](https://taskfile.dev/installation/).
 
-### Dependencies
+**Core Dependencies**
 
 - Golang version  `1.24` or later ([installation](https://go.dev/doc/install))
 - `git` for cloning submodules
@@ -192,7 +184,7 @@ Once [`go-task` is installed](https://taskfile.dev/installation/), you can easil
 task setup
 ```
 
-### Running Tasks
+**Running Tasks**
 
 ```sh
 # View available tasks
@@ -210,7 +202,7 @@ task: Available tasks for this project:
 * 04_generate-examples:         Generate example clusters and components with kr8+       (aliases: ge, gen)
 ```
 
-#### Examples
+**Other Examples**
 
 ```sh
 
