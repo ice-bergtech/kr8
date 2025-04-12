@@ -32,7 +32,7 @@ components
 
 ### SEE ALSO
 
-* [kr8](kr8.md)	 - Kubernetes config parameter framework
+* [kr8](kr8.md)	 - A jsonnet-powered config management tool
 * [kr8 init cluster](kr8_init_cluster.md)	 - Init a new cluster config file
 * [kr8 init component](kr8_init_component.md)	 - Init a new component config file
 * [kr8 init repo](kr8_init_repo.md)	 - Initialize a new kr8 config repo

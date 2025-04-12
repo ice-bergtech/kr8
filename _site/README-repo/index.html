@@ -80,15 +80,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#development">Development</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#dependencies">Dependencies</a>
-    </li>
     <li class="toctree-l3"><a class="reference internal" href="#setup">Setup</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#running-tasks">Running Tasks</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a>
-    </li>
-        </ul>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#tests">Tests</a>
     </li>
@@ -218,7 +210,8 @@
 <p><img src="./kr8_gopher.png" alt="kr8+ Gopher" width="400" align="right" ></p>
 <p><a href="https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI"><img alt="CI status" src="https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg" /></a>
 <img alt="Go Version" src="https://img.shields.io/badge/go%20version-%3E=1.24-61CFDD.svg?style=flat-square" /></p>
-<p><strong>kr8+</strong> or <code>kr8</code> is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.By leveraging best practices and providing a structured approach, <strong>kr8+</strong> helps DevOps teams streamline their workflows and maintain consistency across multiple environments.</p>
+<p><strong>kr8+</strong> or <code>kr8</code> is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.
+By leveraging best practices and providing a structured approach, <strong>kr8+</strong> helps DevOps teams streamline their workflows and maintain consistency across multiple environments.</p>
 <p><strong>kr8+</strong> is <code>pre-1.0</code>.
 This means that breaking changes still happen from time to time, but it's stable enough for both scripting and interactive use in production environments.</p>
 <p align="center">
@@ -236,9 +229,6 @@ This means that breaking changes still happen from time to time, but it's stable
 <li><a href="#installation">Installation</a><ul>
 <li><a href="#getting-started">Getting Started</a></li>
 <li><a href="#configuration">Configuration</a></li>
-<li><a href="#clusters-configurations">Clusters Configurations</a></li>
-<li><a href="#component-configurations">Component Configurations</a></li>
-<li><a href="#jsonnet-libraries">Jsonnet Libraries</a></li>
 <li><a href="#deployment">Deployment</a></li>
 </ul>
 </li>
@@ -248,10 +238,7 @@ This means that breaking changes still happen from time to time, but it's stable
 </ul>
 </li>
 <li><a href="#development">Development</a><ul>
-<li><a href="#dependencies">Dependencies</a></li>
 <li><a href="#setup">Setup</a></li>
-<li><a href="#running-tasks">Running Tasks</a></li>
-<li><a href="#examples">Examples</a></li>
 <li><a href="#tests">Tests</a></li>
 <li><a href="#build-troubleshooting">Build Troubleshooting</a></li>
 </ul>
@@ -266,9 +253,6 @@ This means that breaking changes still happen from time to time, but it's stable
 <li><strong>Jsonnet Native Functions</strong>: Use Jsonnet to render and override component config from multiple sources such as templates, docker-compose files, Kustomize, and Helm.</li>
 <li><strong>Extensibility</strong>: Easily extensible to meet the needs of diverse Kubernetes environments.</li>
 <li><strong>CI/CD Friendly</strong>: Statically define all your configuration in a single source of truth, making it easy to integrate with CI/CD pipelines and deployment automation like ArgoCD.</li>
-<li><strong>Standardization</strong>: Ensures consistency across Kubernetes clusters, reducing errors and improving maintainability.</li>
-<li><strong>Simplicity</strong>: Provides a straightforward approach to complex Kubernetes configurations, making it easier for teams to adopt.</li>
-<li><strong>Scalability</strong>: Designed to support clusters of all sizes, from simple single-node setups to large-scale production environments.</li>
 </ul>
 <p><img alt="kr8+ workflow" src="../diagram/kr8-workflow.png" /></p>
 <h2 id="technical-overview">Technical Overview</h2>
@@ -287,6 +271,12 @@ To install via Homebrew, add the <a href="https://github.com/ice-bergtech/homebr
 <pre><code class="language-sh">brew tap ice-bergtech/tap
 brew install kr8
 </code></pre>
+<p>To install directly from the repo, clone and build using go <code>1.24.2</code>:</p>
+<pre><code class="language-sh">git clone git@github.com:ice-bergtech/kr8.git &amp;&amp; cd kr8
+go mod download
+go build
+</code></pre>
+<p>This will create a binary named <code>kr8</code> which can be placed in your <code>/bin</code> of choice.</p>
 <p>Once installed, use <code>kr8 init</code> commands to setup the initial structure and configurations.</p>
 <h3 id="getting-started">Getting Started</h3>
 <p>An working example of a repo is found at <a href="https://github.com/ice-bergtech/kr8-examples">ice-bergtech/kr8-examples</a>:</p>
@@ -358,7 +348,7 @@ They allow you to write modular and maintainable configuration.</p>
 <p><strong>kr8+</strong> is coded in <a href="https://golang.org/">Golang</a>.
 Currently, version <code>1.24.2</code> is used.</p>
 <p>Common tasks are described in <a href="../Taskfile.yml">Taskfile.yml</a>, and can be executed with <a href="https://taskfile.dev/installation/">go-task</a>.</p>
-<h3 id="dependencies">Dependencies</h3>
+<p><strong>Core Dependencies</strong></p>
 <ul>
 <li>Golang version  <code>1.24</code> or later (<a href="https://go.dev/doc/install">installation</a>)</li>
 <li><code>git</code> for cloning submodules</li>
@@ -372,7 +362,7 @@ Currently, version <code>1.24.2</code> is used.</p>
 <pre><code class="language-sh"># Install dev tools
 task setup
 </code></pre>
-<h3 id="running-tasks">Running Tasks</h3>
+<p><strong>Running Tasks</strong></p>
 <pre><code class="language-sh"># View available tasks
 task -l
 # Output:
@@ -387,7 +377,7 @@ task: Available tasks for this project:
 * 03_test-package:              Test compiled kr8+ binary against test inputs            (aliases: test-package, tp)
 * 04_generate-examples:         Generate example clusters and components with kr8+       (aliases: ge, gen)
 </code></pre>
-<h4 id="examples">Examples</h4>
+<p><strong>Other Examples</strong></p>
 <pre><code class="language-sh">
 # Build kr8+ for your local system
 task build

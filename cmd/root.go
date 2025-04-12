@@ -23,9 +23,8 @@ var version string
 // RootCmd represents the base command when called without any subcommands.
 var RootCmd = &cobra.Command{
 	Use:   "kr8",
-	Short: "Kubernetes config parameter framework",
-	Long: `A tool to generate Kubernetes configuration from a hierarchy
-	of jsonnet files`,
+	Short: "A jsonnet-powered config management tool",
+	Long:  `An opinionated configuration management tool for Kubernetes Clusters powered by jsonnet`,
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.
