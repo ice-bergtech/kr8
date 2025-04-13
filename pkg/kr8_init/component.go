@@ -35,51 +35,81 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 	}
 	switch componentOptions.ComponentType {
 	case "jsonnet":
-		compJson.Kr8Spec.Includes = append(
-			compJson.Kr8Spec.Includes,
-			types.Kr8ComponentSpecIncludeObject{File: "component.jsonnet", DestName: "component", DestExt: "yaml"},
-		)
+		return InitComponentJsonnet(compJson, dstDir, componentOptions)
 	case "yml":
-		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes,
-			types.Kr8ComponentSpecIncludeObject{
-				File:     "input.yml",
-				DestDir:  "",
-				DestName: "glhf",
-				DestExt:  "yml",
-			},
-		)
+		return InitComponentYaml(compJson, dstDir, componentOptions)
 	case "tpl":
-		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes,
-			types.Kr8ComponentSpecIncludeObject{
-				File:     "README.tpl",
-				DestDir:  "docs",
-				DestName: "ReadMe",
-				DestExt:  "md",
-			},
-		)
+		return InitComponentTemplate(compJson, dstDir, componentOptions)
 	case "chart":
-		folderDir := filepath.Join(dstDir, componentOptions.ComponentName)
-		if err := os.MkdirAll(folderDir, 0750); err != nil {
-			log.Error().Err(err).Msg("component directory not created")
-		}
-		if err := GenerateChartJsonnet(compJson, componentOptions, folderDir); err != nil {
-			log.Error().Err(err).Msg("component directory not created")
-		}
-		if err := GenerateChartTaskfile(compJson, componentOptions, folderDir); err != nil {
-			log.Error().Err(err).Msg("component directory not created")
-		}
-		compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes,
-			types.Kr8ComponentSpecIncludeObject{
-				File:     componentOptions.ComponentName + ".jsonnet",
-				DestDir:  "",
-				DestName: componentOptions.ComponentName,
-				DestExt:  "yml",
-			},
-		)
+		return InitComponentChart(dstDir, componentOptions, compJson)
 	default:
 		break
 	}
 
+	return nil
+}
+
+// Initializes the basic parts of a helm chart component.
+func InitComponentChart(dstDir string, componentOptions Kr8InitOptions, compJson types.Kr8ComponentJsonnet) error {
+	folderDir := filepath.Join(dstDir, componentOptions.ComponentName)
+	if err := os.MkdirAll(folderDir, 0750); err != nil {
+		log.Error().Err(err).Msg("component directory not created")
+	}
+	if err := GenerateChartJsonnet(compJson, componentOptions, folderDir); err != nil {
+		log.Error().Err(err).Msg("component jsonnet not created")
+	}
+	if err := GenerateChartTaskfile(compJson, componentOptions, folderDir); err != nil {
+		log.Error().Err(err).Msg("component taskfile not created")
+	}
+	compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes,
+		types.Kr8ComponentSpecIncludeObject{
+			File:     componentOptions.ComponentName + "-chart.jsonnet",
+			DestDir:  "",
+			DestName: componentOptions.ComponentName,
+			DestExt:  "yml",
+		},
+	)
+	_, err := util.WriteObjToJsonFile("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
+
+	return err
+}
+
+// Initializes the based parts of a template-based component.
+func InitComponentTemplate(compJson types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error {
+	compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes,
+		types.Kr8ComponentSpecIncludeObject{
+			File:     "README.tpl",
+			DestDir:  "docs",
+			DestName: "ReadMe",
+			DestExt:  "md",
+		},
+	)
+	_, err := util.WriteObjToJsonFile("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
+
+	return err
+}
+
+// Initializes the basic parts of a yaml-based component.
+func InitComponentYaml(compJson types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error {
+	compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes,
+		types.Kr8ComponentSpecIncludeObject{
+			File:     "input.yml",
+			DestDir:  "",
+			DestName: "glhf",
+			DestExt:  "yml",
+		},
+	)
+	_, err := util.WriteObjToJsonFile("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
+
+	return err
+}
+
+// Initializes the basic parts of a jsonnet-based component.
+func InitComponentJsonnet(compJson types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error {
+	compJson.Kr8Spec.Includes = append(
+		compJson.Kr8Spec.Includes,
+		types.Kr8ComponentSpecIncludeObject{File: "component.jsonnet", DestName: "component", DestExt: "yaml"},
+	)
 	_, err := util.WriteObjToJsonFile("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
 
 	return err
@@ -91,7 +121,8 @@ func GenerateChartJsonnet(compJson types.Kr8ComponentJsonnet, componentOptions K
 		"# This loads the component configuration into the `config` var",
 		"local config = std.extVar('kr8');",
 		"",
-		"local helm_template = std.native('helmTemplate')(config.release_name, './vendor/'+'" + componentOptions.ComponentName + "-'+config.Version, {",
+		"local helm_template = std.native('helmTemplate') " +
+			"(config.release_name, './vendor/'+'" + componentOptions.ComponentName + "-'+config.Version, {",
 		"		calledFrom: std.thisFile,",
 		"		namespace: config.namespace,",
 		"		values:  if 'helm_values' in config then config.helm_values else {},",
@@ -104,7 +135,10 @@ func GenerateChartJsonnet(compJson types.Kr8ComponentJsonnet, componentOptions K
 		"]",
 	}, "\n")
 
-	return os.WriteFile(filepath.Join(folderDir, componentOptions.ComponentName+".jsonnet"), []byte(chartJsonnetText), 0600)
+	return os.WriteFile(
+		filepath.Join(folderDir, componentOptions.ComponentName+"-chart.jsonnet"),
+		[]byte(chartJsonnetText), 0600,
+	)
 }
 
 // Generates a go-task taskfile that's setup to download a helm chart into a local `vendor` directory.
