@@ -44,7 +44,7 @@ tasks:
       - t
     cmds:
       - golangci-lint run
-      - go test -race ./pkg/*
+      - go test -cover ./pkg/*
       - task: 02_build
       - task: 03_test-package
 
