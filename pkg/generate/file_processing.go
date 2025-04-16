@@ -31,11 +31,11 @@ func processIncludesFile(
 	// ensure this directory exists
 	outputDir := componentOutputDir
 	if incInfo.DestDir != "" {
-		outputDir = filepath.Join(kr8Spec.ClusterDir, incInfo.DestDir)
+		outputDir = filepath.Join(kr8Spec.ClusterOutputDir, incInfo.DestDir)
 	}
 	if _, err := os.Stat(outputDir); os.IsNotExist(err) {
 		err = os.MkdirAll(outputDir, 0750)
-		if err := util.GenErrorIfCheck("Error creating alternate directory", err); err != nil {
+		if err := util.GenErrorIfCheck("error creating alternate directory", err); err != nil {
 			return err
 		}
 	}
@@ -46,7 +46,7 @@ func processIncludesFile(
 	outputFileMap[incInfo.DestName+"."+incInfo.DestExt] = true
 
 	outStr, err := ProcessFile(inputFile, outputFile, kr8Spec, componentName, config, incInfo, jvm)
-	if err := util.GenErrorIfCheck("Error processing file", err); err != nil {
+	if err := util.GenErrorIfCheck("error processing file", err); err != nil {
 		return err
 	}
 

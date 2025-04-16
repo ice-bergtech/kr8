@@ -42,15 +42,15 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) er
 
 func setupClusterGenerateDirs(kr8Spec types.Kr8ClusterSpec) ([]string, error) {
 	// create cluster dir
-	if _, err := os.Stat(kr8Spec.ClusterDir); os.IsNotExist(err) {
-		err = os.MkdirAll(kr8Spec.ClusterDir, 0750)
+	if _, err := os.Stat(kr8Spec.ClusterOutputDir); os.IsNotExist(err) {
+		err = os.MkdirAll(kr8Spec.ClusterOutputDir, 0750)
 		if err := util.GenErrorIfCheck("Error creating cluster generateDir", err); err != nil {
 			return []string{}, err
 		}
 	}
 
 	// get list of current generated components directories
-	dir, err := os.Open(kr8Spec.ClusterDir)
+	dir, err := os.Open(kr8Spec.ClusterOutputDir)
 	if err := util.GenErrorIfCheck("Error opening clusterDir", err); err != nil {
 		return []string{}, err
 	}

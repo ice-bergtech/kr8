@@ -134,7 +134,7 @@ func GenProcessComponent(
 		return err
 	}
 
-	componentOutputDir := filepath.Join(kr8Spec.ClusterDir, componentName)
+	componentOutputDir := filepath.Join(kr8Spec.ClusterOutputDir, componentName)
 	// create component dir if needed
 	if _, err := os.Stat(componentOutputDir); os.IsNotExist(err) {
 		err := os.MkdirAll(componentOutputDir, 0750)
@@ -205,7 +205,7 @@ func SetupAndConfigureVM(
 
 	compPath := filepath.Clean(gjson.Get(config, "_components."+componentName+".path").String())
 	// jPathResults always includes base lib. Add jpaths from spec if set
-	loadJPathsIntoVM(compSpec, compPath, kr8Spec.ClusterDir, jvm)
+	loadJPathsIntoVM(compSpec, compPath, kr8Spec.ClusterOutputDir, jvm)
 	// file imports
 	if err := loadExtFilesIntoVars(compSpec, compPath, kr8Spec, kr8Opts, componentName, jvm); err != nil {
 		return nil, "", util.GenErrorIfCheck("error loading ext files into vars", err)
@@ -354,7 +354,7 @@ func GenProcessCluster(
 	clusterComponents := gjson.Parse(renderedCompSpec).Map()
 
 	// determine list of components to process
-	compList := buildComponentList(generatedCompList, clusterComponents, kr8Spec.ClusterDir, kr8Spec.Name, filters)
+	compList := buildComponentList(generatedCompList, clusterComponents, kr8Spec.ClusterOutputDir, kr8Spec.Name, filters)
 
 	config, err := jnetvm.JsonnetRenderClusterParams(
 		vmConfig,

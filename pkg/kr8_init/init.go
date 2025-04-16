@@ -30,7 +30,7 @@ func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error {
 	clusterJson := types.Kr8ClusterJsonnet{
 		ClusterSpec: cSpec,
 		// Bug() Unsure if Path is correct
-		Cluster:    types.Kr8Cluster{Name: cSpec.Name, Path: cSpec.ClusterDir},
+		Cluster:    types.Kr8Cluster{Name: cSpec.Name, Path: cSpec.ClusterOutputDir},
 		Components: map[string]types.Kr8ClusterComponentRef{},
 	}
 	_, err := util.WriteObjToJsonFile(filename, dstDir+"/"+cSpec.Name, clusterJson)
@@ -135,7 +135,7 @@ func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.
 		"## Usage",
 		"",
 		"1. Define components in the `components` directory.",
-		"2. Define tiered cluster configuration in the `" + clusterSpec.ClusterDir + "` directory.",
+		"2. Define tiered cluster configuration in the `" + clusterSpec.ClusterOutputDir + "` directory.",
 		"3. Run `kr8 generate` to generate component configuration files.",
 		"",
 		"## Info ",
@@ -144,9 +144,9 @@ func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.
 		"",
 		"	* ClusterName: `" + cmdOptions.ClusterName + "`",
 		"	* Fetch External Libs: " + fetch,
-		"   * Cluster config root directory: `" + clusterSpec.ClusterDir + "`",
+		"   * Cluster config root directory: `" + clusterSpec.ClusterOutputDir + "`",
 		"   * Component root directory: `components`",
-		"   * Cluster config root directory: `" + clusterSpec.ClusterDir + "`",
+		"   * Cluster config root directory: `" + clusterSpec.ClusterOutputDir + "`",
 		"   * Generated config outpu directory: `" + clusterSpec.GenerateDir + "`",
 		"",
 		"Generated using [kr8+](https://github.com/ice-bergtech/kr8)",
