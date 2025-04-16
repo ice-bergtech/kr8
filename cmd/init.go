@@ -72,7 +72,7 @@ var InitClusterCmd = &cobra.Command{
 				Default: RootConfig.ClusterDir,
 				Help:    "Set the root directory to store cluster configurations, optionally including subdirectories",
 			}
-			util.FatalErrorCheck("Invalid cluster directory", survey.AskOne(prompt, &cSpec.ClusterDir))
+			util.FatalErrorCheck("Invalid cluster directory", survey.AskOne(prompt, &cSpec.ClusterOutputDir))
 
 			// Get cluster name, path from user if not set
 			prompt = &survey.Input{

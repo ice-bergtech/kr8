@@ -284,7 +284,7 @@ var InitClusterCmd = &cobra.Command{
                 Default: RootConfig.ClusterDir,
                 Help:    "Set the root directory to store cluster configurations, optionally including subdirectories",
             }
-            util.FatalErrorCheck("Invalid cluster directory", survey.AskOne(prompt, &cSpec.ClusterDir))
+            util.FatalErrorCheck("Invalid cluster directory", survey.AskOne(prompt, &cSpec.ClusterOutputDir))
 
             prompt = &survey.Input{
                 Message: "Set the cluster name",
@@ -293,16 +293,6 @@ var InitClusterCmd = &cobra.Command{
             }
             util.FatalErrorCheck("Invalid cluster name", survey.AskOne(prompt, &cSpec.Name))
 
-<<<<<<< HEAD
-            prompt = &survey.Input{
-                Message: "Set the cluster configuration directory",
-                Default: RootConfig.ClusterDir,
-                Help:    "Set the root directory for the new cluster",
-            }
-            util.FatalErrorCheck("Invalid cluster directory", survey.AskOne(prompt, &cSpec.ClusterOutputDir))
-
-=======
->>>>>>> origin/main
             promptB := &survey.Confirm{
                 Message: "Generate short names for output file names?",
                 Default: cSpec.GenerateShortNames,

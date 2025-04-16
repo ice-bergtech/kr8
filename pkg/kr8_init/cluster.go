@@ -11,7 +11,7 @@ func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error {
 	clusterJson := types.Kr8ClusterJsonnet{
 		ClusterSpec: cSpec,
 		// Bug() Unsure if Path is correct
-		Cluster:    types.Kr8Cluster{Name: cSpec.Name, Path: cSpec.ClusterDir},
+		Cluster:    types.Kr8Cluster{Name: cSpec.Name, Path: cSpec.ClusterOutputDir},
 		Components: map[string]types.Kr8ClusterComponentRef{},
 	}
 	_, err := util.WriteObjToJsonFile(filename, dstDir+"/"+cSpec.Name, clusterJson)

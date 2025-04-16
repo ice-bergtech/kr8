@@ -444,7 +444,7 @@
                 Default: RootConfig.ClusterDir,
                 Help:    &quot;Set the root directory to store cluster configurations, optionally including subdirectories&quot;,
             }
-            util.FatalErrorCheck(&quot;Invalid cluster directory&quot;, survey.AskOne(prompt, &amp;cSpec.ClusterDir))
+            util.FatalErrorCheck(&quot;Invalid cluster directory&quot;, survey.AskOne(prompt, &amp;cSpec.ClusterOutputDir))
 
             prompt = &amp;survey.Input{
                 Message: &quot;Set the cluster name&quot;,
@@ -453,16 +453,6 @@
             }
             util.FatalErrorCheck(&quot;Invalid cluster name&quot;, survey.AskOne(prompt, &amp;cSpec.Name))
 
-<<<<<<< HEAD
-            prompt = &amp;survey.Input{
-                Message: &quot;Set the cluster configuration directory&quot;,
-                Default: RootConfig.ClusterDir,
-                Help:    &quot;Set the root directory for the new cluster&quot;,
-            }
-            util.FatalErrorCheck(&quot;Invalid cluster directory&quot;, survey.AskOne(prompt, &amp;cSpec.ClusterOutputDir))
-
-=======
->>>>>>> origin/main
             promptB := &amp;survey.Confirm{
                 Message: &quot;Generate short names for output file names?&quot;,
                 Default: cSpec.GenerateShortNames,
