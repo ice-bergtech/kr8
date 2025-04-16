@@ -61,7 +61,7 @@ type KomposeConvertOptions struct {
 	Volumes string
 	// Specify the size of pvc storage requests in the generated resource spec
 	PVCRequestSize string
-	// Specify whether to generate network policies or not
+	// Determine whether to generate network policies
 	NetworkPolicies bool
 
 	// Create multiple containers grouped by 'kompose.service.group' label

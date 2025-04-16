@@ -440,18 +440,18 @@
 
         if cmdInitFlags.Interactive {
             prompt := &amp;survey.Input{
+                Message: &quot;Set the cluster configuration directory&quot;,
+                Default: RootConfig.ClusterDir,
+                Help:    &quot;Set the root directory to store cluster configurations, optionally including subdirectories&quot;,
+            }
+            util.FatalErrorCheck(&quot;Invalid cluster directory&quot;, survey.AskOne(prompt, &amp;cSpec.ClusterDir))
+
+            prompt = &amp;survey.Input{
                 Message: &quot;Set the cluster name&quot;,
                 Default: cmdInitFlags.ClusterName,
                 Help:    &quot;Distinct name for the cluster&quot;,
             }
             util.FatalErrorCheck(&quot;Invalid cluster name&quot;, survey.AskOne(prompt, &amp;cSpec.Name))
-
-            prompt = &amp;survey.Input{
-                Message: &quot;Set the cluster configuration directory&quot;,
-                Default: RootConfig.ClusterDir,
-                Help:    &quot;Set the root directory for the new cluster&quot;,
-            }
-            util.FatalErrorCheck(&quot;Invalid cluster directory&quot;, survey.AskOne(prompt, &amp;cSpec.ClusterDir))
 
             promptB := &amp;survey.Confirm{
                 Message: &quot;Generate short names for output file names?&quot;,
@@ -490,18 +490,18 @@ components`,
 
         if cmdInitFlags.Interactive {
             prompt := &amp;survey.Input{
+                Message: &quot;Enter component directory&quot;,
+                Default: RootConfig.ComponentDir,
+                Help:    &quot;Enter the root directory to store components in&quot;,
+            }
+            util.FatalErrorCheck(&quot;Invalid component directory&quot;, survey.AskOne(prompt, &amp;RootConfig.ComponentDir))
+
+            prompt = &amp;survey.Input{
                 Message: &quot;Enter component name&quot;,
                 Default: cmdInitFlags.ComponentName,
                 Help:    &quot;Enter the name of the component you want to create&quot;,
             }
             util.FatalErrorCheck(&quot;Invalid component name&quot;, survey.AskOne(prompt, &amp;cmdInitFlags.ComponentName))
-
-            prompt = &amp;survey.Input{
-                Message: &quot;Enter component directory&quot;,
-                Default: RootConfig.ComponentDir,
-                Help:    &quot;Enter the directory where you want to create the component&quot;,
-            }
-            util.FatalErrorCheck(&quot;Invalid component directory&quot;, survey.AskOne(prompt, &amp;RootConfig.ComponentDir))
 
             promptS := &amp;survey.Select{
                 Message: &quot;Select component type&quot;,
@@ -512,12 +512,12 @@ components`,
                     switch value {
                     case &quot;jsonnet&quot;:
                         return &quot;Use a Jsonnet file to describe the component resources&quot;
+                    case &quot;chart&quot;:
+                        return &quot;Use a Helm chart to describe the component resources&quot;
                     case &quot;yml&quot;:
                         return &quot;Use a yml (docker-compose) file to describe the component resources&quot;
                     case &quot;tpl&quot;:
                         return &quot;Use a template file to describe the component resources&quot;
-                    case &quot;chart&quot;:
-                        return &quot;Use a Helm chart to describe the component resources&quot;
                     default:
                         return &quot;&quot;
                     }
@@ -534,14 +534,12 @@ components`,
 </code></pre>
 <p><a name="InitRepoCmd"></a>Initializes a new kr8 configuration repository</p>
 <p>Directory tree:</p>
-<pre><code>components/
-
-clusters/
-
-lib/
-
-generated/
-</code></pre>
+<ul>
+<li>components/</li>
+<li>clusters/</li>
+<li>lib/</li>
+<li>generated/</li>
+</ul>
 <pre><code class="language-go">var InitRepoCmd = &amp;cobra.Command{
     Use:   &quot;repo [flags] dir&quot;,
     Args:  cobra.MinimumNArgs(1),

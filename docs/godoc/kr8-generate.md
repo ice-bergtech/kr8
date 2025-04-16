@@ -4,6 +4,12 @@
 import "github.com/ice-bergtech/kr8/pkg/generate"
 ```
 
+Package generate implements the logic for generating output files based on input data.
+
+Combines a directory of cluster configurations with a directory of components \(along with some Jsonnet libs\) to generate output files.
+
+The package prepares a Jsonnet VM and loads the necessary libraries and extvars. A new VM is created for each component.
+
 ## Index
 
 - [func CheckIfUpdateNeeded\(outFile string, outStr string\) \(bool, error\)](<#CheckIfUpdateNeeded>)
@@ -36,7 +42,7 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) er
 
 
 <a name="GenProcessCluster"></a>
-## func [GenProcessCluster](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L313-L323>)
+## func [GenProcessCluster](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L322-L332>)
 
 ```go
 func GenProcessCluster(clusterName string, clusterdir string, baseDir string, generateDirOverride string, kr8Opts types.Kr8Opts, clusterParamsFile string, filters util.PathFilterOptions, vmConfig types.VMConfig, pool *ants.Pool) error
@@ -45,7 +51,7 @@ func GenProcessCluster(clusterName string, clusterdir string, baseDir string, ge
 
 
 <a name="GenProcessComponent"></a>
-## func [GenProcessComponent](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L101-L110>)
+## func [GenProcessComponent](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L110-L119>)
 
 ```go
 func GenProcessComponent(vmconfig types.VMConfig, componentName string, kr8Spec types.Kr8ClusterSpec, kr8Opts types.Kr8Opts, config string, allConfig *safeString, filters util.PathFilterOptions, paramsFile string) error
@@ -54,7 +60,7 @@ func GenProcessComponent(vmconfig types.VMConfig, componentName string, kr8Spec 
 
 
 <a name="GenerateIncludesFiles"></a>
-## func [GenerateIncludesFiles](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L270-L279>)
+## func [GenerateIncludesFiles](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L279-L288>)
 
 ```go
 func GenerateIncludesFiles(includesFiles []types.Kr8ComponentSpecIncludeObject, kr8Spec types.Kr8ClusterSpec, kr8Opts types.Kr8Opts, config string, componentName string, compPath string, componentOutputDir string, jvm *jsonnet.VM) (map[string]bool, error)
@@ -63,7 +69,7 @@ func GenerateIncludesFiles(includesFiles []types.Kr8ComponentSpecIncludeObject, 
 
 
 <a name="GetClusterParams"></a>
-## func [GetClusterParams](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L31>)
+## func [GetClusterParams](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L40>)
 
 ```go
 func GetClusterParams(clusterDir string, vmConfig types.VMConfig) (map[string]string, error)
@@ -85,7 +91,7 @@ Process an includes file. Based on the extension, the file is processed differen
 - .tpl, .tmpl: Processed using component config and Sprig templating.
 
 <a name="SetupAndConfigureVM"></a>
-## func [SetupAndConfigureVM](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L169-L179>)
+## func [SetupAndConfigureVM](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L178-L188>)
 
 ```go
 func SetupAndConfigureVM(vmconfig types.VMConfig, config string, kr8Spec types.Kr8ClusterSpec, componentName string, compSpec types.Kr8ComponentSpec, allConfig *safeString, filters util.PathFilterOptions, paramsFile string, kr8Opts types.Kr8Opts) (*jsonnet.VM, string, error)

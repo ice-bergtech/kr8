@@ -1,3 +1,12 @@
+// Package generate implements the logic for generating output files based on input data.
+//
+// Combines a directory of cluster configurations
+// with a directory of components
+// (along with some Jsonnet libs)
+// to generate output files.
+//
+// The package prepares a Jsonnet VM and loads the necessary libraries and extvars.
+// A new VM is created for each component.
 package generate
 
 import (
