@@ -13,8 +13,8 @@
       },
     ],
   },
-  namespace: "Default",
+  namespace: "default",
   release_name: "temp-component",
   version: "1.0.0",
-  called_from: "",
+  called_from: "std.thisFile",
 }

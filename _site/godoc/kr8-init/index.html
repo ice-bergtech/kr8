@@ -131,6 +131,10 @@
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#index">Index</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-generatechartjsonnet">func GenerateChartJsonnet</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-generatecharttaskfile">func GenerateChartTaskfile</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#func-generateclusterjsonnet">func GenerateClusterJsonnet</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#func-generatecomponentjsonnet">func GenerateComponentJsonnet</a>
@@ -138,6 +142,14 @@
     <li class="toctree-l2"><a class="reference internal" href="#func-generatelib">func GenerateLib</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#func-generatereadme">func GenerateReadme</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-initcomponentchart">func InitComponentChart</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-initcomponentjsonnet">func InitComponentJsonnet</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-initcomponenttemplate">func InitComponentTemplate</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-initcomponentyaml">func InitComponentYaml</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#type-kr8initoptions">type Kr8InitOptions</a>
     </li>
@@ -178,19 +190,35 @@
 </code></pre>
 <h2 id="index">Index</h2>
 <ul>
+<li><a href="#GenerateChartJsonnet">func GenerateChartJsonnet(compJson types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error</a></li>
+<li><a href="#GenerateChartTaskfile">func GenerateChartTaskfile(comp types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error</a></li>
 <li><a href="#GenerateClusterJsonnet">func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error</a></li>
 <li><a href="#GenerateComponentJsonnet">func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) error</a></li>
 <li><a href="#GenerateLib">func GenerateLib(fetch bool, dstDir string) error</a></li>
 <li><a href="#GenerateReadme">func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) error</a></li>
+<li><a href="#InitComponentChart">func InitComponentChart(dstDir string, componentOptions Kr8InitOptions, compJson types.Kr8ComponentJsonnet) error</a></li>
+<li><a href="#InitComponentJsonnet">func InitComponentJsonnet(compJson types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error</a></li>
+<li><a href="#InitComponentTemplate">func InitComponentTemplate(compJson types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error</a></li>
+<li><a href="#InitComponentYaml">func InitComponentYaml(compJson types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error</a></li>
 <li><a href="#Kr8InitOptions">type Kr8InitOptions</a></li>
 </ul>
+<p><a name="GenerateChartJsonnet"></a></p>
+<h2 id="func-generatechartjsonnet">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L119">GenerateChartJsonnet</a></h2>
+<pre><code class="language-go">func GenerateChartJsonnet(compJson types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error
+</code></pre>
+<p>Generates a jsonnet files that references a local helm chart.</p>
+<p><a name="GenerateChartTaskfile"></a></p>
+<h2 id="func-generatecharttaskfile">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L145">GenerateChartTaskfile</a></h2>
+<pre><code class="language-go">func GenerateChartTaskfile(comp types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error
+</code></pre>
+<p>Generates a go-task taskfile that's setup to download a helm chart into a local `vendor` directory.</p>
 <p><a name="GenerateClusterJsonnet"></a></p>
-<h2 id="func-generateclusterjsonnet">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/init.go#L28">GenerateClusterJsonnet</a></h2>
+<h2 id="func-generateclusterjsonnet">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/cluster.go#L9">GenerateClusterJsonnet</a></h2>
 <pre><code class="language-go">func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error
 </code></pre>
 <p>Generate a cluster.jsonnet file based on the provided Kr8ClusterSpec and store it in the specified directory.</p>
 <p><a name="GenerateComponentJsonnet"></a></p>
-<h2 id="func-generatecomponentjsonnet">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/init.go#L49">GenerateComponentJsonnet</a></h2>
+<h2 id="func-generatecomponentjsonnet">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L21">GenerateComponentJsonnet</a></h2>
 <pre><code class="language-go">func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) error
 </code></pre>
 <p>Generate default component kr8_spec values and store in params.jsonnet. Based on the type:</p>
@@ -198,17 +226,37 @@
 <p>yml: leave a note in the params.jsonnet file about where and how the yml files can be referenced</p>
 <p>chart: generate a simple taskfile that handles vendoring the chart data</p>
 <p><a name="GenerateLib"></a></p>
-<h2 id="func-generatelib">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/init.go#L104">GenerateLib</a></h2>
+<h2 id="func-generatelib">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/libs.go#L14">GenerateLib</a></h2>
 <pre><code class="language-go">func GenerateLib(fetch bool, dstDir string) error
 </code></pre>
 <p>Downloads a starter kr8 jsonnet lib from github. If fetch is true, downloads the repo in the /lib directory. If false, prints the git commands to run. Repo: https://github.com/ice-bergtech/kr8-libsonnet . return util.FetchRepoUrl("https://github.com/ice-bergtech/kr8-libsonnet", dstDir+"/kr8-lib", !fetch).</p>
 <p><a name="GenerateReadme"></a></p>
-<h2 id="func-generatereadme">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/init.go#L113">GenerateReadme</a></h2>
+<h2 id="func-generatereadme">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/repo.go#L11">GenerateReadme</a></h2>
 <pre><code class="language-go">func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) error
 </code></pre>
 <p>Generates a starter readme for the repo, and writes it to the destination directory.</p>
+<p><a name="InitComponentChart"></a></p>
+<h2 id="func-initcomponentchart">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L53">InitComponentChart</a></h2>
+<pre><code class="language-go">func InitComponentChart(dstDir string, componentOptions Kr8InitOptions, compJson types.Kr8ComponentJsonnet) error
+</code></pre>
+<p>Initializes the basic parts of a helm chart component.</p>
+<p><a name="InitComponentJsonnet"></a></p>
+<h2 id="func-initcomponentjsonnet">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L108">InitComponentJsonnet</a></h2>
+<pre><code class="language-go">func InitComponentJsonnet(compJson types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error
+</code></pre>
+<p>Initializes the basic parts of a jsonnet-based component.</p>
+<p><a name="InitComponentTemplate"></a></p>
+<h2 id="func-initcomponenttemplate">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L78">InitComponentTemplate</a></h2>
+<pre><code class="language-go">func InitComponentTemplate(compJson types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error
+</code></pre>
+<p>Initializes the based parts of a template-based component.</p>
+<p><a name="InitComponentYaml"></a></p>
+<h2 id="func-initcomponentyaml">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L93">InitComponentYaml</a></h2>
+<pre><code class="language-go">func InitComponentYaml(compJson types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error
+</code></pre>
+<p>Initializes the basic parts of a yaml-based component.</p>
 <p><a name="Kr8InitOptions"></a></p>
-<h2 id="type-kr8initoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/init.go#L12-L25">Kr8InitOptions</a></h2>
+<h2 id="type-kr8initoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/kr8_init.go#L4-L17">Kr8InitOptions</a></h2>
 <p>Kr8InitOptions defines the options used by the init subcommands.</p>
 <pre><code class="language-go">type Kr8InitOptions struct {
     // URL to fetch the skeleton directory from
@@ -219,9 +267,9 @@
     ComponentName string
     // Type of component to initialize (e.g. jsonnet, yml, chart, compose)
     ComponentType string
-    // Whether to run in interactive mode or not
+    // Determines whether to run in interactive mode
     Interactive bool
-    // Whether to fetch remote resources or not
+    // Determines whether to fetch remote resources
     Fetch bool
 }
 </code></pre>

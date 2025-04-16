@@ -6,6 +6,8 @@ import "github.com/ice-bergtech/kr8/pkg/util"
 
 Utility functions for directories and files
 
+Package util contains utility functions for various tasks. It includes functions for formatting JSON, writing to files, directory management, and go control\-flow helpers
+
 ## Index
 
 - [func CalculateClusterIncludesExcludes\(input map\[string\]string, filters PathFilterOptions\) \[\]string](<#CalculateClusterIncludesExcludes>)
@@ -30,7 +32,7 @@ Utility functions for directories and files
 
 
 <a name="CalculateClusterIncludesExcludes"></a>
-## func [CalculateClusterIncludesExcludes](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L127>)
+## func [CalculateClusterIncludesExcludes](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L133>)
 
 ```go
 func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string
@@ -39,7 +41,7 @@ func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilte
 Using the allClusterParams variable and command flags to create a list of clusters to generate. Clusters can be filtered with "=" for equality or "\~" for regex match.
 
 <a name="CheckObjectMatch"></a>
-## func [CheckObjectMatch](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L55>)
+## func [CheckObjectMatch](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L61>)
 
 ```go
 func CheckObjectMatch(input gjson.Result, filterString string) bool
@@ -66,7 +68,7 @@ func Colorize(input interface{}, colorNum int, disabled bool) string
 Colorize function from zerolog console.go file to replicate their coloring functionality. Source: https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389 Replicated here because it's a private function.
 
 <a name="FatalErrorCheck"></a>
-## func [FatalErrorCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L109>)
+## func [FatalErrorCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L115>)
 
 ```go
 func FatalErrorCheck(message string, err error)
@@ -84,7 +86,7 @@ func FetchRepoUrl(url string, destination string, noop bool) error
 Fetch a git repo from a url and clone it to a destination directory. If the noop flag is true, it print commands to fetch manually without doing anything.
 
 <a name="Filter"></a>
-## func [Filter](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L15>)
+## func [Filter](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L21>)
 
 ```go
 func Filter(vs []string, f func(string) bool) []string
@@ -93,7 +95,7 @@ func Filter(vs []string, f func(string) bool) []string
 Filter returns a new slice containing only the elements that satisfy the predicate function. From https://gobyexample.com/collection-functions
 
 <a name="FilterItems"></a>
-## func [FilterItems](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L75>)
+## func [FilterItems](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L81>)
 
 ```go
 func FilterItems(input map[string]string, pfilter PathFilterOptions) []string
@@ -120,7 +122,7 @@ func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, er
 Formats a jsonnet string using custom options.
 
 <a name="GenErrorIfCheck"></a>
-## func [GenErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L115>)
+## func [GenErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L121>)
 
 ```go
 func GenErrorIfCheck(message string, err error) error
@@ -192,7 +194,7 @@ func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (st
 Write out a struct to a specified path and file. Marshals the given interface and generates a formatted json string. All parent directories needed are created.
 
 <a name="PathFilterOptions"></a>
-## type [PathFilterOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L27-L51>)
+## type [PathFilterOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L33-L57>)
 
 Fill with string to include and exclude, using kr8's special parsing.
 

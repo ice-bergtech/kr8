@@ -326,7 +326,7 @@
     Volumes string
     // Specify the size of pvc storage requests in the generated resource spec
     PVCRequestSize string
-    // Specify whether to generate network policies or not
+    // Determine whether to generate network policies
     NetworkPolicies bool
 
     // Create multiple containers grouped by 'kompose.service.group' label
@@ -409,7 +409,7 @@
     ClusterSpec Kr8ClusterSpec `json:&quot;_kr8_spec&quot;`
     // Cluster Level configuration that components can reference
     Cluster Kr8Cluster `json:&quot;_cluster&quot;`
-    // Distictly named components.
+    // Distinctly named components.
     Components map[string]Kr8ClusterComponentRef `json:&quot;_components&quot;`
 }
 </code></pre>

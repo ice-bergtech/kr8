@@ -125,7 +125,7 @@ type KomposeConvertOptions struct {
     Volumes string
     // Specify the size of pvc storage requests in the generated resource spec
     PVCRequestSize string
-    // Specify whether to generate network policies or not
+    // Determine whether to generate network policies
     NetworkPolicies bool
 
     // Create multiple containers grouped by 'kompose.service.group' label
@@ -239,7 +239,7 @@ type Kr8ClusterJsonnet struct {
     ClusterSpec Kr8ClusterSpec `json:"_kr8_spec"`
     // Cluster Level configuration that components can reference
     Cluster Kr8Cluster `json:"_cluster"`
-    // Distictly named components.
+    // Distinctly named components.
     Components map[string]Kr8ClusterComponentRef `json:"_components"`
 }
 ```

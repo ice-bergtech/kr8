@@ -28,7 +28,7 @@ jobs:
         uses: bats-core/bats-action@3.0.0
 
       - name: 🧪 Run go tests
-        run: go test ./...
+        run: go test -cover ./...
       
       # Start of testing steps
       - name: 🧪 Run build
