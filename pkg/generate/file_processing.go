@@ -58,16 +58,7 @@ func processIncludesFile(
 		return util.GenErrorIfCheck("Error checking if file needs updating", err)
 	}
 	if updateNeeded {
-		file, err := os.Create(outputFile)
-		if err := util.GenErrorIfCheck("Error creating file", err); err != nil {
-			return err
-		}
-		_, err = file.WriteString(outStr)
-		if err := util.GenErrorIfCheck("Error writing to file", err); err != nil {
-			return err
-		}
-
-		return util.GenErrorIfCheck("Error closing file", file.Close())
+		return os.WriteFile(outputFile, []byte(outStr), 0600)
 	}
 
 	return nil

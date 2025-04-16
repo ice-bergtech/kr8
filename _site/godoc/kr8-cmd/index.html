@@ -468,7 +468,10 @@
             util.FatalErrorCheck(&quot;Invalid option&quot;, survey.AskOne(promptB, &amp;cSpec.PruneParams))
         }
 
-        util.FatalErrorCheck(&quot;Error generating cluster jsonnet file&quot;, kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterOutputDir))
+        util.FatalErrorCheck(
+            &quot;Error generating cluster jsonnet file&quot;,
+            kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterOutputDir),
+        )
     },
 }
 </code></pre>

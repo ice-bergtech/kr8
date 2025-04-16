@@ -308,7 +308,10 @@ var InitClusterCmd = &cobra.Command{
             util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.PruneParams))
         }
 
-        util.FatalErrorCheck("Error generating cluster jsonnet file", kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterOutputDir))
+        util.FatalErrorCheck(
+            "Error generating cluster jsonnet file",
+            kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterOutputDir),
+        )
     },
 }
 ```
