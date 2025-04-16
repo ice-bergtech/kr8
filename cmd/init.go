@@ -146,7 +146,7 @@ and initialize a git repo so you can get started`,
 			GenerateDir:        "generated",
 			GenerateShortNames: false,
 			PruneParams:        false,
-			ClusterOutputDir:   "clusters",
+			ClusterOutputDir:   "generated" + "/" + cmdInitFlags.ClusterName,
 		}
 
 		util.FatalErrorCheck(

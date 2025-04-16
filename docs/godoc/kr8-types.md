@@ -263,7 +263,7 @@ type Kr8ClusterSpec struct {
     PruneParams bool `json:"prune_params"`
     // Additional information used to process the cluster that is not stored with it.
     // Cluster output directory
-    ClusterDir string `json:"-"`
+    ClusterOutputDir string `json:"-"`
 }
 ```
 

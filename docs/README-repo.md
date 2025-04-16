@@ -79,9 +79,41 @@ go build
 
 This will create a binary named `kr8` which can be placed in your `/bin` of choice.
 
-Once installed, use `kr8 init` commands to setup the initial structure and configurations.
+Once installed, use `kr8 help` to show the available commands.
 
+```sh
+> ./kr8 help
+An opinionated configuration management tool for Kubernetes Clusters powered by jsonnet
 
+Usage:
+  kr8 [command]
+
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  format      Format jsonnet files
+  generate    Generate components
+  get         Display one or many kr8 resources
+  help        Help about any command
+  init        Initialize kr8 config repos, components and clusters
+  jsonnet     Jsonnet utilities
+  render      Render files
+  version     Return the current version of kr8+
+
+Flags:
+  -B, --base string            kr8 config base directory (default "./")
+  -D, --clusterdir string      kr8 cluster directory
+      --color                  enable colorized output. Set to false to disable (default true)
+  -d, --componentdir string    kr8 component directory
+      --config string          A config file with kr8 configuration
+      --debug                  log more information about what kr8 is doing. Overrides --loglevel
+      --ext-str-file strings   Set jsonnet extvar from file contents
+  -h, --help                   help for kr8
+  -J, --jpath stringArray      Directories to add to jsonnet include path. Repeat arg for multiple directories
+  -L, --loglevel string        set log level (default "info")
+      --parallel int           parallelism - defaults to runtime.GOMAXPROCS(0) (default -1)
+
+Use "kr8 [command] --help" for more information about a command.
+```
 
 ### Getting Started
 
