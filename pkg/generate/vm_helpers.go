@@ -50,10 +50,14 @@ func SetupJvmForComponent(
 // jPathResults always includes base lib.
 // Adds jpaths from spec if set.
 func loadJPathsIntoVM(compSpec types.Kr8ComponentSpec, compPath string, baseDir string, jvm *jsonnet.VM) {
+	log.Debug().
+		Str("component path", compPath).
+		Msg("Loading JPaths into VM for component")
 	jPathResults := []string{filepath.Join(baseDir, "lib")}
 	for _, jPath := range compSpec.JPaths {
 		jPathResults = append(jPathResults, filepath.Join(baseDir, compPath, jPath))
 	}
+	log.Debug().Str("component path", compPath).Msgf("JPaths: %v", jPathResults)
 	jvm.Importer(&jsonnet.FileImporter{
 		JPaths: jPathResults,
 	})
@@ -67,11 +71,12 @@ func loadExtFilesIntoVars(
 	componentName string,
 	jvm *jsonnet.VM,
 ) error {
+	log.Debug().Str("component path", compPath).Msgf("Loading extFiles")
 	for key, val := range compSpec.ExtFiles {
+		filePath := filepath.Join(kr8Opts.BaseDir, compPath, val)
 		log.Debug().Str("cluster", kr8Spec.Name).
 			Str("component", componentName).
-			Msg("Extfile: " + key + "=" + val)
-		filePath := filepath.Join(kr8Opts.BaseDir, compPath, val)
+			Msg("Extfile: " + key + "=" + val + "\n Path: " + filePath)
 		if kr8Opts.BaseDir != "./" && !strings.HasPrefix(filePath, kr8Opts.BaseDir) {
 			if err := util.GenErrorIfCheck("Invalid file path: "+filePath, os.ErrNotExist); err != nil {
 				return err

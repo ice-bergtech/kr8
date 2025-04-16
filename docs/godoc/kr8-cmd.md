@@ -275,7 +275,7 @@ var InitClusterCmd = &cobra.Command{
             GenerateDir:        "generated",
             GenerateShortNames: false,
             PruneParams:        false,
-            ClusterDir:         RootConfig.ClusterDir,
+            ClusterOutputDir:   RootConfig.ClusterDir,
         }
 
         if cmdInitFlags.Interactive {
@@ -284,7 +284,7 @@ var InitClusterCmd = &cobra.Command{
                 Default: RootConfig.ClusterDir,
                 Help:    "Set the root directory to store cluster configurations, optionally including subdirectories",
             }
-            util.FatalErrorCheck("Invalid cluster directory", survey.AskOne(prompt, &cSpec.ClusterDir))
+            util.FatalErrorCheck("Invalid cluster directory", survey.AskOne(prompt, &cSpec.ClusterOutputDir))
 
             prompt = &survey.Input{
                 Message: "Set the cluster name",
@@ -308,7 +308,10 @@ var InitClusterCmd = &cobra.Command{
             util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.PruneParams))
         }
 
-        util.FatalErrorCheck("Error generating cluster jsonnet file", kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterDir))
+        util.FatalErrorCheck(
+            "Error generating cluster jsonnet file",
+            kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterOutputDir),
+        )
     },
 }
 ```
@@ -424,7 +427,7 @@ and initialize a git repo so you can get started`,
             GenerateDir:        "generated",
             GenerateShortNames: false,
             PruneParams:        false,
-            ClusterDir:         "clusters",
+            ClusterOutputDir:   "generated" + "/" + cmdInitFlags.ClusterName,
         }
 
         util.FatalErrorCheck(

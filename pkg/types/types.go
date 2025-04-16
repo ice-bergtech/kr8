@@ -58,7 +58,7 @@ type Kr8ClusterSpec struct {
 	PruneParams bool `json:"prune_params"`
 	// Additional information used to process the cluster that is not stored with it.
 	// Cluster output directory
-	ClusterDir string `json:"-"`
+	ClusterOutputDir string `json:"-"`
 }
 
 // This function creates a Kr8ClusterSpec from passed params.
@@ -90,7 +90,7 @@ func CreateClusterSpec(
 		GenerateDir:        clGenerateDir,
 		GenerateShortNames: spec.Get("generate_short_names").Bool(),
 		PruneParams:        spec.Get("prune_params").Bool(),
-		ClusterDir:         clusterDir,
+		ClusterOutputDir:   clGenerateDir + "/" + clusterName,
 		Name:               clusterName,
 	}, nil
 }

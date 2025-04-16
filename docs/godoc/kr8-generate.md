@@ -78,7 +78,7 @@ func GetClusterParams(clusterDir string, vmConfig types.VMConfig) (map[string]st
 
 
 <a name="ProcessFile"></a>
-## func [ProcessFile](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L81-L89>)
+## func [ProcessFile](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L72-L80>)
 
 ```go
 func ProcessFile(inputFile string, outputFile string, kr8Spec types.Kr8ClusterSpec, componentName string, config string, incInfo types.Kr8ComponentSpecIncludeObject, jvm *jsonnet.VM) (string, error)
