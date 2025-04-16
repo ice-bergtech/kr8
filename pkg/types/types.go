@@ -90,7 +90,7 @@ func CreateClusterSpec(
 		GenerateDir:        clGenerateDir,
 		GenerateShortNames: spec.Get("generate_short_names").Bool(),
 		PruneParams:        spec.Get("prune_params").Bool(),
-		ClusterOutputDir:   clusterDir,
+		ClusterOutputDir:   clGenerateDir + "/" + clusterName,
 		Name:               clusterName,
 	}, nil
 }

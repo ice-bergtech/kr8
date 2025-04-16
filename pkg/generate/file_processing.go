@@ -31,7 +31,8 @@ func processIncludesFile(
 	// ensure this directory exists
 	outputDir := componentOutputDir
 	if incInfo.DestDir != "" {
-		outputDir = filepath.Join(kr8Spec.ClusterOutputDir, incInfo.DestDir)
+		outputDir = filepath.Join(componentOutputDir, incInfo.DestDir)
+		log.Debug().Msg("includes destdir override: " + outputDir)
 	}
 	if _, err := os.Stat(outputDir); os.IsNotExist(err) {
 		err = os.MkdirAll(outputDir, 0750)
@@ -39,11 +40,10 @@ func processIncludesFile(
 			return err
 		}
 	}
-	outputFile := filepath.Clean(filepath.Join(outputDir, incInfo.DestName+"."+incInfo.DestExt))
-	inputFile := filepath.Clean(filepath.Join(kr8Opts.BaseDir, componentPath, incInfo.File))
-
+	inputFile := filepath.Join(kr8Opts.BaseDir, componentPath, incInfo.File)
+	outputFile := filepath.Join(outputDir, filepath.Base(incInfo.DestName+"."+incInfo.DestExt))
 	// remember output filename for purging files
-	outputFileMap[incInfo.DestName+"."+incInfo.DestExt] = true
+	outputFileMap[filepath.Base(incInfo.DestName+"."+incInfo.DestExt)] = true
 
 	outStr, err := ProcessFile(inputFile, outputFile, kr8Spec, componentName, config, incInfo, jvm)
 	if err := util.GenErrorIfCheck("error processing file", err); err != nil {

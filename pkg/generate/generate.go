@@ -134,7 +134,7 @@ func GenProcessComponent(
 		return err
 	}
 
-	componentOutputDir := filepath.Join(kr8Spec.ClusterOutputDir, componentName)
+	componentOutputDir := filepath.Join(kr8Spec.GenerateDir, kr8Spec.Name, componentName)
 	// create component dir if needed
 	if _, err := os.Stat(componentOutputDir); os.IsNotExist(err) {
 		err := os.MkdirAll(componentOutputDir, 0750)
@@ -198,14 +198,14 @@ func SetupAndConfigureVM(
 	}
 	if compSpec.Kr8_allclusters {
 		// add kr8_allclusters extcode with every cluster's cluster level params
-		if err := getAllClusterParams(kr8Spec.ClusterDir, vmconfig, jvm); err != nil {
+		if err := getAllClusterParams(kr8Opts.ClusterDir, vmconfig, jvm); err != nil {
 			return nil, "", util.GenErrorIfCheck("error getting all cluster params", err)
 		}
 	}
 
 	compPath := filepath.Clean(gjson.Get(config, "_components."+componentName+".path").String())
 	// jPathResults always includes base lib. Add jpaths from spec if set
-	loadJPathsIntoVM(compSpec, compPath, kr8Spec.ClusterOutputDir, jvm)
+	loadJPathsIntoVM(compSpec, compPath, kr8Opts.BaseDir, jvm)
 	// file imports
 	if err := loadExtFilesIntoVars(compSpec, compPath, kr8Spec, kr8Opts, componentName, jvm); err != nil {
 		return nil, "", util.GenErrorIfCheck("error loading ext files into vars", err)
