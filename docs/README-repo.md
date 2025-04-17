@@ -19,15 +19,19 @@ This means that breaking changes still happen from time to time, but it's stable
 	<a href="https://github.com/ice-bergtech/kr8/issues">Get Help</a>
 </p>
 
-## Table of Contents
+<details>
+  <summary><b>Table of Contents</b></summary>
+  <p>
 
 - [kr8+](#kr8)
-  - [Table of Contents](#table-of-contents)
   - [Key Features](#key-features)
   - [Technical Overview](#technical-overview)
   - [Installation](#installation)
     - [Getting Started](#getting-started)
     - [Configuration](#configuration)
+      - [Clusters Configurations](#clusters-configurations)
+      - [Component Configurations](#component-configurations)
+      - [Jsonnet Libraries](#jsonnet-libraries)
     - [Deployment](#deployment)
   - [Documentation and Additional Resources](#documentation-and-additional-resources)
     - [History and Theory](#history-and-theory)
@@ -38,6 +42,9 @@ This means that breaking changes still happen from time to time, but it's stable
     - [Build Troubleshooting](#build-troubleshooting)
   - [Contributing](#contributing)
   - [License](#license)
+
+</p>
+</details>
 
 ## Key Features
 
