@@ -3,6 +3,7 @@
 ## 0.0.7
 
 * Add changelog and features doc
+* Setup docs site
 
 ## 0.0.6
 
