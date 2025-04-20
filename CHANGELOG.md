@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.9
+
+* Add `config` field to `includes` objects, allowing custom configuration data to be passed to the template instead of just the component config.
+
 ## 0.0.7
 
 * Add changelog and features doc

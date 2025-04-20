@@ -265,7 +265,7 @@
 </code></pre>
 <p>Extract jsonnet lib paths from spec.</p>
 <p><a name="CmdJsonnetOptions"></a></p>
-<h2 id="type-cmdjsonnetoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L280-L287">CmdJsonnetOptions</a></h2>
+<h2 id="type-cmdjsonnetoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L282-L289">CmdJsonnetOptions</a></h2>
 <p>Options for running the jsonnet command.</p>
 <pre><code class="language-go">type CmdJsonnetOptions struct {
     Prune         bool
@@ -478,7 +478,7 @@
 </code></pre>
 <p>Extracts a component spec from a jsonnet object.</p>
 <p><a name="Kr8ComponentSpecIncludeObject"></a></p>
-<h2 id="type-kr8componentspecincludeobject">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L211-L221">Kr8ComponentSpecIncludeObject</a></h2>
+<h2 id="type-kr8componentspecincludeobject">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L211-L223">Kr8ComponentSpecIncludeObject</a></h2>
 <p>An includes object which configures how kr8 includes an object. It allows configuring the included file's destination directory and file name. The input files are processed differently depending on the filetype.</p>
 <pre><code class="language-go">type Kr8ComponentSpecIncludeObject struct {
     // an input file to process
@@ -490,10 +490,12 @@
     DestName string `json:&quot;dest_name,omitempty&quot;`
     // override destination file extension
     DestExt string `json:&quot;dest_ext,omitempty&quot;`
+    // Override config passed to the includes template processing
+    Config string `json:&quot;config,omitempty&quot;`
 }
 </code></pre>
 <p><a name="Kr8ComponentSpecIncludes"></a></p>
-<h2 id="type-kr8componentspecincludes">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L224">Kr8ComponentSpecIncludes</a></h2>
+<h2 id="type-kr8componentspecincludes">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L226">Kr8ComponentSpecIncludes</a></h2>
 <p>Define Kr8ComponentSpecIncludes to handle dynamic decoding.</p>
 <pre><code class="language-go">type Kr8ComponentSpecIncludes []Kr8ComponentSpecIncludeObject
 </code></pre>
@@ -503,19 +505,19 @@
 </code></pre>
 <p>Extract jsonnet includes filenames or objects from spec.</p>
 <p><a name="Kr8ComponentSpecIncludes.UnmarshalJSON"></a></p>
-<h3 id="func-kr8componentspecincludes-unmarshaljson">func (*Kr8ComponentSpecIncludes) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L227">UnmarshalJSON</a></h3>
+<h3 id="func-kr8componentspecincludes-unmarshaljson">func (*Kr8ComponentSpecIncludes) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L229">UnmarshalJSON</a></h3>
 <pre><code class="language-go">func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error
 </code></pre>
 <p>Implement custom unmarshaling for dynamic decoding.</p>
 <p><a name="Kr8Error"></a></p>
-<h2 id="type-kr8error">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L299-L302">Kr8Error</a></h2>
+<h2 id="type-kr8error">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L301-L304">Kr8Error</a></h2>
 <pre><code class="language-go">type Kr8Error struct {
     Message string
     Value   interface{}
 }
 </code></pre>
 <p><a name="Kr8Error.Error"></a></p>
-<h3 id="func-kr8error-error">func (Kr8Error) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L305">Error</a></h3>
+<h3 id="func-kr8error-error">func (Kr8Error) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L307">Error</a></h3>
 <pre><code class="language-go">func (e Kr8Error) Error() string
 </code></pre>
 <p>Error implements error.</p>
@@ -531,7 +533,7 @@
 }
 </code></pre>
 <p><a name="VMConfig"></a></p>
-<h2 id="type-vmconfig">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L290-L297">VMConfig</a></h2>
+<h2 id="type-vmconfig">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L292-L299">VMConfig</a></h2>
 <p>VMConfig describes configuration to initialize the Jsonnet VM with.</p>
 <pre><code class="language-go">type VMConfig struct {
     // Jpaths is a list of paths to search for Jsonnet libraries (libsonnet files)

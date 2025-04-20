@@ -100,7 +100,11 @@ func ProcessFile(
 	case ".tmpl":
 	case ".tpl":
 		// Pass component config as data for the template
-		outStr, err = processTemplate(inputFile, gjson.Get(config, componentName).Map())
+		if len(incInfo.Config) > 0 {
+			outStr, err = processTemplate(inputFile, gjson.Parse(incInfo.Config))
+		} else {
+			outStr, err = processTemplate(inputFile, gjson.Get(config, componentName))
+		}
 	default:
 		outStr, err = "", os.ErrInvalid
 	}
@@ -143,7 +147,7 @@ func processJsonnet(jvm *jsonnet.VM, input string, snippetFilename string) (stri
 	return outStr, nil
 }
 
-func processTemplate(filename string, data map[string]gjson.Result) (string, error) {
+func processTemplate(filename string, data gjson.Result) (string, error) {
 	var tInput []byte
 	var tmpl *template.Template
 	var buffer bytes.Buffer
@@ -153,11 +157,11 @@ func processTemplate(filename string, data map[string]gjson.Result) (string, err
 	if err != nil {
 		return "Error loading template", err
 	}
-	tmpl, err = template.New("file").Funcs(sprig.FuncMap()).Parse(string(tInput))
+	tmpl, err = template.New(filepath.Base(filename)).Funcs(sprig.FuncMap()).Parse(string(tInput))
 	if err != nil {
 		return "Error parsing template", err
 	}
-	if err = tmpl.Execute(&buffer, data); err != nil {
+	if err = tmpl.Execute(&buffer, data.Value().(map[string]interface{})); err != nil {
 		return "Error executing templating", err
 	}
 
