@@ -157,7 +157,7 @@ func processTemplate(filename string, data gjson.Result) (string, error) {
 	if err != nil {
 		return "Error loading template", err
 	}
-	tmpl, err = template.New("file").Funcs(sprig.FuncMap()).Parse(string(tInput))
+	tmpl, err = template.New(filepath.Base(filename)).Funcs(sprig.FuncMap()).Parse(string(tInput))
 	if err != nil {
 		return "Error parsing template", err
 	}

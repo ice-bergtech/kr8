@@ -123,7 +123,7 @@ func NativeSprigTemplate() *jsonnet.NativeFunction {
 				}
 			}
 
-			tmpl, err := template.New("file").Funcs(sprig.FuncMap()).Parse(input)
+			tmpl, err := template.New("templateStr").Funcs(sprig.FuncMap()).Parse(input)
 			if err != nil {
 				return "", err
 			}
