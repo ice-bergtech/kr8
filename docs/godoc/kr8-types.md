@@ -344,7 +344,7 @@ type Kr8ComponentSpecIncludeObject struct {
     DestName string `json:"dest_name,omitempty"`
     // override destination file extension
     DestExt string `json:"dest_ext,omitempty"`
-    // Additional config passed to the includes object
+    // Override config passed to the includes template processing
     Config string `json:"config,omitempty"`
 }
 ```

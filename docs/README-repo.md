@@ -5,7 +5,7 @@
 
 [![CI status](https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg)](https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI)
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.24-61CFDD.svg)
-[![License](https://img.shields.io/badge/License-MIT)](LICENSE)
+[![MIT License](https://img.shields.io/badge/License-MIT)](LICENSE)
 
 **kr8+** or `kr8` is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.
 By leveraging best practices and providing a structured approach, **kr8+** helps DevOps teams streamline their workflows and maintain consistency across multiple environments.
