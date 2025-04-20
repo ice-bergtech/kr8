@@ -52,7 +52,7 @@ func ExtractJpaths(spec gjson.Result) []string
 Extract jsonnet lib paths from spec.
 
 <a name="CmdJsonnetOptions"></a>
-## type [CmdJsonnetOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L280-L287>)
+## type [CmdJsonnetOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L282-L289>)
 
 Options for running the jsonnet command.
 
@@ -329,7 +329,7 @@ func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error)
 Extracts a component spec from a jsonnet object.
 
 <a name="Kr8ComponentSpecIncludeObject"></a>
-## type [Kr8ComponentSpecIncludeObject](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L211-L221>)
+## type [Kr8ComponentSpecIncludeObject](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L211-L223>)
 
 An includes object which configures how kr8 includes an object. It allows configuring the included file's destination directory and file name. The input files are processed differently depending on the filetype.
 
@@ -344,11 +344,13 @@ type Kr8ComponentSpecIncludeObject struct {
     DestName string `json:"dest_name,omitempty"`
     // override destination file extension
     DestExt string `json:"dest_ext,omitempty"`
+    // Additional config passed to the includes object
+    Config string `json:"config,omitempty"`
 }
 ```
 
 <a name="Kr8ComponentSpecIncludes"></a>
-## type [Kr8ComponentSpecIncludes](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L224>)
+## type [Kr8ComponentSpecIncludes](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L226>)
 
 Define Kr8ComponentSpecIncludes to handle dynamic decoding.
 
@@ -366,7 +368,7 @@ func ExtractIncludes(spec gjson.Result) (Kr8ComponentSpecIncludes, error)
 Extract jsonnet includes filenames or objects from spec.
 
 <a name="Kr8ComponentSpecIncludes.UnmarshalJSON"></a>
-### func \(\*Kr8ComponentSpecIncludes\) [UnmarshalJSON](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L227>)
+### func \(\*Kr8ComponentSpecIncludes\) [UnmarshalJSON](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L229>)
 
 ```go
 func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error
@@ -375,7 +377,7 @@ func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error
 Implement custom unmarshaling for dynamic decoding.
 
 <a name="Kr8Error"></a>
-## type [Kr8Error](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L299-L302>)
+## type [Kr8Error](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L301-L304>)
 
 
 
@@ -387,7 +389,7 @@ type Kr8Error struct {
 ```
 
 <a name="Kr8Error.Error"></a>
-### func \(Kr8Error\) [Error](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L305>)
+### func \(Kr8Error\) [Error](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L307>)
 
 ```go
 func (e Kr8Error) Error() string
@@ -412,7 +414,7 @@ type Kr8Opts struct {
 ```
 
 <a name="VMConfig"></a>
-## type [VMConfig](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L290-L297>)
+## type [VMConfig](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L292-L299>)
 
 VMConfig describes configuration to initialize the Jsonnet VM with.
 

@@ -100,7 +100,11 @@ func ProcessFile(
 	case ".tmpl":
 	case ".tpl":
 		// Pass component config as data for the template
-		outStr, err = processTemplate(inputFile, gjson.Get(config, componentName))
+		if len(incInfo.Config) > 0 {
+			outStr, err = processTemplate(inputFile, gjson.Parse(incInfo.Config))
+		} else {
+			outStr, err = processTemplate(inputFile, gjson.Get(config, componentName))
+		}
 	default:
 		outStr, err = "", os.ErrInvalid
 	}
