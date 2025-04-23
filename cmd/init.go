@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/AlecAivazis/survey/v2"
 	kr8init "github.com/ice-bergtech/kr8/pkg/kr8_init"
-	types "github.com/ice-bergtech/kr8/pkg/types"
+	"github.com/ice-bergtech/kr8/pkg/kr8_types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -57,7 +57,7 @@ var InitClusterCmd = &cobra.Command{
 	Short: "Init a new cluster config file",
 	Long:  "Initialize a new cluster configuration file",
 	Run: func(cmd *cobra.Command, args []string) {
-		cSpec := types.Kr8ClusterSpec{
+		cSpec := kr8_types.Kr8ClusterSpec{
 			Name:               cmdInitFlags.ClusterName,
 			PostProcessor:      "function(input) input",
 			GenerateDir:        "generated",
@@ -140,7 +140,7 @@ and initialize a git repo so you can get started`,
 			Interactive:   false,
 			Fetch:         false,
 		}
-		clusterOptions := types.Kr8ClusterSpec{
+		clusterOptions := kr8_types.Kr8ClusterSpec{
 			Name:               cmdInitFlags.ClusterName,
 			PostProcessor:      "",
 			GenerateDir:        "generated",

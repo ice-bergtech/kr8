@@ -6,7 +6,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	types "github.com/ice-bergtech/kr8/pkg/types"
+	"github.com/ice-bergtech/kr8/pkg/kr8_types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
@@ -40,7 +40,7 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) er
 	return nil
 }
 
-func setupClusterGenerateDirs(kr8Spec types.Kr8ClusterSpec) ([]string, error) {
+func setupClusterGenerateDirs(kr8Spec kr8_types.Kr8ClusterSpec) ([]string, error) {
 	// create cluster dir
 	if _, err := os.Stat(kr8Spec.ClusterOutputDir); os.IsNotExist(err) {
 		err = os.MkdirAll(kr8Spec.ClusterOutputDir, 0750)

@@ -51,3 +51,4 @@ nav:
     - kr8 init: godoc/kr8-init.md
     - kr8 jsonnet: godoc/kr8-jsonnet.md
     - kr8 util: godoc/kr8-util.md
+    - types: godoc/types.md

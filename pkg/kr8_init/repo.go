@@ -4,11 +4,11 @@ import (
 	"os"
 	"strings"
 
-	types "github.com/ice-bergtech/kr8/pkg/types"
+	"github.com/ice-bergtech/kr8/pkg/kr8_types"
 )
 
 // Generates a starter readme for the repo, and writes it to the destination directory.
-func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) error {
+func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec kr8_types.Kr8ClusterSpec) error {
 	var fetch string
 	if cmdOptions.Fetch {
 		fetch = "true"

@@ -33,6 +33,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 
+	"github.com/ice-bergtech/kr8/pkg/kr8_types"
 	types "github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
@@ -204,7 +205,7 @@ func JsonnetRenderClusterParams(
 	}
 
 	var params []string
-	var componentMap map[string]types.Kr8ClusterComponentRef
+	var componentMap map[string]kr8_types.Kr8ClusterComponentRef
 
 	if clusterName != "" {
 		clusterPath, err := util.GetClusterPaths(vmconfig.BaseDir, clusterName)
@@ -238,7 +239,7 @@ func JsonnetRenderClusterParams(
 }
 
 func MergeComponentDefaults(
-	componentMap map[string]types.Kr8ClusterComponentRef,
+	componentMap map[string]kr8_types.Kr8ClusterComponentRef,
 	componentNames []string,
 	vmconfig types.VMConfig,
 ) (string, error) {

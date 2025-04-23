@@ -190,7 +190,7 @@ Documentation for kr8+ documentation and other, external resources.
 * [Managing Clusters](./docs/concepts/clusters.md)
 * [Creating Components](./docs/concepts/components.md)
 * [Native Functions](./docs/concepts/nativefuncs.md)
-* [Code Documentation](./docs/godoc)
+* [Code Documentation](https://pkg.go.dev/github.com/ice-bergtech/kr8)
 
 ### Other Documentation
 

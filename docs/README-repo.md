@@ -5,7 +5,8 @@
 
 [![CI status](https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg)](https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI)
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.24-61CFDD.svg)
-[![MIT License](https://img.shields.io/badge/License-MIT)](LICENSE)
+[![Go Reference](https://pkg.go.dev/badge/github.com/ice-bergtech/kr8.svg)](https://pkg.go.dev/github.com/ice-bergtech/kr8)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
 **kr8+** or `kr8` is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.
 By leveraging best practices and providing a structured approach, **kr8+** helps DevOps teams streamline their workflows and maintain consistency across multiple environments.
@@ -29,11 +30,10 @@ This means that breaking changes still happen from time to time, but it's stable
   - [Installation](#installation)
     - [Getting Started](#getting-started)
     - [Configuration](#configuration)
-      - [Clusters Configurations](#clusters-configurations)
-      - [Component Configurations](#component-configurations)
-      - [Jsonnet Libraries](#jsonnet-libraries)
     - [Deployment](#deployment)
   - [Documentation and Additional Resources](#documentation-and-additional-resources)
+    - [Links](#links)
+    - [Other Documentation](#other-documentation)
     - [History and Theory](#history-and-theory)
     - [Alternatives tools](#alternatives-tools)
   - [Development](#development)
@@ -181,16 +181,18 @@ Manifest changes are checked into source control, allowing them to be ingested b
 
 ## Documentation and Additional Resources
 
-kr8+ documentation
+Documentation for kr8+ documentation and other, external resources.
+
+### Links
 
 * [Command Documentation](./cmd/kr8.md)
 * [Concepts](./concepts/overview.md)
 * [Managing Clusters](./concepts/clusters.md)
 * [Creating Components](./concepts/components.md)
 * [Native Functions](./concepts/nativefuncs.md)
-* [Code Documentation](./godoc)
+* [Code Documentation](https://pkg.go.dev/github.com/ice-bergtech/kr8)
 
-Other Documentation
+### Other Documentation
 
 * [Jsonnet Standard Library](https://jsonnet.org/ref/stdlib.html)
 * [Jsonnet Language Reference](https://jsonnet.org/ref/language.html)

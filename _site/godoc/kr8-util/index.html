@@ -171,9 +171,13 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#func-writeobjtojsonfile">func WriteObjToJsonFile</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#type-clustertreenode">type ClusterTreeNode</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#type-pathfilteroptions">type PathFilterOptions</a>
     </li>
     </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../types/">types</a>
                   </li>
               </ul>
       </div>
@@ -204,8 +208,7 @@
                 <h1 id="util">util</h1>
 <pre><code class="language-go">import &quot;github.com/ice-bergtech/kr8/pkg/util&quot;
 </code></pre>
-<p>Utility functions for directories and files</p>
-<p>Package util contains utility functions for various tasks. It includes functions for formatting JSON, writing to files, directory management, and go control-flow helpers</p>
+<p>Package util contains various utility functions for directories and files. It includes functions for formatting JSON, writing to files, directory management, and go control-flow helpers</p>
 <h2 id="index">Index</h2>
 <ul>
 <li><a href="#CalculateClusterIncludesExcludes">func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string</a></li>
@@ -226,6 +229,7 @@
 <li><a href="#JsonnetPrint">func JsonnetPrint(output string, format string, color bool) error</a></li>
 <li><a href="#Pretty">func Pretty(inputJson string, colorOutput bool) (string, error)</a></li>
 <li><a href="#WriteObjToJsonFile">func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (string, error)</a></li>
+<li><a href="#ClusterTreeNode">type ClusterTreeNode</a></li>
 <li><a href="#PathFilterOptions">type PathFilterOptions</a></li>
 </ul>
 <p><a name="CalculateClusterIncludesExcludes"></a></p>
@@ -239,7 +243,7 @@
 </code></pre>
 <p>Checks if a input object matches a filter string. The filter string can be an equality match or a regex match.</p>
 <p><a name="CleanOutputDir"></a></p>
-<h2 id="func-cleanoutputdir">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L111">CleanOutputDir</a></h2>
+<h2 id="func-cleanoutputdir">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L117">CleanOutputDir</a></h2>
 <pre><code class="language-go">func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error
 </code></pre>
 <p>Given a map of filenames, prunes all *.yaml files that are NOT in the map from the directory.</p>
@@ -283,17 +287,17 @@
 <pre><code class="language-go">func GenErrorIfCheck(message string, err error) error
 </code></pre>
 <p><a name="GetClusterFilenames"></a></p>
-<h2 id="func-getclusterfilenames">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L16">GetClusterFilenames</a></h2>
+<h2 id="func-getclusterfilenames">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L22">GetClusterFilenames</a></h2>
 <pre><code class="language-go">func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error)
 </code></pre>
 <p>Get a list of cluster from within a directory. Walks the directory tree, creating a types.Kr8Cluster for each cluster.jsonnet file found.</p>
 <p><a name="GetClusterParamsFilenames"></a></p>
-<h2 id="func-getclusterparamsfilenames">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L72">GetClusterParamsFilenames</a></h2>
+<h2 id="func-getclusterparamsfilenames">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L78">GetClusterParamsFilenames</a></h2>
 <pre><code class="language-go">func GetClusterParamsFilenames(basePath string, targetPath string) []string
 </code></pre>
 <p>Get all cluster parameters within a directory. Walks through the directory hierarchy and returns all paths to `params.jsonnet` files.</p>
 <p><a name="GetClusterPaths"></a></p>
-<h2 id="func-getclusterpaths">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L46">GetClusterPaths</a></h2>
+<h2 id="func-getclusterpaths">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L52">GetClusterPaths</a></h2>
 <pre><code class="language-go">func GetClusterPaths(searchDir string, clusterName string) (string, error)
 </code></pre>
 <p>Get a specific cluster within a directory by name. Walks the cluster directory searching for the given clusterName. Returns the path to the cluster.</p>
@@ -317,6 +321,14 @@
 <pre><code class="language-go">func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (string, error)
 </code></pre>
 <p>Write out a struct to a specified path and file. Marshals the given interface and generates a formatted json string. All parent directories needed are created.</p>
+<p><a name="ClusterTreeNode"></a></p>
+<h2 id="type-clustertreenode">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L14-L18">ClusterTreeNode</a></h2>
+<pre><code class="language-go">type ClusterTreeNode struct {
+    DirName string
+    VM      *jsonnet.VM
+    Parent  *ClusterTreeNode
+}
+</code></pre>
 <p><a name="PathFilterOptions"></a></p>
 <h2 id="type-pathfilteroptions">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L33-L57">PathFilterOptions</a></h2>
 <p>Fill with string to include and exclude, using kr8's special parsing.</p>
@@ -351,6 +363,7 @@
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../kr8-jsonnet/" class="btn btn-neutral float-left" title="kr8 jsonnet"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../types/" class="btn btn-neutral float-right" title="types">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -379,6 +392,8 @@
     
       <span><a href="../kr8-jsonnet/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
+    
+      <span><a href="../types/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

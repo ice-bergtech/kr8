@@ -1,4 +1,3 @@
-// Utility functions for directories and files
 package util
 
 import (
@@ -6,10 +5,17 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/google/go-jsonnet"
 	"github.com/rs/zerolog/log"
 
 	types "github.com/ice-bergtech/kr8/pkg/types"
 )
+
+type ClusterTreeNode struct {
+	DirName string
+	VM      *jsonnet.VM
+	Parent  *ClusterTreeNode
+}
 
 // Get a list of cluster from within a directory.
 // Walks the directory tree, creating a types.Kr8Cluster for each cluster.jsonnet file found.

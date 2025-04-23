@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	jnetvm "github.com/ice-bergtech/kr8/pkg/jnetvm"
+	"github.com/ice-bergtech/kr8/pkg/kr8_types"
 	types "github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
@@ -20,7 +21,7 @@ import (
 func SetupJvmForComponent(
 	vmconfig types.VMConfig,
 	config string,
-	kr8Spec types.Kr8ClusterSpec,
+	kr8Spec kr8_types.Kr8ClusterSpec,
 	componentName string,
 ) (*jsonnet.VM, error) {
 	jvm, err := jnetvm.JsonnetVM(vmconfig)
@@ -49,7 +50,7 @@ func SetupJvmForComponent(
 
 // jPathResults always includes base lib.
 // Adds jpaths from spec if set.
-func loadJPathsIntoVM(compSpec types.Kr8ComponentSpec, compPath string, baseDir string, jvm *jsonnet.VM) {
+func loadJPathsIntoVM(compSpec kr8_types.Kr8ComponentSpec, compPath string, baseDir string, jvm *jsonnet.VM) {
 	log.Debug().
 		Str("component path", compPath).
 		Msg("Loading JPaths into VM for component")
@@ -64,9 +65,9 @@ func loadJPathsIntoVM(compSpec types.Kr8ComponentSpec, compPath string, baseDir 
 }
 
 func loadExtFilesIntoVars(
-	compSpec types.Kr8ComponentSpec,
+	compSpec kr8_types.Kr8ComponentSpec,
 	compPath string,
-	kr8Spec types.Kr8ClusterSpec,
+	kr8Spec kr8_types.Kr8ClusterSpec,
 	kr8Opts types.Kr8Opts,
 	componentName string,
 	jvm *jsonnet.VM,

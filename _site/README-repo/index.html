@@ -70,6 +70,10 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#documentation-and-additional-resources">Documentation and Additional Resources</a>
         <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#links">Links</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#other-documentation">Other Documentation</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#history-and-theory">History and Theory</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#alternatives-tools">Alternatives tools</a>
@@ -179,6 +183,8 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../godoc/kr8-util/">kr8 util</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../godoc/types/">types</a>
+                  </li>
               </ul>
       </div>
     </div>
@@ -208,7 +214,8 @@
 <p><img src="./kr8_gopher.png" alt="kr8+ Gopher" width="400" align="right" ></p>
 <p><a href="https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI"><img alt="CI status" src="https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg" /></a>
 <img alt="Go Version" src="https://img.shields.io/badge/go%20version-%3E=1.24-61CFDD.svg" />
-<a href="../LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/License-MIT" /></a></p>
+<a href="https://pkg.go.dev/github.com/ice-bergtech/kr8"><img alt="Go Reference" src="https://pkg.go.dev/badge/github.com/ice-bergtech/kr8.svg" /></a>
+<a href="../LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/License-MIT-blue" /></a></p>
 <p><strong>kr8+</strong> or <code>kr8</code> is an opinionated Kubernetes cluster configuration management tool designed to simplify and standardize the process of managing Kubernetes clusters.
 By leveraging best practices and providing a structured approach, <strong>kr8+</strong> helps DevOps teams streamline their workflows and maintain consistency across multiple environments.</p>
 <p><strong>kr8+</strong> is <code>pre-1.0</code>.
@@ -229,11 +236,10 @@ This means that breaking changes still happen from time to time, but it's stable
   - [Installation](#installation)
     - [Getting Started](#getting-started)
     - [Configuration](#configuration)
-      - [Clusters Configurations](#clusters-configurations)
-      - [Component Configurations](#component-configurations)
-      - [Jsonnet Libraries](#jsonnet-libraries)
     - [Deployment](#deployment)
   - [Documentation and Additional Resources](#documentation-and-additional-resources)
+    - [Links](#links)
+    - [Other Documentation](#other-documentation)
     - [History and Theory](#history-and-theory)
     - [Alternatives tools](#alternatives-tools)
   - [Development](#development)
@@ -347,16 +353,17 @@ They allow you to write modular and maintainable configuration.</p>
 <strong>kr8+</strong> reads the cluster and components configuration files and generates the final manifests based on the parameters provided.</p>
 <p>Manifest changes are checked into source control, allowing them to be ingested by tools like ArgoCD, Portainer, Rancher etc.</p>
 <h2 id="documentation-and-additional-resources">Documentation and Additional Resources</h2>
-<p>kr8+ documentation</p>
+<p>Documentation for kr8+ documentation and other, external resources.</p>
+<h3 id="links">Links</h3>
 <ul>
 <li><a href="../cmd/kr8/">Command Documentation</a></li>
 <li><a href="../concepts/overview/">Concepts</a></li>
 <li><a href="../concepts/clusters/">Managing Clusters</a></li>
 <li><a href="../concepts/components/">Creating Components</a></li>
 <li><a href="../concepts/nativefuncs/">Native Functions</a></li>
-<li><a href="./godoc">Code Documentation</a></li>
+<li><a href="https://pkg.go.dev/github.com/ice-bergtech/kr8">Code Documentation</a></li>
 </ul>
-<p>Other Documentation</p>
+<h3 id="other-documentation">Other Documentation</h3>
 <ul>
 <li><a href="https://jsonnet.org/ref/stdlib.html">Jsonnet Standard Library</a></li>
 <li><a href="https://jsonnet.org/ref/language.html">Jsonnet Language Reference</a></li>

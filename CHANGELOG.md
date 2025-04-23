@@ -3,6 +3,7 @@
 ## 0.0.9
 
 * Add `config` field to `includes` objects, allowing custom configuration data to be passed to the template instead of just the component config.
+* Improve documentation and publish at https://pkg.go.dev/github.com/ice-bergtech/kr8
 
 ## 0.0.7
 

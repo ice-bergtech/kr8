@@ -3,5 +3,5 @@ dist/
 bin
 *.tar.gz
 kr8
-kr8
 !kr8/*
+tmp

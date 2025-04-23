@@ -157,6 +157,8 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../kr8-util/">kr8 util</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../types/">types</a>
+                  </li>
               </ul>
       </div>
     </div>
@@ -429,7 +431,7 @@
     Short: &quot;Init a new cluster config file&quot;,
     Long:  &quot;Initialize a new cluster configuration file&quot;,
     Run: func(cmd *cobra.Command, args []string) {
-        cSpec := types.Kr8ClusterSpec{
+        cSpec := kr8_types.Kr8ClusterSpec{
             Name:               cmdInitFlags.ClusterName,
             PostProcessor:      &quot;function(input) input&quot;,
             GenerateDir:        &quot;generated&quot;,
@@ -572,7 +574,7 @@ and initialize a git repo so you can get started`,
             Interactive:   false,
             Fetch:         false,
         }
-        clusterOptions := types.Kr8ClusterSpec{
+        clusterOptions := kr8_types.Kr8ClusterSpec{
             Name:               cmdInitFlags.ClusterName,
             PostProcessor:      &quot;&quot;,
             GenerateDir:        &quot;generated&quot;,
