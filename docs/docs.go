@@ -1,7 +1,6 @@
-//go:build ignore
-
+// Generates docs for kr8+ code and commands.
+//
 //go:generate go run ./docs.go
-
 package main
 
 import (
