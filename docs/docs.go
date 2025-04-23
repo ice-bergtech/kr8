@@ -1,6 +1,8 @@
-package main
+//go:build ignore
 
 //go:generate go run ./docs.go
+
+package main
 
 import (
 	"errors"
