@@ -4,18 +4,20 @@
 import "github.com/ice-bergtech/kr8/pkg/kr8_init"
 ```
 
+Package kr8\_init contains logic for initializing a kr8\+ starter repo. It is able to generate starter configs for components, clusters, and full repos.
+
 ## Index
 
-- [func GenerateChartJsonnet\(compJson types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string\) error](<#GenerateChartJsonnet>)
-- [func GenerateChartTaskfile\(comp types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string\) error](<#GenerateChartTaskfile>)
-- [func GenerateClusterJsonnet\(cSpec types.Kr8ClusterSpec, dstDir string\) error](<#GenerateClusterJsonnet>)
+- [func GenerateChartJsonnet\(compJson kr8\_types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string\) error](<#GenerateChartJsonnet>)
+- [func GenerateChartTaskfile\(comp kr8\_types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string\) error](<#GenerateChartTaskfile>)
+- [func GenerateClusterJsonnet\(cSpec kr8\_types.Kr8ClusterSpec, dstDir string\) error](<#GenerateClusterJsonnet>)
 - [func GenerateComponentJsonnet\(componentOptions Kr8InitOptions, dstDir string\) error](<#GenerateComponentJsonnet>)
 - [func GenerateLib\(fetch bool, dstDir string\) error](<#GenerateLib>)
-- [func GenerateReadme\(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec\) error](<#GenerateReadme>)
-- [func InitComponentChart\(dstDir string, componentOptions Kr8InitOptions, compJson types.Kr8ComponentJsonnet\) error](<#InitComponentChart>)
-- [func InitComponentJsonnet\(compJson types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions\) error](<#InitComponentJsonnet>)
-- [func InitComponentTemplate\(compJson types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions\) error](<#InitComponentTemplate>)
-- [func InitComponentYaml\(compJson types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions\) error](<#InitComponentYaml>)
+- [func GenerateReadme\(dstDir string, cmdOptions Kr8InitOptions, clusterSpec kr8\_types.Kr8ClusterSpec\) error](<#GenerateReadme>)
+- [func InitComponentChart\(dstDir string, componentOptions Kr8InitOptions, compJson kr8\_types.Kr8ComponentJsonnet\) error](<#InitComponentChart>)
+- [func InitComponentJsonnet\(compJson kr8\_types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions\) error](<#InitComponentJsonnet>)
+- [func InitComponentTemplate\(compJson kr8\_types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions\) error](<#InitComponentTemplate>)
+- [func InitComponentYaml\(compJson kr8\_types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions\) error](<#InitComponentYaml>)
 - [type Kr8InitOptions](<#Kr8InitOptions>)
 
 
@@ -23,7 +25,7 @@ import "github.com/ice-bergtech/kr8/pkg/kr8_init"
 ## func [GenerateChartJsonnet](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L119>)
 
 ```go
-func GenerateChartJsonnet(compJson types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error
+func GenerateChartJsonnet(compJson kr8_types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error
 ```
 
 Generates a jsonnet files that references a local helm chart.
@@ -32,7 +34,7 @@ Generates a jsonnet files that references a local helm chart.
 ## func [GenerateChartTaskfile](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L145>)
 
 ```go
-func GenerateChartTaskfile(comp types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error
+func GenerateChartTaskfile(comp kr8_types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error
 ```
 
 Generates a go\-task taskfile that's setup to download a helm chart into a local \`vendor\` directory.
@@ -41,7 +43,7 @@ Generates a go\-task taskfile that's setup to download a helm chart into a local
 ## func [GenerateClusterJsonnet](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/cluster.go#L9>)
 
 ```go
-func GenerateClusterJsonnet(cSpec types.Kr8ClusterSpec, dstDir string) error
+func GenerateClusterJsonnet(cSpec kr8_types.Kr8ClusterSpec, dstDir string) error
 ```
 
 Generate a cluster.jsonnet file based on the provided Kr8ClusterSpec and store it in the specified directory.
@@ -74,7 +76,7 @@ Downloads a starter kr8 jsonnet lib from github. If fetch is true, downloads the
 ## func [GenerateReadme](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/repo.go#L11>)
 
 ```go
-func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec types.Kr8ClusterSpec) error
+func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec kr8_types.Kr8ClusterSpec) error
 ```
 
 Generates a starter readme for the repo, and writes it to the destination directory.
@@ -83,7 +85,7 @@ Generates a starter readme for the repo, and writes it to the destination direct
 ## func [InitComponentChart](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L53>)
 
 ```go
-func InitComponentChart(dstDir string, componentOptions Kr8InitOptions, compJson types.Kr8ComponentJsonnet) error
+func InitComponentChart(dstDir string, componentOptions Kr8InitOptions, compJson kr8_types.Kr8ComponentJsonnet) error
 ```
 
 Initializes the basic parts of a helm chart component.
@@ -92,7 +94,7 @@ Initializes the basic parts of a helm chart component.
 ## func [InitComponentJsonnet](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L108>)
 
 ```go
-func InitComponentJsonnet(compJson types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error
+func InitComponentJsonnet(compJson kr8_types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error
 ```
 
 Initializes the basic parts of a jsonnet\-based component.
@@ -101,7 +103,7 @@ Initializes the basic parts of a jsonnet\-based component.
 ## func [InitComponentTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L78>)
 
 ```go
-func InitComponentTemplate(compJson types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error
+func InitComponentTemplate(compJson kr8_types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error
 ```
 
 Initializes the based parts of a template\-based component.
@@ -110,13 +112,13 @@ Initializes the based parts of a template\-based component.
 ## func [InitComponentYaml](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L93>)
 
 ```go
-func InitComponentYaml(compJson types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error
+func InitComponentYaml(compJson kr8_types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error
 ```
 
 Initializes the basic parts of a yaml\-based component.
 
 <a name="Kr8InitOptions"></a>
-## type [Kr8InitOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/kr8_init.go#L4-L17>)
+## type [Kr8InitOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/kr8_init.go#L6-L19>)
 
 Kr8InitOptions defines the options used by the init subcommands.
 

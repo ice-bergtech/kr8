@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Iceberg Tech" />
       <link rel="shortcut icon" href="../../img/favicon.ico" />
-    <title>Native Funcs - kr8+ Docs</title>
+    <title>types - kr8+ Docs</title>
     <link rel="stylesheet" href="../../css/theme.css" />
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Native Funcs";
-        var mkdocs_page_input_path = "concepts/nativefuncs.md";
+        var mkdocs_page_name = "types";
+        var mkdocs_page_input_path = "godoc/types.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -56,26 +56,14 @@
                 </li>
               </ul>
               <p class="caption"><span class="caption-text">Concepts</span></p>
-              <ul class="current">
-                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/overview/">Overview</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../clusters/">Clusters</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/clusters/">Clusters</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../components/">Components</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/components/">Components</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Native Funcs</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#template">template</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#helmtemplate">helmTemplate</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#escapestringregex">escapeStringRegex</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#regexmatch">regexMatch</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#regexsubst">regexSubst</a>
-    </li>
-    </ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/nativefuncs/">Native Funcs</a>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Cmd Docs</span></p>
@@ -132,20 +120,38 @@
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Godocs</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-cmd/">kr8</a>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-cmd/">kr8</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-types/">kr8 types</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-types/">kr8 types</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-generate/">kr8 generate</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-generate/">kr8 generate</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-init/">kr8 init</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-init/">kr8 init</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-jsonnet/">kr8 jsonnet</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-jsonnet/">kr8 jsonnet</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-util/">kr8 util</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-util/">kr8 util</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/types/">types</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">types</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#index">Index</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#type-cmdjsonnetoptions">type CmdJsonnetOptions</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#type-kr8cluster">type Kr8Cluster</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#type-kr8error">type Kr8Error</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#func-kr8error-error">func (Kr8Error) Error</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#type-kr8opts">type Kr8Opts</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#type-vmconfig">type VMConfig</a>
+    </li>
+    </ul>
                   </li>
               </ul>
       </div>
@@ -162,10 +168,10 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Concepts</li>
-      <li class="breadcrumb-item active">Native Funcs</li>
+          <li class="breadcrumb-item">Godocs</li>
+      <li class="breadcrumb-item active">types</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/ice-bergtech/kr8/blob/main/docs/concepts/nativefuncs.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/ice-bergtech/kr8/blob/main/docs/godoc/types.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -173,77 +179,79 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="native-functions">Native Functions</h1>
-<p>Additional functions have been added to the jsonnet vm to add functionality.
-They are able to be called from jsonnet using <code>std.native('funcName')</code>, where <code>funcName</code> is the name of the function.</p>
-<p>Native function definitions: <a href="https://github.com/ice-bergtech/kr8/blob/master/pkg/nativefuncs/nativefuncs.go">pkg/nativefuncs</a>.</p>
-<h2 id="template">template</h2>
-<p>Templates the passed in input <code>str</code> using the json string <code>config</code>.
-Config is unmarshaled into a json object and passed to the template engine.
-The template engine used is sprig - <a href="https://masterminds.github.io/sprig/">Template Documentation</a>.
-The resulting string is returned.</p>
-<p>Usage:</p>
-<pre><code class="language-go">std.native(&quot;template&quot;)(config json, str string) (string)
+                <h1 id="types">types</h1>
+<pre><code class="language-go">import &quot;github.com/ice-bergtech/kr8/pkg/types&quot;
 </code></pre>
-<p>Example:</p>
-<pre><code class="language-go">local templateOutput = std.native(&quot;template&quot;)(config.data, &quot;Hello {{ .Name }}&quot;);
-</code></pre>
-<h2 id="helmtemplate">helmTemplate</h2>
-<p>Provides the same <code>Helm.Template</code> functionality as the <code>grafana/tanka</code> package. 
-Charts are required to be present on the local filesystem, at a relative location to the file that calls <code>helm.template()</code> / <code>std.native('helmTemplate')</code>. 
-This guarantees hermeticity.
-Does not use sprig for templating.</p>
-<p>Usage:</p>
-<pre><code class="language-go">std.native(&quot;helmTemplate&quot;)(name string, chart string, opts TemplateOpts) (manifest.List)
-</code></pre>
-<p>Example:</p>
-<pre><code class="language-go">local helm_template = std.native(&quot;helmTemplate&quot;)(config.release_name, &quot;./vendor/&quot;+config.chart_version, {
-    calledFrom: std.thisFile,
-    namespace: config.namespace,
-    values: config.helm_values,
-});
-
-[
-    object
-    for object in std.objectValues(helm_template)
-    if &quot;kind&quot; in object &amp;&amp; object.kind != &quot;Secret&quot;
-]
-</code></pre>
+<p>Package types contains shared types used across kr8+ packages.</p>
+<h2 id="index">Index</h2>
 <ul>
-<li>Template Opts: <a href="https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L65">godocs grafana/tanka</a></li>
-<li>Function Source: <a href="https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L23">grafana/tanka v0.27.1</a></li>
+<li><a href="#CmdJsonnetOptions">type CmdJsonnetOptions</a></li>
+<li><a href="#Kr8Cluster">type Kr8Cluster</a></li>
+<li><a href="#Kr8Error">type Kr8Error</a></li>
+<li><a href="#Kr8Error.Error">func (e Kr8Error) Error() string</a></li>
+<li><a href="#Kr8Opts">type Kr8Opts</a></li>
+<li><a href="#VMConfig">type VMConfig</a></li>
 </ul>
-<h2 id="escapestringregex">escapeStringRegex</h2>
-<p>Uses <code>regexp.QuoteMeta</code> to escape a string for use in a regular expression.</p>
-<p>Usage:</p>
-<pre><code class="language-go">std.native(&quot;escapeStringRegex&quot;)(str string) (string)
+<p><a name="CmdJsonnetOptions"></a></p>
+<h2 id="type-cmdjsonnetoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L24-L31">CmdJsonnetOptions</a></h2>
+<p>Options for running the jsonnet command.</p>
+<pre><code class="language-go">type CmdJsonnetOptions struct {
+    Prune         bool
+    Cluster       string
+    ClusterParams string
+    Component     string
+    Format        string
+    Color         bool
+}
 </code></pre>
-<p>Example:</p>
-<pre><code class="language-go">local clean_string = std.native(&quot;escapeStringRegex&quot;)(config.knarly_string);
+<p><a name="Kr8Cluster"></a></p>
+<h2 id="type-kr8cluster">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L9-L12">Kr8Cluster</a></h2>
+<p>An object that stores variables that can be referenced by components.</p>
+<pre><code class="language-go">type Kr8Cluster struct {
+    Name string `json:&quot;name&quot;`
+    Path string `json:&quot;-&quot;`
+}
 </code></pre>
-<h2 id="regexmatch">regexMatch</h2>
-<p>Uses <code>regexp.MatchString</code> to check if a string matches a regular expression.</p>
-<p>Usage:</p>
-<pre><code class="language-go">std.native(&quot;regexMatch&quot;)(regex string, str string) (bool)
+<p><a name="Kr8Error"></a></p>
+<h2 id="type-kr8error">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L43-L46">Kr8Error</a></h2>
+<pre><code class="language-go">type Kr8Error struct {
+    Message string
+    Value   interface{}
+}
 </code></pre>
-<p>Example:</p>
-<pre><code class="language-go">// check if a string is numbers
-if std.native(&quot;regexMatch&quot;)(&quot;\d+&quot;, config.thing) then config.thing else &quot;&quot;
+<p><a name="Kr8Error.Error"></a></p>
+<h3 id="func-kr8error-error">func (Kr8Error) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L49">Error</a></h3>
+<pre><code class="language-go">func (e Kr8Error) Error() string
 </code></pre>
-<h2 id="regexsubst">regexSubst</h2>
-<p>Uses <code>regexp.ReplaceAllString</code> to replace all occurrences of a regular expression in a string.</p>
-<p>Usage:</p>
-<pre><code class="language-go">std.native(&quot;regexSubst&quot;)(regex string, src string, repl string) (string)
+<p>Error implements error.</p>
+<p><a name="Kr8Opts"></a></p>
+<h2 id="type-kr8opts">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L14-L21">Kr8Opts</a></h2>
+<pre><code class="language-go">type Kr8Opts struct {
+    // Base directory of kr8 configuration
+    BaseDir string
+    // Directory where component definitions are stored
+    ComponentDir string
+    // Directory where cluster configurations are stored
+    ClusterDir string
+}
 </code></pre>
-<p>Example:</p>
-<pre><code class="language-go">local stringVar = std.native(&quot;regexSubst&quot;)(&quot;\d&quot;, config.thing, &quot;&lt;num&gt;&quot;);
+<p><a name="VMConfig"></a></p>
+<h2 id="type-vmconfig">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L34-L41">VMConfig</a></h2>
+<p>VMConfig describes configuration to initialize the Jsonnet VM with.</p>
+<pre><code class="language-go">type VMConfig struct {
+    // Jpaths is a list of paths to search for Jsonnet libraries (libsonnet files)
+    Jpaths []string `json:&quot;jpath&quot; yaml:&quot;jpath&quot;`
+    // ExtVars is a list of external variables to pass to Jsonnet VM
+    ExtVars []string `json:&quot;ext_str_file&quot; yaml:&quot;ext_str_files&quot;`
+    // base directory for the project
+    BaseDir string `json:&quot;base_dir&quot; yaml:&quot;base_dir&quot;`
+}
 </code></pre>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../components/" class="btn btn-neutral float-left" title="Components"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../../cmd/kr8/" class="btn btn-neutral float-right" title="kr8">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../kr8-util/" class="btn btn-neutral float-left" title="kr8 util"><span class="icon icon-circle-arrow-left"></span> Previous</a>
     </div>
 
   <hr/>
@@ -270,10 +278,8 @@ if std.native(&quot;regexMatch&quot;)(&quot;\d+&quot;, config.thing) then config
         </span>
     
     
-      <span><a href="../components/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../kr8-util/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
-    
-      <span><a href="../../cmd/kr8/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
