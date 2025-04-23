@@ -1,4 +1,4 @@
-// Package util contains utility functions for various tasks.
+// Package util contains various utility functions for directories and files.
 // It includes functions for
 // formatting JSON,
 // writing to files,

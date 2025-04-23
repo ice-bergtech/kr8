@@ -15,7 +15,7 @@ import (
 	"github.com/rs/zerolog/log"
 	kompose_logger "github.com/sirupsen/logrus"
 
-	types "github.com/ice-bergtech/kr8/pkg/types"
+	"github.com/ice-bergtech/kr8/pkg/kr8_types"
 )
 
 // Registers additional native functions in the jsonnet VM.
@@ -175,7 +175,7 @@ func NativeKompose() *jsonnet.NativeFunction {
 			kompose_logger.SetLevel(kompose_logger.WarnLevel)
 			// TODO: add logrus hook to capture and convert events to zerolog
 
-			options := types.Create([]string{filepath.Join(root, inFile)}, root+"/"+outPath, *opts)
+			options := kr8_types.Create([]string{filepath.Join(root, inFile)}, root+"/"+outPath, *opts)
 			if err := options.Validate(); err != nil {
 				return "", err
 			}
@@ -185,13 +185,13 @@ func NativeKompose() *jsonnet.NativeFunction {
 	}
 }
 
-func parseOpts(data interface{}) (*types.Kr8ComponentJsonnet, error) {
+func parseOpts(data interface{}) (*kr8_types.Kr8ComponentJsonnet, error) {
 	component, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
 
-	opts := types.Kr8ComponentJsonnet{}
+	opts := kr8_types.Kr8ComponentJsonnet{}
 
 	if err := json.Unmarshal(component, &opts); err != nil {
 		return nil, err

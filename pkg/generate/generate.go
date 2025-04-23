@@ -25,6 +25,7 @@ import (
 	"golang.org/x/exp/maps"
 
 	jnetvm "github.com/ice-bergtech/kr8/pkg/jnetvm"
+	"github.com/ice-bergtech/kr8/pkg/kr8_types"
 	types "github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
@@ -110,7 +111,7 @@ func buildComponentList(
 func GenProcessComponent(
 	vmconfig types.VMConfig,
 	componentName string,
-	kr8Spec types.Kr8ClusterSpec,
+	kr8Spec kr8_types.Kr8ClusterSpec,
 	kr8Opts types.Kr8Opts,
 	config string,
 	allConfig *safeString,
@@ -122,7 +123,7 @@ func GenProcessComponent(
 		Msg("Process component")
 
 	// get kr8_spec from component's params
-	compSpec, err := types.CreateComponentSpec(gjson.Get(config, componentName+".kr8_spec"))
+	compSpec, err := kr8_types.CreateComponentSpec(gjson.Get(config, componentName+".kr8_spec"))
 	if err := util.GenErrorIfCheck("Error creating component spec", err); err != nil {
 		return err
 	}
@@ -178,9 +179,9 @@ func GenProcessComponent(
 func SetupAndConfigureVM(
 	vmconfig types.VMConfig,
 	config string,
-	kr8Spec types.Kr8ClusterSpec,
+	kr8Spec kr8_types.Kr8ClusterSpec,
 	componentName string,
-	compSpec types.Kr8ComponentSpec,
+	compSpec kr8_types.Kr8ComponentSpec,
 	allConfig *safeString,
 	filters util.PathFilterOptions,
 	paramsFile string,
@@ -245,7 +246,7 @@ func getAllComponentParamsThreadsafe(
 	allConfig *safeString,
 	config string,
 	vmconfig types.VMConfig,
-	kr8Spec types.Kr8ClusterSpec,
+	kr8Spec kr8_types.Kr8ClusterSpec,
 	filters util.PathFilterOptions,
 	paramsFile string,
 	jvm *jsonnet.VM,
@@ -277,8 +278,8 @@ func getAllComponentParamsThreadsafe(
 }
 
 func GenerateIncludesFiles(
-	includesFiles []types.Kr8ComponentSpecIncludeObject,
-	kr8Spec types.Kr8ClusterSpec,
+	includesFiles []kr8_types.Kr8ComponentSpecIncludeObject,
+	kr8Spec kr8_types.Kr8ClusterSpec,
 	kr8Opts types.Kr8Opts,
 	config string,
 	componentName string,
@@ -343,7 +344,7 @@ func GenProcessCluster(
 	}
 
 	// get kr8 settings for cluster
-	kr8Spec, err := types.CreateClusterSpec(clusterName, gjson.Parse(renderedKr8Spec),
+	kr8Spec, err := kr8_types.CreateClusterSpec(clusterName, gjson.Parse(renderedKr8Spec),
 		kr8Opts, generateDirOverride,
 	)
 	if err := util.GenErrorIfCheck("error creating kr8Spec", err); err != nil {
@@ -383,7 +384,7 @@ func GenProcessCluster(
 func renderComponents(
 	config string,
 	vmConfig types.VMConfig,
-	kr8Spec types.Kr8ClusterSpec,
+	kr8Spec kr8_types.Kr8ClusterSpec,
 	compList []string,
 	clusterParamsFile string,
 	pool *ants.Pool,

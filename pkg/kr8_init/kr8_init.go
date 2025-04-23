@@ -1,3 +1,5 @@
+// Package kr8_init contains logic for initializing a kr8+ starter repo.
+// It is able to generate starter configs for components, clusters, and full repos.
 package kr8_init
 
 // Kr8InitOptions defines the options used by the init subcommands.
