@@ -1,3 +1,4 @@
+// Defines the cli-interface commands available to the user.
 package cmd
 
 import (

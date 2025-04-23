@@ -4,6 +4,8 @@
 import "github.com/ice-bergtech/kr8/cmd"
 ```
 
+Defines the cli\-interface commands available to the user.
+
 ## Index
 
 - [Variables](<#variables>)
@@ -595,7 +597,7 @@ var VersionCmd = &cobra.Command{
 ```
 
 <a name="ConfigureLogger"></a>
-## func [ConfigureLogger](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L97>)
+## func [ConfigureLogger](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L98>)
 
 ```go
 func ConfigureLogger(debug bool)
@@ -604,7 +606,7 @@ func ConfigureLogger(debug bool)
 
 
 <a name="Execute"></a>
-## func [Execute](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L32>)
+## func [Execute](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L33>)
 
 ```go
 func Execute(ver string)
@@ -622,7 +624,7 @@ func GenerateCommand(cmd *cobra.Command, args []string)
 This function generates the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.
 
 <a name="InitConfig"></a>
-## func [InitConfig](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L136>)
+## func [InitConfig](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L137>)
 
 ```go
 func InitConfig()
@@ -690,7 +692,7 @@ type CmdRenderOptions struct {
 ```
 
 <a name="CmdRootOptions"></a>
-## type [CmdRootOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L41-L60>)
+## type [CmdRootOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L42-L61>)
 
 Default options that are available to all commands.
 
