@@ -1,3 +1,4 @@
+# https://www.mkdocs.org/user-guide/configuration/
 site_name: kr8+ Docs
 site_description: "Documentation for the kr8+ config management tool"
 site_author: Iceberg Tech
@@ -11,6 +12,8 @@ repo_url: https://github.com/ice-bergtech/kr8/
 site_dir: ./_site
 docs_dir: ./docs
 edit_uri: blob/main/docs
+exclude_docs: |
+  *.go
 
 nav:
   - Home: index.md
