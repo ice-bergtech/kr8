@@ -1,4 +1,4 @@
-package types
+package kr8_types
 
 import (
 	"path/filepath"
