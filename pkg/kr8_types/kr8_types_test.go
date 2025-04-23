@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/ice-bergtech/kr8/pkg/types"
 	"github.com/tidwall/gjson"
 )
 
@@ -13,7 +14,7 @@ func TestCreateClusterSpec(t *testing.T) {
 		name               string
 		clusterName        string
 		spec               gjson.Result
-		kr8Opts            Kr8Opts
+		kr8Opts            types.Kr8Opts
 		genDirOverride     string
 		wantKr8ClusterSpec Kr8ClusterSpec
 		wantErr            bool
@@ -25,7 +26,7 @@ func TestCreateClusterSpec(t *testing.T) {
 					"postprocessor": "",
 					"generate_dir": ""
 			}`),
-			kr8Opts: Kr8Opts{
+			kr8Opts: types.Kr8Opts{
 				BaseDir: "/path/to/kr8",
 			},
 			genDirOverride: "",
@@ -46,7 +47,7 @@ func TestCreateClusterSpec(t *testing.T) {
 					"postprocessor": "function(input) input",
 					"generate_dir": "/path/to/custom/dir"
 			}`),
-			kr8Opts: Kr8Opts{
+			kr8Opts: types.Kr8Opts{
 				BaseDir: "/path/to/kr8",
 			},
 			genDirOverride: "",
@@ -67,7 +68,7 @@ func TestCreateClusterSpec(t *testing.T) {
 					"postprocessor": "function(input) input",
 					"generate_dir": "rel/custom/dir"
 			}`),
-			kr8Opts: Kr8Opts{
+			kr8Opts: types.Kr8Opts{
 				BaseDir: "/path/to/kr8",
 			},
 			genDirOverride: "",
@@ -88,7 +89,7 @@ func TestCreateClusterSpec(t *testing.T) {
 					"postprocessor": "",
 					"generate_dir": "/path/to/custom/dir"
 			}`),
-			kr8Opts: Kr8Opts{
+			kr8Opts: types.Kr8Opts{
 				BaseDir: "/path/to/kr8",
 			},
 			genDirOverride: "alt/gen/dir",
@@ -109,7 +110,7 @@ func TestCreateClusterSpec(t *testing.T) {
 					"postprocessor": "",
 					"generate_dir": "/path/to/custom/dir"
 			}`),
-			kr8Opts: Kr8Opts{
+			kr8Opts: types.Kr8Opts{
 				BaseDir: "/path/to/kr8",
 			},
 			genDirOverride: "/absolute/path/to/gen/dir",

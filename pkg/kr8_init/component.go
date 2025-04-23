@@ -75,7 +75,11 @@ func InitComponentChart(dstDir string, componentOptions Kr8InitOptions, compJson
 }
 
 // Initializes the based parts of a template-based component.
-func InitComponentTemplate(compJson kr8_types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error {
+func InitComponentTemplate(
+	compJson kr8_types.Kr8ComponentJsonnet,
+	dstDir string,
+	componentOptions Kr8InitOptions,
+) error {
 	compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes,
 		kr8_types.Kr8ComponentSpecIncludeObject{
 			File:     "README.tpl",
@@ -105,7 +109,11 @@ func InitComponentYaml(compJson kr8_types.Kr8ComponentJsonnet, dstDir string, co
 }
 
 // Initializes the basic parts of a jsonnet-based component.
-func InitComponentJsonnet(compJson kr8_types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error {
+func InitComponentJsonnet(
+	compJson kr8_types.Kr8ComponentJsonnet,
+	dstDir string,
+	componentOptions Kr8InitOptions,
+) error {
 	compJson.Kr8Spec.Includes = append(
 		compJson.Kr8Spec.Includes,
 		kr8_types.Kr8ComponentSpecIncludeObject{File: "component.jsonnet", DestName: "component", DestExt: "yaml"},
@@ -116,7 +124,11 @@ func InitComponentJsonnet(compJson kr8_types.Kr8ComponentJsonnet, dstDir string,
 }
 
 // Generates a jsonnet files that references a local helm chart.
-func GenerateChartJsonnet(compJson kr8_types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error {
+func GenerateChartJsonnet(
+	compJson kr8_types.Kr8ComponentJsonnet,
+	componentOptions Kr8InitOptions,
+	folderDir string,
+) error {
 	chartJsonnetText := strings.Join([]string{
 		"# This loads the component configuration into the `config` var",
 		"local config = std.extVar('kr8');",
@@ -142,7 +154,11 @@ func GenerateChartJsonnet(compJson kr8_types.Kr8ComponentJsonnet, componentOptio
 }
 
 // Generates a go-task taskfile that's setup to download a helm chart into a local `vendor` directory.
-func GenerateChartTaskfile(comp kr8_types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error {
+func GenerateChartTaskfile(
+	comp kr8_types.Kr8ComponentJsonnet,
+	componentOptions Kr8InitOptions,
+	folderDir string,
+) error {
 	taskfileText := strings.Join([]string{
 		"# https://taskfile.dev/usage",
 		"version: '3'",
