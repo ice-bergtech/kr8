@@ -1,4 +1,4 @@
-// Package types contains shared types used across kr8+ packages.
+// Package kr8_types defines the structure for kr8+ cluster and component resources.
 package kr8_types
 
 import (
