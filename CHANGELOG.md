@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.9
+## 0.1.0
 
 * Add `config` field to `includes` objects, allowing custom configuration data to be passed to the template instead of just the component config.
 * Improve documentation and publish at https://pkg.go.dev/github.com/ice-bergtech/kr8
