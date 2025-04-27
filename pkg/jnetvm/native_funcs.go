@@ -12,7 +12,6 @@ import (
 	jsonnet "github.com/google/go-jsonnet"
 	jsonnetAst "github.com/google/go-jsonnet/ast"
 	"github.com/grafana/tanka/pkg/helm"
-	"github.com/rs/zerolog/log"
 	kompose_logger "github.com/sirupsen/logrus"
 
 	"github.com/ice-bergtech/kr8/pkg/kr8_types"
@@ -115,7 +114,6 @@ func NativeSprigTemplate() *jsonnet.NativeFunction {
 
 			// templateStr is a string that contains the sprig template.
 			input, argOk := args[1].(string)
-			log.Debug().Msg("outPath: " + input)
 			if !argOk {
 				return nil, jsonnet.RuntimeError{
 					Msg:        "second argument 'templateStr' must be of 'string' type, got " + fmt.Sprintf("%T", args[1]),
@@ -136,7 +134,7 @@ func NativeSprigTemplate() *jsonnet.NativeFunction {
 }
 
 // Allows converting a docker-compose file string into kubernetes resources using kompose.
-// Files in the directory must be in the format `[docker-]compose.ym[a]l`.
+// Files in the directory must be in the format `[docker-]compose.y[a]ml`.
 //
 // Source: https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
 //
@@ -147,7 +145,6 @@ func NativeKompose() *jsonnet.NativeFunction {
 		Params: jsonnetAst.Identifiers{"inFile", "outPath", "opts"},
 		Func: func(args []interface{}) (interface{}, error) {
 			inFile, argOk := args[0].(string)
-			log.Debug().Msg("inFile: " + inFile)
 			if !argOk {
 				return nil, jsonnet.RuntimeError{
 					Msg:        "first argument 'inFile' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
@@ -156,7 +153,6 @@ func NativeKompose() *jsonnet.NativeFunction {
 			}
 
 			outPath, argOk := args[1].(string)
-			log.Debug().Msg("outPath: " + outPath)
 			if !argOk {
 				return nil, jsonnet.RuntimeError{
 					Msg:        "second argument 'outPath' must be of 'string' type, got " + fmt.Sprintf("%T", args[1]),

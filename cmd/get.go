@@ -90,7 +90,7 @@ var GetClustersCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		clusters, err := util.GetClusterFilenames(RootConfig.ClusterDir)
-		util.FatalErrorCheck("Error getting clusters", err)
+		util.FatalErrorCheck("Error getting clusters", err, log.Logger)
 
 		if cmdGetFlags.NoTable {
 			for _, c := range clusters {
@@ -128,7 +128,7 @@ var GetComponentsCmd = &cobra.Command{
 		var params []string
 		if cmdGetFlags.Cluster != "" {
 			clusterPath, err := util.GetClusterPaths(RootConfig.ClusterDir, cmdGetFlags.Cluster)
-			util.FatalErrorCheck("error getting cluster path for "+cmdGetFlags.Cluster, err)
+			util.FatalErrorCheck("error getting cluster path for "+cmdGetFlags.Cluster, err, log.Logger)
 			params = util.GetClusterParamsFilenames(RootConfig.ClusterDir, clusterPath)
 		}
 		if cmdGetFlags.ClusterParams != "" {
@@ -136,19 +136,19 @@ var GetComponentsCmd = &cobra.Command{
 		}
 
 		jvm, err := jnetvm.JsonnetRenderFiles(RootConfig.VMConfig, params, "._components", true, "", "components")
-		util.FatalErrorCheck("error rendering jsonnet files", err)
+		util.FatalErrorCheck("error rendering jsonnet files", err, log.Logger)
 		if cmdGetFlags.ParamField != "" {
 			value := gjson.Get(jvm, cmdGetFlags.ParamField)
 			if value.String() == "" {
 				log.Fatal().Msg("Error getting param: " + cmdGetFlags.ParamField)
 			} else {
 				formatted, err := util.Pretty(jvm, RootConfig.Color)
-				util.FatalErrorCheck("error pretty printing jsonnet", err)
+				util.FatalErrorCheck("error pretty printing jsonnet", err, log.Logger)
 				fmt.Println(formatted)
 			}
 		} else {
 			formatted, err := util.Pretty(jvm, RootConfig.Color)
-			util.FatalErrorCheck("error pretty printing jsonnet", err)
+			util.FatalErrorCheck("error pretty printing jsonnet", err, log.Logger)
 			fmt.Println(formatted)
 		}
 	},
@@ -175,18 +175,18 @@ var GetParamsCmd = &cobra.Command{
 			cmdGetFlags.ClusterParams,
 			true,
 		)
-		util.FatalErrorCheck("error rendering cluster params", err)
+		util.FatalErrorCheck("error rendering cluster params", err, log.Logger)
 
 		// if we're not filtering the output, just pretty print and finish
 		if cmdGetFlags.ParamField == "" {
 			if cmdGetFlags.Component != "" {
 				result := gjson.Get(params, cmdGetFlags.Component).String()
 				formatted, err := util.Pretty(result, RootConfig.Color)
-				util.FatalErrorCheck("error pretty printing jsonnet", err)
+				util.FatalErrorCheck("error pretty printing jsonnet", err, log.Logger)
 				fmt.Println(formatted)
 			} else {
 				formatted, err := util.Pretty(params, RootConfig.Color)
-				util.FatalErrorCheck("error pretty printing jsonnet", err)
+				util.FatalErrorCheck("error pretty printing jsonnet", err, log.Logger)
 				fmt.Println(formatted)
 			}
 

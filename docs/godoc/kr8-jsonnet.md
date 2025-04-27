@@ -8,7 +8,7 @@ Package jvm contains the jsonnet rendering logic.
 
 ## Index
 
-- [func JsonnetRender\(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmConfig types.VMConfig\) error](<#JsonnetRender>)
+- [func JsonnetRender\(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmConfig types.VMConfig, logger zerolog.Logger\) error](<#JsonnetRender>)
 - [func JsonnetRenderClusterParams\(vmconfig types.VMConfig, clusterName string, componentNames \[\]string, clusterParams string, prune bool\) \(string, error\)](<#JsonnetRenderClusterParams>)
 - [func JsonnetRenderClusterParamsOnly\(vmconfig types.VMConfig, clusterName string, clusterParams string, prune bool\) \(string, error\)](<#JsonnetRenderClusterParamsOnly>)
 - [func JsonnetRenderFiles\(vmConfig types.VMConfig, files \[\]string, param string, prune bool, prepend string, source string\) \(string, error\)](<#JsonnetRenderFiles>)
@@ -45,16 +45,16 @@ Package jvm contains the jsonnet rendering logic.
 
 
 <a name="JsonnetRender"></a>
-## func [JsonnetRender](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L123>)
+## func [JsonnetRender](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L123-L128>)
 
 ```go
-func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmConfig types.VMConfig) error
+func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmConfig types.VMConfig, logger zerolog.Logger) error
 ```
 
 Renders a jsonnet file with the specified options.
 
 <a name="JsonnetRenderClusterParams"></a>
-## func [JsonnetRenderClusterParams](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L196-L202>)
+## func [JsonnetRenderClusterParams](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L201-L207>)
 
 ```go
 func JsonnetRenderClusterParams(vmconfig types.VMConfig, clusterName string, componentNames []string, clusterParams string, prune bool) (string, error)
@@ -63,7 +63,7 @@ func JsonnetRenderClusterParams(vmconfig types.VMConfig, clusterName string, com
 Render cluster params, merged with one or more component's parameters. Empty componentName list renders all component parameters.
 
 <a name="JsonnetRenderClusterParamsOnly"></a>
-## func [JsonnetRenderClusterParamsOnly](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L173-L178>)
+## func [JsonnetRenderClusterParamsOnly](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L178-L183>)
 
 ```go
 func JsonnetRenderClusterParamsOnly(vmconfig types.VMConfig, clusterName string, clusterParams string, prune bool) (string, error)
@@ -90,7 +90,7 @@ func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error)
 Create a Jsonnet VM to run commands in.
 
 <a name="MergeComponentDefaults"></a>
-## func [MergeComponentDefaults](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L241-L245>)
+## func [MergeComponentDefaults](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L246-L250>)
 
 ```go
 func MergeComponentDefaults(componentMap map[string]kr8_types.Kr8ClusterComponentRef, componentNames []string, vmconfig types.VMConfig) (string, error)
@@ -99,7 +99,7 @@ func MergeComponentDefaults(componentMap map[string]kr8_types.Kr8ClusterComponen
 
 
 <a name="NativeHelmTemplate"></a>
-## func [NativeHelmTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L97>)
+## func [NativeHelmTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L96>)
 
 ```go
 func NativeHelmTemplate() *jsonnet.NativeFunction
@@ -110,7 +110,7 @@ Allows executing helm template to process a helm chart and make available to kr8
 Source: https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L23
 
 <a name="NativeHelp"></a>
-## func [NativeHelp](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L64>)
+## func [NativeHelp](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L63>)
 
 ```go
 func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction
@@ -119,13 +119,13 @@ func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction
 
 
 <a name="NativeKompose"></a>
-## func [NativeKompose](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L144>)
+## func [NativeKompose](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L142>)
 
 ```go
 func NativeKompose() *jsonnet.NativeFunction
 ```
 
-Allows converting a docker\-compose file string into kubernetes resources using kompose. Files in the directory must be in the format \`\[docker\-\]compose.ym\[a\]l\`.
+Allows converting a docker\-compose file string into kubernetes resources using kompose. Files in the directory must be in the format \`\[docker\-\]compose.y\[a\]ml\`.
 
 Source: https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
 
@@ -330,7 +330,7 @@ Substitutes a regex pattern in a string with another string.
 Inputs: "regex", "src", "repl".
 
 <a name="NativeSprigTemplate"></a>
-## func [NativeSprigTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L105>)
+## func [NativeSprigTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L104>)
 
 ```go
 func NativeSprigTemplate() *jsonnet.NativeFunction
@@ -341,7 +341,7 @@ Uses sprig to process passed in config data and template. Sprig template guide: 
 Inputs: "config" "templateStr".
 
 <a name="RegisterNativeFuncs"></a>
-## func [RegisterNativeFuncs](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L24>)
+## func [RegisterNativeFuncs](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/native_funcs.go#L23>)
 
 ```go
 func RegisterNativeFuncs(jvm *jsonnet.VM)

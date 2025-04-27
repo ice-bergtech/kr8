@@ -7,7 +7,8 @@ import (
 	"strings"
 
 	"github.com/ice-bergtech/kr8/pkg/types"
-	"github.com/rs/zerolog/log"
+	"github.com/ice-bergtech/kr8/pkg/util"
+	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
 )
 
@@ -60,6 +61,7 @@ func CreateClusterSpec(
 	spec gjson.Result,
 	kr8Opts types.Kr8Opts,
 	genDirOverride string,
+	logger zerolog.Logger,
 ) (Kr8ClusterSpec, error) {
 	// First determine the value of generate_dir from the command line args or spec.
 	clGenerateDir := genDirOverride
@@ -67,7 +69,10 @@ func CreateClusterSpec(
 		clGenerateDir = spec.Get("generate_dir").String()
 	}
 	if clGenerateDir == "" {
-		log.Warn().Msg("generate_dir should be set in cluster parameters or passed as generate-dir flag.  Defaulting to ./")
+		logger.Warn().
+			Msg("`generate_dir` should be set in cluster parameters or passed as generate-dir flag." +
+				"Defaulting to ./",
+			)
 		clGenerateDir = "generated"
 	}
 	// if generateDir does not start with /, then it goes in baseDir
@@ -75,7 +80,7 @@ func CreateClusterSpec(
 		clGenerateDir = filepath.Join(kr8Opts.BaseDir, clGenerateDir)
 	}
 	clusterDir := filepath.Join(clGenerateDir, clusterName)
-	log.Debug().Str("cluster", clusterName).Msg("output directory: " + clusterDir)
+	logger.Debug().Str("cluster", clusterName).Msg("output directory: " + clusterDir)
 
 	return Kr8ClusterSpec{
 		PostProcessor:      spec.Get("postprocessor").String(),
@@ -108,9 +113,9 @@ type Kr8ComponentJsonnet struct {
 // This configures how kr8 processes the component.
 type Kr8ComponentSpec struct {
 	// If true, includes the parameters of the current cluster when generating this component
-	Kr8_allparams bool `json:"enable_kr8_allparams"`
+	Kr8_allParams bool `json:"enable_kr8_allparams"`
 	// If true, includes the parameters of all other clusters when generating this component
-	Kr8_allclusters bool `json:"enable_kr8_allclusters"`
+	Kr8_allClusters bool `json:"enable_kr8_allclusters"`
 	// If false, all non-generated files present in the output directory are removed
 	DisableOutputDirClean bool `json:"disable_output_clean"`
 	// A list of filenames to include as jsonnet vm external vars
@@ -121,7 +126,7 @@ type Kr8ComponentSpec struct {
 	Includes Kr8ComponentSpecIncludes `json:"includes"`
 }
 
-// Extract jsonnet extVar defintions from spec.
+// Extract jsonnet extVar definitions from spec.
 func ExtractExtFiles(spec gjson.Result) map[string]string {
 	result := make(map[string]string)
 	for k, v := range spec.Get("extfiles").Map() {
@@ -153,26 +158,22 @@ func ExtractIncludes(spec gjson.Result) (Kr8ComponentSpecIncludes, error) {
 	}
 
 	err := json.Unmarshal([]byte(incl.String()), &includes)
-	if err != nil {
-		log.Error().Err(err).Msg("Error unmarshalling include object: " + incl.String() + " skipping.")
-	}
 
-	return includes, err
+	return includes, util.ErrorIfCheck("Error unmarshaling include object: "+incl.String(), err)
 }
 
 // Extracts a component spec from a jsonnet object.
-func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
+func CreateComponentSpec(spec gjson.Result, logger zerolog.Logger) (Kr8ComponentSpec, error) {
 	specM := spec.Map()
-	log.Debug().Msg(spec.String())
+	logger.Debug().Msg(spec.String())
 	// spec is missing?
 	if len(specM) == 0 {
-		log.Error().Msg("Component has no `kr8_spec` object")
-		// intetionally create an error to return
+		// create an error to return
 		return Kr8ComponentSpec{},
 			types.Kr8Error{Message: "Component has no `kr8_spec` object", Value: ""}
 	}
 
-	log.Debug().Msg("Component spec: " + spec.Str)
+	logger.Debug().Msg("Component spec: " + spec.Str)
 
 	includes, err := ExtractIncludes(spec)
 	if err != nil {
@@ -181,8 +182,8 @@ func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
 	}
 
 	componentSpec := Kr8ComponentSpec{
-		Kr8_allparams:         spec.Get("enable_kr8_allparams").Bool(),
-		Kr8_allclusters:       spec.Get("enable_kr8_allclusters").Bool(),
+		Kr8_allParams:         spec.Get("enable_kr8_allparams").Bool(),
+		Kr8_allClusters:       spec.Get("enable_kr8_allclusters").Bool(),
 		DisableOutputDirClean: spec.Get("disable_output_clean").Bool(),
 		ExtFiles:              ExtractExtFiles(spec),
 		JPaths:                ExtractJpaths(spec),

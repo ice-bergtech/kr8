@@ -12,26 +12,28 @@ Package util contains various utility functions for directories and files. It in
 - [func CheckObjectMatch\(input gjson.Result, filterString string\) bool](<#CheckObjectMatch>)
 - [func CleanOutputDir\(outputFileMap map\[string\]bool, componentOutputDir string\) error](<#CleanOutputDir>)
 - [func Colorize\(input interface\{\}, colorNum int, disabled bool\) string](<#Colorize>)
-- [func FatalErrorCheck\(message string, err error\)](<#FatalErrorCheck>)
+- [func ErrorIfCheck\(message string, err error\) error](<#ErrorIfCheck>)
+- [func FatalErrorCheck\(message string, err error, logger zerolog.Logger\)](<#FatalErrorCheck>)
 - [func FetchRepoUrl\(url string, destination string, noop bool\) error](<#FetchRepoUrl>)
 - [func Filter\(vs \[\]string, f func\(string\) bool\) \[\]string](<#Filter>)
-- [func FilterItems\(input map\[string\]string, pfilter PathFilterOptions\) \[\]string](<#FilterItems>)
+- [func FilterItems\(input map\[string\]string, pFilter PathFilterOptions\) \[\]string](<#FilterItems>)
 - [func FormatJsonnetString\(input string\) \(string, error\)](<#FormatJsonnetString>)
 - [func FormatJsonnetStringCustom\(input string, opts formatter.Options\) \(string, error\)](<#FormatJsonnetStringCustom>)
-- [func GenErrorIfCheck\(message string, err error\) error](<#GenErrorIfCheck>)
 - [func GetClusterFilenames\(searchDir string\) \(\[\]types.Kr8Cluster, error\)](<#GetClusterFilenames>)
 - [func GetClusterParamsFilenames\(basePath string, targetPath string\) \[\]string](<#GetClusterParamsFilenames>)
 - [func GetClusterPaths\(searchDir string, clusterName string\) \(string, error\)](<#GetClusterPaths>)
 - [func GetDefaultFormatOptions\(\) formatter.Options](<#GetDefaultFormatOptions>)
 - [func JsonnetPrint\(output string, format string, color bool\) error](<#JsonnetPrint>)
+- [func LogErrorIfCheck\(message string, err error, logger zerolog.Logger\) error](<#LogErrorIfCheck>)
 - [func Pretty\(inputJson string, colorOutput bool\) \(string, error\)](<#Pretty>)
+- [func SetupLogger\(enableColor bool\) zerolog.Logger](<#SetupLogger>)
 - [func WriteObjToJsonFile\(filename string, path string, objStruct interface\{\}\) \(string, error\)](<#WriteObjToJsonFile>)
 - [type ClusterTreeNode](<#ClusterTreeNode>)
 - [type PathFilterOptions](<#PathFilterOptions>)
 
 
 <a name="CalculateClusterIncludesExcludes"></a>
-## func [CalculateClusterIncludesExcludes](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L133>)
+## func [CalculateClusterIncludesExcludes](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L160>)
 
 ```go
 func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string
@@ -40,7 +42,7 @@ func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilte
 Using the allClusterParams variable and command flags to create a list of clusters to generate. Clusters can be filtered with "=" for equality or "\~" for regex match.
 
 <a name="CheckObjectMatch"></a>
-## func [CheckObjectMatch](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L61>)
+## func [CheckObjectMatch](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L80>)
 
 ```go
 func CheckObjectMatch(input gjson.Result, filterString string) bool
@@ -66,11 +68,20 @@ func Colorize(input interface{}, colorNum int, disabled bool) string
 
 Colorize function from zerolog console.go file to replicate their coloring functionality. Source: https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389 Replicated here because it's a private function.
 
-<a name="FatalErrorCheck"></a>
-## func [FatalErrorCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L115>)
+<a name="ErrorIfCheck"></a>
+## func [ErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L140>)
 
 ```go
-func FatalErrorCheck(message string, err error)
+func ErrorIfCheck(message string, err error) error
+```
+
+
+
+<a name="FatalErrorCheck"></a>
+## func [FatalErrorCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L134>)
+
+```go
+func FatalErrorCheck(message string, err error, logger zerolog.Logger)
 ```
 
 Logs an error and exits the program if the error is not nil. Saves 3 lines per use and centralizes fatal errors for rewriting.
@@ -85,7 +96,7 @@ func FetchRepoUrl(url string, destination string, noop bool) error
 Fetch a git repo from a url and clone it to a destination directory. If the noop flag is true, it print commands to fetch manually without doing anything.
 
 <a name="Filter"></a>
-## func [Filter](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L21>)
+## func [Filter](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L23>)
 
 ```go
 func Filter(vs []string, f func(string) bool) []string
@@ -94,10 +105,10 @@ func Filter(vs []string, f func(string) bool) []string
 Filter returns a new slice containing only the elements that satisfy the predicate function. From https://gobyexample.com/collection-functions
 
 <a name="FilterItems"></a>
-## func [FilterItems](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L81>)
+## func [FilterItems](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L100>)
 
 ```go
-func FilterItems(input map[string]string, pfilter PathFilterOptions) []string
+func FilterItems(input map[string]string, pFilter PathFilterOptions) []string
 ```
 
 Given a map of string, filter them based on the provided options. The map value is parsed as a gjson result and then checked against the provided options.
@@ -119,15 +130,6 @@ func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, er
 ```
 
 Formats a jsonnet string using custom options.
-
-<a name="GenErrorIfCheck"></a>
-## func [GenErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L121>)
-
-```go
-func GenErrorIfCheck(message string, err error) error
-```
-
-
 
 <a name="GetClusterFilenames"></a>
 ## func [GetClusterFilenames](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L22>)
@@ -174,6 +176,15 @@ func JsonnetPrint(output string, format string, color bool) error
 
 Print the jsonnet in the specified format. Acceptable formats are: yaml, stream, json.
 
+<a name="LogErrorIfCheck"></a>
+## func [LogErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L148>)
+
+```go
+func LogErrorIfCheck(message string, err error, logger zerolog.Logger) error
+```
+
+
+
 <a name="Pretty"></a>
 ## func [Pretty](<https://github.com:icebergtech/kr8/blob/main/pkg/util/json.go#L18>)
 
@@ -182,6 +193,15 @@ func Pretty(inputJson string, colorOutput bool) (string, error)
 ```
 
 Pretty formats the input jsonnet string with indentation and optional color output. Returns an error when the input can't properly format the json string input.
+
+<a name="SetupLogger"></a>
+## func [SetupLogger](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L34>)
+
+```go
+func SetupLogger(enableColor bool) zerolog.Logger
+```
+
+
 
 <a name="WriteObjToJsonFile"></a>
 ## func [WriteObjToJsonFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/json.go#L120>)
@@ -206,7 +226,7 @@ type ClusterTreeNode struct {
 ```
 
 <a name="PathFilterOptions"></a>
-## type [PathFilterOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L33-L57>)
+## type [PathFilterOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L52-L76>)
 
 Fill with string to include and exclude, using kr8's special parsing.
 
@@ -215,18 +235,18 @@ type PathFilterOptions struct {
     // Comma-separated list of include filters
     // Filters can include:
     //
-    // regex filters using the "~" operator. For example, "name~^myregex$"
-    // equality matches using the "=" operator. For example, "name=myvalue"
-    // substring matches using the "=" operator. For example, "name=myvalue"
+    // regex filters using the "~" operator. For example, "name~^myRegex$"
+    // equality matches using the "=" operator. For example, "name=myValue"
+    // substring matches using the "=" operator. For example, "name=myValue"
     //
     // If no operator is provided, it is treated as a substring match against the "name" field.
     Includes string
     // Comma-separated list of exclude filters.
     // Filters can include:
     //
-    // regex filters using the "~" operator. For example, "name~^myregex$"
-    // equality matches using the "=" operator. For example, "name=myvalue"
-    // substring matches using the "=" operator. For example, "name=myvalue"
+    // regex filters using the "~" operator. For example, "name~^myRegex$"
+    // equality matches using the "=" operator. For example, "name=myValue"
+    // substring matches using the "=" operator. For example, "name=myValue"
     //
     // If no operator is provided, it is treated as a substring match against the "name" field.
     Excludes string

@@ -46,7 +46,7 @@ var FormatCmd = &cobra.Command{
 
             return nil
         })
-        util.FatalErrorCheck("Error walking the path "+RootConfig.BaseDir, err)
+        util.FatalErrorCheck("Error walking the path "+RootConfig.BaseDir, err, log.Logger)
 
         fileList = util.Filter(fileList, func(s string) bool {
             var result bool
@@ -78,7 +78,7 @@ var FormatCmd = &cobra.Command{
 
         var waitGroup sync.WaitGroup
         parallel, err := cmd.Flags().GetInt("parallel")
-        util.FatalErrorCheck("Error getting parallel flag", err)
+        util.FatalErrorCheck("Error getting parallel flag", err, log.Logger)
         log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
         ants_file, _ := ants.NewPool(parallel)
         for _, filename := range fileList {
@@ -131,7 +131,7 @@ var GetClustersCmd = &cobra.Command{
     Run: func(cmd *cobra.Command, args []string) {
 
         clusters, err := util.GetClusterFilenames(RootConfig.ClusterDir)
-        util.FatalErrorCheck("Error getting clusters", err)
+        util.FatalErrorCheck("Error getting clusters", err, log.Logger)
 
         if cmdGetFlags.NoTable {
             for _, c := range clusters {
@@ -183,7 +183,7 @@ var GetComponentsCmd = &cobra.Command{
         var params []string
         if cmdGetFlags.Cluster != "" {
             clusterPath, err := util.GetClusterPaths(RootConfig.ClusterDir, cmdGetFlags.Cluster)
-            util.FatalErrorCheck("error getting cluster path for "+cmdGetFlags.Cluster, err)
+            util.FatalErrorCheck("error getting cluster path for "+cmdGetFlags.Cluster, err, log.Logger)
             params = util.GetClusterParamsFilenames(RootConfig.ClusterDir, clusterPath)
         }
         if cmdGetFlags.ClusterParams != "" {
@@ -191,19 +191,19 @@ var GetComponentsCmd = &cobra.Command{
         }
 
         jvm, err := jnetvm.JsonnetRenderFiles(RootConfig.VMConfig, params, "._components", true, "", "components")
-        util.FatalErrorCheck("error rendering jsonnet files", err)
+        util.FatalErrorCheck("error rendering jsonnet files", err, log.Logger)
         if cmdGetFlags.ParamField != "" {
             value := gjson.Get(jvm, cmdGetFlags.ParamField)
             if value.String() == "" {
                 log.Fatal().Msg("Error getting param: " + cmdGetFlags.ParamField)
             } else {
                 formatted, err := util.Pretty(jvm, RootConfig.Color)
-                util.FatalErrorCheck("error pretty printing jsonnet", err)
+                util.FatalErrorCheck("error pretty printing jsonnet", err, log.Logger)
                 fmt.Println(formatted)
             }
         } else {
             formatted, err := util.Pretty(jvm, RootConfig.Color)
-            util.FatalErrorCheck("error pretty printing jsonnet", err)
+            util.FatalErrorCheck("error pretty printing jsonnet", err, log.Logger)
             fmt.Println(formatted)
         }
     },
@@ -234,17 +234,17 @@ var GetParamsCmd = &cobra.Command{
             cmdGetFlags.ClusterParams,
             true,
         )
-        util.FatalErrorCheck("error rendering cluster params", err)
+        util.FatalErrorCheck("error rendering cluster params", err, log.Logger)
 
         if cmdGetFlags.ParamField == "" {
             if cmdGetFlags.Component != "" {
                 result := gjson.Get(params, cmdGetFlags.Component).String()
                 formatted, err := util.Pretty(result, RootConfig.Color)
-                util.FatalErrorCheck("error pretty printing jsonnet", err)
+                util.FatalErrorCheck("error pretty printing jsonnet", err, log.Logger)
                 fmt.Println(formatted)
             } else {
                 formatted, err := util.Pretty(params, RootConfig.Color)
-                util.FatalErrorCheck("error pretty printing jsonnet", err)
+                util.FatalErrorCheck("error pretty printing jsonnet", err, log.Logger)
                 fmt.Println(formatted)
             }
 
@@ -286,33 +286,34 @@ var InitClusterCmd = &cobra.Command{
                 Default: RootConfig.ClusterDir,
                 Help:    "Set the root directory to store cluster configurations, optionally including subdirectories",
             }
-            util.FatalErrorCheck("Invalid cluster directory", survey.AskOne(prompt, &cSpec.ClusterOutputDir))
+            util.FatalErrorCheck("Invalid cluster directory", survey.AskOne(prompt, &cSpec.ClusterOutputDir), log.Logger)
 
             prompt = &survey.Input{
                 Message: "Set the cluster name",
                 Default: cmdInitFlags.ClusterName,
                 Help:    "Distinct name for the cluster",
             }
-            util.FatalErrorCheck("Invalid cluster name", survey.AskOne(prompt, &cSpec.Name))
+            util.FatalErrorCheck("Invalid cluster name", survey.AskOne(prompt, &cSpec.Name), log.Logger)
 
             promptB := &survey.Confirm{
                 Message: "Generate short names for output file names?",
                 Default: cSpec.GenerateShortNames,
                 Help:    "Shortens component names and file structure",
             }
-            util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.GenerateShortNames))
+            util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.GenerateShortNames), log.Logger)
 
             promptB = &survey.Confirm{
                 Message: "Prune component parameters?",
                 Default: cSpec.PruneParams,
                 Help:    "This removes empty and null parameters from configuration",
             }
-            util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.PruneParams))
+            util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.PruneParams), log.Logger)
         }
 
         util.FatalErrorCheck(
             "Error generating cluster jsonnet file",
             kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterOutputDir),
+            log.Logger,
         )
     },
 }
@@ -345,14 +346,14 @@ var InitComponentCmd = &cobra.Command{
                 Default: RootConfig.ComponentDir,
                 Help:    "Enter the root directory to store components in",
             }
-            util.FatalErrorCheck("Invalid component directory", survey.AskOne(prompt, &RootConfig.ComponentDir))
+            util.FatalErrorCheck("Invalid component directory", survey.AskOne(prompt, &RootConfig.ComponentDir), log.Logger)
 
             prompt = &survey.Input{
                 Message: "Enter component name",
                 Default: cmdInitFlags.ComponentName,
                 Help:    "Enter the name of the component you want to create",
             }
-            util.FatalErrorCheck("Invalid component name", survey.AskOne(prompt, &cmdInitFlags.ComponentName))
+            util.FatalErrorCheck("Invalid component name", survey.AskOne(prompt, &cmdInitFlags.ComponentName), log.Logger)
 
             promptS := &survey.Select{
                 Message: "Select component type",
@@ -374,11 +375,12 @@ var InitComponentCmd = &cobra.Command{
                     }
                 },
             }
-            util.FatalErrorCheck("Invalid component type", survey.AskOne(promptS, &cmdInitFlags.ComponentType))
+            util.FatalErrorCheck("Invalid component type", survey.AskOne(promptS, &cmdInitFlags.ComponentType), log.Logger)
         }
         util.FatalErrorCheck(
             "Error generating component jsonnet",
             kr8init.GenerateComponentJsonnet(cmdInitFlags, RootConfig.ComponentDir),
+            log.Logger,
         )
     },
 }
@@ -410,6 +412,7 @@ and initialize a git repo so you can get started`,
             util.FatalErrorCheck(
                 "Issue fetching repo",
                 util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, !cmdInitFlags.Fetch),
+                log.Logger,
             )
 
             return
@@ -435,18 +438,22 @@ and initialize a git repo so you can get started`,
         util.FatalErrorCheck(
             "Issue creating cluster.jsonnet",
             kr8init.GenerateClusterJsonnet(clusterOptions, outDir+"/clusters"),
+            log.Logger,
         )
         util.FatalErrorCheck(
             "Issue creating example component.jsonnet",
             kr8init.GenerateComponentJsonnet(cmdInitOptions, outDir+"/components"),
+            log.Logger,
         )
         util.FatalErrorCheck(
             "Issue creating lib folder",
             kr8init.GenerateLib(cmdInitFlags.Fetch, outDir+"/lib"),
+            log.Logger,
         )
         util.FatalErrorCheck(
             "Issue creating Readme.md",
             kr8init.GenerateReadme(outDir, cmdInitOptions, clusterOptions),
+            log.Logger,
         )
     },
 }
@@ -473,7 +480,7 @@ var JsonnetRenderCmd = &cobra.Command{
     Args: cobra.MinimumNArgs(1),
     Run: func(cmd *cobra.Command, args []string) {
         for _, f := range args {
-            err := jvm.JsonnetRender(cmdFlagsJsonnet, f, RootConfig.VMConfig)
+            err := jvm.JsonnetRender(cmdFlagsJsonnet, f, RootConfig.VMConfig, log.Logger)
             if err != nil {
                 log.Fatal().Str("file", f).Err(err).Msg("error rendering jsonnet file")
             }
@@ -507,24 +514,24 @@ var RenderHelmCmd = &cobra.Command{
             if errors.Is(err, io.EOF) {
                 break
             } else if err != nil {
-                util.FatalErrorCheck("Error decoding yaml stream", err)
+                util.FatalErrorCheck("Error decoding yaml stream", err, log.Logger)
             }
             if len(bytes) == 0 {
                 continue
             }
             jsonData, err := yaml.ToJSON(bytes)
-            util.FatalErrorCheck("Error converting yaml to JSON", err)
+            util.FatalErrorCheck("Error converting yaml to JSON", err, log.Logger)
             if string(jsonData) == "null" {
 
                 continue
             }
             _, _, err = unstructured.UnstructuredJSONScheme.Decode(jsonData, nil, nil)
-            util.FatalErrorCheck("Error handling unstructured JSON", err)
+            util.FatalErrorCheck("Error handling unstructured JSON", err, log.Logger)
             jsa = append(jsa, jsonData)
         }
         for _, j := range jsa {
             out, err := goyaml.JSONToYAML(j)
-            util.FatalErrorCheck("Error encoding JSON to YAML", err)
+            util.FatalErrorCheck("Error encoding JSON to YAML", err, log.Logger)
             fmt.Println("---")
             fmt.Println(string(out))
         }
@@ -551,7 +558,7 @@ var RenderJsonnetCmd = &cobra.Command{
                     Component:     cmdRenderFlags.ComponentName,
                     Format:        cmdRenderFlags.Format,
                     Color:         false,
-                }, fileName, RootConfig.VMConfig)
+                }, fileName, RootConfig.VMConfig, log.Logger)
             if err != nil {
                 log.Fatal().Str("filename", fileName).Err(err).Msg("error rendering jsonnet")
             }
@@ -597,7 +604,7 @@ var VersionCmd = &cobra.Command{
 ```
 
 <a name="ConfigureLogger"></a>
-## func [ConfigureLogger](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L98>)
+## func [ConfigureLogger](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L97>)
 
 ```go
 func ConfigureLogger(debug bool)
@@ -606,7 +613,7 @@ func ConfigureLogger(debug bool)
 
 
 <a name="Execute"></a>
-## func [Execute](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L33>)
+## func [Execute](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L32>)
 
 ```go
 func Execute(ver string)
@@ -624,7 +631,7 @@ func GenerateCommand(cmd *cobra.Command, args []string)
 This function generates the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.
 
 <a name="InitConfig"></a>
-## func [InitConfig](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L137>)
+## func [InitConfig](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L123>)
 
 ```go
 func InitConfig()
@@ -692,7 +699,7 @@ type CmdRenderOptions struct {
 ```
 
 <a name="CmdRootOptions"></a>
-## type [CmdRootOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L42-L61>)
+## type [CmdRootOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L41-L60>)
 
 Default options that are available to all commands.
 

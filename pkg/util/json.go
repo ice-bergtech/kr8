@@ -29,7 +29,7 @@ func Pretty(inputJson string, colorOutput bool) (string, error) {
 	fmtr.NullColor = color.New(color.Underline)
 
 	formatted, err := fmtr.Format([]byte(inputJson))
-	if err := GenErrorIfCheck("error formatting JSON", err); err != nil {
+	if err := ErrorIfCheck("error formatting JSON", err); err != nil {
 		return "", err
 	}
 
@@ -56,26 +56,26 @@ func JsonnetPrint(output string, format string, color bool) error {
 	switch format {
 	case "yaml":
 		yaml, err := goyaml.JSONToYAML([]byte(output))
-		if err := GenErrorIfCheck("error converting output JSON to YAML", err); err != nil {
+		if err := ErrorIfCheck("error converting output JSON to YAML", err); err != nil {
 			return err
 		}
 		fmt.Println(string(yaml))
 	case "stream": // output yaml stream
 		var o []interface{}
-		if err := GenErrorIfCheck("error unmarshalling output JSON", json.Unmarshal([]byte(output), &o)); err != nil {
+		if err := ErrorIfCheck("error unmarshalling output JSON", json.Unmarshal([]byte(output), &o)); err != nil {
 			return err
 		}
 		for _, jobj := range o {
 			fmt.Println("---")
 			buf, err := goyaml.Marshal(jobj)
-			if err := GenErrorIfCheck("error marshalling output JSON to YAML", err); err != nil {
+			if err := ErrorIfCheck("error marshalling output JSON to YAML", err); err != nil {
 				return err
 			}
 			fmt.Println(string(buf))
 		}
 	case "json":
 		formatted, err := Pretty(output, color)
-		if err := GenErrorIfCheck("error formatting output JSON", err); err != nil {
+		if err := ErrorIfCheck("error formatting output JSON", err); err != nil {
 			return err
 		}
 		fmt.Println(formatted)
@@ -120,19 +120,19 @@ func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, er
 func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (string, error) {
 	jsonStr, err := json.MarshalIndent(objStruct, "", "  ")
 	if err != nil {
-		return "", GenErrorIfCheck("error marshalling component resource to json", err)
+		return "", ErrorIfCheck("error marshalling component resource to json", err)
 	}
 
 	jsonStrFormatted, err := FormatJsonnetString(string(jsonStr))
 	if err != nil {
-		return "", GenErrorIfCheck("error formatting component resource to json", err)
+		return "", ErrorIfCheck("error formatting component resource to json", err)
 	}
 	// Create directories after we marshal and format the json
 	if err := os.MkdirAll(path, 0750); err != nil {
-		return "", GenErrorIfCheck("error creating resource directory", err)
+		return "", ErrorIfCheck("error creating resource directory", err)
 	}
 
-	return jsonStrFormatted, GenErrorIfCheck("error writing file to disk",
+	return jsonStrFormatted, ErrorIfCheck("error writing file to disk",
 		os.WriteFile(path+"/"+filename, []byte(jsonStrFormatted), 0600),
 	)
 }

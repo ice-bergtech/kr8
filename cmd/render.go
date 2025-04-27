@@ -82,7 +82,7 @@ var RenderJsonnetCmd = &cobra.Command{
 					Component:     cmdRenderFlags.ComponentName,
 					Format:        cmdRenderFlags.Format,
 					Color:         false,
-				}, fileName, RootConfig.VMConfig)
+				}, fileName, RootConfig.VMConfig, log.Logger)
 			if err != nil {
 				log.Fatal().Str("filename", fileName).Err(err).Msg("error rendering jsonnet")
 			}
@@ -102,24 +102,24 @@ var RenderHelmCmd = &cobra.Command{
 			if errors.Is(err, io.EOF) {
 				break
 			} else if err != nil {
-				util.FatalErrorCheck("Error decoding yaml stream", err)
+				util.FatalErrorCheck("Error decoding yaml stream", err, log.Logger)
 			}
 			if len(bytes) == 0 {
 				continue
 			}
 			jsonData, err := yaml.ToJSON(bytes)
-			util.FatalErrorCheck("Error converting yaml to JSON", err)
+			util.FatalErrorCheck("Error converting yaml to JSON", err, log.Logger)
 			if string(jsonData) == "null" {
 				// skip empty json
 				continue
 			}
 			_, _, err = unstructured.UnstructuredJSONScheme.Decode(jsonData, nil, nil)
-			util.FatalErrorCheck("Error handling unstructured JSON", err)
+			util.FatalErrorCheck("Error handling unstructured JSON", err, log.Logger)
 			jsa = append(jsa, jsonData)
 		}
 		for _, j := range jsa {
 			out, err := goyaml.JSONToYAML(j)
-			util.FatalErrorCheck("Error encoding JSON to YAML", err)
+			util.FatalErrorCheck("Error encoding JSON to YAML", err, log.Logger)
 			fmt.Println("---")
 			fmt.Println(string(out))
 		}

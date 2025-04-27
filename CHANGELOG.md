@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+* Cleanup error handling and logging
+
 ## 0.1.0
 
 * Add `config` field to `includes` objects, allowing custom configuration data to be passed to the template instead of just the component config.

@@ -55,7 +55,7 @@ var FormatCmd = &cobra.Command{
 
 			return nil
 		})
-		util.FatalErrorCheck("Error walking the path "+RootConfig.BaseDir, err)
+		util.FatalErrorCheck("Error walking the path "+RootConfig.BaseDir, err, log.Logger)
 
 		fileList = util.Filter(fileList, func(s string) bool {
 			var result bool
@@ -87,7 +87,7 @@ var FormatCmd = &cobra.Command{
 
 		var waitGroup sync.WaitGroup
 		parallel, err := cmd.Flags().GetInt("parallel")
-		util.FatalErrorCheck("Error getting parallel flag", err)
+		util.FatalErrorCheck("Error getting parallel flag", err, log.Logger)
 		log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
 		ants_file, _ := ants.NewPool(parallel)
 		for _, filename := range fileList {

@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -117,20 +116,7 @@ func ConfigureLogger(debug bool) {
 		}
 	}
 
-	log.Logger = log.Output(
-		zerolog.ConsoleWriter{
-			Out:     os.Stderr,
-			NoColor: !RootConfig.Color,
-			FormatErrFieldValue: func(err interface{}) string {
-				// https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L21
-				colorRed := 31
-				colorBold := 1
-				s := strings.ReplaceAll(strings.ReplaceAll(strings.TrimRight(err.(string), "\\n"), "\\t", " "), "\\n", " |")
-
-				return util.Colorize(util.Colorize(s, colorBold, !RootConfig.Color), colorRed, !RootConfig.Color)
-			},
-		},
-	)
+	log.Logger = util.SetupLogger(RootConfig.Color)
 }
 
 // InitConfig reads in config file and ENV variables if set.

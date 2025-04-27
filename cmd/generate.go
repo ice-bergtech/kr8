@@ -64,8 +64,8 @@ var GenerateCmd = &cobra.Command{
 // It uses a wait group to ensure that all clusters have been processed before exiting.
 func GenerateCommand(cmd *cobra.Command, args []string) {
 	// get list of all clusters, render cluster level params for all of them
-	allClusterParams, err := gen.GetClusterParams(RootConfig.ClusterDir, RootConfig.VMConfig)
-	util.FatalErrorCheck("error getting cluster params from "+RootConfig.ClusterDir, err)
+	allClusterParams, err := gen.GetClusterParams(RootConfig.ClusterDir, RootConfig.VMConfig, log.Logger)
+	util.FatalErrorCheck("error getting cluster params from "+RootConfig.ClusterDir, err, log.Logger)
 
 	var clusterList []string
 	// Filter out and cluster or components we don't want to generate
@@ -93,6 +93,7 @@ func GenerateCommand(cmd *cobra.Command, args []string) {
 		cl := clusterName
 		_ = ants_cl.Submit(func() {
 			defer waitGroup.Done()
+			sublogger := log.With().Str("cluster", clusterName).Logger()
 			err := gen.GenProcessCluster(
 				cl,
 				RootConfig.ClusterDir,
@@ -102,9 +103,10 @@ func GenerateCommand(cmd *cobra.Command, args []string) {
 				cmdGenerateFlags.ClusterParamsFile,
 				cmdGenerateFlags.Filters,
 				RootConfig.VMConfig,
-				ants_cp)
+				ants_cp,
+				sublogger)
 			if err != nil {
-				log.Fatal().Str("cluster", clusterName).Err(err).Msg("error processing cluster")
+				sublogger.Fatal().Err(err).Msg("error processing cluster")
 			}
 		})
 	}

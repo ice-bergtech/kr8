@@ -23,7 +23,7 @@ var JsonnetRenderCmd = &cobra.Command{
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, f := range args {
-			err := jvm.JsonnetRender(cmdFlagsJsonnet, f, RootConfig.VMConfig)
+			err := jvm.JsonnetRender(cmdFlagsJsonnet, f, RootConfig.VMConfig, log.Logger)
 			if err != nil {
 				log.Fatal().Str("file", f).Err(err).Msg("error rendering jsonnet file")
 			}

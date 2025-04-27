@@ -7,9 +7,11 @@
 package util
 
 import (
+	"os"
 	"regexp"
 	"strings"
 
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 
@@ -29,23 +31,40 @@ func Filter(vs []string, f func(string) bool) []string {
 	return vsf
 }
 
+func SetupLogger(enableColor bool) zerolog.Logger {
+	consoleWriter := zerolog.ConsoleWriter{
+		Out:     os.Stderr,
+		NoColor: !enableColor,
+		FormatErrFieldValue: func(err interface{}) string {
+			// https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L21
+			colorRed := 31
+			colorBold := 1
+			s := strings.ReplaceAll(strings.ReplaceAll(strings.TrimRight(err.(string), "\\n"), "\\t", " "), "\\n", " |")
+
+			return Colorize(Colorize(s, colorBold, !enableColor), colorRed, !enableColor)
+		},
+	}
+
+	return log.Output(consoleWriter)
+}
+
 // Fill with string to include and exclude, using kr8's special parsing.
 type PathFilterOptions struct {
 	// Comma-separated list of include filters
 	// Filters can include:
 	//
-	// regex filters using the "~" operator. For example, "name~^myregex$"
-	// equality matches using the "=" operator. For example, "name=myvalue"
-	// substring matches using the "=" operator. For example, "name=myvalue"
+	// regex filters using the "~" operator. For example, "name~^myRegex$"
+	// equality matches using the "=" operator. For example, "name=myValue"
+	// substring matches using the "=" operator. For example, "name=myValue"
 	//
 	// If no operator is provided, it is treated as a substring match against the "name" field.
 	Includes string
 	// Comma-separated list of exclude filters.
 	// Filters can include:
 	//
-	// regex filters using the "~" operator. For example, "name~^myregex$"
-	// equality matches using the "=" operator. For example, "name=myvalue"
-	// substring matches using the "=" operator. For example, "name=myvalue"
+	// regex filters using the "~" operator. For example, "name~^myRegex$"
+	// equality matches using the "=" operator. For example, "name=myValue"
+	// substring matches using the "=" operator. For example, "name=myValue"
 	//
 	// If no operator is provided, it is treated as a substring match against the "name" field.
 	Excludes string
@@ -78,8 +97,8 @@ func CheckObjectMatch(input gjson.Result, filterString string) bool {
 
 // Given a map of string, filter them based on the provided options.
 // The map value is parsed as a gjson result and then checked against the provided options.
-func FilterItems(input map[string]string, pfilter PathFilterOptions) []string {
-	if pfilter.Includes == "" && pfilter.Excludes == "" {
+func FilterItems(input map[string]string, pFilter PathFilterOptions) []string {
+	if pFilter.Includes == "" && pFilter.Excludes == "" {
 		// Exit hatch
 		return []string{}
 	}
@@ -89,7 +108,7 @@ func FilterItems(input map[string]string, pfilter PathFilterOptions) []string {
 		// filter on cluster parameters, passed in gjson path notation with either
 		// "=" for equality or "~" for regex match
 		include := false
-		for _, b := range strings.Split(pfilter.Includes, ",") {
+		for _, b := range strings.Split(pFilter.Includes, ",") {
 			include = include || CheckObjectMatch(gjResult, b)
 		}
 		if !include {
@@ -99,7 +118,7 @@ func FilterItems(input map[string]string, pfilter PathFilterOptions) []string {
 		// "=" for equality or "~" for regex match
 		var exclude bool
 		exclude = false
-		for _, b := range strings.Split(pfilter.Excludes, ",") {
+		for _, b := range strings.Split(pFilter.Excludes, ",") {
 			exclude = exclude || CheckObjectMatch(gjResult, b)
 		}
 		if exclude {
@@ -112,15 +131,23 @@ func FilterItems(input map[string]string, pfilter PathFilterOptions) []string {
 
 // Logs an error and exits the program if the error is not nil.
 // Saves 3 lines per use and centralizes fatal errors for rewriting.
-func FatalErrorCheck(message string, err error) {
+func FatalErrorCheck(message string, err error, logger zerolog.Logger) {
 	if err != nil {
-		log.Fatal().Err(err).Msg(message)
+		logger.Fatal().Err(err).Msg(message)
 	}
 }
 
-func GenErrorIfCheck(message string, err error) error {
+func ErrorIfCheck(message string, err error) error {
 	if err != nil {
-		log.Error().Err(err).Msg(message)
+		return types.Kr8Error{Message: message, Value: err}
+	}
+
+	return nil
+}
+
+func LogErrorIfCheck(message string, err error, logger zerolog.Logger) error {
+	if err != nil {
+		logger.Error().Err(err).Msg(message)
 
 		return types.Kr8Error{Message: message, Value: err}
 	}

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/ice-bergtech/kr8/pkg/types"
+	"github.com/ice-bergtech/kr8/pkg/util"
 	"github.com/tidwall/gjson"
 )
 
@@ -133,6 +134,7 @@ func TestCreateClusterSpec(t *testing.T) {
 				testEntry.spec,
 				testEntry.kr8Opts,
 				testEntry.genDirOverride,
+				util.SetupLogger(true),
 			)
 			if (err != nil) != testEntry.wantErr {
 				t.Errorf("CreateClusterSpec() `%v` error = \n%v\n-wantErr-\n%v", testEntry.name, err, testEntry.wantErr)
@@ -343,7 +345,7 @@ func TestCreateComponentSpec(t *testing.T) {
 				"enable_kr8_allparams": true
 			}`),
 			want: Kr8ComponentSpec{
-				Kr8_allparams: true,
+				Kr8_allParams: true,
 			},
 		},
 		{
@@ -353,8 +355,8 @@ func TestCreateComponentSpec(t *testing.T) {
 				"enable_kr8_allclusters": false
 			}`),
 			want: Kr8ComponentSpec{
-				Kr8_allparams:   true,
-				Kr8_allclusters: false,
+				Kr8_allParams:   true,
+				Kr8_allClusters: false,
 			},
 		},
 		{
@@ -402,9 +404,10 @@ func TestCreateComponentSpec(t *testing.T) {
 		},
 	}
 
+	logger := util.SetupLogger(true)
 	for _, testEntry := range tests {
 		t.Run(testEntry.name, func(t *testing.T) {
-			_, err := CreateComponentSpec(testEntry.spec)
+			_, err := CreateComponentSpec(testEntry.spec, logger)
 			if err != nil && !testEntry.err {
 				t.Errorf("CreateComponentSpec() error = %v", err)
 

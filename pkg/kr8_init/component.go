@@ -7,7 +7,6 @@ import (
 
 	"github.com/ice-bergtech/kr8/pkg/kr8_types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
-	"github.com/rs/zerolog/log"
 )
 
 // Generate default component kr8_spec values and store in params.jsonnet.
@@ -21,8 +20,8 @@ import (
 func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) error {
 	compJson := kr8_types.Kr8ComponentJsonnet{
 		Kr8Spec: kr8_types.Kr8ComponentSpec{
-			Kr8_allparams:         false,
-			Kr8_allclusters:       false,
+			Kr8_allParams:         false,
+			Kr8_allClusters:       false,
 			DisableOutputDirClean: false,
 			Includes:              []kr8_types.Kr8ComponentSpecIncludeObject{},
 			ExtFiles:              map[string]string{},
@@ -53,13 +52,13 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 func InitComponentChart(dstDir string, componentOptions Kr8InitOptions, compJson kr8_types.Kr8ComponentJsonnet) error {
 	folderDir := filepath.Join(dstDir, componentOptions.ComponentName)
 	if err := os.MkdirAll(folderDir, 0750); err != nil {
-		log.Error().Err(err).Msg("component directory not created")
+		return util.ErrorIfCheck("component directory not created", err)
 	}
 	if err := GenerateChartJsonnet(compJson, componentOptions, folderDir); err != nil {
-		log.Error().Err(err).Msg("component jsonnet not created")
+		return util.ErrorIfCheck("component jsonnet not created", err)
 	}
 	if err := GenerateChartTaskfile(compJson, componentOptions, folderDir); err != nil {
-		log.Error().Err(err).Msg("component taskfile not created")
+		return util.ErrorIfCheck("component taskfile not created", err)
 	}
 	compJson.Kr8Spec.Includes = append(compJson.Kr8Spec.Includes,
 		kr8_types.Kr8ComponentSpecIncludeObject{
