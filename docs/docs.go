@@ -17,46 +17,50 @@ import (
 	"github.com/spf13/cobra/doc"
 )
 
-func CobraDocs() {
+func CobraDocs() error {
 	err := os.Mkdir("cmd", 0750)
 	if err != nil && !errors.Is(err, os.ErrExist) {
-		log.Fatal(err)
+		return err
 	}
 	err = doc.GenMarkdownTree(cmd.RootCmd, "./cmd")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+
+	return nil
 }
 
-func CopyReadme() {
+func CopyReadme() error {
 	destinationFile := "./README-repo.md"
 	iFile, err := os.ReadFile("../README.md")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	fixed := strings.ReplaceAll(string(iFile), "docs/", "")
 	err = os.WriteFile(destinationFile, []byte(fixed), 0600)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	// copy over referenced task file
 	destinationFile = "./Taskfile.yml"
 	iFile, err = os.ReadFile("../Taskfile.yml")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	err = os.WriteFile(destinationFile, iFile, 0600)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+
+	return nil
 }
 
-func GoMarkDoc() {
+func GoMarkDoc() error {
 	docRenderrer, err := gomarkdoc.NewRenderer()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	repo := lang.Repo{
@@ -67,7 +71,7 @@ func GoMarkDoc() {
 
 	err = os.Mkdir("godoc", 0750)
 	if err != nil && !errors.Is(err, os.ErrExist) {
-		log.Fatal(err)
+		return err
 	}
 
 	docfiles := map[string]string{
@@ -83,27 +87,35 @@ func GoMarkDoc() {
 	for pkgPath, pkgDoc := range docfiles {
 		buildPkg, err := build.ImportDir(pkgPath, build.ImportComment)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 
 		logger := logger.New(logger.DebugLevel)
 		pkg, err := lang.NewPackageFromBuild(logger, buildPkg, lang.PackageWithRepositoryOverrides(&repo))
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 		output, err := docRenderrer.Package(pkg)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 		err = os.WriteFile("godoc/"+pkgDoc, []byte(output), 0600)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 	}
+
+	return nil
 }
 
 func main() {
-	CobraDocs()
-	GoMarkDoc()
-	CopyReadme()
+	if err := CobraDocs(); err != nil {
+		log.Fatal(err)
+	}
+	if err := GoMarkDoc(); err != nil {
+		log.Fatal(err)
+	}
+	if err := CopyReadme(); err != nil {
+		log.Fatal(err)
+	}
 }
