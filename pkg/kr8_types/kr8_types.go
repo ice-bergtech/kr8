@@ -7,7 +7,8 @@ import (
 	"strings"
 
 	"github.com/ice-bergtech/kr8/pkg/types"
-	"github.com/rs/zerolog/log"
+	"github.com/ice-bergtech/kr8/pkg/util"
+	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
 )
 
@@ -60,6 +61,7 @@ func CreateClusterSpec(
 	spec gjson.Result,
 	kr8Opts types.Kr8Opts,
 	genDirOverride string,
+	logger zerolog.Logger,
 ) (Kr8ClusterSpec, error) {
 	// First determine the value of generate_dir from the command line args or spec.
 	clGenerateDir := genDirOverride
@@ -67,7 +69,10 @@ func CreateClusterSpec(
 		clGenerateDir = spec.Get("generate_dir").String()
 	}
 	if clGenerateDir == "" {
-		log.Warn().Msg("generate_dir should be set in cluster parameters or passed as generate-dir flag.  Defaulting to ./")
+		logger.Warn().
+			Msg("`generate_dir` should be set in cluster parameters or passed as generate-dir flag." +
+				"Defaulting to ./",
+			)
 		clGenerateDir = "generated"
 	}
 	// if generateDir does not start with /, then it goes in baseDir
@@ -75,7 +80,7 @@ func CreateClusterSpec(
 		clGenerateDir = filepath.Join(kr8Opts.BaseDir, clGenerateDir)
 	}
 	clusterDir := filepath.Join(clGenerateDir, clusterName)
-	log.Debug().Str("cluster", clusterName).Msg("output directory: " + clusterDir)
+	logger.Debug().Str("cluster", clusterName).Msg("output directory: " + clusterDir)
 
 	return Kr8ClusterSpec{
 		PostProcessor:      spec.Get("postprocessor").String(),
@@ -153,26 +158,22 @@ func ExtractIncludes(spec gjson.Result) (Kr8ComponentSpecIncludes, error) {
 	}
 
 	err := json.Unmarshal([]byte(incl.String()), &includes)
-	if err != nil {
-		log.Error().Err(err).Msg("Error unmarshalling include object: " + incl.String() + " skipping.")
-	}
 
-	return includes, err
+	return includes, util.ErrorIfCheck("Error unmarshaling include object: "+incl.String(), err)
 }
 
 // Extracts a component spec from a jsonnet object.
-func CreateComponentSpec(spec gjson.Result) (Kr8ComponentSpec, error) {
+func CreateComponentSpec(spec gjson.Result, logger zerolog.Logger) (Kr8ComponentSpec, error) {
 	specM := spec.Map()
-	log.Debug().Msg(spec.String())
+	logger.Debug().Msg(spec.String())
 	// spec is missing?
 	if len(specM) == 0 {
-		log.Error().Msg("Component has no `kr8_spec` object")
-		// intetionally create an error to return
+		// create an error to return
 		return Kr8ComponentSpec{},
 			types.Kr8Error{Message: "Component has no `kr8_spec` object", Value: ""}
 	}
 
-	log.Debug().Msg("Component spec: " + spec.Str)
+	logger.Debug().Msg("Component spec: " + spec.Str)
 
 	includes, err := ExtractIncludes(spec)
 	if err != nil {

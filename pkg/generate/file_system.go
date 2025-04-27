@@ -13,13 +13,13 @@ import (
 func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error {
 	// clean component dir
 	dir, err := os.Open(filepath.Clean(componentOutputDir))
-	if err := util.GenErrorIfCheck("", err); err != nil {
+	if err := util.ErrorIfCheck("", err); err != nil {
 		return err
 	}
 	// Lifetime of function
 	defer dir.Close()
 	names, err := dir.Readdirnames(-1)
-	if err := util.GenErrorIfCheck("", err); err != nil {
+	if err := util.ErrorIfCheck("", err); err != nil {
 		return err
 	}
 	for _, name := range names {
@@ -30,7 +30,7 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) er
 		if filepath.Ext(name) == ".yaml" {
 			delFile := filepath.Join(componentOutputDir, name)
 			err = os.RemoveAll(delFile)
-			if err := util.GenErrorIfCheck("", err); err != nil {
+			if err := util.ErrorIfCheck("", err); err != nil {
 				return err
 			}
 			log.Debug().Msg("Deleted unmanaged file: " + delFile)
@@ -44,21 +44,21 @@ func setupClusterGenerateDirs(kr8Spec kr8_types.Kr8ClusterSpec) ([]string, error
 	// create cluster dir
 	if _, err := os.Stat(kr8Spec.ClusterOutputDir); os.IsNotExist(err) {
 		err = os.MkdirAll(kr8Spec.ClusterOutputDir, 0750)
-		if err := util.GenErrorIfCheck("Error creating cluster generateDir", err); err != nil {
+		if err := util.ErrorIfCheck("Error creating cluster generateDir", err); err != nil {
 			return []string{}, err
 		}
 	}
 
 	// get list of current generated components directories
 	dir, err := os.Open(kr8Spec.ClusterOutputDir)
-	if err := util.GenErrorIfCheck("Error opening clusterDir", err); err != nil {
+	if err := util.ErrorIfCheck("Error opening clusterDir", err); err != nil {
 		return []string{}, err
 	}
 	defer dir.Close()
 
 	read_all_dirs := -1
 	generatedCompList, err := dir.Readdirnames(read_all_dirs)
-	if err := util.GenErrorIfCheck("Error reading directories", err); err != nil {
+	if err := util.ErrorIfCheck("Error reading directories", err); err != nil {
 		return []string{}, err
 	}
 
@@ -75,7 +75,7 @@ func CheckIfUpdateNeeded(outFile string, outStr string) (bool, error) {
 	}
 
 	currentContents, err := os.ReadFile(outFile)
-	if err := util.GenErrorIfCheck("Error reading file "+outFile, err); err != nil {
+	if err := util.ErrorIfCheck("Error reading file "+outFile, err); err != nil {
 		return false, err
 	}
 	if string(currentContents) != outStr {

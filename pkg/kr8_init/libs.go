@@ -12,7 +12,7 @@ import (
 // Repo: https://github.com/ice-bergtech/kr8-libsonnet .
 // return util.FetchRepoUrl("https://github.com/ice-bergtech/kr8-libsonnet", dstDir+"/kr8-lib", !fetch).
 func GenerateLib(fetch bool, dstDir string) error {
-	if err := util.GenErrorIfCheck("error creating lib directory", os.MkdirAll(dstDir, 0750)); err != nil {
+	if err := util.ErrorIfCheck("error creating lib directory", os.MkdirAll(dstDir, 0750)); err != nil {
 		return err
 	}
 

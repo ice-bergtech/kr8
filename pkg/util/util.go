@@ -7,9 +7,11 @@
 package util
 
 import (
+	"os"
 	"regexp"
 	"strings"
 
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 
@@ -27,6 +29,23 @@ func Filter(vs []string, f func(string) bool) []string {
 	}
 
 	return vsf
+}
+
+func SetupLogger(enableColor bool) zerolog.Logger {
+	consoleWriter := zerolog.ConsoleWriter{
+		Out:     os.Stderr,
+		NoColor: !enableColor,
+		FormatErrFieldValue: func(err interface{}) string {
+			// https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L21
+			colorRed := 31
+			colorBold := 1
+			s := strings.ReplaceAll(strings.ReplaceAll(strings.TrimRight(err.(string), "\\n"), "\\t", " "), "\\n", " |")
+
+			return Colorize(Colorize(s, colorBold, !enableColor), colorRed, !enableColor)
+		},
+	}
+
+	return log.Output(consoleWriter)
 }
 
 // Fill with string to include and exclude, using kr8's special parsing.
@@ -112,15 +131,23 @@ func FilterItems(input map[string]string, pfilter PathFilterOptions) []string {
 
 // Logs an error and exits the program if the error is not nil.
 // Saves 3 lines per use and centralizes fatal errors for rewriting.
-func FatalErrorCheck(message string, err error) {
+func FatalErrorCheck(message string, err error, logger zerolog.Logger) {
 	if err != nil {
-		log.Fatal().Err(err).Msg(message)
+		logger.Fatal().Err(err).Msg(message)
 	}
 }
 
-func GenErrorIfCheck(message string, err error) error {
+func ErrorIfCheck(message string, err error) error {
 	if err != nil {
-		log.Error().Err(err).Msg(message)
+		return types.Kr8Error{Message: message, Value: err}
+	}
+
+	return nil
+}
+
+func LogErrorIfCheck(message string, err error, logger zerolog.Logger) error {
+	if err != nil {
+		logger.Error().Err(err).Msg(message)
 
 		return types.Kr8Error{Message: message, Value: err}
 	}

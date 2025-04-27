@@ -30,7 +30,7 @@ import (
 	"golang.org/x/exp/maps"
 
 	jsonnet "github.com/google/go-jsonnet"
-	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
 
 	"github.com/ice-bergtech/kr8/pkg/kr8_types"
@@ -89,7 +89,7 @@ func JsonnetRenderFiles(
 
 	// Create a JSonnet VM
 	jvm, err := JsonnetVM(vmConfig)
-	if err := util.GenErrorIfCheck("Error creating jsonnet VM", err); err != nil {
+	if err := util.ErrorIfCheck("Error creating jsonnet VM", err); err != nil {
 		return "", err
 	}
 
@@ -112,7 +112,7 @@ func JsonnetRenderFiles(
 
 	// render the jsonnet
 	out, err := jvm.EvaluateAnonymousSnippet(source, jsonnetImport)
-	if err := util.GenErrorIfCheck("Error evaluating jsonnet snippet", err); err != nil {
+	if err := util.ErrorIfCheck("Error evaluating jsonnet snippet", err); err != nil {
 		return "", err
 	}
 
@@ -120,7 +120,12 @@ func JsonnetRenderFiles(
 }
 
 // Renders a jsonnet file with the specified options.
-func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmConfig types.VMConfig) error {
+func JsonnetRender(
+	cmdFlagsJsonnet types.CmdJsonnetOptions,
+	filename string,
+	vmConfig types.VMConfig,
+	logger zerolog.Logger,
+) error {
 	// Check if cluster and/or clusterparams are specified
 	if cmdFlagsJsonnet.Cluster == "" && cmdFlagsJsonnet.ClusterParams == "" {
 		return types.Kr8Error{Message: "Please specify a --cluster name and/or --clusterparams", Value: ""}
@@ -134,7 +139,7 @@ func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmC
 		cmdFlagsJsonnet.ClusterParams,
 		false,
 	)
-	if err := util.GenErrorIfCheck("error rendering cluster params", err); err != nil {
+	if err := util.ErrorIfCheck("error rendering cluster params", err); err != nil {
 		return err
 	}
 
@@ -155,14 +160,14 @@ func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmC
 		input = "( import '" + filename + "')"
 	}
 
-	log.Debug().Msg("Processing file through jsonnet vm: " + input)
+	logger.Debug().Msg("Processing file through jsonnet vm: " + input)
 
 	//
 	// Evaluate the jsonnet snippet and print the result
 	// This is where the magic happens! The jsonnet code is evaluated and the result is stored
 	//
 	j, err := jvm.EvaluateAnonymousSnippet("file", input)
-	if err := util.GenErrorIfCheck("Error evaluating jsonnet snippet", err); err != nil {
+	if err := util.ErrorIfCheck("Error evaluating jsonnet snippet", err); err != nil {
 		return err
 	}
 
@@ -219,20 +224,20 @@ func JsonnetRenderClusterParams(
 	}
 
 	compParams, err := JsonnetRenderFiles(vmconfig, params, "", true, "", "clusterparams")
-	if err := util.GenErrorIfCheck("failed to render cluster params", err); err != nil {
+	if err := util.ErrorIfCheck("failed to render cluster params", err); err != nil {
 		return "", err
 	}
 
 	compString := gjson.Get(compParams, "_components")
 	err = json.Unmarshal([]byte(compString.String()), &componentMap)
-	if err := util.GenErrorIfCheck("failed to parse component map", err); err != nil {
+	if err := util.ErrorIfCheck("failed to parse component map", err); err != nil {
 		return "", err
 	}
 
 	// all components
 	componentDefaultsMerged, err := MergeComponentDefaults(componentMap, componentNames, vmconfig)
 	if err != nil {
-		return "", util.GenErrorIfCheck("failed to merge component defaults", err)
+		return "", util.ErrorIfCheck("failed to merge component defaults", err)
 	}
 
 	return JsonnetRenderFiles(vmconfig, params, "", prune, componentDefaultsMerged, "componentparams")
@@ -254,7 +259,7 @@ func MergeComponentDefaults(
 		if value, ok := componentMap[key]; ok {
 			path := filepath.Join(vmconfig.BaseDir, value.Path, "params.jsonnet")
 			fileC, err := os.ReadFile(filepath.Clean(path))
-			if err := util.GenErrorIfCheck("Error reading file "+path, err); err != nil {
+			if err := util.ErrorIfCheck("Error reading file "+path, err); err != nil {
 				return "", err
 			}
 			componentDefaultsMerged += fmt.Sprintf("'%s': %s,", key, string(fileC))

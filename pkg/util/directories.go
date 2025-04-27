@@ -29,7 +29,7 @@ func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error) {
 		return err
 	})
 	if err != nil {
-		return ClusterData, GenErrorIfCheck("error building cluster list", err)
+		return ClusterData, ErrorIfCheck("error building cluster list", err)
 	}
 
 	for _, file := range fileList {
@@ -64,7 +64,7 @@ func GetClusterPaths(searchDir string, clusterName string) (string, error) {
 		}
 	})
 	if err != nil {
-		return "", GenErrorIfCheck("error building cluster list", err)
+		return "", ErrorIfCheck("error building cluster list", err)
 	}
 	if clusterPath == "" {
 		return "", types.Kr8Error{Message: "error: could not find cluster: " + clusterName, Value: ""}

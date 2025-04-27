@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	jsonnet "github.com/google/go-jsonnet"
-	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog"
 
 	jnetvm "github.com/ice-bergtech/kr8/pkg/jnetvm"
 	"github.com/ice-bergtech/kr8/pkg/kr8_types"
@@ -50,15 +50,21 @@ func SetupJvmForComponent(
 
 // jPathResults always includes base lib.
 // Adds jpaths from spec if set.
-func loadJPathsIntoVM(compSpec kr8_types.Kr8ComponentSpec, compPath string, baseDir string, jvm *jsonnet.VM) {
-	log.Debug().
+func loadJPathsIntoVM(
+	compSpec kr8_types.Kr8ComponentSpec,
+	compPath string,
+	baseDir string,
+	jvm *jsonnet.VM,
+	logger zerolog.Logger,
+) {
+	logger.Debug().
 		Str("component path", compPath).
 		Msg("Loading JPaths into VM for component")
 	jPathResults := []string{filepath.Join(baseDir, "lib")}
 	for _, jPath := range compSpec.JPaths {
 		jPathResults = append(jPathResults, filepath.Join(baseDir, compPath, jPath))
 	}
-	log.Debug().Str("component path", compPath).Msgf("JPaths: %v", jPathResults)
+	logger.Debug().Str("component path", compPath).Msgf("JPaths: %v", jPathResults)
 	jvm.Importer(&jsonnet.FileImporter{
 		JPaths: jPathResults,
 	})
@@ -71,20 +77,21 @@ func loadExtFilesIntoVars(
 	kr8Opts types.Kr8Opts,
 	componentName string,
 	jvm *jsonnet.VM,
+	logger zerolog.Logger,
 ) error {
-	log.Debug().Str("component path", compPath).Msgf("Loading extFiles")
+	logger.Debug().Str("component path", compPath).Msgf("Loading extFiles")
 	for key, val := range compSpec.ExtFiles {
 		filePath := filepath.Join(kr8Opts.BaseDir, compPath, val)
-		log.Debug().Str("cluster", kr8Spec.Name).
+		logger.Debug().Str("cluster", kr8Spec.Name).
 			Str("component", componentName).
 			Msg("Extfile: " + key + "=" + val + "\n Path: " + filePath)
 		if kr8Opts.BaseDir != "./" && !strings.HasPrefix(filePath, kr8Opts.BaseDir) {
-			if err := util.GenErrorIfCheck("Invalid file path: "+filePath, os.ErrNotExist); err != nil {
+			if err := util.ErrorIfCheck("Invalid file path: "+filePath, os.ErrNotExist); err != nil {
 				return err
 			}
 		}
 		extFile, err := os.ReadFile(filepath.Clean(filePath))
-		if err := util.GenErrorIfCheck("Error importing extfiles item", err); err != nil {
+		if err := util.ErrorIfCheck("Error importing extfiles item", err); err != nil {
 			return err
 		}
 		jvm.ExtVar(key, string(extFile))

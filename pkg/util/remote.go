@@ -23,7 +23,7 @@ func FetchRepoUrl(url string, destination string, noop bool) error {
 
 	// Get the current working directory
 	pwd, err := os.Getwd()
-	if err := GenErrorIfCheck("Error getting working directory", err); err != nil {
+	if err := ErrorIfCheck("Error getting working directory", err); err != nil {
 		return err
 	}
 
@@ -36,7 +36,7 @@ func FetchRepoUrl(url string, destination string, noop bool) error {
 		Mode: getter.ClientModeAny,
 	}
 
-	if err := GenErrorIfCheck("Error getting repo", client.Get()); err != nil {
+	if err := ErrorIfCheck("Error getting repo", client.Get()); err != nil {
 		return err
 	}
 
@@ -44,7 +44,7 @@ func FetchRepoUrl(url string, destination string, noop bool) error {
 	if _, err := os.Stat(filepath.Join(destination, ".git")); !os.IsNotExist(err) {
 		log.Debug().Msg("Removing .git directory")
 
-		return GenErrorIfCheck("Error removing .git directory", os.RemoveAll(destination+"/.git"))
+		return ErrorIfCheck("Error removing .git directory", os.RemoveAll(destination+"/.git"))
 	}
 
 	return nil

@@ -10,7 +10,7 @@ import (
 	"github.com/Masterminds/sprig/v3"
 	goyaml "github.com/ghodss/yaml"
 	jsonnet "github.com/google/go-jsonnet"
-	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
 
 	"github.com/ice-bergtech/kr8/pkg/kr8_types"
@@ -28,16 +28,17 @@ func processIncludesFile(
 	componentOutputDir string,
 	incInfo kr8_types.Kr8ComponentSpecIncludeObject,
 	outputFileMap map[string]bool,
+	logger zerolog.Logger,
 ) error {
 	// ensure this directory exists
 	outputDir := componentOutputDir
 	if incInfo.DestDir != "" {
 		outputDir = filepath.Join(componentOutputDir, incInfo.DestDir)
-		log.Debug().Msg("includes destdir override: " + outputDir)
+		logger.Debug().Msg("includes destdir override: " + outputDir)
 	}
 	if _, err := os.Stat(outputDir); os.IsNotExist(err) {
 		err = os.MkdirAll(outputDir, 0750)
-		if err := util.GenErrorIfCheck("error creating alternate directory", err); err != nil {
+		if err := util.ErrorIfCheck("error creating alternate directory", err); err != nil {
 			return err
 		}
 	}
@@ -46,17 +47,17 @@ func processIncludesFile(
 	// remember output filename for purging files
 	outputFileMap[filepath.Base(incInfo.DestName+"."+incInfo.DestExt)] = true
 
-	outStr, err := ProcessFile(inputFile, outputFile, kr8Spec, componentName, config, incInfo, jvm)
-	if err := util.GenErrorIfCheck("error processing file", err); err != nil {
+	outStr, err := ProcessFile(inputFile, outputFile, kr8Spec, componentName, config, incInfo, jvm, logger)
+	if err := util.ErrorIfCheck("error processing file", err); err != nil {
 		return err
 	}
 
-	log.Debug().Str("cluster", kr8Spec.Name).Str("component", componentName).Msg("Checking if file needs updating...")
+	logger.Debug().Str("cluster", kr8Spec.Name).Str("component", componentName).Msg("Checking if file needs updating...")
 
 	// only write file if it does not exist, or the generated contents does not match what is on disk
 	updateNeeded, err := CheckIfUpdateNeeded(outputFile, outStr)
 	if err != nil {
-		return util.GenErrorIfCheck("Error checking if file needs updating", err)
+		return util.ErrorIfCheck("Error checking if file needs updating", err)
 	}
 	if updateNeeded {
 		return os.WriteFile(outputFile, []byte(outStr), 0600)
@@ -78,8 +79,9 @@ func ProcessFile(
 	config string,
 	incInfo kr8_types.Kr8ComponentSpecIncludeObject,
 	jvm *jsonnet.VM,
+	logger zerolog.Logger,
 ) (string, error) {
-	log.Debug().Str("cluster", kr8Spec.Name).
+	logger.Debug().Str("cluster", kr8Spec.Name).
 		Str("component", componentName).
 		Msg("Process file: " + inputFile + " -> " + outputFile)
 
@@ -110,9 +112,7 @@ func ProcessFile(
 		outStr, err = "", os.ErrInvalid
 	}
 	if err != nil {
-		log.Error().Str("cluster", kr8Spec.Name).
-			Str("component", componentName).
-			Str("file", incInfo.File).
+		logger.Error().
 			Err(err).
 			Msg(outStr)
 	}
@@ -130,14 +130,14 @@ func processJsonnet(jvm *jsonnet.VM, input string, snippetFilename string) (stri
 	// create output file contents in a string first, as a yaml stream
 	var listObjOut []interface{}
 	var outStr string
-	if err := util.GenErrorIfCheck("Error unmarshalling jsonnet output to go slice",
+	if err := util.ErrorIfCheck("Error unmarshalling jsonnet output to go slice",
 		json.Unmarshal([]byte(jsonStr), &listObjOut),
 	); err != nil {
 		return "", err
 	}
 	for _, jObj := range listObjOut {
 		buf, err := goyaml.Marshal(jObj)
-		if err := util.GenErrorIfCheck("Error marshalling jsonnet object to yaml", err); err != nil {
+		if err := util.ErrorIfCheck("Error marshalling jsonnet object to yaml", err); err != nil {
 			return "", err
 		}
 		outStr += string(buf)

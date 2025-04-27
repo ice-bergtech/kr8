@@ -20,6 +20,7 @@ import (
 
 	jsonnet "github.com/google/go-jsonnet"
 	"github.com/panjf2000/ants/v2"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
 	"golang.org/x/exp/maps"
@@ -38,11 +39,11 @@ type safeString struct {
 	config string
 }
 
-func GetClusterParams(clusterDir string, vmConfig types.VMConfig) (map[string]string, error) {
+func GetClusterParams(clusterDir string, vmConfig types.VMConfig, logger zerolog.Logger) (map[string]string, error) {
 	// get list of all clusters, render cluster level params for all of them
 	allClusterParams := make(map[string]string)
 	allClusters, err := util.GetClusterFilenames(clusterDir)
-	if err := util.GenErrorIfCheck("Error getting list of clusters", err); err != nil {
+	if err := util.LogErrorIfCheck("Error getting list of clusters", err, logger); err != nil {
 		return nil, err
 	}
 	log.Debug().Msg("Found " + strconv.Itoa(len(allClusters)) + " clusters")
@@ -117,14 +118,12 @@ func GenProcessComponent(
 	allConfig *safeString,
 	filters util.PathFilterOptions,
 	paramsFile string,
+	logger zerolog.Logger,
 ) error {
-	log.Info().Str("cluster", kr8Spec.Name).
-		Str("component", componentName).
-		Msg("Process component")
-
+	logger.Info().Msg("Processing component")
 	// get kr8_spec from component's params
-	compSpec, err := kr8_types.CreateComponentSpec(gjson.Get(config, componentName+".kr8_spec"))
-	if err := util.GenErrorIfCheck("Error creating component spec", err); err != nil {
+	compSpec, err := kr8_types.CreateComponentSpec(gjson.Get(config, componentName+".kr8_spec"), logger)
+	if err := util.LogErrorIfCheck("Error creating component spec", err, logger); err != nil {
 		return err
 	}
 
@@ -139,8 +138,9 @@ func GenProcessComponent(
 		filters,
 		paramsFile,
 		kr8Opts,
+		logger,
 	)
-	if err := util.GenErrorIfCheck("Error setting up JVM for component", err); err != nil {
+	if err := util.LogErrorIfCheck("Error setting up JVM for component", err, logger); err != nil {
 		return err
 	}
 
@@ -148,7 +148,7 @@ func GenProcessComponent(
 	// create component dir if needed
 	if _, err := os.Stat(componentOutputDir); os.IsNotExist(err) {
 		err := os.MkdirAll(componentOutputDir, 0750)
-		if err := util.GenErrorIfCheck("Error creating component directory", err); err != nil {
+		if err := util.LogErrorIfCheck("Error creating component directory", err, logger); err != nil {
 			return err
 		}
 	}
@@ -163,8 +163,9 @@ func GenProcessComponent(
 		compPath,
 		componentOutputDir,
 		jvm,
+		logger,
 	)
-	if err := util.GenErrorIfCheck("Error generating includes files", err); err != nil {
+	if err := util.LogErrorIfCheck("Error generating includes files", err, logger); err != nil {
 		return err
 	}
 
@@ -186,9 +187,10 @@ func SetupAndConfigureVM(
 	filters util.PathFilterOptions,
 	paramsFile string,
 	kr8Opts types.Kr8Opts,
+	logger zerolog.Logger,
 ) (*jsonnet.VM, string, error) {
 	jvm, err := SetupJvmForComponent(vmconfig, config, kr8Spec, componentName)
-	if err := util.GenErrorIfCheck("error setting up JVM for component", err); err != nil {
+	if err := util.LogErrorIfCheck("error setting up JVM for component", err, logger); err != nil {
 		return nil, "", err
 	}
 	// include full render of all component params
@@ -202,32 +204,33 @@ func SetupAndConfigureVM(
 			filters,
 			paramsFile,
 			jvm,
+			logger,
 		); err != nil {
-			return nil, "", util.GenErrorIfCheck("error getting all component params", err)
+			return nil, "", util.LogErrorIfCheck("error getting all component params", err, logger)
 		}
 	}
 	if compSpec.Kr8_allclusters {
 		// add kr8_allclusters extcode with every cluster's cluster level params
-		if err := getAllClusterParams(kr8Opts.ClusterDir, vmconfig, jvm); err != nil {
-			return nil, "", util.GenErrorIfCheck("error getting all cluster params", err)
+		if err := getAllClusterParams(kr8Opts.ClusterDir, vmconfig, jvm, logger); err != nil {
+			return nil, "", util.LogErrorIfCheck("error getting all cluster params", err, logger)
 		}
 	}
 
 	compPath := filepath.Clean(gjson.Get(config, "_components."+componentName+".path").String())
 	// jPathResults always includes base lib. Add jpaths from spec if set
-	loadJPathsIntoVM(compSpec, compPath, kr8Opts.BaseDir, jvm)
+	loadJPathsIntoVM(compSpec, compPath, kr8Opts.BaseDir, jvm, logger)
 	// file imports
-	if err := loadExtFilesIntoVars(compSpec, compPath, kr8Spec, kr8Opts, componentName, jvm); err != nil {
-		return nil, "", util.GenErrorIfCheck("error loading ext files into vars", err)
+	if err := loadExtFilesIntoVars(compSpec, compPath, kr8Spec, kr8Opts, componentName, jvm, logger); err != nil {
+		return nil, "", util.LogErrorIfCheck("error loading ext files into vars", err, logger)
 	}
 
 	return jvm, compPath, err
 }
 
 // combine all the cluster params into a single object indexed by cluster name.
-func getAllClusterParams(clusterDir string, vmconfig types.VMConfig, jvm *jsonnet.VM) error {
+func getAllClusterParams(clusterDir string, vmconfig types.VMConfig, jvm *jsonnet.VM, logger zerolog.Logger) error {
 	allClusterParamsObject := "{ "
-	params, err := GetClusterParams(clusterDir, vmconfig)
+	params, err := GetClusterParams(clusterDir, vmconfig, logger)
 	if err != nil {
 		return err
 	}
@@ -250,6 +253,7 @@ func getAllComponentParamsThreadsafe(
 	filters util.PathFilterOptions,
 	paramsFile string,
 	jvm *jsonnet.VM,
+	logger zerolog.Logger,
 ) error {
 	allConfig.mu.Lock()
 	if allConfig.config == "" {
@@ -267,7 +271,7 @@ func getAllComponentParamsThreadsafe(
 			if err != nil {
 				allConfig.mu.Unlock()
 
-				return util.GenErrorIfCheck("Error rendering cluster params", err)
+				return util.LogErrorIfCheck("Error rendering cluster params", err, logger)
 			}
 		}
 	}
@@ -286,6 +290,7 @@ func GenerateIncludesFiles(
 	compPath string,
 	componentOutputDir string,
 	jvm *jsonnet.VM,
+	logger zerolog.Logger,
 ) (map[string]bool, error) {
 	outputFileMap := make(map[string]bool)
 	for _, include := range includesFiles {
@@ -311,9 +316,10 @@ func GenerateIncludesFiles(
 			componentOutputDir,
 			include,
 			outputFileMap,
+			logger.With().Str("includes files", include.File).Logger(),
 		)
 		if err != nil {
-			return nil, util.GenErrorIfCheck("error processing includes file", err)
+			return nil, util.LogErrorIfCheck("error processing includes file", err, logger)
 		}
 	}
 
@@ -330,8 +336,9 @@ func GenProcessCluster(
 	filters util.PathFilterOptions,
 	vmConfig types.VMConfig,
 	pool *ants.Pool,
+	logger zerolog.Logger,
 ) error {
-	log.Debug().Str("cluster", clusterName).Msg("Processing cluster")
+	logger.Debug().Str("cluster", clusterName).Msg("Processing cluster")
 	clusterPaths, err := util.GetClusterPaths(clusterdir, clusterName)
 	if err != nil {
 		return err
@@ -339,25 +346,26 @@ func GenProcessCluster(
 	// get list of components for cluster
 	params := util.GetClusterParamsFilenames(clusterdir, clusterPaths)
 	renderedKr8Spec, err := jnetvm.JsonnetRenderFiles(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")
-	if err := util.GenErrorIfCheck("error rendering cluster `_kr8_spec`", err); err != nil {
+	if err := util.LogErrorIfCheck("error rendering cluster `_kr8_spec`", err, logger); err != nil {
 		return err
 	}
 
 	// get kr8 settings for cluster
 	kr8Spec, err := kr8_types.CreateClusterSpec(clusterName, gjson.Parse(renderedKr8Spec),
 		kr8Opts, generateDirOverride,
+		logger,
 	)
-	if err := util.GenErrorIfCheck("error creating kr8Spec", err); err != nil {
+	if err := util.LogErrorIfCheck("error creating kr8Spec", err, logger); err != nil {
 		return err
 	}
 
 	generatedCompList, err := setupClusterGenerateDirs(kr8Spec)
-	if err := util.GenErrorIfCheck("error creating generate dirs", err); err != nil {
+	if err := util.LogErrorIfCheck("error creating generate dirs", err, logger); err != nil {
 		return err
 	}
 
 	renderedCompSpec, err := jnetvm.JsonnetRenderFiles(vmConfig, params, "._components", true, "", "clustercomponents")
-	if err := util.GenErrorIfCheck("error rendering cluster components list", err); err != nil {
+	if err := util.LogErrorIfCheck("error rendering cluster components list", err, logger); err != nil {
 		return err
 	}
 
@@ -373,12 +381,12 @@ func GenProcessCluster(
 		clusterParamsFile,
 		false,
 	)
-	if err := util.GenErrorIfCheck("error rendering cluster params", err); err != nil {
+	if err := util.LogErrorIfCheck("error rendering cluster params", err, logger); err != nil {
 		return err
 	}
 
 	// render full params for cluster for all selected components
-	return renderComponents(config, vmConfig, kr8Spec, compList, clusterParamsFile, pool, kr8Opts, filters)
+	return renderComponents(config, vmConfig, kr8Spec, compList, clusterParamsFile, pool, kr8Opts, filters, logger)
 }
 
 func renderComponents(
@@ -390,6 +398,7 @@ func renderComponents(
 	pool *ants.Pool,
 	kr8Opts types.Kr8Opts,
 	filters util.PathFilterOptions,
+	logger zerolog.Logger,
 ) error {
 	var allconfig safeString
 
@@ -399,6 +408,7 @@ func renderComponents(
 		cName := componentName
 		_ = pool.Submit(func() {
 			defer waitGroup.Done()
+			sublogger := logger.With().Str("component", componentName).Logger()
 			if err := GenProcessComponent(
 				vmConfig,
 				cName,
@@ -408,10 +418,9 @@ func renderComponents(
 				&allconfig,
 				filters,
 				clusterParamsFile,
+				sublogger,
 			); err != nil {
-				log.Error().
-					Str("cluster", componentName).
-					Str("component", componentName).
+				sublogger.Error().
 					Err(err).
 					Msg("Failed to process component")
 			}

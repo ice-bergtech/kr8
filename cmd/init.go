@@ -72,7 +72,7 @@ var InitClusterCmd = &cobra.Command{
 				Default: RootConfig.ClusterDir,
 				Help:    "Set the root directory to store cluster configurations, optionally including subdirectories",
 			}
-			util.FatalErrorCheck("Invalid cluster directory", survey.AskOne(prompt, &cSpec.ClusterOutputDir))
+			util.FatalErrorCheck("Invalid cluster directory", survey.AskOne(prompt, &cSpec.ClusterOutputDir), log.Logger)
 
 			// Get cluster name, path from user if not set
 			prompt = &survey.Input{
@@ -80,26 +80,27 @@ var InitClusterCmd = &cobra.Command{
 				Default: cmdInitFlags.ClusterName,
 				Help:    "Distinct name for the cluster",
 			}
-			util.FatalErrorCheck("Invalid cluster name", survey.AskOne(prompt, &cSpec.Name))
+			util.FatalErrorCheck("Invalid cluster name", survey.AskOne(prompt, &cSpec.Name), log.Logger)
 
 			promptB := &survey.Confirm{
 				Message: "Generate short names for output file names?",
 				Default: cSpec.GenerateShortNames,
 				Help:    "Shortens component names and file structure",
 			}
-			util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.GenerateShortNames))
+			util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.GenerateShortNames), log.Logger)
 
 			promptB = &survey.Confirm{
 				Message: "Prune component parameters?",
 				Default: cSpec.PruneParams,
 				Help:    "This removes empty and null parameters from configuration",
 			}
-			util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.PruneParams))
+			util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.PruneParams), log.Logger)
 		}
 		// Generate the jsonnet file based on the config
 		util.FatalErrorCheck(
 			"Error generating cluster jsonnet file",
 			kr8init.GenerateClusterJsonnet(cSpec, cSpec.ClusterOutputDir),
+			log.Logger,
 		)
 	},
 }
@@ -127,6 +128,7 @@ and initialize a git repo so you can get started`,
 			util.FatalErrorCheck(
 				"Issue fetching repo",
 				util.FetchRepoUrl(cmdInitFlags.InitUrl, outDir, !cmdInitFlags.Fetch),
+				log.Logger,
 			)
 
 			return
@@ -152,18 +154,22 @@ and initialize a git repo so you can get started`,
 		util.FatalErrorCheck(
 			"Issue creating cluster.jsonnet",
 			kr8init.GenerateClusterJsonnet(clusterOptions, outDir+"/clusters"),
+			log.Logger,
 		)
 		util.FatalErrorCheck(
 			"Issue creating example component.jsonnet",
 			kr8init.GenerateComponentJsonnet(cmdInitOptions, outDir+"/components"),
+			log.Logger,
 		)
 		util.FatalErrorCheck(
 			"Issue creating lib folder",
 			kr8init.GenerateLib(cmdInitFlags.Fetch, outDir+"/lib"),
+			log.Logger,
 		)
 		util.FatalErrorCheck(
 			"Issue creating Readme.md",
 			kr8init.GenerateReadme(outDir, cmdInitOptions, clusterOptions),
+			log.Logger,
 		)
 	},
 }
@@ -180,14 +186,14 @@ var InitComponentCmd = &cobra.Command{
 				Default: RootConfig.ComponentDir,
 				Help:    "Enter the root directory to store components in",
 			}
-			util.FatalErrorCheck("Invalid component directory", survey.AskOne(prompt, &RootConfig.ComponentDir))
+			util.FatalErrorCheck("Invalid component directory", survey.AskOne(prompt, &RootConfig.ComponentDir), log.Logger)
 
 			prompt = &survey.Input{
 				Message: "Enter component name",
 				Default: cmdInitFlags.ComponentName,
 				Help:    "Enter the name of the component you want to create",
 			}
-			util.FatalErrorCheck("Invalid component name", survey.AskOne(prompt, &cmdInitFlags.ComponentName))
+			util.FatalErrorCheck("Invalid component name", survey.AskOne(prompt, &cmdInitFlags.ComponentName), log.Logger)
 
 			promptS := &survey.Select{
 				Message: "Select component type",
@@ -209,11 +215,12 @@ var InitComponentCmd = &cobra.Command{
 					}
 				},
 			}
-			util.FatalErrorCheck("Invalid component type", survey.AskOne(promptS, &cmdInitFlags.ComponentType))
+			util.FatalErrorCheck("Invalid component type", survey.AskOne(promptS, &cmdInitFlags.ComponentType), log.Logger)
 		}
 		util.FatalErrorCheck(
 			"Error generating component jsonnet",
 			kr8init.GenerateComponentJsonnet(cmdInitFlags, RootConfig.ComponentDir),
+			log.Logger,
 		)
 	},
 }
