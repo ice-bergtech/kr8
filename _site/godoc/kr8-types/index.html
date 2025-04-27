@@ -244,7 +244,7 @@
 <h2 id="func-extractextfiles">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L130">ExtractExtFiles</a></h2>
 <pre><code class="language-go">func ExtractExtFiles(spec gjson.Result) map[string]string
 </code></pre>
-<p>Extract jsonnet extVar defintions from spec.</p>
+<p>Extract jsonnet extVar definitions from spec.</p>
 <p><a name="ExtractJpaths"></a></p>
 <h2 id="func-extractjpaths">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L142">ExtractJpaths</a></h2>
 <pre><code class="language-go">func ExtractJpaths(spec gjson.Result) []string
@@ -433,9 +433,9 @@
 <p>The kr8_spec object in a cluster config file. This configures how kr8 processes the component.</p>
 <pre><code class="language-go">type Kr8ComponentSpec struct {
     // If true, includes the parameters of the current cluster when generating this component
-    Kr8_allparams bool `json:&quot;enable_kr8_allparams&quot;`
+    Kr8_allParams bool `json:&quot;enable_kr8_allparams&quot;`
     // If true, includes the parameters of all other clusters when generating this component
-    Kr8_allclusters bool `json:&quot;enable_kr8_allclusters&quot;`
+    Kr8_allClusters bool `json:&quot;enable_kr8_allclusters&quot;`
     // If false, all non-generated files present in the output directory are removed
     DisableOutputDirClean bool `json:&quot;disable_output_clean&quot;`
     // A list of filenames to include as jsonnet vm external vars

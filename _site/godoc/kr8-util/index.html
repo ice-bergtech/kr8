@@ -223,7 +223,7 @@
 <li><a href="#FatalErrorCheck">func FatalErrorCheck(message string, err error, logger zerolog.Logger)</a></li>
 <li><a href="#FetchRepoUrl">func FetchRepoUrl(url string, destination string, noop bool) error</a></li>
 <li><a href="#Filter">func Filter(vs []string, f func(string) bool) []string</a></li>
-<li><a href="#FilterItems">func FilterItems(input map[string]string, pfilter PathFilterOptions) []string</a></li>
+<li><a href="#FilterItems">func FilterItems(input map[string]string, pFilter PathFilterOptions) []string</a></li>
 <li><a href="#FormatJsonnetString">func FormatJsonnetString(input string) (string, error)</a></li>
 <li><a href="#FormatJsonnetStringCustom">func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, error)</a></li>
 <li><a href="#GetClusterFilenames">func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error)</a></li>
@@ -279,7 +279,7 @@
 <p>Filter returns a new slice containing only the elements that satisfy the predicate function. From https://gobyexample.com/collection-functions</p>
 <p><a name="FilterItems"></a></p>
 <h2 id="func-filteritems">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L100">FilterItems</a></h2>
-<pre><code class="language-go">func FilterItems(input map[string]string, pfilter PathFilterOptions) []string
+<pre><code class="language-go">func FilterItems(input map[string]string, pFilter PathFilterOptions) []string
 </code></pre>
 <p>Given a map of string, filter them based on the provided options. The map value is parsed as a gjson result and then checked against the provided options.</p>
 <p><a name="FormatJsonnetString"></a></p>
@@ -350,18 +350,18 @@
     // Comma-separated list of include filters
     // Filters can include:
     //
-    // regex filters using the &quot;~&quot; operator. For example, &quot;name~^myregex$&quot;
-    // equality matches using the &quot;=&quot; operator. For example, &quot;name=myvalue&quot;
-    // substring matches using the &quot;=&quot; operator. For example, &quot;name=myvalue&quot;
+    // regex filters using the &quot;~&quot; operator. For example, &quot;name~^myRegex$&quot;
+    // equality matches using the &quot;=&quot; operator. For example, &quot;name=myValue&quot;
+    // substring matches using the &quot;=&quot; operator. For example, &quot;name=myValue&quot;
     //
     // If no operator is provided, it is treated as a substring match against the &quot;name&quot; field.
     Includes string
     // Comma-separated list of exclude filters.
     // Filters can include:
     //
-    // regex filters using the &quot;~&quot; operator. For example, &quot;name~^myregex$&quot;
-    // equality matches using the &quot;=&quot; operator. For example, &quot;name=myvalue&quot;
-    // substring matches using the &quot;=&quot; operator. For example, &quot;name=myvalue&quot;
+    // regex filters using the &quot;~&quot; operator. For example, &quot;name~^myRegex$&quot;
+    // equality matches using the &quot;=&quot; operator. For example, &quot;name=myValue&quot;
+    // substring matches using the &quot;=&quot; operator. For example, &quot;name=myValue&quot;
     //
     // If no operator is provided, it is treated as a substring match against the &quot;name&quot; field.
     Excludes string

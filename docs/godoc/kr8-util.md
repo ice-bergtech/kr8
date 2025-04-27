@@ -16,7 +16,7 @@ Package util contains various utility functions for directories and files. It in
 - [func FatalErrorCheck\(message string, err error, logger zerolog.Logger\)](<#FatalErrorCheck>)
 - [func FetchRepoUrl\(url string, destination string, noop bool\) error](<#FetchRepoUrl>)
 - [func Filter\(vs \[\]string, f func\(string\) bool\) \[\]string](<#Filter>)
-- [func FilterItems\(input map\[string\]string, pfilter PathFilterOptions\) \[\]string](<#FilterItems>)
+- [func FilterItems\(input map\[string\]string, pFilter PathFilterOptions\) \[\]string](<#FilterItems>)
 - [func FormatJsonnetString\(input string\) \(string, error\)](<#FormatJsonnetString>)
 - [func FormatJsonnetStringCustom\(input string, opts formatter.Options\) \(string, error\)](<#FormatJsonnetStringCustom>)
 - [func GetClusterFilenames\(searchDir string\) \(\[\]types.Kr8Cluster, error\)](<#GetClusterFilenames>)
@@ -108,7 +108,7 @@ Filter returns a new slice containing only the elements that satisfy the predica
 ## func [FilterItems](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L100>)
 
 ```go
-func FilterItems(input map[string]string, pfilter PathFilterOptions) []string
+func FilterItems(input map[string]string, pFilter PathFilterOptions) []string
 ```
 
 Given a map of string, filter them based on the provided options. The map value is parsed as a gjson result and then checked against the provided options.
@@ -235,18 +235,18 @@ type PathFilterOptions struct {
     // Comma-separated list of include filters
     // Filters can include:
     //
-    // regex filters using the "~" operator. For example, "name~^myregex$"
-    // equality matches using the "=" operator. For example, "name=myvalue"
-    // substring matches using the "=" operator. For example, "name=myvalue"
+    // regex filters using the "~" operator. For example, "name~^myRegex$"
+    // equality matches using the "=" operator. For example, "name=myValue"
+    // substring matches using the "=" operator. For example, "name=myValue"
     //
     // If no operator is provided, it is treated as a substring match against the "name" field.
     Includes string
     // Comma-separated list of exclude filters.
     // Filters can include:
     //
-    // regex filters using the "~" operator. For example, "name~^myregex$"
-    // equality matches using the "=" operator. For example, "name=myvalue"
-    // substring matches using the "=" operator. For example, "name=myvalue"
+    // regex filters using the "~" operator. For example, "name~^myRegex$"
+    // equality matches using the "=" operator. For example, "name=myValue"
+    // substring matches using the "=" operator. For example, "name=myValue"
     //
     // If no operator is provided, it is treated as a substring match against the "name" field.
     Excludes string

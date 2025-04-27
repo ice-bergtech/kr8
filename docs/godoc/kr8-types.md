@@ -37,7 +37,7 @@ Package kr8\_types defines the structure for kr8\+ cluster and component resourc
 func ExtractExtFiles(spec gjson.Result) map[string]string
 ```
 
-Extract jsonnet extVar defintions from spec.
+Extract jsonnet extVar definitions from spec.
 
 <a name="ExtractJpaths"></a>
 ## func [ExtractJpaths](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L142>)
@@ -286,9 +286,9 @@ The kr8\_spec object in a cluster config file. This configures how kr8 processes
 ```go
 type Kr8ComponentSpec struct {
     // If true, includes the parameters of the current cluster when generating this component
-    Kr8_allparams bool `json:"enable_kr8_allparams"`
+    Kr8_allParams bool `json:"enable_kr8_allparams"`
     // If true, includes the parameters of all other clusters when generating this component
-    Kr8_allclusters bool `json:"enable_kr8_allclusters"`
+    Kr8_allClusters bool `json:"enable_kr8_allclusters"`
     // If false, all non-generated files present in the output directory are removed
     DisableOutputDirClean bool `json:"disable_output_clean"`
     // A list of filenames to include as jsonnet vm external vars

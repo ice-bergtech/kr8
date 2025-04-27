@@ -113,9 +113,9 @@ type Kr8ComponentJsonnet struct {
 // This configures how kr8 processes the component.
 type Kr8ComponentSpec struct {
 	// If true, includes the parameters of the current cluster when generating this component
-	Kr8_allparams bool `json:"enable_kr8_allparams"`
+	Kr8_allParams bool `json:"enable_kr8_allparams"`
 	// If true, includes the parameters of all other clusters when generating this component
-	Kr8_allclusters bool `json:"enable_kr8_allclusters"`
+	Kr8_allClusters bool `json:"enable_kr8_allclusters"`
 	// If false, all non-generated files present in the output directory are removed
 	DisableOutputDirClean bool `json:"disable_output_clean"`
 	// A list of filenames to include as jsonnet vm external vars
@@ -126,7 +126,7 @@ type Kr8ComponentSpec struct {
 	Includes Kr8ComponentSpecIncludes `json:"includes"`
 }
 
-// Extract jsonnet extVar defintions from spec.
+// Extract jsonnet extVar definitions from spec.
 func ExtractExtFiles(spec gjson.Result) map[string]string {
 	result := make(map[string]string)
 	for k, v := range spec.Get("extfiles").Map() {
@@ -182,8 +182,8 @@ func CreateComponentSpec(spec gjson.Result, logger zerolog.Logger) (Kr8Component
 	}
 
 	componentSpec := Kr8ComponentSpec{
-		Kr8_allparams:         spec.Get("enable_kr8_allparams").Bool(),
-		Kr8_allclusters:       spec.Get("enable_kr8_allclusters").Bool(),
+		Kr8_allParams:         spec.Get("enable_kr8_allparams").Bool(),
+		Kr8_allClusters:       spec.Get("enable_kr8_allclusters").Bool(),
 		DisableOutputDirClean: spec.Get("disable_output_clean").Bool(),
 		ExtFiles:              ExtractExtFiles(spec),
 		JPaths:                ExtractJpaths(spec),

@@ -58,7 +58,7 @@ func CopyReadme() error {
 }
 
 func GoMarkDoc() error {
-	docRenderrer, err := gomarkdoc.NewRenderer()
+	docRenderer, err := gomarkdoc.NewRenderer()
 	if err != nil {
 		return err
 	}
@@ -74,7 +74,7 @@ func GoMarkDoc() error {
 		return err
 	}
 
-	docfiles := map[string]string{
+	docFiles := map[string]string{
 		"../cmd":           "kr8-cmd.md",
 		"../pkg/jnetvm":    "kr8-jsonnet.md",
 		"../pkg/types":     "types.md",
@@ -84,7 +84,7 @@ func GoMarkDoc() error {
 		"../pkg/generate":  "kr8-generate.md",
 	}
 
-	for pkgPath, pkgDoc := range docfiles {
+	for pkgPath, pkgDoc := range docFiles {
 		buildPkg, err := build.ImportDir(pkgPath, build.ImportComment)
 		if err != nil {
 			return err
@@ -95,7 +95,7 @@ func GoMarkDoc() error {
 		if err != nil {
 			return err
 		}
-		output, err := docRenderrer.Package(pkg)
+		output, err := docRenderer.Package(pkg)
 		if err != nil {
 			return err
 		}

@@ -20,8 +20,8 @@ import (
 func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) error {
 	compJson := kr8_types.Kr8ComponentJsonnet{
 		Kr8Spec: kr8_types.Kr8ComponentSpec{
-			Kr8_allparams:         false,
-			Kr8_allclusters:       false,
+			Kr8_allParams:         false,
+			Kr8_allClusters:       false,
 			DisableOutputDirClean: false,
 			Includes:              []kr8_types.Kr8ComponentSpecIncludeObject{},
 			ExtFiles:              map[string]string{},

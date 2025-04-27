@@ -53,18 +53,18 @@ type PathFilterOptions struct {
 	// Comma-separated list of include filters
 	// Filters can include:
 	//
-	// regex filters using the "~" operator. For example, "name~^myregex$"
-	// equality matches using the "=" operator. For example, "name=myvalue"
-	// substring matches using the "=" operator. For example, "name=myvalue"
+	// regex filters using the "~" operator. For example, "name~^myRegex$"
+	// equality matches using the "=" operator. For example, "name=myValue"
+	// substring matches using the "=" operator. For example, "name=myValue"
 	//
 	// If no operator is provided, it is treated as a substring match against the "name" field.
 	Includes string
 	// Comma-separated list of exclude filters.
 	// Filters can include:
 	//
-	// regex filters using the "~" operator. For example, "name~^myregex$"
-	// equality matches using the "=" operator. For example, "name=myvalue"
-	// substring matches using the "=" operator. For example, "name=myvalue"
+	// regex filters using the "~" operator. For example, "name~^myRegex$"
+	// equality matches using the "=" operator. For example, "name=myValue"
+	// substring matches using the "=" operator. For example, "name=myValue"
 	//
 	// If no operator is provided, it is treated as a substring match against the "name" field.
 	Excludes string
@@ -97,8 +97,8 @@ func CheckObjectMatch(input gjson.Result, filterString string) bool {
 
 // Given a map of string, filter them based on the provided options.
 // The map value is parsed as a gjson result and then checked against the provided options.
-func FilterItems(input map[string]string, pfilter PathFilterOptions) []string {
-	if pfilter.Includes == "" && pfilter.Excludes == "" {
+func FilterItems(input map[string]string, pFilter PathFilterOptions) []string {
+	if pFilter.Includes == "" && pFilter.Excludes == "" {
 		// Exit hatch
 		return []string{}
 	}
@@ -108,7 +108,7 @@ func FilterItems(input map[string]string, pfilter PathFilterOptions) []string {
 		// filter on cluster parameters, passed in gjson path notation with either
 		// "=" for equality or "~" for regex match
 		include := false
-		for _, b := range strings.Split(pfilter.Includes, ",") {
+		for _, b := range strings.Split(pFilter.Includes, ",") {
 			include = include || CheckObjectMatch(gjResult, b)
 		}
 		if !include {
@@ -118,7 +118,7 @@ func FilterItems(input map[string]string, pfilter PathFilterOptions) []string {
 		// "=" for equality or "~" for regex match
 		var exclude bool
 		exclude = false
-		for _, b := range strings.Split(pfilter.Excludes, ",") {
+		for _, b := range strings.Split(pFilter.Excludes, ",") {
 			exclude = exclude || CheckObjectMatch(gjResult, b)
 		}
 		if exclude {

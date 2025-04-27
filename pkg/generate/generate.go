@@ -109,8 +109,10 @@ func buildComponentList(
 	return compList
 }
 
+// Root function for processing a kr8 component.
+// Processes a component through a jsonnet VM to generate output files.
 func GenProcessComponent(
-	vmconfig types.VMConfig,
+	vmConfig types.VMConfig,
 	componentName string,
 	kr8Spec kr8_types.Kr8ClusterSpec,
 	kr8Opts types.Kr8Opts,
@@ -129,7 +131,7 @@ func GenProcessComponent(
 
 	// it's faster to create this VM for each component, rather than re-use
 	jvm, compPath, err := SetupAndConfigureVM(
-		vmconfig,
+		vmConfig,
 		config,
 		kr8Spec,
 		componentName,
@@ -177,8 +179,13 @@ func GenProcessComponent(
 	return nil
 }
 
+// Setup and configures a jsonnet VM for processing kr8 resources.
+// Creates a new VM and does the following:
+//   - loads cluster and component config
+//   - loads jsonnet library files
+//   - loads external file references
 func SetupAndConfigureVM(
-	vmconfig types.VMConfig,
+	vmConfig types.VMConfig,
 	config string,
 	kr8Spec kr8_types.Kr8ClusterSpec,
 	componentName string,
@@ -189,17 +196,17 @@ func SetupAndConfigureVM(
 	kr8Opts types.Kr8Opts,
 	logger zerolog.Logger,
 ) (*jsonnet.VM, string, error) {
-	jvm, err := SetupJvmForComponent(vmconfig, config, kr8Spec, componentName)
+	jvm, err := SetupJvmForComponent(vmConfig, config, kr8Spec, componentName)
 	if err := util.LogErrorIfCheck("error setting up JVM for component", err, logger); err != nil {
 		return nil, "", err
 	}
 	// include full render of all component params
-	if compSpec.Kr8_allparams {
+	if compSpec.Kr8_allParams {
 		// only do this if we have not already cached it and don't already have it stored
 		if err := getAllComponentParamsThreadsafe(
 			allConfig,
 			config,
-			vmconfig,
+			vmConfig,
 			kr8Spec,
 			filters,
 			paramsFile,
@@ -209,9 +216,9 @@ func SetupAndConfigureVM(
 			return nil, "", util.LogErrorIfCheck("error getting all component params", err, logger)
 		}
 	}
-	if compSpec.Kr8_allclusters {
+	if compSpec.Kr8_allClusters {
 		// add kr8_allclusters extcode with every cluster's cluster level params
-		if err := getAllClusterParams(kr8Opts.ClusterDir, vmconfig, jvm, logger); err != nil {
+		if err := getAllClusterParams(kr8Opts.ClusterDir, vmConfig, jvm, logger); err != nil {
 			return nil, "", util.LogErrorIfCheck("error getting all cluster params", err, logger)
 		}
 	}
@@ -227,10 +234,10 @@ func SetupAndConfigureVM(
 	return jvm, compPath, err
 }
 
-// combine all the cluster params into a single object indexed by cluster name.
-func getAllClusterParams(clusterDir string, vmconfig types.VMConfig, jvm *jsonnet.VM, logger zerolog.Logger) error {
+// Combine all the cluster params into a single object indexed by cluster name.
+func getAllClusterParams(clusterDir string, vmConfig types.VMConfig, jvm *jsonnet.VM, logger zerolog.Logger) error {
 	allClusterParamsObject := "{ "
-	params, err := GetClusterParams(clusterDir, vmconfig, logger)
+	params, err := GetClusterParams(clusterDir, vmConfig, logger)
 	if err != nil {
 		return err
 	}
@@ -248,7 +255,7 @@ func getAllClusterParams(clusterDir string, vmconfig types.VMConfig, jvm *jsonne
 func getAllComponentParamsThreadsafe(
 	allConfig *safeString,
 	config string,
-	vmconfig types.VMConfig,
+	vmConfig types.VMConfig,
 	kr8Spec kr8_types.Kr8ClusterSpec,
 	filters util.PathFilterOptions,
 	paramsFile string,
@@ -262,7 +269,7 @@ func getAllComponentParamsThreadsafe(
 		} else {
 			var err error
 			allConfig.config, err = jnetvm.JsonnetRenderClusterParams(
-				vmconfig,
+				vmConfig,
 				kr8Spec.Name,
 				[]string{},
 				paramsFile,
@@ -281,6 +288,9 @@ func getAllComponentParamsThreadsafe(
 	return nil
 }
 
+// Generates the list of includes files for a component.
+// Processes each includes file using the component's config.
+// Returns an error if there's an issue with ANY includes file.
 func GenerateIncludesFiles(
 	includesFiles []kr8_types.Kr8ComponentSpecIncludeObject,
 	kr8Spec kr8_types.Kr8ClusterSpec,
@@ -326,6 +336,9 @@ func GenerateIncludesFiles(
 	return outputFileMap, nil
 }
 
+// The root function for generating a cluster.
+// Prepares and builds the cluster config.
+// Build and processes the list of components.
 func GenProcessCluster(
 	clusterName string,
 	clusterdir string,
@@ -389,6 +402,8 @@ func GenProcessCluster(
 	return renderComponents(config, vmConfig, kr8Spec, compList, clusterParamsFile, pool, kr8Opts, filters, logger)
 }
 
+// Renders a list of components with a given Kr8ClusterSpec configuration.
+// Each component is processed by a process thread from a thread pool.
 func renderComponents(
 	config string,
 	vmConfig types.VMConfig,
@@ -400,7 +415,7 @@ func renderComponents(
 	filters util.PathFilterOptions,
 	logger zerolog.Logger,
 ) error {
-	var allconfig safeString
+	var allConfig safeString
 
 	var waitGroup sync.WaitGroup
 	for _, componentName := range compList {
@@ -415,7 +430,7 @@ func renderComponents(
 				kr8Spec,
 				kr8Opts,
 				config,
-				&allconfig,
+				&allConfig,
 				filters,
 				clusterParamsFile,
 				sublogger,

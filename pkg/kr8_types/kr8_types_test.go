@@ -345,7 +345,7 @@ func TestCreateComponentSpec(t *testing.T) {
 				"enable_kr8_allparams": true
 			}`),
 			want: Kr8ComponentSpec{
-				Kr8_allparams: true,
+				Kr8_allParams: true,
 			},
 		},
 		{
@@ -355,8 +355,8 @@ func TestCreateComponentSpec(t *testing.T) {
 				"enable_kr8_allclusters": false
 			}`),
 			want: Kr8ComponentSpec{
-				Kr8_allparams:   true,
-				Kr8_allclusters: false,
+				Kr8_allParams:   true,
+				Kr8_allClusters: false,
 			},
 		},
 		{
