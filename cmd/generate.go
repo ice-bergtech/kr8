@@ -90,12 +90,11 @@ func GenerateCommand(cmd *cobra.Command, args []string) {
 	// Generate config for each cluster in parallel
 	for _, clusterName := range clusterList {
 		waitGroup.Add(1)
-		cl := clusterName
 		_ = ants_cl.Submit(func() {
 			defer waitGroup.Done()
 			sublogger := log.With().Str("cluster", clusterName).Logger()
 			err := gen.GenProcessCluster(
-				cl,
+				clusterName,
 				RootConfig.ClusterDir,
 				RootConfig.BaseDir,
 				cmdGenerateFlags.GenerateDir,

@@ -102,13 +102,11 @@ func GenProcessComponent(
 	logger zerolog.Logger,
 ) error {
 	logger.Info().Msg("Processing component")
-
 	// get kr8_spec from component's params
 	compSpec, err := kr8_types.CreateComponentSpec(gjson.Get(config, componentName+".kr8_spec"), logger)
 	if err := util.LogErrorIfCheck("Error creating component spec", err, logger); err != nil {
 		return err
 	}
-
 	// it's faster to create this VM for each component, rather than re-use
 	jvm, compPath, err := SetupComponentVM(
 		vmConfig,
@@ -179,8 +177,9 @@ func SetupComponentVM(
 	// Initialize a default jsonnet VM for components to build on top of
 	jvm, err := SetupBaseComponentJvm(vmConfig, config, kr8Spec)
 	if err != nil {
-		logger.Error().Err(err).Msg("error initializing component jsonnet VM")
-		return nil, "", err
+		kErr := types.Kr8Error{Message: "error initializing component jsonnet VM", Value: err}
+
+		return nil, "", kErr
 	}
 	// Add component-specific config to the JVM
 	SetupJvmForComponent(jvm, config, kr8Spec, componentName)
@@ -340,7 +339,14 @@ func GenProcessCluster(
 	logger.Debug().Str("cluster", clusterName).Msg("Processing cluster")
 
 	// Start by compiling the cluster-level configuration
-	kr8Spec, clusterComponents, err := CompileClusterConfiguration(clusterdir, clusterName, vmConfig, logger, kr8Opts, generateDirOverride)
+	kr8Spec, clusterComponents, err := CompileClusterConfiguration(
+		clusterName,
+		clusterdir,
+		kr8Opts,
+		vmConfig,
+		generateDirOverride,
+		logger,
+	)
 	if err != nil {
 		return err
 	}
@@ -381,14 +387,13 @@ func GenProcessCluster(
 	return RenderComponents(config, vmConfig, *kr8Spec, compList, clusterParamsFile, pool, kr8Opts, filters, logger)
 }
 
-// Build the list of cluster parameter files to combine by walking folder tree leaf to root
+// Build the list of cluster parameter files to combine by walking folder tree leaf to root.
 func CompileClusterConfiguration(
-	clusterDir string,
-	clusterName string,
-	vmConfig types.VMConfig,
-	logger zerolog.Logger,
+	clusterName, clusterDir string,
 	kr8Opts types.Kr8Opts,
+	vmConfig types.VMConfig,
 	generateDirOverride string,
+	logger zerolog.Logger,
 ) (*kr8_types.Kr8ClusterSpec, map[string]gjson.Result, error) {
 	// First determine the path to the cluster.jsonnet file.
 	clusterPath, err := util.GetClusterPath(clusterDir, clusterName)

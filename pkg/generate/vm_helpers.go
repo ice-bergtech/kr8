@@ -15,7 +15,7 @@ import (
 )
 
 // This function sets up component-specific external code in the JVM.
-// It makes the component config available to the jvm under the `kr8` extVar
+// It makes the component config available to the jvm under the `kr8` extVar.
 func SetupJvmForComponent(
 	jvm *jsonnet.VM,
 	config string,

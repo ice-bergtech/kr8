@@ -41,7 +41,7 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) er
 }
 
 // Create the root cluster output directory.
-// Returns a list of cluster component output directories that already existed
+// Returns a list of cluster component output directories that already existed.
 func CreateClusterGenerateDirs(kr8Spec kr8_types.Kr8ClusterSpec) ([]string, error) {
 	// Create root cluster output dir
 	if _, err := os.Stat(kr8Spec.ClusterOutputDir); os.IsNotExist(err) {
