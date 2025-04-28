@@ -13,6 +13,8 @@ Defines the cli\-interface commands available to the user.
 - [func Execute\(ver string\)](<#Execute>)
 - [func GenerateCommand\(cmd \*cobra.Command, args \[\]string\)](<#GenerateCommand>)
 - [func InitConfig\(\)](<#InitConfig>)
+- [func ProfilingFinalizer\(\)](<#ProfilingFinalizer>)
+- [func ProfilingInitializer\(\)](<#ProfilingInitializer>)
 - [type CmdGenerateOptions](<#CmdGenerateOptions>)
 - [type CmdGetOptions](<#CmdGetOptions>)
 - [type CmdRenderOptions](<#CmdRenderOptions>)
@@ -182,7 +184,7 @@ var GetComponentsCmd = &cobra.Command{
 
         var params []string
         if cmdGetFlags.Cluster != "" {
-            clusterPath, err := util.GetClusterPaths(RootConfig.ClusterDir, cmdGetFlags.Cluster)
+            clusterPath, err := util.GetClusterPath(RootConfig.ClusterDir, cmdGetFlags.Cluster)
             util.FatalErrorCheck("error getting cluster path for "+cmdGetFlags.Cluster, err, log.Logger)
             params = util.GetClusterParamsFilenames(RootConfig.ClusterDir, clusterPath)
         }
@@ -604,7 +606,7 @@ var VersionCmd = &cobra.Command{
 ```
 
 <a name="ConfigureLogger"></a>
-## func [ConfigureLogger](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L97>)
+## func [ConfigureLogger](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L107>)
 
 ```go
 func ConfigureLogger(debug bool)
@@ -613,7 +615,7 @@ func ConfigureLogger(debug bool)
 
 
 <a name="Execute"></a>
-## func [Execute](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L32>)
+## func [Execute](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L33>)
 
 ```go
 func Execute(ver string)
@@ -631,13 +633,31 @@ func GenerateCommand(cmd *cobra.Command, args []string)
 This function generates the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.
 
 <a name="InitConfig"></a>
-## func [InitConfig](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L123>)
+## func [InitConfig](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L133>)
 
 ```go
 func InitConfig()
 ```
 
 InitConfig reads in config file and ENV variables if set.
+
+<a name="ProfilingFinalizer"></a>
+## func [ProfilingFinalizer](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L172>)
+
+```go
+func ProfilingFinalizer()
+```
+
+Stop profiling and write cpu and memory profiling files if configured.
+
+<a name="ProfilingInitializer"></a>
+## func [ProfilingInitializer](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L197>)
+
+```go
+func ProfilingInitializer()
+```
+
+Sets up program profiling.
 
 <a name="CmdGenerateOptions"></a>
 ## type [CmdGenerateOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L18-L25>)
@@ -699,7 +719,7 @@ type CmdRenderOptions struct {
 ```
 
 <a name="CmdRootOptions"></a>
-## type [CmdRootOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L41-L60>)
+## type [CmdRootOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L42-L65>)
 
 Default options that are available to all commands.
 
@@ -721,8 +741,12 @@ type CmdRootOptions struct {
     LogLevel string
     // enable colorized output (default true). Set to false to disable")
     Color bool
-    // contains ingormation to configure jsonnet vm
+    // contains information to configure jsonnet vm
     VMConfig types.VMConfig
+    // Profiling output directory.  Only captured if set.
+    ProfilingDir string
+    // CPU profiling output file handle.
+    ProfilingCPUFile *os.File
 }
 ```
 

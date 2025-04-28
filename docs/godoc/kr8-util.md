@@ -21,7 +21,7 @@ Package util contains various utility functions for directories and files. It in
 - [func FormatJsonnetStringCustom\(input string, opts formatter.Options\) \(string, error\)](<#FormatJsonnetStringCustom>)
 - [func GetClusterFilenames\(searchDir string\) \(\[\]types.Kr8Cluster, error\)](<#GetClusterFilenames>)
 - [func GetClusterParamsFilenames\(basePath string, targetPath string\) \[\]string](<#GetClusterParamsFilenames>)
-- [func GetClusterPaths\(searchDir string, clusterName string\) \(string, error\)](<#GetClusterPaths>)
+- [func GetClusterPath\(searchDir string, clusterName string\) \(string, error\)](<#GetClusterPath>)
 - [func GetDefaultFormatOptions\(\) formatter.Options](<#GetDefaultFormatOptions>)
 - [func JsonnetPrint\(output string, format string, color bool\) error](<#JsonnetPrint>)
 - [func LogErrorIfCheck\(message string, err error, logger zerolog.Logger\) error](<#LogErrorIfCheck>)
@@ -149,14 +149,14 @@ func GetClusterParamsFilenames(basePath string, targetPath string) []string
 
 Get all cluster parameters within a directory. Walks through the directory hierarchy and returns all paths to \`params.jsonnet\` files.
 
-<a name="GetClusterPaths"></a>
-## func [GetClusterPaths](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L52>)
+<a name="GetClusterPath"></a>
+## func [GetClusterPath](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L52>)
 
 ```go
-func GetClusterPaths(searchDir string, clusterName string) (string, error)
+func GetClusterPath(searchDir string, clusterName string) (string, error)
 ```
 
-Get a specific cluster within a directory by name. Walks the cluster directory searching for the given clusterName. Returns the path to the cluster.
+Get a specific cluster within a directory by name. \[filepath.Walk\]s the cluster directory tree searching for the given clusterName. Returns the path to the cluster.jsonnet file.
 
 <a name="GetDefaultFormatOptions"></a>
 ## func [GetDefaultFormatOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/util/json.go#L90>)

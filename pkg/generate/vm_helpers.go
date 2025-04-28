@@ -14,15 +14,30 @@ import (
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
+// This function sets up component-specific external code in the JVM.
+// It makes the component config available to the jvm under the `kr8` extVar.
+func SetupJvmForComponent(
+	jvm *jsonnet.VM,
+	config string,
+	kr8Spec kr8_types.Kr8ClusterSpec,
+	componentName string,
+) {
+	// check if we should prune params
+	if kr8Spec.PruneParams {
+		jvm.ExtCode("kr8", "std.prune("+config+"."+componentName+")")
+	} else {
+		jvm.ExtCode("kr8", config+"."+componentName)
+	}
+}
+
 // This function sets up the JVM for a given component.
 // It registers native functions, sets up post-processing, and prunes parameters as required.
 // It's faster to create this VM for each component, rather than re-use.
 // Default postprocessor just copies input to output.
-func SetupJvmForComponent(
+func SetupBaseComponentJvm(
 	vmconfig types.VMConfig,
 	config string,
 	kr8Spec kr8_types.Kr8ClusterSpec,
-	componentName string,
 ) (*jsonnet.VM, error) {
 	jvm, err := jnetvm.JsonnetVM(vmconfig)
 	if err != nil {
@@ -36,13 +51,6 @@ func SetupJvmForComponent(
 	} else {
 		// Default PostProcessor passes input to output
 		jvm.ExtCode("process", "function(input) input")
-	}
-
-	// check if we should prune params
-	if kr8Spec.PruneParams {
-		jvm.ExtCode("kr8", "std.prune("+config+"."+componentName+")")
-	} else {
-		jvm.ExtCode("kr8", config+"."+componentName)
 	}
 
 	return jvm, nil

@@ -40,8 +40,10 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) er
 	return nil
 }
 
-func setupClusterGenerateDirs(kr8Spec kr8_types.Kr8ClusterSpec) ([]string, error) {
-	// create cluster dir
+// Create the root cluster output directory.
+// Returns a list of cluster component output directories that already existed.
+func CreateClusterGenerateDirs(kr8Spec kr8_types.Kr8ClusterSpec) ([]string, error) {
+	// Create root cluster output dir
 	if _, err := os.Stat(kr8Spec.ClusterOutputDir); os.IsNotExist(err) {
 		err = os.MkdirAll(kr8Spec.ClusterOutputDir, 0750)
 		if err := util.ErrorIfCheck("Error creating cluster generateDir", err); err != nil {
@@ -49,7 +51,7 @@ func setupClusterGenerateDirs(kr8Spec kr8_types.Kr8ClusterSpec) ([]string, error
 		}
 	}
 
-	// get list of current generated components directories
+	// Get list of current generated components directories
 	dir, err := os.Open(kr8Spec.ClusterOutputDir)
 	if err := util.ErrorIfCheck("Error opening clusterDir", err); err != nil {
 		return []string{}, err

@@ -135,6 +135,10 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#func-initconfig">func InitConfig</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-profilingfinalizer">func ProfilingFinalizer</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-profilinginitializer">func ProfilingInitializer</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#type-cmdgenerateoptions">type CmdGenerateOptions</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#type-cmdgetoptions">type CmdGetOptions</a>
@@ -196,6 +200,8 @@
 <li><a href="#Execute">func Execute(ver string)</a></li>
 <li><a href="#GenerateCommand">func GenerateCommand(cmd *cobra.Command, args []string)</a></li>
 <li><a href="#InitConfig">func InitConfig()</a></li>
+<li><a href="#ProfilingFinalizer">func ProfilingFinalizer()</a></li>
+<li><a href="#ProfilingInitializer">func ProfilingInitializer()</a></li>
 <li><a href="#CmdGenerateOptions">type CmdGenerateOptions</a></li>
 <li><a href="#CmdGetOptions">type CmdGetOptions</a></li>
 <li><a href="#CmdRenderOptions">type CmdRenderOptions</a></li>
@@ -349,7 +355,7 @@
 
         var params []string
         if cmdGetFlags.Cluster != &quot;&quot; {
-            clusterPath, err := util.GetClusterPaths(RootConfig.ClusterDir, cmdGetFlags.Cluster)
+            clusterPath, err := util.GetClusterPath(RootConfig.ClusterDir, cmdGetFlags.Cluster)
             util.FatalErrorCheck(&quot;error getting cluster path for &quot;+cmdGetFlags.Cluster, err, log.Logger)
             params = util.GetClusterParamsFilenames(RootConfig.ClusterDir, clusterPath)
         }
@@ -734,11 +740,11 @@ and initialize a git repo so you can get started`,
 }
 </code></pre>
 <p><a name="ConfigureLogger"></a></p>
-<h2 id="func-configurelogger">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L97">ConfigureLogger</a></h2>
+<h2 id="func-configurelogger">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L107">ConfigureLogger</a></h2>
 <pre><code class="language-go">func ConfigureLogger(debug bool)
 </code></pre>
 <p><a name="Execute"></a></p>
-<h2 id="func-execute">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L32">Execute</a></h2>
+<h2 id="func-execute">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L33">Execute</a></h2>
 <pre><code class="language-go">func Execute(ver string)
 </code></pre>
 <p>Execute adds all child commands to the root command sets flags appropriately. This is called by main.main(). It only needs to happen once to the rootCmd.</p>
@@ -748,10 +754,20 @@ and initialize a git repo so you can get started`,
 </code></pre>
 <p>This function generates the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.</p>
 <p><a name="InitConfig"></a></p>
-<h2 id="func-initconfig">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L123">InitConfig</a></h2>
+<h2 id="func-initconfig">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L133">InitConfig</a></h2>
 <pre><code class="language-go">func InitConfig()
 </code></pre>
 <p>InitConfig reads in config file and ENV variables if set.</p>
+<p><a name="ProfilingFinalizer"></a></p>
+<h2 id="func-profilingfinalizer">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L172">ProfilingFinalizer</a></h2>
+<pre><code class="language-go">func ProfilingFinalizer()
+</code></pre>
+<p>Stop profiling and write cpu and memory profiling files if configured.</p>
+<p><a name="ProfilingInitializer"></a></p>
+<h2 id="func-profilinginitializer">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L197">ProfilingInitializer</a></h2>
+<pre><code class="language-go">func ProfilingInitializer()
+</code></pre>
+<p>Sets up program profiling.</p>
 <p><a name="CmdGenerateOptions"></a></p>
 <h2 id="type-cmdgenerateoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L18-L25">CmdGenerateOptions</a></h2>
 <p>Stores the options for the 'generate' command.</p>
@@ -800,7 +816,7 @@ and initialize a git repo so you can get started`,
 }
 </code></pre>
 <p><a name="CmdRootOptions"></a></p>
-<h2 id="type-cmdrootoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L41-L60">CmdRootOptions</a></h2>
+<h2 id="type-cmdrootoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L42-L65">CmdRootOptions</a></h2>
 <p>Default options that are available to all commands.</p>
 <pre><code class="language-go">type CmdRootOptions struct {
     // kr8 config base directory
@@ -819,8 +835,12 @@ and initialize a git repo so you can get started`,
     LogLevel string
     // enable colorized output (default true). Set to false to disable&quot;)
     Color bool
-    // contains ingormation to configure jsonnet vm
+    // contains information to configure jsonnet vm
     VMConfig types.VMConfig
+    // Profiling output directory.  Only captured if set.
+    ProfilingDir string
+    // CPU profiling output file handle.
+    ProfilingCPUFile *os.File
 }
 </code></pre>
 <p><a name="RootConfig"></a></p>
