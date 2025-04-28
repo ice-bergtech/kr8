@@ -58,53 +58,32 @@ func GetClusterParams(clusterDir string, vmConfig types.VMConfig, logger zerolog
 	return allClusterParams, nil
 }
 
+// Calculates which components should be generated based on filters.
 // Only processes specified component if it's defined in the cluster.
 // Processes components in string sorted order.
 // Sorts out orphaned, generated components directories.
-func buildComponentList(
-	generatedCompList []string,
+func CalculateClusterComponentList(
 	clusterComponents map[string]gjson.Result,
-	clusterDir string,
-	clusterName string,
 	filters util.PathFilterOptions,
+	existingClusterComponents []string,
 ) []string {
 	var compList []string
-	var currentCompRefList []string
 
 	if filters.Components == "" {
 		compList = maps.Keys(clusterComponents)
-		currentCompRefList = generatedCompList
 	} else {
 		for _, filterStr := range strings.Split(filters.Components, ",") {
-			listFilterComp := util.Filter(generatedCompList, func(s string) bool {
-				r, _ := regexp.MatchString("^"+filterStr+"$", s)
+			compList = append(
+				compList,
+				util.Filter(maps.Keys(clusterComponents), func(s string) bool {
+					r, _ := regexp.MatchString("^"+filterStr+"$", s)
 
-				return r
-			})
-			currentCompRefList = append(currentCompRefList, listFilterComp...)
-
-			listFilterCluster := util.Filter(maps.Keys(clusterComponents), func(s string) bool {
-				r, _ := regexp.MatchString("^"+filterStr+"$", s)
-
-				return r
-			})
-			compList = append(compList, listFilterCluster...)
+					return r
+				})...,
+			)
 		}
 	}
 	sort.Strings(compList)
-
-	// cleanup components that are no longer referenced
-	for _, component := range currentCompRefList {
-		if _, found := clusterComponents[component]; !found {
-			delComp := filepath.Join(clusterDir, component)
-			if err := os.RemoveAll(delComp); err != nil {
-				log.Error().Msg("Issue deleting generated for component " + component)
-			}
-			log.Info().Str("cluster", clusterName).
-				Str("component", component).
-				Msg("Deleting generated for component")
-		}
-	}
 
 	return compList
 }
@@ -123,6 +102,7 @@ func GenProcessComponent(
 	logger zerolog.Logger,
 ) error {
 	logger.Info().Msg("Processing component")
+
 	// get kr8_spec from component's params
 	compSpec, err := kr8_types.CreateComponentSpec(gjson.Get(config, componentName+".kr8_spec"), logger)
 	if err := util.LogErrorIfCheck("Error creating component spec", err, logger); err != nil {
@@ -130,7 +110,7 @@ func GenProcessComponent(
 	}
 
 	// it's faster to create this VM for each component, rather than re-use
-	jvm, compPath, err := SetupAndConfigureVM(
+	jvm, compPath, err := SetupComponentVM(
 		vmConfig,
 		config,
 		kr8Spec,
@@ -184,7 +164,7 @@ func GenProcessComponent(
 //   - loads cluster and component config
 //   - loads jsonnet library files
 //   - loads external file references
-func SetupAndConfigureVM(
+func SetupComponentVM(
 	vmConfig types.VMConfig,
 	config string,
 	kr8Spec kr8_types.Kr8ClusterSpec,
@@ -196,14 +176,18 @@ func SetupAndConfigureVM(
 	kr8Opts types.Kr8Opts,
 	logger zerolog.Logger,
 ) (*jsonnet.VM, string, error) {
-	jvm, err := SetupJvmForComponent(vmConfig, config, kr8Spec, componentName)
-	if err := util.LogErrorIfCheck("error setting up JVM for component", err, logger); err != nil {
+	// Initialize a default jsonnet VM for components to build on top of
+	jvm, err := SetupBaseComponentJvm(vmConfig, config, kr8Spec)
+	if err != nil {
+		logger.Error().Err(err).Msg("error initializing component jsonnet VM")
 		return nil, "", err
 	}
-	// include full render of all component params
+	// Add component-specific config to the JVM
+	SetupJvmForComponent(jvm, config, kr8Spec, componentName)
+	// Check if a full render of all cluster component params should be included
 	if compSpec.Kr8_allParams {
 		// only do this if we have not already cached it and don't already have it stored
-		if err := getAllComponentParamsThreadsafe(
+		if err := GetClusterComponentParamsThreadsafe(
 			allConfig,
 			config,
 			vmConfig,
@@ -216,13 +200,15 @@ func SetupAndConfigureVM(
 			return nil, "", util.LogErrorIfCheck("error getting all component params", err, logger)
 		}
 	}
+	// check if a full render of ALL cluster params should be included
 	if compSpec.Kr8_allClusters {
 		// add kr8_allclusters extcode with every cluster's cluster level params
-		if err := getAllClusterParams(kr8Opts.ClusterDir, vmConfig, jvm, logger); err != nil {
+		if err := GetAllClusterParams(kr8Opts.ClusterDir, vmConfig, jvm, logger); err != nil {
 			return nil, "", util.LogErrorIfCheck("error getting all cluster params", err, logger)
 		}
 	}
 
+	// Load files referenced by the component
 	compPath := filepath.Clean(gjson.Get(config, "_components."+componentName+".path").String())
 	// jPathResults always includes base lib. Add jpaths from spec if set
 	loadJPathsIntoVM(compSpec, compPath, kr8Opts.BaseDir, jvm, logger)
@@ -231,11 +217,11 @@ func SetupAndConfigureVM(
 		return nil, "", util.LogErrorIfCheck("error loading ext files into vars", err, logger)
 	}
 
-	return jvm, compPath, err
+	return jvm, compPath, nil
 }
 
 // Combine all the cluster params into a single object indexed by cluster name.
-func getAllClusterParams(clusterDir string, vmConfig types.VMConfig, jvm *jsonnet.VM, logger zerolog.Logger) error {
+func GetAllClusterParams(clusterDir string, vmConfig types.VMConfig, jvm *jsonnet.VM, logger zerolog.Logger) error {
 	allClusterParamsObject := "{ "
 	params, err := GetClusterParams(clusterDir, vmConfig, logger)
 	if err != nil {
@@ -252,7 +238,7 @@ func getAllClusterParams(clusterDir string, vmConfig types.VMConfig, jvm *jsonne
 
 // Include full render of all component params for cluster.
 // Only do this if we have not already cached it and don't already have it stored.
-func getAllComponentParamsThreadsafe(
+func GetClusterComponentParamsThreadsafe(
 	allConfig *safeString,
 	config string,
 	vmConfig types.VMConfig,
@@ -352,41 +338,34 @@ func GenProcessCluster(
 	logger zerolog.Logger,
 ) error {
 	logger.Debug().Str("cluster", clusterName).Msg("Processing cluster")
-	clusterPaths, err := util.GetClusterPaths(clusterdir, clusterName)
+
+	// Start by compiling the cluster-level configuration
+	kr8Spec, clusterComponents, err := CompileClusterConfiguration(clusterdir, clusterName, vmConfig, logger, kr8Opts, generateDirOverride)
 	if err != nil {
 		return err
 	}
-	// get list of components for cluster
-	params := util.GetClusterParamsFilenames(clusterdir, clusterPaths)
-	renderedKr8Spec, err := jnetvm.JsonnetRenderFiles(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")
-	if err := util.LogErrorIfCheck("error rendering cluster `_kr8_spec`", err, logger); err != nil {
-		return err
-	}
-
-	// get kr8 settings for cluster
-	kr8Spec, err := kr8_types.CreateClusterSpec(clusterName, gjson.Parse(renderedKr8Spec),
-		kr8Opts, generateDirOverride,
-		logger,
-	)
-	if err := util.LogErrorIfCheck("error creating kr8Spec", err, logger); err != nil {
-		return err
-	}
-
-	generatedCompList, err := setupClusterGenerateDirs(kr8Spec)
+	// Setup output dirs
+	existingComponents, err := CreateClusterGenerateDirs(*kr8Spec)
 	if err := util.LogErrorIfCheck("error creating generate dirs", err, logger); err != nil {
 		return err
 	}
 
-	renderedCompSpec, err := jnetvm.JsonnetRenderFiles(vmConfig, params, "._components", true, "", "clustercomponents")
-	if err := util.LogErrorIfCheck("error rendering cluster components list", err, logger); err != nil {
-		return err
+	// Remove component output dirs that are no longer referenced
+	for _, component := range existingComponents {
+		if _, found := clusterComponents[component]; !found {
+			delComp := filepath.Join(kr8Spec.ClusterOutputDir, component)
+			if err := os.RemoveAll(delComp); err != nil {
+				logger.Error().Msg("Issue deleting generated for component " + component)
+			}
+			logger.Info().Str("component", component).
+				Msg("Deleting generated dir for non-referenced component")
+		}
 	}
 
-	clusterComponents := gjson.Parse(renderedCompSpec).Map()
+	// Determine list of components to process
+	compList := CalculateClusterComponentList(clusterComponents, filters, existingComponents)
 
-	// determine list of components to process
-	compList := buildComponentList(generatedCompList, clusterComponents, kr8Spec.ClusterOutputDir, kr8Spec.Name, filters)
-
+	// Use Jsonnet to render cluster-level configurations for components
 	config, err := jnetvm.JsonnetRenderClusterParams(
 		vmConfig,
 		kr8Spec.Name,
@@ -399,12 +378,57 @@ func GenProcessCluster(
 	}
 
 	// render full params for cluster for all selected components
-	return renderComponents(config, vmConfig, kr8Spec, compList, clusterParamsFile, pool, kr8Opts, filters, logger)
+	return RenderComponents(config, vmConfig, *kr8Spec, compList, clusterParamsFile, pool, kr8Opts, filters, logger)
+}
+
+// Build the list of cluster parameter files to combine by walking folder tree leaf to root
+func CompileClusterConfiguration(
+	clusterDir string,
+	clusterName string,
+	vmConfig types.VMConfig,
+	logger zerolog.Logger,
+	kr8Opts types.Kr8Opts,
+	generateDirOverride string,
+) (*kr8_types.Kr8ClusterSpec, map[string]gjson.Result, error) {
+	// First determine the path to the cluster.jsonnet file.
+	clusterPath, err := util.GetClusterPath(clusterDir, clusterName)
+	if err != nil {
+		return nil, nil, err
+	}
+	// Gather list of configurations that apply to the cluster
+	params := util.GetClusterParamsFilenames(clusterDir, clusterPath)
+
+	// Compile the cluster kr8 configuration
+	renderedKr8Spec, err := jnetvm.JsonnetRenderFiles(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")
+	if err := util.LogErrorIfCheck("error rendering cluster `_kr8_spec`", err, logger); err != nil {
+		return nil, nil, err
+	}
+	// Package the cluster kr8 spec into struct
+	kr8Spec, err := kr8_types.CreateClusterSpec(
+		clusterName,
+		gjson.Parse(renderedKr8Spec),
+		kr8Opts,
+		generateDirOverride,
+		logger,
+	)
+	if err := util.LogErrorIfCheck("error creating kr8Spec", err, logger); err != nil {
+		return nil, nil, err
+	}
+
+	// Compile the cluster component references
+	renderedCompSpec, err := jnetvm.JsonnetRenderFiles(vmConfig, params, "._components", true, "", "clustercomponents")
+	if err := util.LogErrorIfCheck("error rendering cluster components list", err, logger); err != nil {
+		return nil, nil, err
+	}
+	// Package into a map
+	clusterComponents := gjson.Parse(renderedCompSpec).Map()
+
+	return &kr8Spec, clusterComponents, nil
 }
 
 // Renders a list of components with a given Kr8ClusterSpec configuration.
 // Each component is processed by a process thread from a thread pool.
-func renderComponents(
+func RenderComponents(
 	config string,
 	vmConfig types.VMConfig,
 	kr8Spec kr8_types.Kr8ClusterSpec,
@@ -418,6 +442,7 @@ func renderComponents(
 	var allConfig safeString
 
 	var waitGroup sync.WaitGroup
+
 	for _, componentName := range compList {
 		waitGroup.Add(1)
 		cName := componentName
