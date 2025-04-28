@@ -183,7 +183,7 @@ func JsonnetRenderClusterParamsOnly(
 ) (string, error) {
 	var params []string
 	if clusterName != "" {
-		clusterPath, err := util.GetClusterPaths(vmconfig.BaseDir, clusterName)
+		clusterPath, err := util.GetClusterPath(vmconfig.BaseDir, clusterName)
 		if err != nil {
 			return "", err
 		}
@@ -213,7 +213,7 @@ func JsonnetRenderClusterParams(
 	var componentMap map[string]kr8_types.Kr8ClusterComponentRef
 
 	if clusterName != "" {
-		clusterPath, err := util.GetClusterPaths(vmconfig.BaseDir, clusterName)
+		clusterPath, err := util.GetClusterPath(vmconfig.BaseDir, clusterName)
 		if err != nil {
 			return "", err
 		}

@@ -47,9 +47,9 @@ func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error) {
 }
 
 // Get a specific cluster within a directory by name.
-// Walks the cluster directory searching for the given clusterName.
-// Returns the path to the cluster.
-func GetClusterPaths(searchDir string, clusterName string) (string, error) {
+// [filepath.Walk]s the cluster directory tree searching for the given clusterName.
+// Returns the path to the cluster.jsonnet file.
+func GetClusterPath(searchDir string, clusterName string) (string, error) {
 	clusterPath := ""
 
 	err := filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {

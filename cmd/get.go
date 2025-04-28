@@ -127,7 +127,7 @@ var GetComponentsCmd = &cobra.Command{
 
 		var params []string
 		if cmdGetFlags.Cluster != "" {
-			clusterPath, err := util.GetClusterPaths(RootConfig.ClusterDir, cmdGetFlags.Cluster)
+			clusterPath, err := util.GetClusterPath(RootConfig.ClusterDir, cmdGetFlags.Cluster)
 			util.FatalErrorCheck("error getting cluster path for "+cmdGetFlags.Cluster, err, log.Logger)
 			params = util.GetClusterParamsFilenames(RootConfig.ClusterDir, clusterPath)
 		}
