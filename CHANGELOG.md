@@ -1,9 +1,12 @@
 # Changelog
 
+## 0.1.2
+
+* Add program pprof exports for perf monitoring
+
 ## 0.1.1
 
 * Cleanup error handling and logging
-* Add program pprof exports for perf monitoring
 
 ## 0.1.0
 
