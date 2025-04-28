@@ -161,7 +161,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#func-getclusterparamsfilenames">func GetClusterParamsFilenames</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#func-getclusterpaths">func GetClusterPaths</a>
+    <li class="toctree-l2"><a class="reference internal" href="#func-getclusterpath">func GetClusterPath</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#func-getdefaultformatoptions">func GetDefaultFormatOptions</a>
     </li>
@@ -228,7 +228,7 @@
 <li><a href="#FormatJsonnetStringCustom">func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, error)</a></li>
 <li><a href="#GetClusterFilenames">func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error)</a></li>
 <li><a href="#GetClusterParamsFilenames">func GetClusterParamsFilenames(basePath string, targetPath string) []string</a></li>
-<li><a href="#GetClusterPaths">func GetClusterPaths(searchDir string, clusterName string) (string, error)</a></li>
+<li><a href="#GetClusterPath">func GetClusterPath(searchDir string, clusterName string) (string, error)</a></li>
 <li><a href="#GetDefaultFormatOptions">func GetDefaultFormatOptions() formatter.Options</a></li>
 <li><a href="#JsonnetPrint">func JsonnetPrint(output string, format string, color bool) error</a></li>
 <li><a href="#LogErrorIfCheck">func LogErrorIfCheck(message string, err error, logger zerolog.Logger) error</a></li>
@@ -302,11 +302,11 @@
 <pre><code class="language-go">func GetClusterParamsFilenames(basePath string, targetPath string) []string
 </code></pre>
 <p>Get all cluster parameters within a directory. Walks through the directory hierarchy and returns all paths to `params.jsonnet` files.</p>
-<p><a name="GetClusterPaths"></a></p>
-<h2 id="func-getclusterpaths">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L52">GetClusterPaths</a></h2>
-<pre><code class="language-go">func GetClusterPaths(searchDir string, clusterName string) (string, error)
+<p><a name="GetClusterPath"></a></p>
+<h2 id="func-getclusterpath">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L52">GetClusterPath</a></h2>
+<pre><code class="language-go">func GetClusterPath(searchDir string, clusterName string) (string, error)
 </code></pre>
-<p>Get a specific cluster within a directory by name. Walks the cluster directory searching for the given clusterName. Returns the path to the cluster.</p>
+<p>Get a specific cluster within a directory by name. [filepath.Walk]s the cluster directory tree searching for the given clusterName. Returns the path to the cluster.jsonnet file.</p>
 <p><a name="GetDefaultFormatOptions"></a></p>
 <h2 id="func-getdefaultformatoptions">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/json.go#L90">GetDefaultFormatOptions</a></h2>
 <pre><code class="language-go">func GetDefaultFormatOptions() formatter.Options

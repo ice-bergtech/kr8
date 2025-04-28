@@ -184,7 +184,7 @@ var GetComponentsCmd = &cobra.Command{
 
         var params []string
         if cmdGetFlags.Cluster != "" {
-            clusterPath, err := util.GetClusterPaths(RootConfig.ClusterDir, cmdGetFlags.Cluster)
+            clusterPath, err := util.GetClusterPath(RootConfig.ClusterDir, cmdGetFlags.Cluster)
             util.FatalErrorCheck("error getting cluster path for "+cmdGetFlags.Cluster, err, log.Logger)
             params = util.GetClusterParamsFilenames(RootConfig.ClusterDir, clusterPath)
         }
@@ -651,7 +651,7 @@ func ProfilingFinalizer()
 Stop profiling and write cpu and memory profiling files if configured.
 
 <a name="ProfilingInitializer"></a>
-## func [ProfilingInitializer](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L193>)
+## func [ProfilingInitializer](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L197>)
 
 ```go
 func ProfilingInitializer()

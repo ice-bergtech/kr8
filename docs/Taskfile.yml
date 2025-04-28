@@ -17,6 +17,8 @@ tasks:
       - brew upgrade golangci-lint
       - task: 01_setup-bats
       - pip install --user mkdocs
+      # parse profiling data
+      - go install github.com/google/pprof@latest
 
   01_setup-bats:
     desc: 'Install bats testing tools'
@@ -94,3 +96,13 @@ tasks:
     cmds:
       - task: 02_build
       - ./kr8 generate -B examples
+
+  05_profile-generate:
+    desc: Capture profiling data from a kr8 generate of the examples.
+    cmds:
+      - mkdir -p ./profiling
+      - ./kr8 generate -B examples --profiledir ./profiling
+      - go tool pprof -png -output ./profiling/kr8-cpu.png ./kr8 ./profiling/profile_cpu.pb.gz
+      - go tool pprof -png -output ./profiling/kr8-mem.png ./kr8 ./profiling/profile_mem.pb.gz
+      #- go tool pprof -http=0.0.0.0:8654 ./kr8 ./profiling/profile_cpu.pb.gz
+      #- go tool pprof -http=0.0.0.0:8654 ./kr8 ./profiling/profile_mem.pb.gz

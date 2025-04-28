@@ -355,7 +355,7 @@
 
         var params []string
         if cmdGetFlags.Cluster != &quot;&quot; {
-            clusterPath, err := util.GetClusterPaths(RootConfig.ClusterDir, cmdGetFlags.Cluster)
+            clusterPath, err := util.GetClusterPath(RootConfig.ClusterDir, cmdGetFlags.Cluster)
             util.FatalErrorCheck(&quot;error getting cluster path for &quot;+cmdGetFlags.Cluster, err, log.Logger)
             params = util.GetClusterParamsFilenames(RootConfig.ClusterDir, clusterPath)
         }
@@ -764,7 +764,7 @@ and initialize a git repo so you can get started`,
 </code></pre>
 <p>Stop profiling and write cpu and memory profiling files if configured.</p>
 <p><a name="ProfilingInitializer"></a></p>
-<h2 id="func-profilinginitializer">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L193">ProfilingInitializer</a></h2>
+<h2 id="func-profilinginitializer">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L197">ProfilingInitializer</a></h2>
 <pre><code class="language-go">func ProfilingInitializer()
 </code></pre>
 <p>Sets up program profiling.</p>
