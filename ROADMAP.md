@@ -16,3 +16,4 @@ However, there are always things to improve:
 * integrate `go-task` for preparing remote resource definition fetching scripts for user
 * Build caching
 * Create configuration plan before generating clusters. Create a tree of based on cluster config files, and deep copy jvm each layer - difficult because of how JVM is setup and golang deep copy abilities.  Perform breadth-first "search" until all leafs (`cluster.jsonnet` files) are generated.  Need different solution for component jvm management.  Only thread pool component generation but process cluster serially.
+* Add way to output cluster/component jsonnet AST for outside analysis
