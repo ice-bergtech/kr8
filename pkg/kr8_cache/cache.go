@@ -3,6 +3,7 @@
 package kr8_cache
 
 import (
+	"bytes"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -48,7 +49,9 @@ type DeploymentCache struct {
 
 func (cache *DeploymentCache) WriteCache(outFile string) error {
 	// confirm cluster-level configuration matches the cache
-	text, err := json.Marshal(cache)
+	var text bytes.Buffer
+	buffer, err := json.Marshal(cache)
+	json.Compact(&text, buffer)
 	if err != nil {
 		return err
 	}
@@ -57,7 +60,7 @@ func (cache *DeploymentCache) WriteCache(outFile string) error {
 		return err
 	}
 	defer f.Close()
-	_, err = f.Write(text)
+	_, err = text.WriteTo(f)
 
 	return err
 }
