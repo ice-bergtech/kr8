@@ -15,7 +15,126 @@ func TestLoadClusterCache(t *testing.T) {
 		want      *kr8_cache.DeploymentCache
 		wantErr   bool
 	}{
-		// TODO: Add test cases.
+		{
+			name:      "Valid cache file with correct structure",
+			cacheFile: "testdata/valid_cache.json",
+			want: &kr8_cache.DeploymentCache{
+				ClusterConfig: kr8_cache.CreateClusterCache("test_cluster_config"),
+				ComponentConfigs: map[string]kr8_cache.ComponentCache{
+					"component1": {
+						ComponentConfig: "config1",
+						ComponentFiles: map[string]string{
+							"file1.txt": "hash1",
+							"file2.txt": "hash2",
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name:      "Invalid cache file (missing cluster_config)",
+			cacheFile: "testdata/invalid_missing_cluster_config.json",
+			want:      nil,
+			wantErr:   true,
+		},
+		{
+			name:      "Invalid cache file (malformed JSON)",
+			cacheFile: "testdata/invalid_malformed_json.json",
+			want:      nil,
+			wantErr:   true,
+		},
+		{
+			name:      "Valid cache file with empty component_configs",
+			cacheFile: "testdata/valid_empty_component_configs.json",
+			want: &kr8_cache.DeploymentCache{
+				ClusterConfig:    kr8_cache.CreateClusterCache("test_cluster_config"),
+				ComponentConfigs: map[string]kr8_cache.ComponentCache{},
+			},
+			wantErr: false,
+		},
+		{
+			name:      "Valid cache file with multiple components",
+			cacheFile: "testdata/valid_multiple_components.json",
+			want: &kr8_cache.DeploymentCache{
+				ClusterConfig: kr8_cache.CreateClusterCache("test_cluster_config"),
+				ComponentConfigs: map[string]kr8_cache.ComponentCache{
+					"component1": {
+						ComponentConfig: "config1",
+						ComponentFiles: map[string]string{
+							"file1.txt": "hash1",
+						},
+					},
+					"component2": {
+						ComponentConfig: "config2",
+						ComponentFiles: map[string]string{
+							"file2.txt": "hash2",
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name:      "Valid cache file with correct structure",
+			cacheFile: "testdata/valid_cache.json",
+			want: &kr8_cache.DeploymentCache{
+				ClusterConfig: kr8_cache.CreateClusterCache("test_cluster_config"),
+				ComponentConfigs: map[string]kr8_cache.ComponentCache{
+					"component1": {
+						ComponentConfig: "config1",
+						ComponentFiles: map[string]string{
+							"file1.txt": "hash1",
+							"file2.txt": "hash2",
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name:      "Invalid cache file (missing cluster_config)",
+			cacheFile: "testdata/invalid_missing_cluster_config.json",
+			want:      nil,
+			wantErr:   true,
+		},
+		{
+			name:      "Invalid cache file (malformed JSON)",
+			cacheFile: "testdata/invalid_malformed_json.json",
+			want:      nil,
+			wantErr:   true,
+		},
+		{
+			name:      "Valid cache file with empty component_configs",
+			cacheFile: "testdata/valid_empty_component_configs.json",
+			want: &kr8_cache.DeploymentCache{
+				ClusterConfig:    kr8_cache.CreateClusterCache("test_cluster_config"),
+				ComponentConfigs: map[string]kr8_cache.ComponentCache{},
+			},
+			wantErr: false,
+		},
+		{
+			name:      "Valid cache file with multiple components",
+			cacheFile: "testdata/valid_multiple_components.json",
+			want: &kr8_cache.DeploymentCache{
+				ClusterConfig: kr8_cache.CreateClusterCache("test_cluster_config"),
+				ComponentConfigs: map[string]kr8_cache.ComponentCache{
+					"component1": {
+						ComponentConfig: "config1",
+						ComponentFiles: map[string]string{
+							"file1.txt": "hash1",
+						},
+					},
+					"component2": {
+						ComponentConfig: "config2",
+						ComponentFiles: map[string]string{
+							"file2.txt": "hash2",
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
 	}
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
