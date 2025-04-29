@@ -137,17 +137,20 @@ type ComponentCache struct {
 	ComponentFiles map[string]string `json:"component_files"`
 }
 
-func CreateComponentCache(config string, componentPath string, listFiles []string) *ComponentCache {
-	cacheResult := ComponentCache{}
+func CreateComponentCache(config string, componentPath string, listFiles []string) (*ComponentCache, error) {
+	cacheResult := ComponentCache{
+		ComponentConfig: config,
+		ComponentFiles:  map[string]string{},
+	}
 	for _, file := range listFiles {
 		currentHash, err := util.HashFile(filepath.Join(componentPath, file))
 		if err != nil {
-			return nil
+			return nil, err
 		}
 		cacheResult.ComponentFiles[file] = currentHash
 	}
 
-	return &cacheResult
+	return &cacheResult, nil
 }
 
 func (cache *ComponentCache) CheckComponentCache(
