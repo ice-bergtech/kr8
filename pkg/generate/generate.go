@@ -41,6 +41,11 @@ type safeString struct {
 	config string
 }
 
+type safeCacheMap struct {
+	mu   sync.Mutex
+	data map[string]kr8_cache.ComponentCache
+}
+
 func GetClusterParams(clusterDir string, vmConfig types.VMConfig, logger zerolog.Logger) (map[string]string, error) {
 	// get list of all clusters, render cluster level params for all of them
 	allClusterParams := make(map[string]string)
@@ -608,7 +613,10 @@ func RenderComponents(
 		}
 	}
 
-	cacheResults := map[string]kr8_cache.ComponentCache{}
+	cacheResults := safeCacheMap{
+		mu:   sync.Mutex{},
+		data: map[string]kr8_cache.ComponentCache{},
+	}
 
 	var allConfig safeString
 	var waitGroup sync.WaitGroup
@@ -637,11 +645,13 @@ func RenderComponents(
 					Msg("Failed to process component")
 			}
 			if cacheResult != nil {
-				cacheResults[componentName] = *cacheResult
+				cacheResults.mu.Lock()
+				cacheResults.data[componentName] = *cacheResult
+				cacheResults.mu.Unlock()
 			}
 		})
 	}
 	waitGroup.Wait()
 
-	return cacheResults, nil
+	return cacheResults.data, nil
 }
