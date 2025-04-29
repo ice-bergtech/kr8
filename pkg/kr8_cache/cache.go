@@ -51,7 +51,10 @@ func (cache *DeploymentCache) WriteCache(outFile string) error {
 	// confirm cluster-level configuration matches the cache
 	var text bytes.Buffer
 	buffer, err := json.Marshal(cache)
-	json.Compact(&text, buffer)
+	if err != nil {
+		return err
+	}
+	err = json.Compact(&text, buffer)
 	if err != nil {
 		return err
 	}
@@ -70,6 +73,7 @@ func (cache *DeploymentCache) CheckClusterCache(config string, logger zerolog.Lo
 	if cache.ClusterConfig != nil {
 		return cache.ClusterConfig.CheckClusterCache(config, logger)
 	}
+
 	return false
 }
 

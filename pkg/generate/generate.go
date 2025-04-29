@@ -107,29 +107,27 @@ func GenProcessComponent(
 	paramsFile string,
 	cache *kr8_cache.DeploymentCache,
 	logger zerolog.Logger,
-) (*kr8_cache.ComponentCache, error) {
+) (bool, *kr8_cache.ComponentCache, error) {
 	logger.Info().Msg("Processing component")
 	// get kr8_spec from component's params
 	compSpec, err := kr8_types.CreateComponentSpec(gjson.Get(config, componentName+".kr8_spec"), logger)
 	if err := util.LogErrorIfCheck("Error creating component spec", err, logger); err != nil {
-		return nil, err
+		return false, nil, err
 	}
 
 	if CheckComponentCache(cache, compSpec, config, componentName, logger) {
 		logger.Info().Msg("Component config and files match cache, skipping")
-		return nil, nil
+
+		return true, nil, nil
 	}
 
 	// it's faster to create this VM for each component, rather than re-use
 	jvm, compPath, err := SetupComponentVM(
-		vmConfig, config,
-		kr8Spec, componentName,
-		compSpec, allConfig,
-		filters, paramsFile,
-		kr8Opts, logger,
+		vmConfig, config, kr8Spec, componentName, compSpec,
+		allConfig, filters, paramsFile, kr8Opts, logger,
 	)
 	if err := util.LogErrorIfCheck("Error setting up JVM for component", err, logger); err != nil {
-		return nil, err
+		return false, nil, err
 	}
 
 	componentOutputDir := filepath.Join(kr8Spec.GenerateDir, kr8Spec.Name, componentName)
@@ -137,23 +135,40 @@ func GenProcessComponent(
 	if _, err := os.Stat(componentOutputDir); os.IsNotExist(err) {
 		err := os.MkdirAll(componentOutputDir, 0750)
 		if err := util.LogErrorIfCheck("Error creating component directory", err, logger); err != nil {
-			return nil, err
+			return false, nil, err
 		}
 	}
 
 	// generate each included file
 	outputFileMap, err := GenerateIncludesFiles(
-		compSpec.Includes,
-		kr8Spec, kr8Opts,
-		config, componentName,
-		compPath, componentOutputDir,
-		jvm, logger,
+		compSpec.Includes, kr8Spec, kr8Opts, config,
+		componentName, compPath, componentOutputDir, jvm, logger,
 	)
 	if err := util.LogErrorIfCheck("Error generating includes files", err, logger); err != nil {
-		return nil, err
+		return false, nil, err
 	}
 
-	newCache, err := kr8_cache.CreateComponentCache(config, filepath.Join(kr8Opts.BaseDir, compPath), GetComponentFiles(compSpec))
+	newCache, err := ProcessComponentFinalizer(
+		kr8Opts, config, compPath, compSpec,
+		componentOutputDir, outputFileMap, logger,
+	)
+
+	return true, newCache, err
+}
+
+func ProcessComponentFinalizer(
+	kr8Opts types.Kr8Opts,
+	config, compPath string,
+	compSpec kr8_types.Kr8ComponentSpec,
+	componentOutputDir string,
+	outputFileMap map[string]bool,
+	logger zerolog.Logger,
+) (*kr8_cache.ComponentCache, error) {
+	newCache, err := kr8_cache.CreateComponentCache(
+		config,
+		filepath.Join(kr8Opts.BaseDir, compPath),
+		GetComponentFiles(compSpec),
+	)
 	if err != nil {
 		logger.Warn().Err(err).Msg("issue hashing file for cache")
 	}
@@ -624,7 +639,7 @@ func RenderComponents(
 		_ = pool.Submit(func() {
 			defer waitGroup.Done()
 			sublogger := logger.With().Str("component", componentName).Logger()
-			cacheResult, err := GenProcessComponent(
+			success, cacheResult, err := GenProcessComponent(
 				vmConfig,
 				cName,
 				kr8Spec,
@@ -641,7 +656,7 @@ func RenderComponents(
 					Err(err).
 					Msg("Failed to process component")
 			}
-			if cacheResult != nil {
+			if success && cacheResult != nil {
 				cacheResults.mu.Lock()
 				cacheResults.data[componentName] = *cacheResult
 				cacheResults.mu.Unlock()
