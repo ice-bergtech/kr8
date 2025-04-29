@@ -501,8 +501,8 @@ func GenerateCacheInitializer(
 func GenerateCacheFinalizer(
 	enableCache bool,
 	config string,
-	cacheResult map[string]kr8_cache.ComponentCache,
-	cacheFile string,
+	cacheResults map[string]kr8_cache.ComponentCache,
+	cacheFilePath string,
 	logger zerolog.Logger,
 ) {
 	if enableCache {
@@ -511,7 +511,7 @@ func GenerateCacheFinalizer(
 			ComponentConfigs: cacheResult,
 		}
 
-		err := newCache.WriteCache(cacheFile)
+		err := newCache.WriteCache(cacheFilePath)
 		if err != nil {
 			wd, _ := os.Getwd()
 			logger.Warn().Err(err).Str("pwd", wd).Msg("error storing cache")

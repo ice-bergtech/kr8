@@ -113,13 +113,13 @@ func CreateClusterCache(config string) *ClusterCache {
 func (cache *ClusterCache) CheckClusterCache(config string, logger zerolog.Logger) bool {
 	// compare cluster (non-component) configuration to cached cluster
 	if cache.Kr8_Spec != gjson.Get(config, "._kr8_spec").Raw {
-		logger.Info().Msg("_kr8_spec differs from cache")
+		logger.Debug().Msg("_kr8_spec differs from cache")
 
 		return false
 	}
 
 	if cache.Cluster != gjson.Get(config, "._cluster").Raw {
-		logger.Info().Msg("_cluster differs from cache")
+		logger.Debug().Msg("_cluster differs from cache")
 
 		return false
 	}
