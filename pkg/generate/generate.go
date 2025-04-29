@@ -508,7 +508,7 @@ func GenerateCacheFinalizer(
 	if enableCache {
 		newCache := kr8_cache.DeploymentCache{
 			ClusterConfig:    kr8_cache.CreateClusterCache(config),
-			ComponentConfigs: cacheResult,
+			ComponentConfigs: cacheResults,
 		}
 
 		err := newCache.WriteCache(cacheFilePath)

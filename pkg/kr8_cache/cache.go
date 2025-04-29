@@ -104,8 +104,8 @@ type ClusterCache struct {
 }
 
 // Stores the cluster kr8_spec and cluster config as cluster-level cache.
-func CreateClusterCache(config string) ClusterCache {
-	return ClusterCache{
+func CreateClusterCache(config string) *ClusterCache {
+	return &ClusterCache{
 		Kr8_Spec: gjson.Get(config, "_kr8_spec").Raw,
 		Cluster:  gjson.Get(config, "_cluster").Raw,
 	}
