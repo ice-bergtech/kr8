@@ -19,7 +19,6 @@ import (
 	"sync"
 
 	jsonnet "github.com/google/go-jsonnet"
-	"github.com/mitchellh/copystructure"
 	"github.com/panjf2000/ants/v2"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -116,9 +115,9 @@ func GenProcessComponent(
 		return nil, err
 	}
 
-	shouldReturn, result, cacheErr := CheckcomponentCache(cache, compSpec, config, componentName, logger)
-	if shouldReturn {
-		return result, cacheErr
+	if CheckComponentCache(cache, compSpec, config, componentName, logger) {
+		logger.Info().Msg("Component config and files match cache, skipping")
+		return nil, nil
 	}
 
 	// it's faster to create this VM for each component, rather than re-use
@@ -154,38 +153,36 @@ func GenProcessComponent(
 		return nil, err
 	}
 
+	newCache, err := kr8_cache.CreateComponentCache(config, filepath.Join(kr8Opts.BaseDir, compPath), GetComponentFiles(compSpec))
+	if err != nil {
+		logger.Warn().Err(err).Msg("issue hashing file for cache")
+	}
 	// purge any yaml files in the output dir that were not generated
 	if !compSpec.DisableOutputDirClean {
-		return nil, CleanOutputDir(outputFileMap, componentOutputDir)
+		return newCache, CleanOutputDir(outputFileMap, componentOutputDir)
 	}
 
-	return kr8_cache.CreateComponentCache(config, compPath, maps.Keys(outputFileMap)), nil
+	return newCache, nil
 }
 
-func CheckcomponentCache(
+func CheckComponentCache(
 	cache *kr8_cache.DeploymentCache,
 	compSpec kr8_types.Kr8ComponentSpec,
 	config string,
 	componentName string,
 	logger zerolog.Logger,
-) (bool, *kr8_cache.ComponentCache, error) {
+) bool {
 	if cache != nil {
 		// build list of files referenced by component
 		listFiles := GetComponentFiles(compSpec)
 		compPath := GetComponentPath(config, componentName)
+		// check if the component matches the cache
 		if cache.CheckClusterComponentCache(config, componentName, compPath, listFiles, logger) {
-			logger.Info().Msg("Component config and files match cache, skipping")
-			tmp, err := copystructure.Copy(cache.ComponentConfigs[componentName])
-			result, ok := tmp.(kr8_cache.ComponentCache)
-			if !ok {
-				return true, nil, types.Kr8Error{Message: "error casting cache copy", Value: ok}
-			}
-
-			return true, &result, err
+			return true
 		}
 	}
 
-	return false, nil, nil
+	return false
 }
 
 func GetComponentFiles(compSpec kr8_types.Kr8ComponentSpec) []string {
