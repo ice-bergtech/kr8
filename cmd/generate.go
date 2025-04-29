@@ -22,6 +22,8 @@ type CmdGenerateOptions struct {
 	GenerateDir string
 	// Stores the filters to apply to clusters and components when generating files
 	Filters util.PathFilterOptions
+	// If true, enables generating, checking and storing a cache to speed up builds.
+	EnableCache bool
 }
 
 var cmdGenerateFlags CmdGenerateOptions
@@ -47,6 +49,10 @@ func init() {
 		"clexcludes", "x", "",
 		"filter included cluster by excluding clusters with matching cluster parameters - "+
 			"comma separate list of key/value conditions separated by = or ~ (for regex match)")
+	GenerateCmd.Flags().BoolVar(&cmdGenerateFlags.EnableCache,
+		"cache", false,
+		"generate a cache file for each cluster. "+
+			"Used to determine if generate should skip generating a component. ")
 }
 
 var GenerateCmd = &cobra.Command{
@@ -103,6 +109,7 @@ func GenerateCommand(cmd *cobra.Command, args []string) {
 				cmdGenerateFlags.Filters,
 				RootConfig.VMConfig,
 				ants_cp,
+				cmdGenerateFlags.EnableCache,
 				sublogger)
 			if err != nil {
 				sublogger.Fatal().Err(err).Msg("error processing cluster")
