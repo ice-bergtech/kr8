@@ -21,6 +21,7 @@ type Kr8Opts struct {
 }
 
 // Options for running the jsonnet command.
+// Used by a few packages and commands.
 type CmdJsonnetOptions struct {
 	Prune         bool
 	Cluster       string
