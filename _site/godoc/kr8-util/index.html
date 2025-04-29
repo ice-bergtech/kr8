@@ -165,6 +165,8 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#func-getdefaultformatoptions">func GetDefaultFormatOptions</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-hashfile">func HashFile</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#func-jsonnetprint">func JsonnetPrint</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#func-logerrorifcheck">func LogErrorIfCheck</a>
@@ -230,6 +232,7 @@
 <li><a href="#GetClusterParamsFilenames">func GetClusterParamsFilenames(basePath string, targetPath string) []string</a></li>
 <li><a href="#GetClusterPath">func GetClusterPath(searchDir string, clusterName string) (string, error)</a></li>
 <li><a href="#GetDefaultFormatOptions">func GetDefaultFormatOptions() formatter.Options</a></li>
+<li><a href="#HashFile">func HashFile(path string) (string, error)</a></li>
 <li><a href="#JsonnetPrint">func JsonnetPrint(output string, format string, color bool) error</a></li>
 <li><a href="#LogErrorIfCheck">func LogErrorIfCheck(message string, err error, logger zerolog.Logger) error</a></li>
 <li><a href="#Pretty">func Pretty(inputJson string, colorOutput bool) (string, error)</a></li>
@@ -239,12 +242,12 @@
 <li><a href="#PathFilterOptions">type PathFilterOptions</a></li>
 </ul>
 <p><a name="CalculateClusterIncludesExcludes"></a></p>
-<h2 id="func-calculateclusterincludesexcludes">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L160">CalculateClusterIncludesExcludes</a></h2>
+<h2 id="func-calculateclusterincludesexcludes">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L164">CalculateClusterIncludesExcludes</a></h2>
 <pre><code class="language-go">func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string
 </code></pre>
 <p>Using the allClusterParams variable and command flags to create a list of clusters to generate. Clusters can be filtered with "=" for equality or "\~" for regex match.</p>
 <p><a name="CheckObjectMatch"></a></p>
-<h2 id="func-checkobjectmatch">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L80">CheckObjectMatch</a></h2>
+<h2 id="func-checkobjectmatch">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L84">CheckObjectMatch</a></h2>
 <pre><code class="language-go">func CheckObjectMatch(input gjson.Result, filterString string) bool
 </code></pre>
 <p>Checks if a input object matches a filter string. The filter string can be an equality match or a regex match.</p>
@@ -259,11 +262,11 @@
 </code></pre>
 <p>Colorize function from zerolog console.go file to replicate their coloring functionality. Source: https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389 Replicated here because it's a private function.</p>
 <p><a name="ErrorIfCheck"></a></p>
-<h2 id="func-errorifcheck">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L140">ErrorIfCheck</a></h2>
+<h2 id="func-errorifcheck">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L144">ErrorIfCheck</a></h2>
 <pre><code class="language-go">func ErrorIfCheck(message string, err error) error
 </code></pre>
 <p><a name="FatalErrorCheck"></a></p>
-<h2 id="func-fatalerrorcheck">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L134">FatalErrorCheck</a></h2>
+<h2 id="func-fatalerrorcheck">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L138">FatalErrorCheck</a></h2>
 <pre><code class="language-go">func FatalErrorCheck(message string, err error, logger zerolog.Logger)
 </code></pre>
 <p>Logs an error and exits the program if the error is not nil. Saves 3 lines per use and centralizes fatal errors for rewriting.</p>
@@ -273,12 +276,12 @@
 </code></pre>
 <p>Fetch a git repo from a url and clone it to a destination directory. If the noop flag is true, it print commands to fetch manually without doing anything.</p>
 <p><a name="Filter"></a></p>
-<h2 id="func-filter">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L23">Filter</a></h2>
+<h2 id="func-filter">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L27">Filter</a></h2>
 <pre><code class="language-go">func Filter(vs []string, f func(string) bool) []string
 </code></pre>
 <p>Filter returns a new slice containing only the elements that satisfy the predicate function. From https://gobyexample.com/collection-functions</p>
 <p><a name="FilterItems"></a></p>
-<h2 id="func-filteritems">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L100">FilterItems</a></h2>
+<h2 id="func-filteritems">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L104">FilterItems</a></h2>
 <pre><code class="language-go">func FilterItems(input map[string]string, pFilter PathFilterOptions) []string
 </code></pre>
 <p>Given a map of string, filter them based on the provided options. The map value is parsed as a gjson result and then checked against the provided options.</p>
@@ -312,13 +315,17 @@
 <pre><code class="language-go">func GetDefaultFormatOptions() formatter.Options
 </code></pre>
 <p>Configures the default options for the jsonnet formatter.</p>
+<p><a name="HashFile"></a></p>
+<h2 id="func-hashfile">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L182">HashFile</a></h2>
+<pre><code class="language-go">func HashFile(path string) (string, error)
+</code></pre>
 <p><a name="JsonnetPrint"></a></p>
 <h2 id="func-jsonnetprint">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/json.go#L55">JsonnetPrint</a></h2>
 <pre><code class="language-go">func JsonnetPrint(output string, format string, color bool) error
 </code></pre>
 <p>Print the jsonnet in the specified format. Acceptable formats are: yaml, stream, json.</p>
 <p><a name="LogErrorIfCheck"></a></p>
-<h2 id="func-logerrorifcheck">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L148">LogErrorIfCheck</a></h2>
+<h2 id="func-logerrorifcheck">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L152">LogErrorIfCheck</a></h2>
 <pre><code class="language-go">func LogErrorIfCheck(message string, err error, logger zerolog.Logger) error
 </code></pre>
 <p><a name="Pretty"></a></p>
@@ -327,7 +334,7 @@
 </code></pre>
 <p>Pretty formats the input jsonnet string with indentation and optional color output. Returns an error when the input can't properly format the json string input.</p>
 <p><a name="SetupLogger"></a></p>
-<h2 id="func-setuplogger">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L34">SetupLogger</a></h2>
+<h2 id="func-setuplogger">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L38">SetupLogger</a></h2>
 <pre><code class="language-go">func SetupLogger(enableColor bool) zerolog.Logger
 </code></pre>
 <p><a name="WriteObjToJsonFile"></a></p>
@@ -344,7 +351,7 @@
 }
 </code></pre>
 <p><a name="PathFilterOptions"></a></p>
-<h2 id="type-pathfilteroptions">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L52-L76">PathFilterOptions</a></h2>
+<h2 id="type-pathfilteroptions">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L56-L80">PathFilterOptions</a></h2>
 <p>Fill with string to include and exclude, using kr8's special parsing.</p>
 <pre><code class="language-go">type PathFilterOptions struct {
     // Comma-separated list of include filters
