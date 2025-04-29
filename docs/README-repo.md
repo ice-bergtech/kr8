@@ -52,6 +52,7 @@ This means that breaking changes still happen from time to time, but it's stable
 * **Opinionated Structure**: Enforces best practices for consistent and reliable cluster configurations.
 * **Jsonnet Native Functions**: Use Jsonnet to render and override component config from multiple sources such as templates, docker-compose files, Kustomize, and Helm.
 * **Extensibility**: Easily extensible to meet the needs of diverse Kubernetes environments.
+* **Build Cache**: Cache cluster-component configuration and skip components that don't need to be generated.
 * **CI/CD Friendly**: Statically define all your configuration in a single source of truth, making it easy to integrate with CI/CD pipelines and deployment automation like ArgoCD.
 
 ![kr8+ workflow](./diagram/kr8-workflow.png)
