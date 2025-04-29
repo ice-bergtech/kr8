@@ -19,6 +19,7 @@ import (
 	"sync"
 
 	jsonnet "github.com/google/go-jsonnet"
+	"github.com/mitchellh/copystructure"
 	"github.com/panjf2000/ants/v2"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -26,6 +27,7 @@ import (
 	"golang.org/x/exp/maps"
 
 	jnetvm "github.com/ice-bergtech/kr8/pkg/jnetvm"
+	"github.com/ice-bergtech/kr8/pkg/kr8_cache"
 	"github.com/ice-bergtech/kr8/pkg/kr8_types"
 	types "github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
@@ -99,29 +101,31 @@ func GenProcessComponent(
 	allConfig *safeString,
 	filters util.PathFilterOptions,
 	paramsFile string,
+	cache *kr8_cache.DeploymentCache,
 	logger zerolog.Logger,
-) error {
+) (*kr8_cache.ComponentCache, error) {
 	logger.Info().Msg("Processing component")
 	// get kr8_spec from component's params
 	compSpec, err := kr8_types.CreateComponentSpec(gjson.Get(config, componentName+".kr8_spec"), logger)
 	if err := util.LogErrorIfCheck("Error creating component spec", err, logger); err != nil {
-		return err
+		return nil, err
 	}
+
+	shouldReturn, result, cacheErr := CheckcomponentCache(cache, compSpec, config, componentName, logger)
+	if shouldReturn {
+		return result, cacheErr
+	}
+
 	// it's faster to create this VM for each component, rather than re-use
 	jvm, compPath, err := SetupComponentVM(
-		vmConfig,
-		config,
-		kr8Spec,
-		componentName,
-		compSpec,
-		allConfig,
-		filters,
-		paramsFile,
-		kr8Opts,
-		logger,
+		vmConfig, config,
+		kr8Spec, componentName,
+		compSpec, allConfig,
+		filters, paramsFile,
+		kr8Opts, logger,
 	)
 	if err := util.LogErrorIfCheck("Error setting up JVM for component", err, logger); err != nil {
-		return err
+		return nil, err
 	}
 
 	componentOutputDir := filepath.Join(kr8Spec.GenerateDir, kr8Spec.Name, componentName)
@@ -129,32 +133,77 @@ func GenProcessComponent(
 	if _, err := os.Stat(componentOutputDir); os.IsNotExist(err) {
 		err := os.MkdirAll(componentOutputDir, 0750)
 		if err := util.LogErrorIfCheck("Error creating component directory", err, logger); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
 	// generate each included file
 	outputFileMap, err := GenerateIncludesFiles(
 		compSpec.Includes,
-		kr8Spec,
-		kr8Opts,
-		config,
-		componentName,
-		compPath,
-		componentOutputDir,
-		jvm,
-		logger,
+		kr8Spec, kr8Opts,
+		config, componentName,
+		compPath, componentOutputDir,
+		jvm, logger,
 	)
 	if err := util.LogErrorIfCheck("Error generating includes files", err, logger); err != nil {
-		return err
+		return nil, err
 	}
 
 	// purge any yaml files in the output dir that were not generated
 	if !compSpec.DisableOutputDirClean {
-		return CleanOutputDir(outputFileMap, componentOutputDir)
+		return nil, CleanOutputDir(outputFileMap, componentOutputDir)
 	}
 
-	return nil
+	return kr8_cache.CreateComponentCache(config, compPath, maps.Keys(outputFileMap)), nil
+}
+
+func CheckcomponentCache(
+	cache *kr8_cache.DeploymentCache,
+	compSpec kr8_types.Kr8ComponentSpec,
+	config string,
+	componentName string,
+	logger zerolog.Logger,
+) (bool, *kr8_cache.ComponentCache, error) {
+	if cache != nil {
+		// build list of files referenced by component
+		listFiles := GetComponentFiles(compSpec)
+		compPath := GetComponentPath(config, componentName)
+		if cache.CheckClusterComponentCache(config, componentName, compPath, listFiles, logger) {
+			logger.Info().Msg("Component config and files match cache, skipping")
+			tmp, err := copystructure.Copy(cache.ComponentConfigs[componentName])
+			result, ok := tmp.(kr8_cache.ComponentCache)
+			if !ok {
+				return true, nil, types.Kr8Error{Message: "error casting cache copy", Value: ok}
+			}
+
+			return true, &result, err
+		}
+	}
+
+	return false, nil, nil
+}
+
+func GetComponentFiles(compSpec kr8_types.Kr8ComponentSpec) []string {
+	numIncludes := len(compSpec.Includes)
+	numExtFiles := len(compSpec.ExtFiles)
+	numJpaths := len(compSpec.JPaths)
+	listFiles := make([]string, numIncludes+numExtFiles+numJpaths)
+
+	for i, obj := range compSpec.Includes {
+		listFiles[i] = obj.File
+	}
+
+	idx := 0
+	for _, path := range compSpec.ExtFiles {
+		listFiles[idx+numIncludes] = path
+		idx++
+	}
+
+	for i, path := range compSpec.JPaths {
+		listFiles[i+numIncludes+numExtFiles] = path
+	}
+
+	return listFiles
 }
 
 // Setup and configures a jsonnet VM for processing kr8 resources.
@@ -208,7 +257,7 @@ func SetupComponentVM(
 	}
 
 	// Load files referenced by the component
-	compPath := filepath.Clean(gjson.Get(config, "_components."+componentName+".path").String())
+	compPath := GetComponentPath(config, componentName)
 	// jPathResults always includes base lib. Add jpaths from spec if set
 	loadJPathsIntoVM(compSpec, compPath, kr8Opts.BaseDir, jvm, logger)
 	// file imports
@@ -217,6 +266,10 @@ func SetupComponentVM(
 	}
 
 	return jvm, compPath, nil
+}
+
+func GetComponentPath(config string, componentName string) string {
+	return filepath.Clean(gjson.Get(config, "_components."+componentName+".path").String())
 }
 
 // Combine all the cluster params into a single object indexed by cluster name.
@@ -334,39 +387,78 @@ func GenProcessCluster(
 	filters util.PathFilterOptions,
 	vmConfig types.VMConfig,
 	pool *ants.Pool,
+	enableCache bool,
 	logger zerolog.Logger,
 ) error {
 	logger.Debug().Str("cluster", clusterName).Msg("Processing cluster")
 
 	// Start by compiling the cluster-level configuration
-	kr8Spec, clusterComponents, err := CompileClusterConfiguration(
+	kr8Spec, compList, config, err := GatherClusterConfig(
 		clusterName,
 		clusterdir,
+		kr8Opts,
+		vmConfig,
+		generateDirOverride,
+		filters,
+		clusterParamsFile,
+		logger,
+	)
+	if err != nil {
+		return err
+	}
+
+	cache, cacheFile := GenerateCacheInitializer(kr8Spec, enableCache, logger)
+
+	// render full params for cluster for all selected components
+	cacheResult, err := RenderComponents(
+		config,
+		vmConfig,
+		*kr8Spec,
+		compList,
+		clusterParamsFile,
+		pool,
+		kr8Opts,
+		filters,
+		cache,
+		logger,
+	)
+	if err != nil {
+		return err
+	}
+
+	GenerateCacheFinalizer(enableCache, config, cacheResult, cacheFile, logger)
+
+	return nil
+}
+
+func GatherClusterConfig(
+	clusterName, clusterDir string,
+	kr8Opts types.Kr8Opts,
+	vmConfig types.VMConfig,
+	generateDirOverride string,
+	filters util.PathFilterOptions,
+	clusterParamsFile string,
+	logger zerolog.Logger,
+) (*kr8_types.Kr8ClusterSpec, []string, string, error) {
+	kr8Spec, clusterComponents, err := CompileClusterConfiguration(
+		clusterName,
+		clusterDir,
 		kr8Opts,
 		vmConfig,
 		generateDirOverride,
 		logger,
 	)
 	if err != nil {
-		return err
-	}
-	// Setup output dirs
-	existingComponents, err := CreateClusterGenerateDirs(*kr8Spec)
-	if err := util.LogErrorIfCheck("error creating generate dirs", err, logger); err != nil {
-		return err
+		return nil, nil, "", err
 	}
 
-	// Remove component output dirs that are no longer referenced
-	for _, component := range existingComponents {
-		if _, found := clusterComponents[component]; !found {
-			delComp := filepath.Join(kr8Spec.ClusterOutputDir, component)
-			if err := os.RemoveAll(delComp); err != nil {
-				logger.Error().Msg("Issue deleting generated for component " + component)
-			}
-			logger.Info().Str("component", component).
-				Msg("Deleting generated dir for non-referenced component")
-		}
+	// Setup output dirs and remove component output dirs that are no longer referenced
+	existingComponents, err := CreateClusterGenerateDirs(*kr8Spec)
+	if err := util.LogErrorIfCheck("error creating generate dirs", err, logger); err != nil {
+		return nil, nil, "", err
 	}
+
+	CleanupOldComponentDirs(existingComponents, clusterComponents, kr8Spec, logger)
 
 	// Determine list of components to process
 	compList := CalculateClusterComponentList(clusterComponents, filters, existingComponents)
@@ -380,11 +472,73 @@ func GenProcessCluster(
 		false,
 	)
 	if err := util.LogErrorIfCheck("error rendering cluster params", err, logger); err != nil {
-		return err
+		return nil, nil, "", err
 	}
 
-	// render full params for cluster for all selected components
-	return RenderComponents(config, vmConfig, *kr8Spec, compList, clusterParamsFile, pool, kr8Opts, filters, logger)
+	return kr8Spec, compList, config, nil
+}
+
+func GenerateCacheInitializer(
+	kr8Spec *kr8_types.Kr8ClusterSpec,
+	enableCache bool,
+	logger zerolog.Logger,
+) (*kr8_cache.DeploymentCache, string) {
+	var cache *kr8_cache.DeploymentCache
+	var err error
+	cacheFile := filepath.Join(kr8Spec.ClusterOutputDir, ".kr8_cache")
+	if enableCache {
+		cache, err = kr8_cache.LoadClusterCache(cacheFile)
+		if err != nil {
+			logger.Warn().Err(err).Msg("error loading cluster cache")
+		}
+	} else {
+		cache = nil
+	}
+
+	return cache, cacheFile
+}
+
+func GenerateCacheFinalizer(
+	enableCache bool,
+	config string,
+	cacheResult map[string]kr8_cache.ComponentCache,
+	cacheFile string,
+	logger zerolog.Logger,
+) {
+	if enableCache {
+		newCache := kr8_cache.DeploymentCache{
+			ClusterConfig:    kr8_cache.CreateClusterCache(config),
+			ComponentConfigs: cacheResult,
+		}
+
+		err := newCache.WriteCache(cacheFile)
+		if err != nil {
+			wd, _ := os.Getwd()
+			logger.Warn().Err(err).Str("pwd", wd).Msg("error storing cache")
+		}
+	}
+}
+
+func CleanupOldComponentDirs(
+	existingComponents []string,
+	clusterComponents map[string]gjson.Result,
+	kr8Spec *kr8_types.Kr8ClusterSpec,
+	logger zerolog.Logger,
+) {
+	for _, component := range existingComponents {
+		if _, found := clusterComponents[component]; !found {
+			// Skip deleting cache files
+			if component == ".kr8_cache" {
+				continue
+			}
+			delComp := filepath.Join(kr8Spec.ClusterOutputDir, component)
+			if err := os.RemoveAll(delComp); err != nil {
+				logger.Error().Msg("Issue deleting generated for component " + component)
+			}
+			logger.Info().Str("component", component).
+				Msg("Deleting generated dir for non-referenced component")
+		}
+	}
 }
 
 // Build the list of cluster parameter files to combine by walking folder tree leaf to root.
@@ -442,10 +596,21 @@ func RenderComponents(
 	pool *ants.Pool,
 	kr8Opts types.Kr8Opts,
 	filters util.PathFilterOptions,
+	cache *kr8_cache.DeploymentCache,
 	logger zerolog.Logger,
-) error {
-	var allConfig safeString
+) (map[string]kr8_cache.ComponentCache, error) {
+	// Make sure the cache is valid
+	cacheObj := cache
+	if cacheObj == nil || !cacheObj.CheckClusterCache(config, logger) {
+		cacheObj = &kr8_cache.DeploymentCache{
+			ClusterConfig:    nil,
+			ComponentConfigs: map[string]kr8_cache.ComponentCache{},
+		}
+	}
 
+	cacheResults := map[string]kr8_cache.ComponentCache{}
+
+	var allConfig safeString
 	var waitGroup sync.WaitGroup
 
 	for _, componentName := range compList {
@@ -454,7 +619,7 @@ func RenderComponents(
 		_ = pool.Submit(func() {
 			defer waitGroup.Done()
 			sublogger := logger.With().Str("component", componentName).Logger()
-			if err := GenProcessComponent(
+			cacheResult, err := GenProcessComponent(
 				vmConfig,
 				cName,
 				kr8Spec,
@@ -463,15 +628,20 @@ func RenderComponents(
 				&allConfig,
 				filters,
 				clusterParamsFile,
+				cacheObj,
 				sublogger,
-			); err != nil {
+			)
+			if err != nil {
 				sublogger.Error().
 					Err(err).
 					Msg("Failed to process component")
+			}
+			if cacheResult != nil {
+				cacheResults[componentName] = *cacheResult
 			}
 		})
 	}
 	waitGroup.Wait()
 
-	return nil
+	return cacheResults, nil
 }
