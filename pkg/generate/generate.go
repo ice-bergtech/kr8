@@ -33,14 +33,14 @@ import (
 )
 
 // A thread-safe string that can be used to store and retrieve configuration data.
-type safeString struct {
+type SafeString struct {
 	// mu is a mutex that ensures thread-safe access to the struct field
 	mu sync.Mutex
 	// config is a string that stores the configuration data
 	config string
 }
 
-type safeCacheMap struct {
+type SafeCacheMap struct {
 	mu   sync.Mutex
 	data map[string]kr8_cache.ComponentCache
 }
@@ -102,7 +102,7 @@ func GenProcessComponent(
 	kr8Spec kr8_types.Kr8ClusterSpec,
 	kr8Opts types.Kr8Opts,
 	config string,
-	allConfig *safeString,
+	allConfig *SafeString,
 	filters util.PathFilterOptions,
 	paramsFile string,
 	cache *kr8_cache.DeploymentCache,
@@ -234,7 +234,7 @@ func SetupComponentVM(
 	kr8Spec kr8_types.Kr8ClusterSpec,
 	componentName string,
 	compSpec kr8_types.Kr8ComponentSpec,
-	allConfig *safeString,
+	allConfig *SafeString,
 	filters util.PathFilterOptions,
 	paramsFile string,
 	kr8Opts types.Kr8Opts,
@@ -308,7 +308,7 @@ func GetAllClusterParams(clusterDir string, vmConfig types.VMConfig, jvm *jsonne
 // Include full render of all component params for cluster.
 // Only do this if we have not already cached it and don't already have it stored.
 func GetClusterComponentParamsThreadsafe(
-	allConfig *safeString,
+	allConfig *SafeString,
 	config string,
 	vmConfig types.VMConfig,
 	kr8Spec kr8_types.Kr8ClusterSpec,
@@ -625,12 +625,12 @@ func RenderComponents(
 		}
 	}
 
-	cacheResults := safeCacheMap{
+	cacheResults := SafeCacheMap{
 		mu:   sync.Mutex{},
 		data: map[string]kr8_cache.ComponentCache{},
 	}
 
-	var allConfig safeString
+	var allConfig SafeString
 	var waitGroup sync.WaitGroup
 
 	for _, componentName := range compList {
