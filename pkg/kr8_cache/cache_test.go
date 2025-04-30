@@ -272,8 +272,7 @@ func TestDeploymentCache_CheckClusterCache(t *testing.T) {
 				t.Fatalf("could not construct receiver type: %v", err)
 			}
 			got := cache.CheckClusterCache(testCase.config, testCase.logger)
-			// TODO: update the condition below to compare got with tt.want.
-			if true {
+			if got != testCase.want {
 				t.Errorf("CheckClusterCache() = %v, want %v", got, testCase.want)
 			}
 		})
