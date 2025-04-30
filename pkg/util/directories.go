@@ -3,6 +3,7 @@ package util
 import (
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/google/go-jsonnet"
@@ -142,4 +143,25 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) er
 	}
 
 	return nil
+}
+
+func BuildDirFileList(directory string) ([]string, error) {
+	clusterPaths := []string{}
+
+	err := filepath.Walk(directory, func(path string, f os.FileInfo, err error) error {
+		_, file := filepath.Split(path)
+		if file != "" {
+			clusterPaths = append(clusterPaths, path)
+			// No error
+			return nil
+		}
+		return nil
+	})
+	if err != nil {
+		return []string{}, ErrorIfCheck("error building dir file list", err)
+	}
+
+	sort.Strings(clusterPaths)
+
+	return clusterPaths, nil
 }

@@ -164,17 +164,25 @@ func ProcessComponentFinalizer(
 	outputFileMap map[string]bool,
 	logger zerolog.Logger,
 ) (*kr8_cache.ComponentCache, error) {
+	// purge any yaml files in the output dir that were not generated
+	if !compSpec.DisableOutputDirClean {
+		err := CleanOutputDir(outputFileMap, componentOutputDir)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	files, err := util.BuildDirFileList(compPath)
+	if err != nil {
+		return nil, err
+	}
 	newCache, err := kr8_cache.CreateComponentCache(
 		config,
 		filepath.Join(kr8Opts.BaseDir, compPath),
-		GetComponentFiles(compSpec),
+		files,
 	)
 	if err != nil {
 		logger.Warn().Err(err).Msg("issue hashing file for cache")
-	}
-	// purge any yaml files in the output dir that were not generated
-	if !compSpec.DisableOutputDirClean {
-		return newCache, CleanOutputDir(outputFileMap, componentOutputDir)
 	}
 
 	return newCache, nil
@@ -189,8 +197,12 @@ func CheckComponentCache(
 ) bool {
 	if cache != nil {
 		// build list of files referenced by component
-		listFiles := GetComponentFiles(compSpec)
 		compPath := GetComponentPath(config, componentName)
+		listFiles, err := util.BuildDirFileList(compPath)
+		if err != nil {
+			logger.Warn().Err(err).Msg("issue walking component directory")
+			return false
+		}
 		// check if the component matches the cache
 		if cache.CheckClusterComponentCache(config, componentName, compPath, listFiles, logger) {
 			return true
