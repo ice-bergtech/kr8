@@ -114,12 +114,8 @@ func GenProcessComponent(
 		return false, nil, err
 	}
 	cacheValid, currentCacheState, err := CheckComponentCache(
-		cache,
-		compSpec,
-		config,
-		componentName,
-		kr8Opts.BaseDir,
-		logger,
+		cache, compSpec, config,
+		componentName, kr8Opts.BaseDir, logger,
 	)
 	if kr8Spec.EnableCache && !compSpec.DisableCache {
 		if err != nil {
