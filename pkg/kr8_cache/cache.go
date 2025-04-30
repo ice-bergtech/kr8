@@ -22,7 +22,11 @@ func LoadClusterCache(cacheFile string) (*DeploymentCache, error) {
 	}
 	defer fCache.Close()
 
-	text := []byte{}
+	fileInfo, err := fCache.Stat()
+	if err != nil {
+		return nil, err
+	}
+	text := make([]byte, fileInfo.Size())
 	_, err = fCache.Read(text)
 	if err != nil {
 		return nil, err
