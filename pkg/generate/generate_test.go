@@ -1,6 +1,7 @@
 package generate_test
 
 import (
+	"reflect"
 	"testing"
 
 	jsonnet "github.com/google/go-jsonnet"
@@ -113,11 +114,10 @@ func TestGenProcessComponent(t *testing.T) {
 			if testCase.wantErr {
 				t.Fatal("GenProcessComponent() succeeded unexpectedly")
 			}
-			// TODO: update the condition below to compare got with tt.want.
-			if true {
+			if got != testCase.want {
 				t.Errorf("GenProcessComponent() = %v, want %v", got, testCase.want)
 			}
-			if true {
+			if !reflect.DeepEqual(got2, testCase.want2) {
 				t.Errorf("GenProcessComponent() = %v, want %v", got2, testCase.want2)
 			}
 		})
@@ -157,7 +157,6 @@ func TestProcessComponentFinalizer(t *testing.T) {
 			if testCase.wantErr {
 				t.Fatal("ProcessComponentFinalizer() succeeded unexpectedly")
 			}
-			// TODO: update the condition below to compare got with tt.want.
 		})
 	}
 }
@@ -177,13 +176,22 @@ func TestCheckComponentCache(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, got2 := generate.CheckComponentCache(tt.cache, tt.compSpec, tt.config, tt.componentName, tt.baseDir, tt.logger)
+	for _, testCase := range tests {
+		t.Run(testCase.name, func(t *testing.T) {
+			got, got2 := generate.CheckComponentCache(
+				testCase.cache,
+				testCase.compSpec,
+				testCase.config,
+				testCase.componentName,
+				testCase.baseDir,
+				testCase.logger,
+			)
 			// TODO: update the condition below to compare got with tt.want.
-			if true {
-				t.Errorf("CheckComponentCache() = %v, want %v", got, tt.want)
-				t.Errorf("CheckComponentCache() = %v, want %v", got2, tt.want2)
+			if got != testCase.want {
+				t.Errorf("CheckComponentCache() = %v, want %v", got, testCase.want)
+			}
+			if !reflect.DeepEqual(got2, testCase.want2) {
+				t.Errorf("CheckComponentCache() = %v, want %v", got2, testCase.want2)
 			}
 		})
 	}
@@ -201,8 +209,7 @@ func TestGetComponentFiles(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := generate.GetComponentFiles(tt.compSpec)
-			// TODO: update the condition below to compare got with tt.want.
-			if true {
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetComponentFiles() = %v, want %v", got, tt.want)
 			}
 		})
@@ -257,7 +264,7 @@ func TestSetupComponentVM(t *testing.T) {
 			if true {
 				t.Errorf("SetupComponentVM() = %v, want %v", got, testCase.want)
 			}
-			if true {
+			if got2 != testCase.want2 {
 				t.Errorf("SetupComponentVM() = %v, want %v", got2, testCase.want2)
 			}
 		})
