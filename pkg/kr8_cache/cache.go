@@ -3,10 +3,8 @@
 package kr8_cache
 
 import (
-	"bytes"
 	"encoding/base64"
 	"encoding/json"
-	"os"
 	"path/filepath"
 
 	"github.com/ice-bergtech/kr8/pkg/types"
@@ -17,18 +15,7 @@ import (
 
 // Load cluster cache from a specified cache file.
 func LoadClusterCache(cacheFile string) (*DeploymentCache, error) {
-	fCache, err := os.Open(filepath.Clean(cacheFile))
-	if err != nil {
-		return nil, err
-	}
-	defer fCache.Close()
-
-	fileInfo, err := fCache.Stat()
-	if err != nil {
-		return nil, err
-	}
-	text := make([]byte, fileInfo.Size())
-	_, err = fCache.Read(text)
+	text, err := util.ReadFile(cacheFile)
 	if err != nil {
 		return nil, err
 	}
@@ -48,31 +35,35 @@ func LoadClusterCache(cacheFile string) (*DeploymentCache, error) {
 
 // Object that contains the cache for a single cluster.
 type DeploymentCache struct {
+	// A struct containing cluster-level cache values
 	ClusterConfig *ClusterCache `json:"cluster_config"`
 	// Map of cache entries for cluster components.
 	// Depends on ClusterConfig cache being valid to be considered valid.
 	ComponentConfigs map[string]ComponentCache `json:"component_config"`
 }
 
-func (cache *DeploymentCache) WriteCache(outFile string) error {
-	// confirm cluster-level configuration matches the cache
-	var text bytes.Buffer
-	buffer, err := json.Marshal(cache)
-	if err != nil {
-		return err
+func InitDeploymentCache(config string, cacheResults map[string]ComponentCache) *DeploymentCache {
+	cache := DeploymentCache{
+		ClusterConfig:    CreateClusterCache(config),
+		ComponentConfigs: cacheResults,
 	}
-	err = json.Compact(&text, buffer)
-	if err != nil {
-		return err
-	}
-	f, err := os.Create(filepath.Clean(outFile))
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	_, err = text.WriteTo(f)
 
-	return err
+	return &cache
+}
+
+func (cache *DeploymentCache) WriteCache(outFile string, compress bool) error {
+	// confirm cluster-level configuration matches the cache
+	var text []byte
+	text, err := json.Marshal(cache)
+	if err != nil {
+		return err
+	}
+
+	if compress {
+		return util.WriteGzip(text, outFile)
+	}
+
+	return util.WriteFile(text, outFile)
 }
 
 func (cache *DeploymentCache) CheckClusterCache(config string, logger zerolog.Logger) bool {
@@ -127,6 +118,8 @@ type ClusterCache struct {
 	Kr8_Spec string `json:"kr8_spec"`
 	// Raw cluster _cluster object
 	Cluster string `json:"cluster"`
+	// Map of library directory file hashes
+	LibraryCache map[string]string `json:"jsonnet_libs"`
 }
 
 // Stores the cluster kr8_spec and cluster config as cluster-level cache.

@@ -516,7 +516,7 @@ func TestGenerateCacheInitializer(t *testing.T) {
 	}
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
-			got, got2 := generate.GenerateCacheInitializer(testCase.kr8Spec, testCase.enableCache, testCase.logger)
+			got, got2 := generate.LoadClusterCache(testCase.kr8Spec, testCase.logger)
 			// TODO: update the condition below to compare got with tt.want.
 			if true {
 				t.Errorf("GenerateCacheInitializer() = %v, want %v", got, testCase.want)
@@ -524,31 +524,6 @@ func TestGenerateCacheInitializer(t *testing.T) {
 			if true {
 				t.Errorf("GenerateCacheInitializer() = %v, want %v", got2, testCase.want2)
 			}
-		})
-	}
-}
-
-func TestGenerateCacheFinalizer(t *testing.T) {
-	tests := []struct {
-		name string // description of this test case
-		// Named input parameters for target function.
-		enableCache   bool
-		config        string
-		cacheResults  map[string]kr8_cache.ComponentCache
-		cacheFilePath string
-		logger        zerolog.Logger
-	}{
-		// TODO: Add test cases.
-	}
-	for _, testCase := range tests {
-		t.Run(testCase.name, func(t *testing.T) {
-			generate.GenerateCacheFinalizer(
-				testCase.enableCache,
-				testCase.config,
-				testCase.cacheResults,
-				testCase.cacheFilePath,
-				testCase.logger,
-			)
 		})
 	}
 }
@@ -630,12 +605,12 @@ func TestRenderComponents(t *testing.T) {
 		config            string
 		vmConfig          types.VMConfig
 		kr8Spec           kr8_types.Kr8ClusterSpec
+		cache             *kr8_cache.DeploymentCache
 		compList          []string
 		clusterParamsFile string
 		pool              *ants.Pool
 		kr8Opts           types.Kr8Opts
 		filters           util.PathFilterOptions
-		cache             *kr8_cache.DeploymentCache
 		logger            zerolog.Logger
 		want              map[string]kr8_cache.ComponentCache
 		wantErr           bool
@@ -648,12 +623,12 @@ func TestRenderComponents(t *testing.T) {
 				testCase.config,
 				testCase.vmConfig,
 				testCase.kr8Spec,
+				testCase.cache,
 				testCase.compList,
 				testCase.clusterParamsFile,
 				testCase.pool,
 				testCase.kr8Opts,
 				testCase.filters,
-				testCase.cache,
 				testCase.logger,
 			)
 			if gotErr != nil {

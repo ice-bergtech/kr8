@@ -433,26 +433,34 @@ func GenProcessCluster(
 		return err
 	}
 
-	cache, cacheFile := GenerateCacheInitializer(kr8Spec, enableCache, logger)
+	var cacheCur *kr8_cache.DeploymentCache
+	cacheFile := ""
+	if kr8Spec.EnableCache {
+		cacheCur, cacheFile = LoadClusterCache(kr8Spec, logger)
+	} else {
+		cacheCur = nil
+	}
 
 	// render full params for cluster for all selected components
-	cacheResult, err := RenderComponents(
+	componentCacheResult, err := RenderComponents(
 		config,
 		vmConfig,
 		*kr8Spec,
+		cacheCur,
 		compList,
 		clusterParamsFile,
 		pool,
 		kr8Opts,
 		filters,
-		cache,
 		logger,
 	)
 	if err != nil {
 		return err
 	}
 
-	GenerateCacheFinalizer(enableCache, config, cacheResult, cacheFile, logger)
+	if kr8Spec.EnableCache {
+		return StoreClusterComponentCache(kr8Spec, config, componentCacheResult, cacheFile)
+	}
 
 	return nil
 }
@@ -504,15 +512,14 @@ func GatherClusterConfig(
 	return kr8Spec, compList, config, nil
 }
 
-func GenerateCacheInitializer(
+func LoadClusterCache(
 	kr8Spec *kr8_types.Kr8ClusterSpec,
-	enableCache bool,
 	logger zerolog.Logger,
 ) (*kr8_cache.DeploymentCache, string) {
 	var cache *kr8_cache.DeploymentCache
 	var err error
 	cacheFile := filepath.Join(kr8Spec.ClusterOutputDir, ".kr8_cache")
-	if enableCache {
+	if kr8Spec.EnableCache {
 		cache, err = kr8_cache.LoadClusterCache(cacheFile)
 		if err != nil {
 			logger.Warn().Err(err).Msg("error loading cluster cache")
@@ -526,25 +533,18 @@ func GenerateCacheInitializer(
 	return cache, cacheFile
 }
 
-func GenerateCacheFinalizer(
-	enableCache bool,
+// Generates and stores cluster cache provided the config and component caches.
+func StoreClusterComponentCache(
+	kr8Spec *kr8_types.Kr8ClusterSpec,
 	config string,
 	cacheResults map[string]kr8_cache.ComponentCache,
 	cacheFilePath string,
-	logger zerolog.Logger,
-) {
-	if enableCache {
-		newCache := kr8_cache.DeploymentCache{
-			ClusterConfig:    kr8_cache.CreateClusterCache(config),
-			ComponentConfigs: cacheResults,
-		}
-
-		err := newCache.WriteCache(cacheFilePath)
-		if err != nil {
-			wd, _ := os.Getwd()
-			logger.Warn().Err(err).Str("pwd", wd).Msg("error storing cache")
-		}
+) error {
+	if kr8Spec.EnableCache {
+		return kr8_cache.InitDeploymentCache(config, cacheResults).WriteCache(cacheFilePath, kr8Spec.CompressCache)
 	}
+
+	return nil
 }
 
 func CleanupOldComponentDirs(
@@ -619,12 +619,12 @@ func RenderComponents(
 	config string,
 	vmConfig types.VMConfig,
 	kr8Spec kr8_types.Kr8ClusterSpec,
+	cache *kr8_cache.DeploymentCache,
 	compList []string,
 	clusterParamsFile string,
 	pool *ants.Pool,
 	kr8Opts types.Kr8Opts,
 	filters util.PathFilterOptions,
-	cache *kr8_cache.DeploymentCache,
 	logger zerolog.Logger,
 ) (map[string]kr8_cache.ComponentCache, error) {
 	// Make sure the cache is valid

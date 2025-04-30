@@ -238,7 +238,7 @@ func TestDeploymentCache_WriteCache(t *testing.T) {
 					return
 				}
 			}
-			gotErr2 := cache.WriteCache(testCase.outFile)
+			gotErr2 := cache.WriteCache(testCase.outFile, false)
 			if gotErr2 != nil {
 				if !testCase.wantErr {
 					t.Errorf("WriteCache() failed: %v", gotErr2)
