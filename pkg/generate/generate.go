@@ -40,11 +40,6 @@ type SafeString struct {
 	config string
 }
 
-type SafeCacheMap struct {
-	mu   sync.Mutex
-	data map[string]kr8_cache.ComponentCache
-}
-
 func GetClusterParams(clusterDir string, vmConfig types.VMConfig, logger zerolog.Logger) (map[string]string, error) {
 	// get list of all clusters, render cluster level params for all of them
 	allClusterParams := make(map[string]string)
@@ -513,6 +508,8 @@ func GenerateCacheInitializer(
 		cache, err = kr8_cache.LoadClusterCache(cacheFile)
 		if err != nil {
 			logger.Warn().Err(err).Msg("error loading cluster cache")
+		} else {
+			logger.Info().Str("file", cacheFile).Msg("Loaded cluster cache")
 		}
 	} else {
 		cache = nil
@@ -667,6 +664,7 @@ func RenderComponents(
 		})
 	}
 	waitGroup.Wait()
+	close(cacheResultChannel)
 
 	result := make(map[string]kr8_cache.ComponentCache, len(cacheResultChannel))
 	for s := range cacheResultChannel {
