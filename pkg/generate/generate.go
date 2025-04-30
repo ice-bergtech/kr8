@@ -114,11 +114,14 @@ func GenProcessComponent(
 	if err := util.LogErrorIfCheck("Error creating component spec", err, logger); err != nil {
 		return false, nil, err
 	}
-	cacheValid, currentCacheState := CheckComponentCache(cache, compSpec, config, componentName, kr8Opts.BaseDir, logger)
+	cacheValid, currentCacheState, err := CheckComponentCache(cache, compSpec, config, componentName, kr8Opts.BaseDir, logger)
+	if err != nil {
+		logger.Error().Err(err).Msg("errororor")
+	}
 	if cacheValid {
 		logger.Info().Msg("Component config and files match cache, skipping")
 
-		return true, nil, nil
+		return true, currentCacheState, nil
 	}
 
 	// it's faster to create this VM for each component, rather than re-use
@@ -174,18 +177,18 @@ func CheckComponentCache(
 	componentName string,
 	baseDir string,
 	logger zerolog.Logger,
-) (bool, *kr8_cache.ComponentCache) {
+) (bool, *kr8_cache.ComponentCache, error) {
 	compPath := GetComponentPath(config, componentName)
 	listFiles, err := util.BuildDirFileList(compPath)
 	// build list of files referenced by component
 	if err != nil {
 		logger.Warn().Err(err).Msg("issue walking component directory")
 
-		return false, nil
+		return false, nil, err
 	}
 	// check if the component matches the cache
 	if cache != nil {
-		cacheValid, componentCache := cache.CheckClusterComponentCache(
+		return cache.CheckClusterComponentCache(
 			config,
 			componentName,
 			compPath,
@@ -193,16 +196,14 @@ func CheckComponentCache(
 			listFiles,
 			logger,
 		)
-
-		return cacheValid, componentCache
 	}
 
 	newCache, err := kr8_cache.CreateComponentCache(config, baseDir, listFiles)
 	if err != nil {
-		return false, nil
+		return false, nil, err
 	}
 
-	return false, newCache
+	return false, newCache, nil
 }
 
 func GetComponentFiles(compSpec kr8_types.Kr8ComponentSpec) []string {
@@ -630,10 +631,7 @@ func RenderComponents(
 		}
 	}
 
-	cacheResults := SafeCacheMap{
-		mu:   sync.Mutex{},
-		data: map[string]kr8_cache.ComponentCache{},
-	}
+	cacheResultChannel := make(chan map[string]kr8_cache.ComponentCache, len(compList))
 
 	var allConfig SafeString
 	var waitGroup sync.WaitGroup
@@ -662,13 +660,19 @@ func RenderComponents(
 					Msg("Failed to process component")
 			}
 			if success && cacheResult != nil {
-				cacheResults.mu.Lock()
-				cacheResults.data[componentName] = *cacheResult
-				cacheResults.mu.Unlock()
+				cacheResultChannel <- map[string]kr8_cache.ComponentCache{
+					componentName: *cacheResult,
+				}
 			}
 		})
 	}
 	waitGroup.Wait()
 
-	return cacheResults.data, nil
+	result := make(map[string]kr8_cache.ComponentCache, len(cacheResultChannel))
+	for s := range cacheResultChannel {
+		for k, v := range s {
+			result[k] = v
+		}
+	}
+	return result, nil
 }
