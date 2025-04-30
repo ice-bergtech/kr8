@@ -152,9 +152,8 @@ func BuildDirFileList(directory string) ([]string, error) {
 		_, file := filepath.Split(path)
 		if file != "" {
 			clusterPaths = append(clusterPaths, path)
-			// No error
-			return nil
 		}
+
 		return nil
 	})
 	if err != nil {

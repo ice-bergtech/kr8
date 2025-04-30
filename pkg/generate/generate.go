@@ -201,6 +201,7 @@ func CheckComponentCache(
 		listFiles, err := util.BuildDirFileList(compPath)
 		if err != nil {
 			logger.Warn().Err(err).Msg("issue walking component directory")
+
 			return false
 		}
 		// check if the component matches the cache
