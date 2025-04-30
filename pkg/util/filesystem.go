@@ -166,6 +166,39 @@ func BuildDirFileList(directory string) ([]string, error) {
 	return clusterPaths, nil
 }
 
+// Write bytes to file (path included).
+func WriteFile(input []byte, file string) error {
+	f, err := os.Create(filepath.Clean(file))
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	return os.WriteFile(file, input, 0600)
+}
+
+// Read bytes from file (path included).
+func ReadFile(file string) ([]byte, error) {
+	fCache, err := os.Open(filepath.Clean(file))
+	if err != nil {
+		return nil, err
+	}
+	defer fCache.Close()
+
+	fileInfo, err := fCache.Stat()
+	if err != nil {
+		return nil, err
+	}
+	text := make([]byte, fileInfo.Size())
+	_, err = fCache.Read(text)
+	if err != nil {
+		return nil, err
+	}
+
+	return text, nil
+}
+
+// Write bytes to gzip file (path included).
 func WriteGzip(input []byte, file string) error {
 	outFile, err := os.Create(filepath.Clean(file))
 	if err != nil {
@@ -177,6 +210,7 @@ func WriteGzip(input []byte, file string) error {
 	return err
 }
 
+// Read bytes from a gzip file (path included).
 func ReadGzip(filename string) ([]byte, error) {
 	inFile, err := os.Open(filepath.Clean(filename))
 	if err != nil {
