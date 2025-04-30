@@ -4,6 +4,7 @@ package kr8_cache
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -110,22 +111,23 @@ type ClusterCache struct {
 // Stores the cluster kr8_spec and cluster config as cluster-level cache.
 func CreateClusterCache(config string) *ClusterCache {
 	return &ClusterCache{
-		Kr8_Spec: gjson.Get(config, "_kr8_spec").Raw,
-		Cluster:  gjson.Get(config, "_cluster").Raw,
+		Kr8_Spec: base64.RawStdEncoding.EncodeToString([]byte(gjson.Get(config, "_kr8_spec").Raw)),
+		Cluster:  base64.RawStdEncoding.EncodeToString([]byte(gjson.Get(config, "_cluster").Raw)),
 	}
 }
 
 // Compares current cluster config represented as a json string to the cache.
 // Returns true if cache is valid.
 func (cache *ClusterCache) CheckClusterCache(config string, logger zerolog.Logger) bool {
+	currentState := CreateClusterCache(config)
 	// compare cluster (non-component) configuration to cached cluster
-	if cache.Kr8_Spec != gjson.Get(config, "._kr8_spec").Raw {
+	if cache.Kr8_Spec != currentState.Kr8_Spec {
 		logger.Debug().Msg("_kr8_spec differs from cache")
 
 		return false
 	}
 
-	if cache.Cluster != gjson.Get(config, "._cluster").Raw {
+	if cache.Cluster != currentState.Cluster {
 		logger.Debug().Msg("_cluster differs from cache")
 
 		return false
@@ -143,7 +145,7 @@ type ComponentCache struct {
 
 func CreateComponentCache(config string, componentPath string, listFiles []string) (*ComponentCache, error) {
 	cacheResult := ComponentCache{
-		ComponentConfig: config,
+		ComponentConfig: base64.RawStdEncoding.EncodeToString([]byte(config)),
 		ComponentFiles:  map[string]string{},
 	}
 	for _, file := range listFiles {
@@ -164,15 +166,19 @@ func (cache *ComponentCache) CheckComponentCache(
 	files []string,
 	logger zerolog.Logger,
 ) bool {
+	currentState, err := CreateComponentCache(config, componentPath, files)
+	if err != nil {
+		return false
+	}
 	// compare cluster-level component config
-	if cache.ComponentConfig != gjson.Get(config, componentName).Raw {
+	if cache.ComponentConfig != currentState.ComponentConfig {
 		logger.Info().Msg("component config differs from cache")
 		// invalidate component cache
 	}
-	if len(cache.ComponentFiles) != len(files) {
+	if len(cache.ComponentFiles) != len(currentState.ComponentFiles) {
 		return false
 	}
-	for _, file := range files {
+	for _, file := range currentState.ComponentFiles {
 		hash, ok := cache.ComponentFiles[file]
 		// didn't find file in cache
 		if !ok {
