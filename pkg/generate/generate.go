@@ -185,7 +185,15 @@ func CheckComponentCache(
 	}
 	// check if the component matches the cache
 	if cache != nil {
-		cacheValid, componentCache := cache.CheckClusterComponentCache(config, componentName, compPath, baseDir, listFiles, logger)
+		cacheValid, componentCache := cache.CheckClusterComponentCache(
+			config,
+			componentName,
+			compPath,
+			baseDir,
+			listFiles,
+			logger,
+		)
+
 		return cacheValid, componentCache
 	}
 
@@ -193,6 +201,7 @@ func CheckComponentCache(
 	if err != nil {
 		return false, nil
 	}
+
 	return false, newCache
 }
 
