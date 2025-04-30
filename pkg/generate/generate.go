@@ -415,7 +415,6 @@ func GenProcessCluster(
 	filters util.PathFilterOptions,
 	vmConfig types.VMConfig,
 	pool *ants.Pool,
-	enableCache bool,
 	logger zerolog.Logger,
 ) error {
 	logger.Debug().Str("cluster", clusterName).Msg("Processing cluster")

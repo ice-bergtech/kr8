@@ -640,7 +640,7 @@ func Execute(ver string)
 Execute adds all child commands to the root command sets flags appropriately. This is called by main.main\(\). It only needs to happen once to the rootCmd.
 
 <a name="GenerateCommand"></a>
-## func [GenerateCommand](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L75>)
+## func [GenerateCommand](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L69>)
 
 ```go
 func GenerateCommand(cmd *cobra.Command, args []string)
@@ -676,7 +676,7 @@ func ProfilingInitializer()
 Sets up program profiling.
 
 <a name="CmdGenerateOptions"></a>
-## type [CmdGenerateOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L21-L30>)
+## type [CmdGenerateOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L21-L28>)
 
 Stores the options for the 'generate' command.
 
@@ -688,8 +688,6 @@ type CmdGenerateOptions struct {
     GenerateDir string
     // Stores the filters to apply to clusters and components when generating files
     Filters util.PathFilterOptions
-    // If true, enables generating, checking and storing a cache to speed up builds.
-    EnableCache bool
 }
 ```
 

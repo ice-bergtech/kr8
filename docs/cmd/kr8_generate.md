@@ -19,7 +19,6 @@ kr8 generate
 ### Options
 
 ```
-      --cache                  generate a cache file for each cluster. Used to determine if generate should skip generating a component. 
   -x, --clexcludes string      filter included cluster by excluding clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)
   -i, --clincludes string      filter included cluster by including clusters with matching cluster parameters - comma separate list of key/value conditions separated by = or ~ (for regex match)
   -p, --clusterparams string   provide cluster params as single file - can be combined with --cluster to override cluster

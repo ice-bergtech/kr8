@@ -762,7 +762,7 @@ and initialize a git repo so you can get started`,
 </code></pre>
 <p>Execute adds all child commands to the root command sets flags appropriately. This is called by main.main(). It only needs to happen once to the rootCmd.</p>
 <p><a name="GenerateCommand"></a></p>
-<h2 id="func-generatecommand">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L75">GenerateCommand</a></h2>
+<h2 id="func-generatecommand">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L69">GenerateCommand</a></h2>
 <pre><code class="language-go">func GenerateCommand(cmd *cobra.Command, args []string)
 </code></pre>
 <p>This function generates the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.</p>
@@ -782,7 +782,7 @@ and initialize a git repo so you can get started`,
 </code></pre>
 <p>Sets up program profiling.</p>
 <p><a name="CmdGenerateOptions"></a></p>
-<h2 id="type-cmdgenerateoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L21-L30">CmdGenerateOptions</a></h2>
+<h2 id="type-cmdgenerateoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L21-L28">CmdGenerateOptions</a></h2>
 <p>Stores the options for the 'generate' command.</p>
 <pre><code class="language-go">type CmdGenerateOptions struct {
     // Stores the path to the cluster params file
@@ -791,8 +791,6 @@ and initialize a git repo so you can get started`,
     GenerateDir string
     // Stores the filters to apply to clusters and components when generating files
     Filters util.PathFilterOptions
-    // If true, enables generating, checking and storing a cache to speed up builds.
-    EnableCache bool
 }
 </code></pre>
 <p><a name="CmdGetOptions"></a></p>

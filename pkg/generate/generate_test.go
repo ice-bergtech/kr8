@@ -412,7 +412,6 @@ func TestGenProcessCluster(t *testing.T) {
 		filters             util.PathFilterOptions
 		vmConfig            types.VMConfig
 		pool                *ants.Pool
-		enableCache         bool
 		logger              zerolog.Logger
 		wantErr             bool
 	}{
@@ -430,7 +429,6 @@ func TestGenProcessCluster(t *testing.T) {
 				testCase.filters,
 				testCase.vmConfig,
 				testCase.pool,
-				testCase.enableCache,
 				testCase.logger,
 			)
 			if gotErr != nil {
