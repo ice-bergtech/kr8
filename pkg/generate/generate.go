@@ -121,15 +121,17 @@ func GenProcessComponent(
 		kr8Opts.BaseDir,
 		logger,
 	)
-	if err != nil {
-		logger.Error().Err(err).Msg("issue checking/creating component cache")
-	}
-	if cacheValid {
-		logger.Info().Msg("Component matches cache, skipping")
+	if kr8Spec.EnableCache && !compSpec.DisableCache {
+		if err != nil {
+			logger.Error().Err(err).Msg("issue checking/creating component cache")
+		}
+		if cacheValid {
+			logger.Info().Msg("Component matches cache, skipping")
 
-		return true, currentCacheState, nil
+			return true, currentCacheState, nil
+		}
+		logger.Info().Msg("Component differs from cache, continuing")
 	}
-	logger.Info().Msg("Component differs from cache, continuing")
 
 	// it's faster to create this VM for each component, rather than re-use
 	jvm, compPath, err := SetupComponentVM(
