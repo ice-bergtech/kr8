@@ -38,10 +38,7 @@ func LoadClusterCache(cacheFile string) (*DeploymentCache, error) {
 		return nil, err
 	}
 
-	return &DeploymentCache{
-		ClusterConfig:    &ClusterCache{},
-		ComponentConfigs: make(map[string]ComponentCache),
-	}, nil
+	return &result, nil
 }
 
 // Object that contains the cache for a single cluster.
