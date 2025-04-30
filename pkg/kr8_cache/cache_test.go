@@ -30,6 +30,10 @@ func TestLoadClusterCache(t *testing.T) {
 						},
 					},
 				},
+				LibraryCache: &kr8_cache.LibraryCache{
+					Directory: "",
+					Entries:   map[string]string{},
+				},
 			},
 			wantErr: false,
 		},
@@ -51,6 +55,10 @@ func TestLoadClusterCache(t *testing.T) {
 			want: &kr8_cache.DeploymentCache{
 				ClusterConfig:    kr8_cache.CreateClusterCache("test_cluster_config"),
 				ComponentConfigs: map[string]kr8_cache.ComponentCache{},
+				LibraryCache: &kr8_cache.LibraryCache{
+					Directory: "",
+					Entries:   map[string]string{},
+				},
 			},
 			wantErr: false,
 		},
@@ -72,6 +80,10 @@ func TestLoadClusterCache(t *testing.T) {
 							"file2.txt": "hash2",
 						},
 					},
+				},
+				LibraryCache: &kr8_cache.LibraryCache{
+					Directory: "",
+					Entries:   map[string]string{},
 				},
 			},
 			wantErr: false,
@@ -90,6 +102,10 @@ func TestLoadClusterCache(t *testing.T) {
 						},
 					},
 				},
+				LibraryCache: &kr8_cache.LibraryCache{
+					Directory: "",
+					Entries:   map[string]string{},
+				},
 			},
 			wantErr: false,
 		},
@@ -111,6 +127,10 @@ func TestLoadClusterCache(t *testing.T) {
 			want: &kr8_cache.DeploymentCache{
 				ClusterConfig:    kr8_cache.CreateClusterCache("test_cluster_config"),
 				ComponentConfigs: map[string]kr8_cache.ComponentCache{},
+				LibraryCache: &kr8_cache.LibraryCache{
+					Directory: "",
+					Entries:   map[string]string{},
+				},
 			},
 			wantErr: false,
 		},
@@ -133,6 +153,10 @@ func TestLoadClusterCache(t *testing.T) {
 						},
 					},
 				},
+				LibraryCache: &kr8_cache.LibraryCache{
+					Directory: "",
+					Entries:   map[string]string{},
+				},
 			},
 			wantErr: false,
 		},
@@ -140,7 +164,7 @@ func TestLoadClusterCache(t *testing.T) {
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
 			got, gotErr := kr8_cache.LoadClusterCache(testCase.cacheFile)
-			// _ = testCase.want.WriteCache("testdata/" + testCase.name)
+			// _ = testCase.want.WriteCache(testCase.cacheFile, false)
 			if gotErr != nil {
 				if !testCase.wantErr {
 					t.Errorf("LoadClusterCache() failed: %v", gotErr)
@@ -258,6 +282,7 @@ func TestDeploymentCache_CheckClusterCache(t *testing.T) {
 		name string // description of this test case
 		// Named input parameters for receiver constructor.
 		cacheFile string
+		baseDir   string
 		// Named input parameters for target function.
 		config string
 		logger zerolog.Logger
@@ -271,7 +296,7 @@ func TestDeploymentCache_CheckClusterCache(t *testing.T) {
 			if err != nil {
 				t.Fatalf("could not construct receiver type: %v", err)
 			}
-			got := cache.CheckClusterCache(testCase.config, testCase.logger)
+			got := cache.CheckClusterCache(testCase.config, testCase.baseDir, testCase.logger)
 			if got != testCase.want {
 				t.Errorf("CheckClusterCache() = %v, want %v", got, testCase.want)
 			}
@@ -354,6 +379,7 @@ func TestClusterCache_CheckClusterCache(t *testing.T) {
 		name string // description of this test case
 		// Named input parameters for receiver constructor.
 		cconfig string
+		baseDir string
 		// Named input parameters for target function.
 		config string
 		logger zerolog.Logger
@@ -364,7 +390,7 @@ func TestClusterCache_CheckClusterCache(t *testing.T) {
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
 			cache := kr8_cache.CreateClusterCache(testCase.cconfig)
-			got := cache.CheckClusterCache(testCase.config, testCase.logger)
+			got := cache.CheckClusterCache(testCase.config, testCase.baseDir, testCase.logger)
 			// TODO: update the condition below to compare got with tt.want.
 			if true {
 				t.Errorf("CheckClusterCache() = %v, want %v", got, testCase.want)
