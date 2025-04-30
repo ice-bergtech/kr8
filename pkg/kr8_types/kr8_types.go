@@ -45,12 +45,16 @@ type Kr8ClusterSpec struct {
 	PostProcessor string `json:"postprocessor"`
 	// The name of the root generate directory. Default `generated`
 	GenerateDir string `json:"generate_dir"`
-	// if this is true, we don't use the full file path to generate output file names
+	// If true, we don't use the full file path to generate output file names
 	GenerateShortNames bool `json:"generate_short_names"`
-	// if this is true, we prune component parameters
+	// If true, we prune component parameters
 	PruneParams bool `json:"prune_params"`
-	// Additional information used to process the cluster that is not stored with it.
+	// If true, kr8 will store and reference a cache file for the cluster.
+	EnableCache bool `json:"cache_enable"`
+	// If true, kr8 will compress the cache in a gzip file instead of raw json.
+	CompressCache bool `json:"cache_compress"`
 	// Cluster output directory
+	// Not read from config.
 	ClusterOutputDir string `json:"-"`
 }
 
@@ -118,6 +122,8 @@ type Kr8ComponentSpec struct {
 	Kr8_allClusters bool `json:"enable_kr8_allclusters"`
 	// If false, all non-generated files present in the output directory are removed
 	DisableOutputDirClean bool `json:"disable_output_clean"`
+	// If true, component will not be cached if cluster caching is enabled.
+	DisableCache bool
 	// A list of filenames to include as jsonnet vm external vars
 	ExtFiles ExtFileVar `json:"extfiles"`
 	// Additional jsonnet libs to the jsonnet vm, component-path scoped
