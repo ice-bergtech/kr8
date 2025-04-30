@@ -28,14 +28,18 @@ Package util contains various utility functions for directories and files. It in
 - [func JsonnetPrint\(output string, format string, color bool\) error](<#JsonnetPrint>)
 - [func LogErrorIfCheck\(message string, err error, logger zerolog.Logger\) error](<#LogErrorIfCheck>)
 - [func Pretty\(inputJson string, colorOutput bool\) \(string, error\)](<#Pretty>)
+- [func ReadFile\(file string\) \(\[\]byte, error\)](<#ReadFile>)
+- [func ReadGzip\(filename string\) \(\[\]byte, error\)](<#ReadGzip>)
 - [func SetupLogger\(enableColor bool\) zerolog.Logger](<#SetupLogger>)
+- [func WriteFile\(input \[\]byte, file string\) error](<#WriteFile>)
+- [func WriteGzip\(input \[\]byte, file string\) error](<#WriteGzip>)
 - [func WriteObjToJsonFile\(filename string, path string, objStruct interface\{\}\) \(string, error\)](<#WriteObjToJsonFile>)
 - [type ClusterTreeNode](<#ClusterTreeNode>)
 - [type PathFilterOptions](<#PathFilterOptions>)
 
 
 <a name="BuildDirFileList"></a>
-## func [BuildDirFileList](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L148>)
+## func [BuildDirFileList](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L150>)
 
 ```go
 func BuildDirFileList(directory string) ([]string, error)
@@ -62,7 +66,7 @@ func CheckObjectMatch(input gjson.Result, filterString string) bool
 Checks if a input object matches a filter string. The filter string can be an equality match or a regex match.
 
 <a name="CleanOutputDir"></a>
-## func [CleanOutputDir](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L118>)
+## func [CleanOutputDir](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L120>)
 
 ```go
 func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error
@@ -143,7 +147,7 @@ func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, er
 Formats a jsonnet string using custom options.
 
 <a name="GetClusterFilenames"></a>
-## func [GetClusterFilenames](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L23>)
+## func [GetClusterFilenames](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L25>)
 
 ```go
 func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error)
@@ -152,7 +156,7 @@ func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error)
 Get a list of cluster from within a directory. Walks the directory tree, creating a types.Kr8Cluster for each cluster.jsonnet file found.
 
 <a name="GetClusterParamsFilenames"></a>
-## func [GetClusterParamsFilenames](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L79>)
+## func [GetClusterParamsFilenames](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L81>)
 
 ```go
 func GetClusterParamsFilenames(basePath string, targetPath string) []string
@@ -161,7 +165,7 @@ func GetClusterParamsFilenames(basePath string, targetPath string) []string
 Get all cluster parameters within a directory. Walks through the directory hierarchy and returns all paths to \`params.jsonnet\` files.
 
 <a name="GetClusterPath"></a>
-## func [GetClusterPath](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L53>)
+## func [GetClusterPath](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L55>)
 
 ```go
 func GetClusterPath(searchDir string, clusterName string) (string, error)
@@ -214,6 +218,24 @@ func Pretty(inputJson string, colorOutput bool) (string, error)
 
 Pretty formats the input jsonnet string with indentation and optional color output. Returns an error when the input can't properly format the json string input.
 
+<a name="ReadFile"></a>
+## func [ReadFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L181>)
+
+```go
+func ReadFile(file string) ([]byte, error)
+```
+
+Read bytes from file \(path included\).
+
+<a name="ReadGzip"></a>
+## func [ReadGzip](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L214>)
+
+```go
+func ReadGzip(filename string) ([]byte, error)
+```
+
+Read bytes from a gzip file \(path included\).
+
 <a name="SetupLogger"></a>
 ## func [SetupLogger](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L38>)
 
@@ -222,6 +244,24 @@ func SetupLogger(enableColor bool) zerolog.Logger
 ```
 
 
+
+<a name="WriteFile"></a>
+## func [WriteFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L170>)
+
+```go
+func WriteFile(input []byte, file string) error
+```
+
+Write bytes to file \(path included\).
+
+<a name="WriteGzip"></a>
+## func [WriteGzip](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L202>)
+
+```go
+func WriteGzip(input []byte, file string) error
+```
+
+Write bytes to gzip file \(path included\).
 
 <a name="WriteObjToJsonFile"></a>
 ## func [WriteObjToJsonFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/json.go#L120>)
@@ -233,7 +273,7 @@ func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (st
 Write out a struct to a specified path and file. Marshals the given interface and generates a formatted json string. All parent directories needed are created.
 
 <a name="ClusterTreeNode"></a>
-## type [ClusterTreeNode](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L15-L19>)
+## type [ClusterTreeNode](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L17-L21>)
 
 
 
