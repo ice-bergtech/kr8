@@ -93,6 +93,8 @@ func CreateClusterSpec(
 		PruneParams:        spec.Get("prune_params").Bool(),
 		ClusterOutputDir:   clGenerateDir + "/" + clusterName,
 		Name:               clusterName,
+		EnableCache:        false,
+		CompressCache:      true,
 	}, nil
 }
 
@@ -194,6 +196,7 @@ func CreateComponentSpec(spec gjson.Result, logger zerolog.Logger) (Kr8Component
 		ExtFiles:              ExtractExtFiles(spec),
 		JPaths:                ExtractJpaths(spec),
 		Includes:              includes,
+		DisableCache:          false,
 	}
 
 	return componentSpec, nil
@@ -240,6 +243,8 @@ func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error {
 			File:     file,
 			DestExt:  "yaml",
 			DestName: fileName,
+			DestDir:  "",
+			Config:   "",
 		})
 
 		return nil
@@ -264,6 +269,8 @@ func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error {
 				File:     file,
 				DestExt:  "yaml",
 				DestName: fileName,
+				DestDir:  "",
+				Config:   "",
 			})
 		} else { // Otherwise, it's an object
 			var include Kr8ComponentSpecIncludeObject
