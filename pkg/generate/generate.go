@@ -114,8 +114,8 @@ func GenProcessComponent(
 	if err := util.LogErrorIfCheck("Error creating component spec", err, logger); err != nil {
 		return false, nil, err
 	}
-
-	if CheckComponentCache(cache, compSpec, config, componentName, kr8Opts.BaseDir, logger) {
+	cacheValid, currentCacheState := CheckComponentCache(cache, compSpec, config, componentName, kr8Opts.BaseDir, logger)
+	if cacheValid {
 		logger.Info().Msg("Component config and files match cache, skipping")
 
 		return true, nil, nil
@@ -148,44 +148,23 @@ func GenProcessComponent(
 		return false, nil, err
 	}
 
-	newCache, err := ProcessComponentFinalizer(
-		kr8Opts, config, compPath, compSpec,
-		componentOutputDir, outputFileMap, logger,
-	)
-
-	return true, newCache, err
+	return true, currentCacheState, ProcessComponentFinalizer(compSpec, componentOutputDir, outputFileMap)
 }
 
 func ProcessComponentFinalizer(
-	kr8Opts types.Kr8Opts,
-	config, compPath string,
 	compSpec kr8_types.Kr8ComponentSpec,
 	componentOutputDir string,
 	outputFileMap map[string]bool,
-	logger zerolog.Logger,
-) (*kr8_cache.ComponentCache, error) {
+) error {
 	// purge any yaml files in the output dir that were not generated
 	if !compSpec.DisableOutputDirClean {
 		err := CleanOutputDir(outputFileMap, componentOutputDir)
 		if err != nil {
-			return nil, err
+			return err
 		}
 	}
 
-	files, err := util.BuildDirFileList(compPath)
-	if err != nil {
-		return nil, err
-	}
-	newCache, err := kr8_cache.CreateComponentCache(
-		config,
-		kr8Opts.BaseDir,
-		files,
-	)
-	if err != nil {
-		logger.Warn().Err(err).Msg("issue hashing file for cache")
-	}
-
-	return newCache, nil
+	return nil
 }
 
 func CheckComponentCache(
@@ -195,23 +174,26 @@ func CheckComponentCache(
 	componentName string,
 	baseDir string,
 	logger zerolog.Logger,
-) bool {
-	if cache != nil {
-		// build list of files referenced by component
-		compPath := GetComponentPath(config, componentName)
-		listFiles, err := util.BuildDirFileList(compPath)
-		if err != nil {
-			logger.Warn().Err(err).Msg("issue walking component directory")
+) (bool, *kr8_cache.ComponentCache) {
+	compPath := GetComponentPath(config, componentName)
+	listFiles, err := util.BuildDirFileList(compPath)
+	// build list of files referenced by component
+	if err != nil {
+		logger.Warn().Err(err).Msg("issue walking component directory")
 
-			return false
-		}
-		// check if the component matches the cache
-		if cache.CheckClusterComponentCache(config, componentName, compPath, baseDir, listFiles, logger) {
-			return true
-		}
+		return false, nil
+	}
+	// check if the component matches the cache
+	if cache != nil {
+		cacheValid, componentCache := cache.CheckClusterComponentCache(config, componentName, compPath, baseDir, listFiles, logger)
+		return cacheValid, componentCache
 	}
 
-	return false
+	newCache, err := kr8_cache.CreateComponentCache(config, baseDir, listFiles)
+	if err != nil {
+		return false, nil
+	}
+	return false, newCache
 }
 
 func GetComponentFiles(compSpec kr8_types.Kr8ComponentSpec) []string {

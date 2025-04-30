@@ -89,19 +89,27 @@ func (cache *DeploymentCache) CheckClusterComponentCache(
 	baseDir string,
 	files []string,
 	logger zerolog.Logger,
-) bool {
+) (bool, *ComponentCache) {
 	// first confirm cluster-level configuration matches the cache
 	result := cache.CheckClusterCache(config, logger)
 	if !result {
-		return result
+		return result, nil
 	}
 
 	componentCache, ok := cache.ComponentConfigs[componentName]
 	if !ok {
-		return false
+		return false, nil
 	}
 
-	return result && componentCache.CheckComponentCache(config, componentName, componentPath, baseDir, files, logger)
+	cacheValid, currentComponentCache := componentCache.CheckComponentCache(
+		config,
+		componentName,
+		componentPath,
+		baseDir,
+		files,
+		logger,
+	)
+	return result && cacheValid, currentComponentCache
 }
 
 // This is cluster-level cache that applies to all components.
@@ -171,35 +179,36 @@ func (cache *ComponentCache) CheckComponentCache(
 	baseDir string,
 	files []string,
 	logger zerolog.Logger,
-) bool {
+) (bool, *ComponentCache) {
 	currentState, err := CreateComponentCache(config, baseDir, files)
 	if err != nil {
-		return false
+		return false, nil
 	}
 	// compare cluster-level component config
 	if cache.ComponentConfig != currentState.ComponentConfig {
 		logger.Info().Msg("component config differs from cache")
-		// invalidate component cache
+
+		return false, currentState
 	}
 	if len(cache.ComponentFiles) != len(currentState.ComponentFiles) {
-		return false
+		return false, currentState
 	}
 	for _, file := range currentState.ComponentFiles {
 		hash, ok := cache.ComponentFiles[file]
 		// didn't find file in cache
 		if !ok {
-			return false
+			return false, currentState
 		}
 		currentHash, err := util.HashFile(filepath.Join(componentPath, file))
 		if err != nil {
 			logger.Warn().Err(err).Msg("issue hashing file, cache invalid")
 
-			return false
+			return false, currentState
 		}
 		if hash != currentHash {
-			return false
+			return false, currentState
 		}
 	}
 
-	return true
+	return true, currentState
 }
