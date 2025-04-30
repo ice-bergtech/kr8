@@ -149,8 +149,7 @@ func BuildDirFileList(directory string) ([]string, error) {
 	clusterPaths := []string{}
 
 	err := filepath.Walk(directory, func(path string, f os.FileInfo, err error) error {
-		_, file := filepath.Split(path)
-		if file != "" {
+		if f != nil && !f.IsDir() {
 			clusterPaths = append(clusterPaths, path)
 		}
 
