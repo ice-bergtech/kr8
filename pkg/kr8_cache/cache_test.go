@@ -167,18 +167,81 @@ func TestDeploymentCache_WriteCache(t *testing.T) {
 		outFile string
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name:      "Valid cache file with correct structure",
+			cacheFile: "testdata/valid_cache.json",
+			outFile:   "testdata/valid_cache_out.json",
+			wantErr:   false,
+		},
+		{
+			name:      "Invalid cache file (missing cluster_config)",
+			cacheFile: "testdata/invalid_missing_cluster_config.json",
+			outFile:   "testdata/valid_cache_out.json",
+			wantErr:   true,
+		},
+		{
+			name:      "Invalid cache file (malformed JSON)",
+			cacheFile: "testdata/invalid_malformed_json.json",
+			outFile:   "testdata/valid_cache_out.json",
+			wantErr:   true,
+		},
+		{
+			name:      "Valid cache file with empty component_configs",
+			cacheFile: "testdata/valid_empty_component_configs.json",
+			outFile:   "testdata/valid_cache_out.json",
+			wantErr:   false,
+		},
+		{
+			name:      "Valid cache file with multiple components",
+			cacheFile: "testdata/valid_multiple_components.json",
+			outFile:   "testdata/valid_cache_out.json",
+			wantErr:   false,
+		},
+		{
+			name:      "Valid cache file with correct structure",
+			cacheFile: "testdata/valid_cache.json",
+			outFile:   "testdata/valid_cache_out.json",
+			wantErr:   false,
+		},
+		{
+			name:      "Invalid cache file (missing cluster_config)",
+			cacheFile: "testdata/invalid_missing_cluster_config.json",
+			outFile:   "testdata/valid_cache_out.json",
+			wantErr:   true,
+		},
+		{
+			name:      "Invalid cache file (malformed JSON)",
+			cacheFile: "testdata/invalid_malformed_json.json",
+			outFile:   "testdata/valid_cache_out.json",
+			wantErr:   true,
+		},
+		{
+			name:      "Valid cache file with empty component_configs",
+			cacheFile: "testdata/valid_empty_component_configs.json",
+			outFile:   "testdata/valid_cache_out.json",
+			wantErr:   false,
+		},
+		{
+			name:      "Valid cache file with multiple components",
+			cacheFile: "testdata/valid_multiple_components.json",
+			outFile:   "testdata/valid_cache_out.json",
+			wantErr:   false,
+		},
 	}
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
 			cache, err := kr8_cache.LoadClusterCache(testCase.cacheFile)
 			if err != nil {
-				t.Fatalf("could not construct receiver type: %v", err)
-			}
-			gotErr := cache.WriteCache(testCase.outFile)
-			if gotErr != nil {
 				if !testCase.wantErr {
-					t.Errorf("WriteCache() failed: %v", gotErr)
+					t.Fatalf("could not construct receiver type: %v", err)
+				} else {
+					return
+				}
+			}
+			gotErr2 := cache.WriteCache(testCase.outFile)
+			if gotErr2 != nil {
+				if !testCase.wantErr {
+					t.Errorf("WriteCache() failed: %v", gotErr2)
 				}
 
 				return
