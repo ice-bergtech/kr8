@@ -14,10 +14,14 @@ import (
 )
 
 // Load cluster cache from a specified cache file.
+// Assumes cache is gzipped, but falls back to plaintext if there's an error.
 func LoadClusterCache(cacheFile string) (*DeploymentCache, error) {
-	text, err := util.ReadFile(cacheFile)
+	text, err := util.ReadGzip(cacheFile)
 	if err != nil {
-		return nil, err
+		text, err = util.ReadFile(cacheFile)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	//nolint:exhaustruct
