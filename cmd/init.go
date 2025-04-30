@@ -67,6 +67,7 @@ var InitClusterCmd = &cobra.Command{
 		}
 
 		if cmdInitFlags.Interactive {
+			//nolint:exhaustruct
 			prompt := &survey.Input{
 				Message: "Set the cluster configuration directory",
 				Default: RootConfig.ClusterDir,
@@ -75,6 +76,7 @@ var InitClusterCmd = &cobra.Command{
 			util.FatalErrorCheck("Invalid cluster directory", survey.AskOne(prompt, &cSpec.ClusterOutputDir), log.Logger)
 
 			// Get cluster name, path from user if not set
+			//nolint:exhaustruct
 			prompt = &survey.Input{
 				Message: "Set the cluster name",
 				Default: cmdInitFlags.ClusterName,
@@ -82,6 +84,7 @@ var InitClusterCmd = &cobra.Command{
 			}
 			util.FatalErrorCheck("Invalid cluster name", survey.AskOne(prompt, &cSpec.Name), log.Logger)
 
+			//nolint:exhaustruct
 			promptB := &survey.Confirm{
 				Message: "Generate short names for output file names?",
 				Default: cSpec.GenerateShortNames,
@@ -89,6 +92,7 @@ var InitClusterCmd = &cobra.Command{
 			}
 			util.FatalErrorCheck("Invalid option", survey.AskOne(promptB, &cSpec.GenerateShortNames), log.Logger)
 
+			//nolint:exhaustruct
 			promptB = &survey.Confirm{
 				Message: "Prune component parameters?",
 				Default: cSpec.PruneParams,
@@ -181,6 +185,7 @@ var InitComponentCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get component name, path and type from user if not set
 		if cmdInitFlags.Interactive {
+			//nolint:exhaustruct
 			prompt := &survey.Input{
 				Message: "Enter component directory",
 				Default: RootConfig.ComponentDir,
@@ -188,6 +193,7 @@ var InitComponentCmd = &cobra.Command{
 			}
 			util.FatalErrorCheck("Invalid component directory", survey.AskOne(prompt, &RootConfig.ComponentDir), log.Logger)
 
+			//nolint:exhaustruct
 			prompt = &survey.Input{
 				Message: "Enter component name",
 				Default: cmdInitFlags.ComponentName,
@@ -195,6 +201,7 @@ var InitComponentCmd = &cobra.Command{
 			}
 			util.FatalErrorCheck("Invalid component name", survey.AskOne(prompt, &cmdInitFlags.ComponentName), log.Logger)
 
+			//nolint:exhaustruct
 			promptS := &survey.Select{
 				Message: "Select component type",
 				Options: []string{"jsonnet", "yml", "tpl", "chart"},

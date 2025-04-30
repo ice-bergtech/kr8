@@ -20,6 +20,7 @@ type Stamp struct {
 }
 
 func retrieveStamp(info *debug.BuildInfo) *Stamp {
+	//nolint:exhaustruct
 	stamp := Stamp{}
 	for _, setting := range info.Settings {
 		switch setting.Key {
