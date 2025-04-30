@@ -127,8 +127,15 @@ func CreateClusterCache(config string) *ClusterCache {
 	return &ClusterCache{
 		Kr8_Spec: base64.RawStdEncoding.EncodeToString([]byte(gjson.Get(config, "_kr8_spec").Raw)),
 		Cluster:  base64.RawStdEncoding.EncodeToString([]byte(gjson.Get(config, "_cluster").Raw)),
+		// LibraryCache: BuildLibraryCache(""),
 	}
 }
+
+// func BuildLibraryCache(dir string) map[string]string {
+// 	result := map[string]string{}
+
+// 	return result
+// }
 
 // Compares current cluster config represented as a json string to the cache.
 // Returns true if cache is valid.

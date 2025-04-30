@@ -123,7 +123,7 @@ type Kr8ComponentSpec struct {
 	// If false, all non-generated files present in the output directory are removed
 	DisableOutputDirClean bool `json:"disable_output_clean"`
 	// If true, component will not be cached if cluster caching is enabled.
-	DisableCache bool
+	DisableCache bool `json:"disable_cache"`
 	// A list of filenames to include as jsonnet vm external vars
 	ExtFiles ExtFileVar `json:"extfiles"`
 	// Additional jsonnet libs to the jsonnet vm, component-path scoped

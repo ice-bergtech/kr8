@@ -1,3 +1,4 @@
+//nolint:exhaustruct
 package kr8_types
 
 import (

@@ -36,6 +36,7 @@ func Filter(vs []string, f func(string) bool) []string {
 }
 
 func SetupLogger(enableColor bool) zerolog.Logger {
+	//nolint:exhaustruct
 	consoleWriter := zerolog.ConsoleWriter{
 		Out:     os.Stderr,
 		NoColor: !enableColor,
@@ -47,6 +48,11 @@ func SetupLogger(enableColor bool) zerolog.Logger {
 
 			return Colorize(Colorize(s, colorBold, !enableColor), colorRed, !enableColor)
 		},
+		// Other fields:
+		// TimeFormat, TimeLocation, PartsOrder, PartsExclude,
+		// FieldsOrder, FieldsExclude, FormatTimestamp, FormatLevel,
+		// FormatCaller, FormatMessage, FormatFieldName, FormatFieldValue,
+		// FormatErrFieldName, FormatExtra, FormatPrepare
 	}
 
 	return log.Output(consoleWriter)

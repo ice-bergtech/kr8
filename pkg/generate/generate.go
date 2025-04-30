@@ -23,6 +23,8 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
+
+	//nolint:exptostd
 	"golang.org/x/exp/maps"
 
 	jnetvm "github.com/ice-bergtech/kr8/pkg/jnetvm"
@@ -63,6 +65,8 @@ func GetClusterParams(clusterDir string, vmConfig types.VMConfig, logger zerolog
 // Only processes specified component if it's defined in the cluster.
 // Processes components in string sorted order.
 // Sorts out orphaned, generated components directories.
+//
+//nolint:exptostd
 func CalculateClusterComponentList(
 	clusterComponents map[string]gjson.Result,
 	filters util.PathFilterOptions,
