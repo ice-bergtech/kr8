@@ -26,7 +26,7 @@
 * **Build Cache**
   * Keeps cache of cluster-level config, which if invalidated triggers a full generate
   * Keeps cache of cluster-component config. If cluster-level component config changes the component is re-generated.
-  * Keeps cache of input file hashes that are referenced by components.
+  * Keeps cache of per-component file hashes.
   * Stores cache per-cluster, in a json file named `.kr8_cache`
 * **CI/CD Friendly**: Statically define all your configuration in a single source of truth, making it easy to integrate with CI/CD pipelines and deployment automation like ArgoCD.
   * Easily create reproducible builds by using the same configuration across different environments.
