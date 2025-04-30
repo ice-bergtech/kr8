@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ice-bergtech/kr8/pkg/types"
 	"github.com/ice-bergtech/kr8/pkg/util"
 	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
@@ -36,6 +37,10 @@ func LoadClusterCache(cacheFile string) (*DeploymentCache, error) {
 	err = json.Unmarshal(text, &result)
 	if err != nil {
 		return nil, err
+	}
+
+	if result.ClusterConfig == nil || result.ComponentConfigs == nil {
+		return nil, types.Kr8Error{Message: "cache missing fields", Value: result}
 	}
 
 	return &result, nil
