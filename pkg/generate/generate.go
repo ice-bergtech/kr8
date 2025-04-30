@@ -109,15 +109,23 @@ func GenProcessComponent(
 	if err := util.LogErrorIfCheck("Error creating component spec", err, logger); err != nil {
 		return false, nil, err
 	}
-	cacheValid, currentCacheState, err := CheckComponentCache(cache, compSpec, config, componentName, kr8Opts.BaseDir, logger)
+	cacheValid, currentCacheState, err := CheckComponentCache(
+		cache,
+		compSpec,
+		config,
+		componentName,
+		kr8Opts.BaseDir,
+		logger,
+	)
 	if err != nil {
-		logger.Error().Err(err).Msg("errororor")
+		logger.Error().Err(err).Msg("issue checking/creating component cache")
 	}
 	if cacheValid {
-		logger.Info().Msg("Component config and files match cache, skipping")
+		logger.Info().Msg("Component matches cache, skipping")
 
 		return true, currentCacheState, nil
 	}
+	logger.Info().Msg("Component differs from cache, continuing")
 
 	// it's faster to create this VM for each component, rather than re-use
 	jvm, compPath, err := SetupComponentVM(
@@ -620,16 +628,8 @@ func RenderComponents(
 	logger zerolog.Logger,
 ) (map[string]kr8_cache.ComponentCache, error) {
 	// Make sure the cache is valid
-	cacheObj := cache
-	if cacheObj == nil || !cacheObj.CheckClusterCache(config, logger) {
-		cacheObj = &kr8_cache.DeploymentCache{
-			ClusterConfig:    nil,
-			ComponentConfigs: map[string]kr8_cache.ComponentCache{},
-		}
-	}
-
+	cacheObj := ValidateOrCreateCache(cache, config, logger)
 	cacheResultChannel := make(chan map[string]kr8_cache.ComponentCache, len(compList))
-
 	var allConfig SafeString
 	var waitGroup sync.WaitGroup
 
@@ -672,5 +672,22 @@ func RenderComponents(
 			result[k] = v
 		}
 	}
+
 	return result, nil
+}
+
+func ValidateOrCreateCache(
+	cache *kr8_cache.DeploymentCache,
+	config string,
+	logger zerolog.Logger,
+) *kr8_cache.DeploymentCache {
+	cacheObj := cache
+	if cacheObj == nil || !cacheObj.CheckClusterCache(config, logger) {
+		cacheObj = &kr8_cache.DeploymentCache{
+			ClusterConfig:    nil,
+			ComponentConfigs: map[string]kr8_cache.ComponentCache{},
+		}
+	}
+
+	return cacheObj
 }
