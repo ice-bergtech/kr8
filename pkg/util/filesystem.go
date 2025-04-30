@@ -1,6 +1,8 @@
 package util
 
 import (
+	"compress/gzip"
+	"io"
 	"os"
 	"path/filepath"
 	"sort"
@@ -162,4 +164,32 @@ func BuildDirFileList(directory string) ([]string, error) {
 	sort.Strings(clusterPaths)
 
 	return clusterPaths, nil
+}
+
+func WriteGzip(input []byte, file string) error {
+	outFile, err := os.Create(filepath.Clean(file))
+	if err != nil {
+		return err
+	}
+	gzipWriter := gzip.NewWriter(outFile)
+	_, err = gzipWriter.Write(input)
+
+	return err
+}
+
+func ReadGzip(filename string) ([]byte, error) {
+	inFile, err := os.Open(filepath.Clean(filename))
+	if err != nil {
+		return []byte{}, err
+	}
+	reader, err := gzip.NewReader(inFile)
+	if err != nil {
+		return []byte{}, err
+	}
+	data, err := io.ReadAll(reader)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	return data, nil
 }
