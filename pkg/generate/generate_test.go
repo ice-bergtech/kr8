@@ -173,12 +173,13 @@ func TestCheckComponentCache(t *testing.T) {
 		logger        zerolog.Logger
 		want          bool
 		want2         *kr8_cache.ComponentCache
+		wantErr       bool
 	}{
 		// TODO: Add test cases.
 	}
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
-			got, got2 := generate.CheckComponentCache(
+			got, got2, gotErr := generate.CheckComponentCache(
 				testCase.cache,
 				testCase.compSpec,
 				testCase.config,
@@ -187,6 +188,13 @@ func TestCheckComponentCache(t *testing.T) {
 				testCase.logger,
 			)
 			// TODO: update the condition below to compare got with tt.want.
+			if gotErr != nil {
+				if !testCase.wantErr {
+					t.Errorf("ProcessComponentFinalizer() failed: %v", gotErr)
+				}
+
+				return
+			}
 			if got != testCase.want {
 				t.Errorf("CheckComponentCache() = %v, want %v", got, testCase.want)
 			}

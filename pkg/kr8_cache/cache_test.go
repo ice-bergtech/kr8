@@ -231,6 +231,7 @@ func TestDeploymentCache_CheckClusterComponentCache(t *testing.T) {
 		logger        zerolog.Logger
 		want          bool
 		want2         *kr8_cache.ComponentCache
+		wantErr       bool
 	}{
 		// TODO: Add test cases.
 	}
@@ -240,7 +241,7 @@ func TestDeploymentCache_CheckClusterComponentCache(t *testing.T) {
 			if err != nil {
 				t.Fatalf("could not construct receiver type: %v", err)
 			}
-			got, got2 := cache.CheckClusterComponentCache(
+			got, got2, gotErr := cache.CheckClusterComponentCache(
 				testCase.config,
 				testCase.componentName,
 				testCase.componentPath,
@@ -249,6 +250,13 @@ func TestDeploymentCache_CheckClusterComponentCache(t *testing.T) {
 				testCase.logger,
 			)
 			// TODO: update the condition below to compare got with tt.want.
+			if gotErr != nil {
+				if !testCase.wantErr {
+					t.Errorf("ProcessComponentFinalizer() failed: %v", gotErr)
+				}
+
+				return
+			}
 			if true {
 				t.Errorf("CheckClusterComponentCache() = %v, want %v", got, testCase.want)
 			}
