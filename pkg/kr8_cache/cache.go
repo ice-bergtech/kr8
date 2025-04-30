@@ -111,6 +111,7 @@ func (cache *DeploymentCache) CheckClusterComponentCache(
 		files,
 		logger,
 	)
+
 	return result && cacheValid, currentComponentCache
 }
 
