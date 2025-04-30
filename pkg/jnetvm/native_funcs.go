@@ -187,8 +187,8 @@ func parseOpts(data interface{}) (*kr8_types.Kr8ComponentJsonnet, error) {
 		return nil, err
 	}
 
+	//nolint:exhaustruct
 	opts := kr8_types.Kr8ComponentJsonnet{}
-
 	if err := json.Unmarshal(component, &opts); err != nil {
 		return nil, err
 	}

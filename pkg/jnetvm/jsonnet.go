@@ -27,6 +27,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	//nolint:exptostd
 	"golang.org/x/exp/maps"
 
 	jsonnet "github.com/google/go-jsonnet"
@@ -250,6 +251,7 @@ func MergeComponentDefaults(
 ) (string, error) {
 	componentDefaultsMerged := "{"
 
+	//nolint:exptostd
 	listComponentKeys := maps.Keys(componentMap)
 	if len(componentNames) > 0 {
 		listComponentKeys = componentNames

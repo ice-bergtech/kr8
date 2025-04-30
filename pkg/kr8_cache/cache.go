@@ -3,10 +3,8 @@
 package kr8_cache
 
 import (
-	"bytes"
 	"encoding/base64"
 	"encoding/json"
-	"os"
 	"path/filepath"
 
 	"github.com/ice-bergtech/kr8/pkg/types"
@@ -16,23 +14,17 @@ import (
 )
 
 // Load cluster cache from a specified cache file.
+// Assumes cache is gzipped, but falls back to plaintext if there's an error.
 func LoadClusterCache(cacheFile string) (*DeploymentCache, error) {
-	fCache, err := os.Open(filepath.Clean(cacheFile))
+	text, err := util.ReadGzip(cacheFile)
 	if err != nil {
-		return nil, err
-	}
-	defer fCache.Close()
-
-	fileInfo, err := fCache.Stat()
-	if err != nil {
-		return nil, err
-	}
-	text := make([]byte, fileInfo.Size())
-	_, err = fCache.Read(text)
-	if err != nil {
-		return nil, err
+		text, err = util.ReadFile(cacheFile)
+		if err != nil {
+			return nil, err
+		}
 	}
 
+	//nolint:exhaustruct
 	result := DeploymentCache{}
 	err = json.Unmarshal(text, &result)
 	if err != nil {
@@ -48,37 +40,43 @@ func LoadClusterCache(cacheFile string) (*DeploymentCache, error) {
 
 // Object that contains the cache for a single cluster.
 type DeploymentCache struct {
+	// A struct containing cluster-level cache values
 	ClusterConfig *ClusterCache `json:"cluster_config"`
 	// Map of cache entries for cluster components.
 	// Depends on ClusterConfig cache being valid to be considered valid.
 	ComponentConfigs map[string]ComponentCache `json:"component_config"`
+	LibraryCache     *LibraryCache             `json:"library_cache"`
 }
 
-func (cache *DeploymentCache) WriteCache(outFile string) error {
+func InitDeploymentCache(config string, baseDir string, cacheResults map[string]ComponentCache) *DeploymentCache {
+	cache := DeploymentCache{
+		ClusterConfig:    CreateClusterCache(config),
+		ComponentConfigs: cacheResults,
+		LibraryCache:     CreateLibraryCache(baseDir),
+	}
+
+	return &cache
+}
+
+func (cache *DeploymentCache) WriteCache(outFile string, compress bool) error {
 	// confirm cluster-level configuration matches the cache
-	var text bytes.Buffer
-	buffer, err := json.Marshal(cache)
+	var text []byte
+	text, err := json.Marshal(cache)
 	if err != nil {
 		return err
 	}
-	err = json.Compact(&text, buffer)
-	if err != nil {
-		return err
-	}
-	f, err := os.Create(filepath.Clean(outFile))
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	_, err = text.WriteTo(f)
 
-	return err
+	if compress {
+		return util.WriteGzip(text, outFile)
+	}
+
+	return util.WriteFile(text, outFile)
 }
 
-func (cache *DeploymentCache) CheckClusterCache(config string, logger zerolog.Logger) bool {
+func (cache *DeploymentCache) CheckClusterCache(config string, baseDir string, logger zerolog.Logger) bool {
 	// confirm cluster-level configuration matches the cache
 	if cache.ClusterConfig != nil {
-		return cache.ClusterConfig.CheckClusterCache(config, logger)
+		return cache.ClusterConfig.CheckClusterCache(config, baseDir, logger)
 	}
 
 	return false
@@ -98,7 +96,7 @@ func (cache *DeploymentCache) CheckClusterComponentCache(
 	}
 
 	// first confirm cluster-level configuration matches the cache
-	result := cache.CheckClusterCache(config, logger)
+	result := cache.CheckClusterCache(config, baseDir, logger)
 	if !result {
 		return result, currentState, nil
 	}
@@ -120,6 +118,11 @@ func (cache *DeploymentCache) CheckClusterComponentCache(
 	return result && cacheValid, currentComponentCache, nil
 }
 
+type LibraryCache struct {
+	Directory string            `json:"directory"`
+	Entries   map[string]string `json:"entries"`
+}
+
 // This is cluster-level cache that applies to all components.
 // If it is deemed invalid, the component cache is also invalid.
 type ClusterCache struct {
@@ -137,9 +140,32 @@ func CreateClusterCache(config string) *ClusterCache {
 	}
 }
 
+func CreateLibraryCache(baseDir string) *LibraryCache {
+	result := LibraryCache{
+		Directory: baseDir,
+		Entries:   map[string]string{},
+	}
+
+	files, err := util.BuildDirFileList(filepath.Join(baseDir, "lib"))
+	if err != nil {
+		return &result
+	}
+	result.Entries = make(map[string]string, len(files))
+	for _, file := range files {
+		hash, err := util.HashFile(file)
+		if err != nil {
+			result.Entries[file] = "error: " + err.Error()
+		} else {
+			result.Entries[file] = hash
+		}
+	}
+
+	return &result
+}
+
 // Compares current cluster config represented as a json string to the cache.
 // Returns true if cache is valid.
-func (cache *ClusterCache) CheckClusterCache(config string, logger zerolog.Logger) bool {
+func (cache *ClusterCache) CheckClusterCache(config string, libDir string, logger zerolog.Logger) bool {
 	currentState := CreateClusterCache(config)
 	// compare cluster (non-component) configuration to cached cluster
 	if cache.Kr8_Spec != currentState.Kr8_Spec {

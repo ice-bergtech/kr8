@@ -3,7 +3,7 @@ package kr8_types
 import (
 	"encoding/json"
 
-	"github.com/google/go-jsonnet"
+	"github.com/ice-bergtech/kr8/pkg/types"
 
 	kompose "github.com/kubernetes/kompose/pkg/app"
 	"github.com/kubernetes/kompose/pkg/kobject"
@@ -109,6 +109,7 @@ func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *Kompos
 		GenerateJSON: false,
 		GenerateYaml: false,
 
+		Volumes:         "persistentVolumeClaim",
 		EmptyVols:       false,
 		PVCRequestSize:  "100m",
 		SecretsAsFiles:  true,
@@ -120,6 +121,24 @@ func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *Kompos
 		OutFile:            outDir,
 		GenerateYAMLIndent: 2,
 		GenerateToStdout:   false,
+
+		Profiles:              []string{},
+		WithKomposeAnnotation: false,
+
+		StoreManifest: true,
+
+		MultipleContainerMode: false,
+		ServiceGroupMode:      "",
+		ServiceGroupName:      "",
+
+		Server:                   "",
+		OSCreateDeploymentConfig: false,
+		OSBuildRepo:              "",
+		OSInsecureRepository:     false,
+		OSBuildBranch:            "",
+		ImageBuildCommand:        "",
+		ImagePushCommand:         "",
+		ImagePushRegistry:        "",
 	}
 }
 
@@ -188,6 +207,12 @@ func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions {
 		CreateDeploymentConfig: k.OSCreateDeploymentConfig && !isKube,
 		BuildRepo:              k.OSBuildRepo,
 		BuildBranch:            k.OSBuildBranch,
+
+		// TODO ??
+		Build:                  "",
+		IsReplicaSetFlag:       false,
+		IsDeploymentConfigFlag: false,
+		IsNamespaceFlag:        false,
 	}
 
 	return &resultOpts
@@ -196,10 +221,10 @@ func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions {
 // Validates a set of options for converting a Kubernetes manifest to a Docker Compose file.
 func (k KomposeConvertOptions) Validate() error {
 	if k.OutFile == "" {
-		return jsonnet.RuntimeError{Msg: "OutFile must be set"}
+		return types.Kr8Error{Message: "OutFile must be set", Value: ""}
 	}
 	if len(k.InputFiles) == 0 {
-		return jsonnet.RuntimeError{Msg: "InputFiles must be set"}
+		return types.Kr8Error{Message: "InputFiles must be set", Value: 0}
 	}
 	// Makes sure the input files are present and are named in a compose-file way
 	return kompose.ValidateComposeFile(k.GenKomposePkgOpts())
@@ -212,18 +237,18 @@ func (k KomposeConvertOptions) Convert() (interface{}, error) {
 
 // Convenience method to return the appropriate Transformer based on
 // what provider we are using.
-func getTransformer(opt kobject.ConvertOptions) transformer.Transformer {
-	var tfmr transformer.Transformer
+func getTransformer(opt kobject.ConvertOptions) *transformer.Transformer {
+	var tFormer transformer.Transformer
 	if opt.Provider == "kubernetes" {
 		// Create/Init new Kubernetes object with CLI opts
-		tfmr = &kubernetes.Kubernetes{Opt: opt}
+		tFormer = &kubernetes.Kubernetes{Opt: opt}
 	} else {
 		// Create/Init new OpenShift object that is initialized with a newly
 		// created Kubernetes object. Openshift inherits from Kubernetes
-		tfmr = &openshift.OpenShift{Kubernetes: kubernetes.Kubernetes{Opt: opt}}
+		tFormer = &openshift.OpenShift{Kubernetes: kubernetes.Kubernetes{Opt: opt}}
 	}
 
-	return tfmr
+	return &tFormer
 }
 
 // Convert transforms docker compose or dab file to k8s objects
@@ -234,7 +259,6 @@ func convertComposeToK8s(opt kobject.ConvertOptions) ([]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	tfmr := getTransformer(opt)
 
 	// Load the docker-compose file
 	objects, err := loader.LoadFile(opt.InputFiles, []string{})
@@ -243,7 +267,8 @@ func convertComposeToK8s(opt kobject.ConvertOptions) ([]interface{}, error) {
 	}
 
 	// Transform the loaded objects into Kubernetes objects
-	k8sObjects, err := tfmr.Transform(objects, opt)
+	tFormer := *getTransformer(opt)
+	k8sObjects, err := tFormer.Transform(objects, opt)
 	if err != nil {
 		return nil, err
 	}
