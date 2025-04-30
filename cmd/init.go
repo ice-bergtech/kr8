@@ -1,3 +1,4 @@
+//nolint:gochecknoinits,gochecknoglobals
 package cmd
 
 import (
@@ -64,6 +65,8 @@ var InitClusterCmd = &cobra.Command{
 			GenerateShortNames: false,
 			PruneParams:        false,
 			ClusterOutputDir:   RootConfig.ClusterDir,
+			EnableCache:        true,
+			CompressCache:      true,
 		}
 
 		if cmdInitFlags.Interactive {
@@ -153,6 +156,8 @@ and initialize a git repo so you can get started`,
 			GenerateShortNames: false,
 			PruneParams:        false,
 			ClusterOutputDir:   "generated" + "/" + cmdInitFlags.ClusterName,
+			EnableCache:        true,
+			CompressCache:      true,
 		}
 
 		util.FatalErrorCheck(

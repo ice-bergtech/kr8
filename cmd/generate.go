@@ -1,3 +1,4 @@
+//nolint:gochecknoinits,gochecknoglobals
 package cmd
 
 import (
@@ -7,6 +8,8 @@ import (
 	"github.com/panjf2000/ants/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+
+	//nolint:exptostd
 	"golang.org/x/exp/maps"
 
 	gen "github.com/ice-bergtech/kr8/pkg/generate"
@@ -28,6 +31,7 @@ type CmdGenerateOptions struct {
 
 var cmdGenerateFlags CmdGenerateOptions
 
+//nolint:gochecknoinits
 func init() {
 	RootCmd.AddCommand(GenerateCmd)
 	GenerateCmd.Flags().StringVarP(&cmdGenerateFlags.ClusterParamsFile,
@@ -79,6 +83,7 @@ func GenerateCommand(cmd *cobra.Command, args []string) {
 		clusterList = util.CalculateClusterIncludesExcludes(allClusterParams, cmdGenerateFlags.Filters)
 		log.Debug().Msg("Have " + strconv.Itoa(len(clusterList)) + " after filtering")
 	} else {
+		//nolint:exptostd
 		clusterList = maps.Keys(allClusterParams)
 	}
 

@@ -1,4 +1,6 @@
 // Defines the cli-interface commands available to the user.
+//
+//nolint:gochecknoinits,gochecknoglobals
 package cmd
 
 import (
