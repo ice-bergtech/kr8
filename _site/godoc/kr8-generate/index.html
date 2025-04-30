@@ -183,6 +183,8 @@
     </li>
     </ul>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-cache/">kr8 generate caching</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../kr8-init/">kr8 init</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../kr8-jsonnet/">kr8 jsonnet</a>
@@ -226,7 +228,7 @@
 <h2 id="index">Index</h2>
 <ul>
 <li><a href="#CalculateClusterComponentList">func CalculateClusterComponentList(clusterComponents map[string]gjson.Result, filters util.PathFilterOptions, existingClusterComponents []string) []string</a></li>
-<li><a href="#CheckComponentCache">func CheckComponentCache(cache *kr8_cache.DeploymentCache, compSpec kr8_types.Kr8ComponentSpec, config string, componentName string, logger zerolog.Logger) bool</a></li>
+<li><a href="#CheckComponentCache">func CheckComponentCache(cache *kr8_cache.DeploymentCache, compSpec kr8_types.Kr8ComponentSpec, config string, componentName string, baseDir string, logger zerolog.Logger) (bool, *kr8_cache.ComponentCache)</a></li>
 <li><a href="#CheckIfUpdateNeeded">func CheckIfUpdateNeeded(outFile string, outStr string) (bool, error)</a></li>
 <li><a href="#CleanOutputDir">func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error</a></li>
 <li><a href="#CleanupOldComponentDirs">func CleanupOldComponentDirs(existingComponents []string, clusterComponents map[string]gjson.Result, kr8Spec *kr8_types.Kr8ClusterSpec, logger zerolog.Logger)</a></li>
@@ -243,7 +245,7 @@
 <li><a href="#GetClusterParams">func GetClusterParams(clusterDir string, vmConfig types.VMConfig, logger zerolog.Logger) (map[string]string, error)</a></li>
 <li><a href="#GetComponentFiles">func GetComponentFiles(compSpec kr8_types.Kr8ComponentSpec) []string</a></li>
 <li><a href="#GetComponentPath">func GetComponentPath(config string, componentName string) string</a></li>
-<li><a href="#ProcessComponentFinalizer">func ProcessComponentFinalizer(kr8Opts types.Kr8Opts, config, compPath string, compSpec kr8_types.Kr8ComponentSpec, componentOutputDir string, outputFileMap map[string]bool, logger zerolog.Logger) (*kr8_cache.ComponentCache, error)</a></li>
+<li><a href="#ProcessComponentFinalizer">func ProcessComponentFinalizer(compSpec kr8_types.Kr8ComponentSpec, componentOutputDir string, outputFileMap map[string]bool) error</a></li>
 <li><a href="#ProcessFile">func ProcessFile(inputFile string, outputFile string, kr8Spec kr8_types.Kr8ClusterSpec, componentName string, config string, incInfo kr8_types.Kr8ComponentSpecIncludeObject, jvm *jsonnet.VM, logger zerolog.Logger) (string, error)</a></li>
 <li><a href="#RenderComponents">func RenderComponents(config string, vmConfig types.VMConfig, kr8Spec kr8_types.Kr8ClusterSpec, compList []string, clusterParamsFile string, pool *ants.Pool, kr8Opts types.Kr8Opts, filters util.PathFilterOptions, cache *kr8_cache.DeploymentCache, logger zerolog.Logger) (map[string]kr8_cache.ComponentCache, error)</a></li>
 <li><a href="#SetupBaseComponentJvm">func SetupBaseComponentJvm(vmconfig types.VMConfig, config string, kr8Spec kr8_types.Kr8ClusterSpec) (*jsonnet.VM, error)</a></li>
@@ -258,8 +260,8 @@
 </code></pre>
 <p>Calculates which components should be generated based on filters. Only processes specified component if it's defined in the cluster. Processes components in string sorted order. Sorts out orphaned, generated components directories.</p>
 <p><a name="CheckComponentCache"></a></p>
-<h2 id="func-checkcomponentcache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L183-L189">CheckComponentCache</a></h2>
-<pre><code class="language-go">func CheckComponentCache(cache *kr8_cache.DeploymentCache, compSpec kr8_types.Kr8ComponentSpec, config string, componentName string, logger zerolog.Logger) bool
+<h2 id="func-checkcomponentcache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L170-L177">CheckComponentCache</a></h2>
+<pre><code class="language-go">func CheckComponentCache(cache *kr8_cache.DeploymentCache, compSpec kr8_types.Kr8ComponentSpec, config string, componentName string, baseDir string, logger zerolog.Logger) (bool, *kr8_cache.ComponentCache)
 </code></pre>
 <p><a name="CheckIfUpdateNeeded"></a></p>
 <h2 id="func-checkifupdateneeded">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_system.go#L71">CheckIfUpdateNeeded</a></h2>
@@ -271,11 +273,11 @@
 <pre><code class="language-go">func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error
 </code></pre>
 <p><a name="CleanupOldComponentDirs"></a></p>
-<h2 id="func-cleanupoldcomponentdirs">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L539-L544">CleanupOldComponentDirs</a></h2>
+<h2 id="func-cleanupoldcomponentdirs">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L535-L540">CleanupOldComponentDirs</a></h2>
 <pre><code class="language-go">func CleanupOldComponentDirs(existingComponents []string, clusterComponents map[string]gjson.Result, kr8Spec *kr8_types.Kr8ClusterSpec, logger zerolog.Logger)
 </code></pre>
 <p><a name="CompileClusterConfiguration"></a></p>
-<h2 id="func-compileclusterconfiguration">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L562-L568">CompileClusterConfiguration</a></h2>
+<h2 id="func-compileclusterconfiguration">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L558-L564">CompileClusterConfiguration</a></h2>
 <pre><code class="language-go">func CompileClusterConfiguration(clusterName, clusterDir string, kr8Opts types.Kr8Opts, vmConfig types.VMConfig, generateDirOverride string, logger zerolog.Logger) (*kr8_types.Kr8ClusterSpec, map[string]gjson.Result, error)
 </code></pre>
 <p>Build the list of cluster parameter files to combine by walking folder tree leaf to root.</p>
@@ -285,11 +287,11 @@
 </code></pre>
 <p>Create the root cluster output directory. Returns a list of cluster component output directories that already existed.</p>
 <p><a name="GatherClusterConfig"></a></p>
-<h2 id="func-gatherclusterconfig">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L451-L459">GatherClusterConfig</a></h2>
+<h2 id="func-gatherclusterconfig">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L447-L455">GatherClusterConfig</a></h2>
 <pre><code class="language-go">func GatherClusterConfig(clusterName, clusterDir string, kr8Opts types.Kr8Opts, vmConfig types.VMConfig, generateDirOverride string, filters util.PathFilterOptions, clusterParamsFile string, logger zerolog.Logger) (*kr8_types.Kr8ClusterSpec, []string, string, error)
 </code></pre>
 <p><a name="GenProcessCluster"></a></p>
-<h2 id="func-genprocesscluster">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L397-L409">GenProcessCluster</a></h2>
+<h2 id="func-genprocesscluster">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L393-L405">GenProcessCluster</a></h2>
 <pre><code class="language-go">func GenProcessCluster(clusterName string, clusterdir string, baseDir string, generateDirOverride string, kr8Opts types.Kr8Opts, clusterParamsFile string, filters util.PathFilterOptions, vmConfig types.VMConfig, pool *ants.Pool, enableCache bool, logger zerolog.Logger) error
 </code></pre>
 <p>The root function for generating a cluster. Prepares and builds the cluster config. Build and processes the list of components.</p>
@@ -299,25 +301,25 @@
 </code></pre>
 <p>Root function for processing a kr8 component. Processes a component through a jsonnet VM to generate output files.</p>
 <p><a name="GenerateCacheFinalizer"></a></p>
-<h2 id="func-generatecachefinalizer">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L518-L524">GenerateCacheFinalizer</a></h2>
+<h2 id="func-generatecachefinalizer">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L514-L520">GenerateCacheFinalizer</a></h2>
 <pre><code class="language-go">func GenerateCacheFinalizer(enableCache bool, config string, cacheResults map[string]kr8_cache.ComponentCache, cacheFilePath string, logger zerolog.Logger)
 </code></pre>
 <p><a name="GenerateCacheInitializer"></a></p>
-<h2 id="func-generatecacheinitializer">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L498-L502">GenerateCacheInitializer</a></h2>
+<h2 id="func-generatecacheinitializer">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L494-L498">GenerateCacheInitializer</a></h2>
 <pre><code class="language-go">func GenerateCacheInitializer(kr8Spec *kr8_types.Kr8ClusterSpec, enableCache bool, logger zerolog.Logger) (*kr8_cache.DeploymentCache, string)
 </code></pre>
 <p><a name="GenerateIncludesFiles"></a></p>
-<h2 id="func-generateincludesfiles">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L349-L359">GenerateIncludesFiles</a></h2>
+<h2 id="func-generateincludesfiles">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L345-L355">GenerateIncludesFiles</a></h2>
 <pre><code class="language-go">func GenerateIncludesFiles(includesFiles []kr8_types.Kr8ComponentSpecIncludeObject, kr8Spec kr8_types.Kr8ClusterSpec, kr8Opts types.Kr8Opts, config string, componentName string, compPath string, componentOutputDir string, jvm *jsonnet.VM, logger zerolog.Logger) (map[string]bool, error)
 </code></pre>
 <p>Generates the list of includes files for a component. Processes each includes file using the component's config. Returns an error if there's an issue with ANY includes file.</p>
 <p><a name="GetAllClusterParams"></a></p>
-<h2 id="func-getallclusterparams">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L293">GetAllClusterParams</a></h2>
+<h2 id="func-getallclusterparams">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L289">GetAllClusterParams</a></h2>
 <pre><code class="language-go">func GetAllClusterParams(clusterDir string, vmConfig types.VMConfig, jvm *jsonnet.VM, logger zerolog.Logger) error
 </code></pre>
 <p>Combine all the cluster params into a single object indexed by cluster name.</p>
 <p><a name="GetClusterComponentParamsThreadsafe"></a></p>
-<h2 id="func-getclustercomponentparamsthreadsafe">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L310-L319">GetClusterComponentParamsThreadsafe</a></h2>
+<h2 id="func-getclustercomponentparamsthreadsafe">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L306-L315">GetClusterComponentParamsThreadsafe</a></h2>
 <pre><code class="language-go">func GetClusterComponentParamsThreadsafe(allConfig *SafeString, config string, vmConfig types.VMConfig, kr8Spec kr8_types.Kr8ClusterSpec, filters util.PathFilterOptions, paramsFile string, jvm *jsonnet.VM, logger zerolog.Logger) error
 </code></pre>
 <p>Include full render of all component params for cluster. Only do this if we have not already cached it and don't already have it stored.</p>
@@ -326,16 +328,16 @@
 <pre><code class="language-go">func GetClusterParams(clusterDir string, vmConfig types.VMConfig, logger zerolog.Logger) (map[string]string, error)
 </code></pre>
 <p><a name="GetComponentFiles"></a></p>
-<h2 id="func-getcomponentfiles">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L203">GetComponentFiles</a></h2>
+<h2 id="func-getcomponentfiles">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L199">GetComponentFiles</a></h2>
 <pre><code class="language-go">func GetComponentFiles(compSpec kr8_types.Kr8ComponentSpec) []string
 </code></pre>
 <p><a name="GetComponentPath"></a></p>
-<h2 id="func-getcomponentpath">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L288">GetComponentPath</a></h2>
+<h2 id="func-getcomponentpath">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L284">GetComponentPath</a></h2>
 <pre><code class="language-go">func GetComponentPath(config string, componentName string) string
 </code></pre>
 <p><a name="ProcessComponentFinalizer"></a></p>
-<h2 id="func-processcomponentfinalizer">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L159-L166">ProcessComponentFinalizer</a></h2>
-<pre><code class="language-go">func ProcessComponentFinalizer(kr8Opts types.Kr8Opts, config, compPath string, compSpec kr8_types.Kr8ComponentSpec, componentOutputDir string, outputFileMap map[string]bool, logger zerolog.Logger) (*kr8_cache.ComponentCache, error)
+<h2 id="func-processcomponentfinalizer">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L154-L158">ProcessComponentFinalizer</a></h2>
+<pre><code class="language-go">func ProcessComponentFinalizer(compSpec kr8_types.Kr8ComponentSpec, componentOutputDir string, outputFileMap map[string]bool) error
 </code></pre>
 <p><a name="ProcessFile"></a></p>
 <h2 id="func-processfile">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L74-L83">ProcessFile</a></h2>
@@ -348,7 +350,7 @@
 <li>.tpl, .tmpl: Processed using component config and Sprig templating.</li>
 </ul>
 <p><a name="RenderComponents"></a></p>
-<h2 id="func-rendercomponents">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L607-L618">RenderComponents</a></h2>
+<h2 id="func-rendercomponents">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L603-L614">RenderComponents</a></h2>
 <pre><code class="language-go">func RenderComponents(config string, vmConfig types.VMConfig, kr8Spec kr8_types.Kr8ClusterSpec, compList []string, clusterParamsFile string, pool *ants.Pool, kr8Opts types.Kr8Opts, filters util.PathFilterOptions, cache *kr8_cache.DeploymentCache, logger zerolog.Logger) (map[string]kr8_cache.ComponentCache, error)
 </code></pre>
 <p>Renders a list of components with a given Kr8ClusterSpec configuration. Each component is processed by a process thread from a thread pool.</p>
@@ -358,7 +360,7 @@
 </code></pre>
 <p>This function sets up the JVM for a given component. It registers native functions, sets up post-processing, and prunes parameters as required. It's faster to create this VM for each component, rather than re-use. Default postprocessor just copies input to output.</p>
 <p><a name="SetupComponentVM"></a></p>
-<h2 id="func-setupcomponentvm">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L231-L242">SetupComponentVM</a></h2>
+<h2 id="func-setupcomponentvm">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L227-L238">SetupComponentVM</a></h2>
 <pre><code class="language-go">func SetupComponentVM(vmConfig types.VMConfig, config string, kr8Spec kr8_types.Kr8ClusterSpec, componentName string, compSpec kr8_types.Kr8ComponentSpec, allConfig *SafeString, filters util.PathFilterOptions, paramsFile string, kr8Opts types.Kr8Opts, logger zerolog.Logger) (*jsonnet.VM, string, error)
 </code></pre>
 <p>Setup and configures a jsonnet VM for processing kr8 resources. Creates a new VM and does the following:</p>
@@ -390,7 +392,7 @@
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../kr8-types/" class="btn btn-neutral float-left" title="kr8 types"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../kr8-init/" class="btn btn-neutral float-right" title="kr8 init">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../kr8-cache/" class="btn btn-neutral float-right" title="kr8 generate caching">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -420,7 +422,7 @@
       <span><a href="../kr8-types/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../kr8-init/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../kr8-cache/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

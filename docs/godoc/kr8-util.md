@@ -8,6 +8,7 @@ Package util contains various utility functions for directories and files. It in
 
 ## Index
 
+- [func BuildDirFileList\(directory string\) \(\[\]string, error\)](<#BuildDirFileList>)
 - [func CalculateClusterIncludesExcludes\(input map\[string\]string, filters PathFilterOptions\) \[\]string](<#CalculateClusterIncludesExcludes>)
 - [func CheckObjectMatch\(input gjson.Result, filterString string\) bool](<#CheckObjectMatch>)
 - [func CleanOutputDir\(outputFileMap map\[string\]bool, componentOutputDir string\) error](<#CleanOutputDir>)
@@ -33,6 +34,15 @@ Package util contains various utility functions for directories and files. It in
 - [type PathFilterOptions](<#PathFilterOptions>)
 
 
+<a name="BuildDirFileList"></a>
+## func [BuildDirFileList](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L148>)
+
+```go
+func BuildDirFileList(directory string) ([]string, error)
+```
+
+
+
 <a name="CalculateClusterIncludesExcludes"></a>
 ## func [CalculateClusterIncludesExcludes](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L164>)
 
@@ -52,7 +62,7 @@ func CheckObjectMatch(input gjson.Result, filterString string) bool
 Checks if a input object matches a filter string. The filter string can be an equality match or a regex match.
 
 <a name="CleanOutputDir"></a>
-## func [CleanOutputDir](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L117>)
+## func [CleanOutputDir](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L118>)
 
 ```go
 func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error
@@ -133,7 +143,7 @@ func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, er
 Formats a jsonnet string using custom options.
 
 <a name="GetClusterFilenames"></a>
-## func [GetClusterFilenames](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L22>)
+## func [GetClusterFilenames](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L23>)
 
 ```go
 func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error)
@@ -142,7 +152,7 @@ func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error)
 Get a list of cluster from within a directory. Walks the directory tree, creating a types.Kr8Cluster for each cluster.jsonnet file found.
 
 <a name="GetClusterParamsFilenames"></a>
-## func [GetClusterParamsFilenames](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L78>)
+## func [GetClusterParamsFilenames](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L79>)
 
 ```go
 func GetClusterParamsFilenames(basePath string, targetPath string) []string
@@ -151,7 +161,7 @@ func GetClusterParamsFilenames(basePath string, targetPath string) []string
 Get all cluster parameters within a directory. Walks through the directory hierarchy and returns all paths to \`params.jsonnet\` files.
 
 <a name="GetClusterPath"></a>
-## func [GetClusterPath](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L52>)
+## func [GetClusterPath](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L53>)
 
 ```go
 func GetClusterPath(searchDir string, clusterName string) (string, error)
@@ -223,7 +233,7 @@ func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (st
 Write out a struct to a specified path and file. Marshals the given interface and generates a formatted json string. All parent directories needed are created.
 
 <a name="ClusterTreeNode"></a>
-## type [ClusterTreeNode](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L14-L18>)
+## type [ClusterTreeNode](<https://github.com:icebergtech/kr8/blob/main/pkg/util/directories.go#L15-L19>)
 
 
 
