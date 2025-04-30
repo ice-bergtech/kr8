@@ -26,6 +26,7 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 			Includes:              []kr8_types.Kr8ComponentSpecIncludeObject{},
 			ExtFiles:              map[string]string{},
 			JPaths:                []string{},
+			DisableCache:          false,
 		},
 		ReleaseName: strings.ReplaceAll(componentOptions.ComponentName, "_", "-"),
 		Namespace:   "default",
@@ -66,6 +67,7 @@ func InitComponentChart(dstDir string, componentOptions Kr8InitOptions, compJson
 			DestDir:  "",
 			DestName: componentOptions.ComponentName,
 			DestExt:  "yml",
+			Config:   "",
 		},
 	)
 	_, err := util.WriteObjToJsonFile("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
@@ -85,6 +87,7 @@ func InitComponentTemplate(
 			DestDir:  "docs",
 			DestName: "ReadMe",
 			DestExt:  "md",
+			Config:   "",
 		},
 	)
 	_, err := util.WriteObjToJsonFile("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
@@ -100,6 +103,7 @@ func InitComponentYaml(compJson kr8_types.Kr8ComponentJsonnet, dstDir string, co
 			DestDir:  "",
 			DestName: "glhf",
 			DestExt:  "yml",
+			Config:   "",
 		},
 	)
 	_, err := util.WriteObjToJsonFile("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
@@ -115,7 +119,13 @@ func InitComponentJsonnet(
 ) error {
 	compJson.Kr8Spec.Includes = append(
 		compJson.Kr8Spec.Includes,
-		kr8_types.Kr8ComponentSpecIncludeObject{File: "component.jsonnet", DestName: "component", DestExt: "yaml"},
+		kr8_types.Kr8ComponentSpecIncludeObject{
+			File:     "component.jsonnet",
+			DestName: "component",
+			DestDir:  "",
+			DestExt:  "yaml",
+			Config:   "",
+		},
 	)
 	_, err := util.WriteObjToJsonFile("params.jsonnet", dstDir+"/"+componentOptions.ComponentName, compJson)
 
