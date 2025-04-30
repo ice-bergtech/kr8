@@ -225,9 +225,11 @@ func TestDeploymentCache_CheckClusterComponentCache(t *testing.T) {
 		config        string
 		componentName string
 		componentPath string
+		baseDir       string
 		files         []string
 		logger        zerolog.Logger
 		want          bool
+		want2         *kr8_cache.ComponentCache
 	}{
 		// TODO: Add test cases.
 	}
@@ -237,16 +239,20 @@ func TestDeploymentCache_CheckClusterComponentCache(t *testing.T) {
 			if err != nil {
 				t.Fatalf("could not construct receiver type: %v", err)
 			}
-			got := cache.CheckClusterComponentCache(
+			got, got2 := cache.CheckClusterComponentCache(
 				testCase.config,
 				testCase.componentName,
 				testCase.componentPath,
+				testCase.baseDir,
 				testCase.files,
 				testCase.logger,
 			)
 			// TODO: update the condition below to compare got with tt.want.
 			if true {
 				t.Errorf("CheckClusterComponentCache() = %v, want %v", got, testCase.want)
+			}
+			if true {
+				t.Errorf("CheckClusterComponentCache() = %v, want %v", got2, testCase.want2)
 			}
 		})
 	}
@@ -340,9 +346,11 @@ func TestComponentCache_CheckComponentCache(t *testing.T) {
 		config        string
 		componentName string
 		componentPath string
+		baseDir       string
 		files         []string
 		logger        zerolog.Logger
 		want          bool
+		want2         *kr8_cache.ComponentCache
 	}{
 		// TODO: Add test cases.
 	}
@@ -352,16 +360,20 @@ func TestComponentCache_CheckComponentCache(t *testing.T) {
 			if err != nil {
 				t.Fatalf("could not construct receiver type: %v", err)
 			}
-			got := cache.CheckComponentCache(
+			got, got2 := cache.CheckComponentCache(
 				testCase.config,
 				testCase.componentName,
 				testCase.componentPath,
+				testCase.baseDir,
 				testCase.files,
 				testCase.logger,
 			)
 			// TODO: update the condition below to compare got with tt.want.
 			if true {
 				t.Errorf("CheckComponentCache() = %v, want %v", got, testCase.want)
+			}
+			if true {
+				t.Errorf("CheckComponentCache() = %v, want %v", got2, testCase.want2)
 			}
 		})
 	}

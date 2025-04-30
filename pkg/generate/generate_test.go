@@ -142,14 +142,10 @@ func TestProcessComponentFinalizer(t *testing.T) {
 	}
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
-			got, gotErr := generate.ProcessComponentFinalizer(
-				testCase.kr8Opts,
-				testCase.config,
-				testCase.compPath,
+			gotErr := generate.ProcessComponentFinalizer(
 				testCase.compSpec,
 				testCase.componentOutputDir,
 				testCase.outputFileMap,
-				testCase.logger,
 			)
 			if gotErr != nil {
 				if !testCase.wantErr {
@@ -162,9 +158,6 @@ func TestProcessComponentFinalizer(t *testing.T) {
 				t.Fatal("ProcessComponentFinalizer() succeeded unexpectedly")
 			}
 			// TODO: update the condition below to compare got with tt.want.
-			if true {
-				t.Errorf("ProcessComponentFinalizer() = %v, want %v", got, testCase.want)
-			}
 		})
 	}
 }
@@ -177,17 +170,20 @@ func TestCheckComponentCache(t *testing.T) {
 		compSpec      kr8_types.Kr8ComponentSpec
 		config        string
 		componentName string
+		baseDir       string
 		logger        zerolog.Logger
 		want          bool
+		want2         *kr8_cache.ComponentCache
 	}{
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := generate.CheckComponentCache(tt.cache, tt.compSpec, tt.config, tt.componentName, tt.logger)
+			got, got2 := generate.CheckComponentCache(tt.cache, tt.compSpec, tt.config, tt.componentName, tt.baseDir, tt.logger)
 			// TODO: update the condition below to compare got with tt.want.
 			if true {
 				t.Errorf("CheckComponentCache() = %v, want %v", got, tt.want)
+				t.Errorf("CheckComponentCache() = %v, want %v", got2, tt.want2)
 			}
 		})
 	}
