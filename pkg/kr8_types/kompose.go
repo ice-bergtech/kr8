@@ -3,7 +3,7 @@ package kr8_types
 import (
 	"encoding/json"
 
-	"github.com/google/go-jsonnet"
+	"github.com/ice-bergtech/kr8/pkg/types"
 
 	kompose "github.com/kubernetes/kompose/pkg/app"
 	"github.com/kubernetes/kompose/pkg/kobject"
@@ -196,10 +196,10 @@ func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions {
 // Validates a set of options for converting a Kubernetes manifest to a Docker Compose file.
 func (k KomposeConvertOptions) Validate() error {
 	if k.OutFile == "" {
-		return jsonnet.RuntimeError{Msg: "OutFile must be set"}
+		return types.Kr8Error{Message: "OutFile must be set", Value: ""}
 	}
 	if len(k.InputFiles) == 0 {
-		return jsonnet.RuntimeError{Msg: "InputFiles must be set"}
+		return types.Kr8Error{Message: "InputFiles must be set", Value: 0}
 	}
 	// Makes sure the input files are present and are named in a compose-file way
 	return kompose.ValidateComposeFile(k.GenKomposePkgOpts())
