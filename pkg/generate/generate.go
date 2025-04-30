@@ -463,7 +463,7 @@ func GenProcessCluster(
 	}
 
 	if kr8Spec.EnableCache {
-		return StoreClusterComponentCache(kr8Spec, config, componentCacheResult, cacheFile)
+		return StoreClusterComponentCache(kr8Spec, baseDir, config, componentCacheResult, cacheFile)
 	}
 
 	return nil
@@ -540,12 +540,13 @@ func LoadClusterCache(
 // Generates and stores cluster cache provided the config and component caches.
 func StoreClusterComponentCache(
 	kr8Spec *kr8_types.Kr8ClusterSpec,
+	baseDir string,
 	config string,
 	cacheResults map[string]kr8_cache.ComponentCache,
 	cacheFilePath string,
 ) error {
 	if kr8Spec.EnableCache {
-		return kr8_cache.InitDeploymentCache(config, cacheResults).WriteCache(cacheFilePath, kr8Spec.CompressCache)
+		return kr8_cache.InitDeploymentCache(config, baseDir, cacheResults).WriteCache(cacheFilePath, kr8Spec.CompressCache)
 	}
 
 	return nil
@@ -686,10 +687,18 @@ func ValidateOrCreateCache(
 	logger zerolog.Logger,
 ) *kr8_cache.DeploymentCache {
 	cacheObj := cache
-	if cacheObj == nil || !cacheObj.CheckClusterCache(config, logger) {
+	if cacheObj == nil || !cacheObj.CheckClusterCache(
+		config,
+		cacheObj.LibraryCache.Directory,
+		logger,
+	) {
 		cacheObj = &kr8_cache.DeploymentCache{
 			ClusterConfig:    nil,
 			ComponentConfigs: map[string]kr8_cache.ComponentCache{},
+			LibraryCache: &kr8_cache.LibraryCache{
+				Directory: "",
+				Entries:   map[string]string{},
+			},
 		}
 	}
 
