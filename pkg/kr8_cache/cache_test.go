@@ -1,6 +1,7 @@
 package kr8_cache_test
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/ice-bergtech/kr8/pkg/kr8_cache"
@@ -139,6 +140,7 @@ func TestLoadClusterCache(t *testing.T) {
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
 			got, gotErr := kr8_cache.LoadClusterCache(testCase.cacheFile)
+			// _ = testCase.want.WriteCache("testdata/" + testCase.name)
 			if gotErr != nil {
 				if !testCase.wantErr {
 					t.Errorf("LoadClusterCache() failed: %v", gotErr)
@@ -149,8 +151,7 @@ func TestLoadClusterCache(t *testing.T) {
 			if testCase.wantErr {
 				t.Fatal("LoadClusterCache() succeeded unexpectedly")
 			}
-			// TODO: update the condition below to compare got with tt.want.
-			if true {
+			if !reflect.DeepEqual(got, testCase.want) {
 				t.Errorf("LoadClusterCache() = %v, want %v", got, testCase.want)
 			}
 		})
