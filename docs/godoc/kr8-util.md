@@ -48,7 +48,7 @@ func BuildDirFileList(directory string) ([]string, error)
 
 
 <a name="CalculateClusterIncludesExcludes"></a>
-## func [CalculateClusterIncludesExcludes](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L164>)
+## func [CalculateClusterIncludesExcludes](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L170>)
 
 ```go
 func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string
@@ -57,7 +57,7 @@ func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilte
 Using the allClusterParams variable and command flags to create a list of clusters to generate. Clusters can be filtered with "=" for equality or "\~" for regex match.
 
 <a name="CheckObjectMatch"></a>
-## func [CheckObjectMatch](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L84>)
+## func [CheckObjectMatch](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L90>)
 
 ```go
 func CheckObjectMatch(input gjson.Result, filterString string) bool
@@ -84,7 +84,7 @@ func Colorize(input interface{}, colorNum int, disabled bool) string
 Colorize function from zerolog console.go file to replicate their coloring functionality. Source: https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389 Replicated here because it's a private function.
 
 <a name="ErrorIfCheck"></a>
-## func [ErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L144>)
+## func [ErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L150>)
 
 ```go
 func ErrorIfCheck(message string, err error) error
@@ -93,7 +93,7 @@ func ErrorIfCheck(message string, err error) error
 
 
 <a name="FatalErrorCheck"></a>
-## func [FatalErrorCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L138>)
+## func [FatalErrorCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L144>)
 
 ```go
 func FatalErrorCheck(message string, err error, logger zerolog.Logger)
@@ -120,7 +120,7 @@ func Filter(vs []string, f func(string) bool) []string
 Filter returns a new slice containing only the elements that satisfy the predicate function. From https://gobyexample.com/collection-functions
 
 <a name="FilterItems"></a>
-## func [FilterItems](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L104>)
+## func [FilterItems](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L110>)
 
 ```go
 func FilterItems(input map[string]string, pFilter PathFilterOptions) []string
@@ -183,7 +183,7 @@ func GetDefaultFormatOptions() formatter.Options
 Configures the default options for the jsonnet formatter.
 
 <a name="HashFile"></a>
-## func [HashFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L182>)
+## func [HashFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L188>)
 
 ```go
 func HashFile(path string) (string, error)
@@ -201,7 +201,7 @@ func JsonnetPrint(output string, format string, color bool) error
 Print the jsonnet in the specified format. Acceptable formats are: yaml, stream, json.
 
 <a name="LogErrorIfCheck"></a>
-## func [LogErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L152>)
+## func [LogErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L158>)
 
 ```go
 func LogErrorIfCheck(message string, err error, logger zerolog.Logger) error
@@ -286,7 +286,7 @@ type ClusterTreeNode struct {
 ```
 
 <a name="PathFilterOptions"></a>
-## type [PathFilterOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L56-L80>)
+## type [PathFilterOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L62-L86>)
 
 Fill with string to include and exclude, using kr8's special parsing.
 

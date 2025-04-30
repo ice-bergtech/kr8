@@ -45,7 +45,7 @@ Package jvm contains the jsonnet rendering logic.
 
 
 <a name="JsonnetRender"></a>
-## func [JsonnetRender](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L123-L128>)
+## func [JsonnetRender](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L124-L129>)
 
 ```go
 func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmConfig types.VMConfig, logger zerolog.Logger) error
@@ -54,7 +54,7 @@ func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmC
 Renders a jsonnet file with the specified options.
 
 <a name="JsonnetRenderClusterParams"></a>
-## func [JsonnetRenderClusterParams](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L201-L207>)
+## func [JsonnetRenderClusterParams](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L202-L208>)
 
 ```go
 func JsonnetRenderClusterParams(vmconfig types.VMConfig, clusterName string, componentNames []string, clusterParams string, prune bool) (string, error)
@@ -63,7 +63,7 @@ func JsonnetRenderClusterParams(vmconfig types.VMConfig, clusterName string, com
 Render cluster params, merged with one or more component's parameters. Empty componentName list renders all component parameters.
 
 <a name="JsonnetRenderClusterParamsOnly"></a>
-## func [JsonnetRenderClusterParamsOnly](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L178-L183>)
+## func [JsonnetRenderClusterParamsOnly](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L179-L184>)
 
 ```go
 func JsonnetRenderClusterParamsOnly(vmconfig types.VMConfig, clusterName string, clusterParams string, prune bool) (string, error)
@@ -72,7 +72,7 @@ func JsonnetRenderClusterParamsOnly(vmconfig types.VMConfig, clusterName string,
 Only render cluster params \(\_cluster\), without components.
 
 <a name="JsonnetRenderFiles"></a>
-## func [JsonnetRenderFiles](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L74-L81>)
+## func [JsonnetRenderFiles](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L75-L82>)
 
 ```go
 func JsonnetRenderFiles(vmConfig types.VMConfig, files []string, param string, prune bool, prepend string, source string) (string, error)
@@ -81,7 +81,7 @@ func JsonnetRenderFiles(vmConfig types.VMConfig, files []string, param string, p
 Takes a list of jsonnet files and imports each one. Formats the string for jsonnet using "\+".
 
 <a name="JsonnetVM"></a>
-## func [JsonnetVM](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L42>)
+## func [JsonnetVM](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L43>)
 
 ```go
 func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error)
@@ -90,7 +90,7 @@ func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error)
 Create a Jsonnet VM to run commands in.
 
 <a name="MergeComponentDefaults"></a>
-## func [MergeComponentDefaults](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L246-L250>)
+## func [MergeComponentDefaults](<https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L247-L251>)
 
 ```go
 func MergeComponentDefaults(componentMap map[string]kr8_types.Kr8ClusterComponentRef, componentNames []string, vmconfig types.VMConfig) (string, error)
