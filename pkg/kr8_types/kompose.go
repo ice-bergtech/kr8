@@ -123,7 +123,7 @@ func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *Kompos
 		GenerateToStdout:   false,
 
 		Profiles:              []string{},
-		WithKomposeAnnotation: true,
+		WithKomposeAnnotation: false,
 
 		StoreManifest: true,
 
