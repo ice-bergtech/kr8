@@ -86,6 +86,7 @@ func (cache *DeploymentCache) CheckClusterComponentCache(
 	config string,
 	componentName string,
 	componentPath string,
+	baseDir string,
 	files []string,
 	logger zerolog.Logger,
 ) bool {
@@ -100,7 +101,7 @@ func (cache *DeploymentCache) CheckClusterComponentCache(
 		return false
 	}
 
-	return result && componentCache.CheckComponentCache(config, componentName, componentPath, files, logger)
+	return result && componentCache.CheckComponentCache(config, componentName, componentPath, baseDir, files, logger)
 }
 
 // This is cluster-level cache that applies to all components.
@@ -167,10 +168,11 @@ func (cache *ComponentCache) CheckComponentCache(
 	config string,
 	componentName string,
 	componentPath string,
+	baseDir string,
 	files []string,
 	logger zerolog.Logger,
 ) bool {
-	currentState, err := CreateComponentCache(config, componentPath, files)
+	currentState, err := CreateComponentCache(config, baseDir, files)
 	if err != nil {
 		return false
 	}

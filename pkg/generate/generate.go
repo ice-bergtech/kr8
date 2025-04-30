@@ -115,7 +115,7 @@ func GenProcessComponent(
 		return false, nil, err
 	}
 
-	if CheckComponentCache(cache, compSpec, config, componentName, logger) {
+	if CheckComponentCache(cache, compSpec, config, componentName, kr8Opts.BaseDir, logger) {
 		logger.Info().Msg("Component config and files match cache, skipping")
 
 		return true, nil, nil
@@ -178,7 +178,7 @@ func ProcessComponentFinalizer(
 	}
 	newCache, err := kr8_cache.CreateComponentCache(
 		config,
-		filepath.Join(kr8Opts.BaseDir, compPath),
+		kr8Opts.BaseDir,
 		files,
 	)
 	if err != nil {
@@ -193,6 +193,7 @@ func CheckComponentCache(
 	compSpec kr8_types.Kr8ComponentSpec,
 	config string,
 	componentName string,
+	baseDir string,
 	logger zerolog.Logger,
 ) bool {
 	if cache != nil {
@@ -205,7 +206,7 @@ func CheckComponentCache(
 			return false
 		}
 		// check if the component matches the cache
-		if cache.CheckClusterComponentCache(config, componentName, compPath, listFiles, logger) {
+		if cache.CheckClusterComponentCache(config, componentName, compPath, baseDir, listFiles, logger) {
 			return true
 		}
 	}
