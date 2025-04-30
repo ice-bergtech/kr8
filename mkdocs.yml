@@ -51,6 +51,7 @@ nav:
     - kr8: godoc/kr8-cmd.md
     - kr8 types: godoc/kr8-types.md
     - kr8 generate: godoc/kr8-generate.md
+    - kr8 generate caching: godoc/kr8-cache.md
     - kr8 init: godoc/kr8-init.md
     - kr8 jsonnet: godoc/kr8-jsonnet.md
     - kr8 util: godoc/kr8-util.md
