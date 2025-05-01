@@ -18,6 +18,9 @@ import (
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
+// Processes an include file from a component.
+// Calls [ProcessFile] to generate the output string.
+// Ensures the output directory exists, and only writes file if it differs from the one on disk.
 func processIncludesFile(
 	jvm *jsonnet.VM,
 	config string,
@@ -120,14 +123,18 @@ func ProcessFile(
 	return outStr, err
 }
 
+// Processes an input string through the jsonnet VM and hsnled extracting the output.
+// [snippetFilename] is used for error messages.
 func processJsonnet(jvm *jsonnet.VM, input string, snippetFilename string) (string, error) {
+	// Load data into VM and execute
 	jvm.ExtCode("input", input)
 	jsonStr, err := jvm.EvaluateAnonymousSnippet(snippetFilename, "std.extVar('process')(std.extVar('input'))")
 	if err != nil {
 		return "Error evaluating jsonnet snippet", err
 	}
 
-	// create output file contents in a string first, as a yaml stream
+	// Create output file as a yaml string
+	// First extract list of output files
 	var listObjOut []interface{}
 	var outStr string
 	if err := util.ErrorIfCheck("Error unmarshalling jsonnet output to go slice",
@@ -135,19 +142,22 @@ func processJsonnet(jvm *jsonnet.VM, input string, snippetFilename string) (stri
 	); err != nil {
 		return "", err
 	}
+	// Go through each file and marshal interface to yaml string
 	for _, jObj := range listObjOut {
 		buf, err := goyaml.Marshal(jObj)
 		if err := util.ErrorIfCheck("Error marshalling jsonnet object to yaml", err); err != nil {
 			return "", err
 		}
 		outStr += string(buf)
-		// Place yml new document at end of each object
+		// Place yml new document marker at end of each object
 		outStr += "\n---\n"
 	}
 
 	return outStr, nil
 }
 
+// Processes a template file with the given data.
+// Loads file, parses template, then executes template.
 func processTemplate(filename string, data gjson.Result) (string, error) {
 	var tInput []byte
 	var tmpl *template.Template
