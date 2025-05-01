@@ -56,23 +56,26 @@ func SetupBaseComponentJvm(
 	return jvm, nil
 }
 
-// jPathResults always includes base lib.
-// Adds jpaths from spec if set.
-func loadJPathsIntoVM(
+// Loads Jsonnet Library paths from component spec.
+// jPathResults always includes base lib folder, `filepath.Join(baseDir, "lib")`.
+func loadLibPathsIntoVM(
 	compSpec kr8_types.Kr8ComponentSpec,
 	compPath string,
 	baseDir string,
 	jvm *jsonnet.VM,
 	logger zerolog.Logger,
 ) {
-	logger.Debug().
-		Str("component path", compPath).
-		Msg("Loading JPaths into VM for component")
+	logger.Debug().Str("component", compPath).
+		Msg("loadLibPathsIntoVM Loading JPaths into VM for component")
+
 	jPathResults := []string{filepath.Join(baseDir, "lib")}
 	for _, jPath := range compSpec.JPaths {
 		jPathResults = append(jPathResults, filepath.Join(baseDir, compPath, jPath))
 	}
-	logger.Debug().Str("component path", compPath).Msgf("JPaths: %v", jPathResults)
+
+	logger.Debug().Str("component", compPath).
+		Msgf("loadLibPathsIntoVM JPaths: %v", jPathResults)
+
 	jvm.Importer(&jsonnet.FileImporter{
 		JPaths: jPathResults,
 	})
