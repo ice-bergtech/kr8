@@ -91,10 +91,10 @@ func CreateClusterSpec(
 		GenerateDir:        clGenerateDir,
 		GenerateShortNames: spec.Get("generate_short_names").Bool(),
 		PruneParams:        spec.Get("prune_params").Bool(),
+		EnableCache:        spec.Get("cache_enable").Bool(),
+		CompressCache:      spec.Get("cache_compress").Bool(),
 		ClusterOutputDir:   clGenerateDir + "/" + clusterName,
 		Name:               clusterName,
-		EnableCache:        false,
-		CompressCache:      true,
 	}, nil
 }
 
