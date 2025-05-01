@@ -184,7 +184,7 @@ func CheckComponentCache(
 	logger zerolog.Logger,
 ) (bool, *kr8_cache.ComponentCache, error) {
 	compPath := GetComponentPath(config, componentName)
-	listFiles, err := util.BuildDirFileList(compPath)
+	listFiles, err := util.BuildDirFileList(filepath.Join(baseDir, compPath))
 	// build list of files referenced by component
 	if err != nil {
 		logger.Warn().Err(err).Msg("issue walking component directory")
