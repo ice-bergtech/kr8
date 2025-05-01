@@ -197,13 +197,12 @@ func CheckComponentCache(
 			config,
 			componentName,
 			compPath,
-			baseDir,
 			listFiles,
 			logger,
 		)
 	}
 
-	newCache, err := kr8_cache.CreateComponentCache(config, baseDir, listFiles)
+	newCache, err := kr8_cache.CreateComponentCache(config, listFiles)
 	if err != nil {
 		return false, nil, err
 	}
@@ -686,7 +685,6 @@ func ValidateOrCreateCache(
 	cacheObj := cache
 	if cacheObj == nil || !cacheObj.CheckClusterCache(
 		config,
-		cacheObj.LibraryCache.Directory,
 		logger,
 	) {
 		cacheObj = &kr8_cache.DeploymentCache{
