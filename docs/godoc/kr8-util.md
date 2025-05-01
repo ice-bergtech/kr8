@@ -228,7 +228,7 @@ func ReadFile(file string) ([]byte, error)
 Read bytes from file \(path included\).
 
 <a name="ReadGzip"></a>
-## func [ReadGzip](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L214>)
+## func [ReadGzip](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L215>)
 
 ```go
 func ReadGzip(filename string) ([]byte, error)

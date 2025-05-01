@@ -211,21 +211,21 @@
 <ul>
 <li><a href="#ClusterCache">type ClusterCache</a></li>
 <li><a href="#CreateClusterCache">func CreateClusterCache(config string) *ClusterCache</a></li>
-<li><a href="#ClusterCache.CheckClusterCache">func (cache *ClusterCache) CheckClusterCache(config string, libDir string, logger zerolog.Logger) bool</a></li>
+<li><a href="#ClusterCache.CheckClusterCache">func (cache *ClusterCache) CheckClusterCache(config string, logger zerolog.Logger) bool</a></li>
 <li><a href="#ComponentCache">type ComponentCache</a></li>
-<li><a href="#CreateComponentCache">func CreateComponentCache(config string, componentPath string, listFiles []string) (*ComponentCache, error)</a></li>
-<li><a href="#ComponentCache.CheckComponentCache">func (cache *ComponentCache) CheckComponentCache(config string, componentName string, componentPath string, baseDir string, files []string, logger zerolog.Logger) (bool, *ComponentCache)</a></li>
+<li><a href="#CreateComponentCache">func CreateComponentCache(config string, listFiles []string) (*ComponentCache, error)</a></li>
+<li><a href="#ComponentCache.CheckComponentCache">func (cache *ComponentCache) CheckComponentCache(config string, componentName string, componentPath string, files []string, logger zerolog.Logger) (bool, *ComponentCache)</a></li>
 <li><a href="#DeploymentCache">type DeploymentCache</a></li>
 <li><a href="#InitDeploymentCache">func InitDeploymentCache(config string, baseDir string, cacheResults map[string]ComponentCache) *DeploymentCache</a></li>
 <li><a href="#LoadClusterCache">func LoadClusterCache(cacheFile string) (*DeploymentCache, error)</a></li>
-<li><a href="#DeploymentCache.CheckClusterCache">func (cache *DeploymentCache) CheckClusterCache(config string, baseDir string, logger zerolog.Logger) bool</a></li>
-<li><a href="#DeploymentCache.CheckClusterComponentCache">func (cache *DeploymentCache) CheckClusterComponentCache(config string, componentName string, componentPath string, baseDir string, files []string, logger zerolog.Logger) (bool, *ComponentCache, error)</a></li>
+<li><a href="#DeploymentCache.CheckClusterCache">func (cache *DeploymentCache) CheckClusterCache(config string, logger zerolog.Logger) bool</a></li>
+<li><a href="#DeploymentCache.CheckClusterComponentCache">func (cache *DeploymentCache) CheckClusterComponentCache(config string, componentName string, componentPath string, files []string, logger zerolog.Logger) (bool, *ComponentCache, error)</a></li>
 <li><a href="#DeploymentCache.WriteCache">func (cache *DeploymentCache) WriteCache(outFile string, compress bool) error</a></li>
 <li><a href="#LibraryCache">type LibraryCache</a></li>
 <li><a href="#CreateLibraryCache">func CreateLibraryCache(baseDir string) *LibraryCache</a></li>
 </ul>
 <p><a name="ClusterCache"></a></p>
-<h2 id="type-clustercache">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L128-L133">ClusterCache</a></h2>
+<h2 id="type-clustercache">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L121-L126">ClusterCache</a></h2>
 <p>This is cluster-level cache that applies to all components. If it is deemed invalid, the component cache is also invalid.</p>
 <pre><code class="language-go">type ClusterCache struct {
     // Raw cluster _kr8_spec object
@@ -235,17 +235,17 @@
 }
 </code></pre>
 <p><a name="CreateClusterCache"></a></p>
-<h3 id="func-createclustercache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L136">CreateClusterCache</a></h3>
+<h3 id="func-createclustercache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L129">CreateClusterCache</a></h3>
 <pre><code class="language-go">func CreateClusterCache(config string) *ClusterCache
 </code></pre>
 <p>Stores the cluster kr8_spec and cluster config as cluster-level cache.</p>
 <p><a name="ClusterCache.CheckClusterCache"></a></p>
-<h3 id="func-clustercache-checkclustercache">func (*ClusterCache) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L168">CheckClusterCache</a></h3>
-<pre><code class="language-go">func (cache *ClusterCache) CheckClusterCache(config string, libDir string, logger zerolog.Logger) bool
+<h3 id="func-clustercache-checkclustercache">func (*ClusterCache) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L161">CheckClusterCache</a></h3>
+<pre><code class="language-go">func (cache *ClusterCache) CheckClusterCache(config string, logger zerolog.Logger) bool
 </code></pre>
 <p>Compares current cluster config represented as a json string to the cache. Returns true if cache is valid.</p>
 <p><a name="ComponentCache"></a></p>
-<h2 id="type-componentcache">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L186-L191">ComponentCache</a></h2>
+<h2 id="type-componentcache">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L179-L184">ComponentCache</a></h2>
 <pre><code class="language-go">type ComponentCache struct {
     // Raw component config string
     ComponentConfig string `json:&quot;component_config&quot;`
@@ -254,15 +254,15 @@
 }
 </code></pre>
 <p><a name="CreateComponentCache"></a></p>
-<h3 id="func-createcomponentcache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L193">CreateComponentCache</a></h3>
-<pre><code class="language-go">func CreateComponentCache(config string, componentPath string, listFiles []string) (*ComponentCache, error)
+<h3 id="func-createcomponentcache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L186">CreateComponentCache</a></h3>
+<pre><code class="language-go">func CreateComponentCache(config string, listFiles []string) (*ComponentCache, error)
 </code></pre>
 <p><a name="ComponentCache.CheckComponentCache"></a></p>
-<h3 id="func-componentcache-checkcomponentcache">func (*ComponentCache) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L209-L216">CheckComponentCache</a></h3>
-<pre><code class="language-go">func (cache *ComponentCache) CheckComponentCache(config string, componentName string, componentPath string, baseDir string, files []string, logger zerolog.Logger) (bool, *ComponentCache)
+<h3 id="func-componentcache-checkcomponentcache">func (*ComponentCache) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L202-L208">CheckComponentCache</a></h3>
+<pre><code class="language-go">func (cache *ComponentCache) CheckComponentCache(config string, componentName string, componentPath string, files []string, logger zerolog.Logger) (bool, *ComponentCache)
 </code></pre>
 <p><a name="DeploymentCache"></a></p>
-<h2 id="type-deploymentcache">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L42-L49">DeploymentCache</a></h2>
+<h2 id="type-deploymentcache">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L43-L50">DeploymentCache</a></h2>
 <p>Object that contains the cache for a single cluster.</p>
 <pre><code class="language-go">type DeploymentCache struct {
     // A struct containing cluster-level cache values
@@ -274,35 +274,35 @@
 }
 </code></pre>
 <p><a name="InitDeploymentCache"></a></p>
-<h3 id="func-initdeploymentcache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L51">InitDeploymentCache</a></h3>
+<h3 id="func-initdeploymentcache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L52">InitDeploymentCache</a></h3>
 <pre><code class="language-go">func InitDeploymentCache(config string, baseDir string, cacheResults map[string]ComponentCache) *DeploymentCache
 </code></pre>
 <p><a name="LoadClusterCache"></a></p>
-<h3 id="func-loadclustercache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L18">LoadClusterCache</a></h3>
+<h3 id="func-loadclustercache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L19">LoadClusterCache</a></h3>
 <pre><code class="language-go">func LoadClusterCache(cacheFile string) (*DeploymentCache, error)
 </code></pre>
 <p>Load cluster cache from a specified cache file. Assumes cache is gzipped, but falls back to plaintext if there's an error.</p>
 <p><a name="DeploymentCache.CheckClusterCache"></a></p>
-<h3 id="func-deploymentcache-checkclustercache">func (*DeploymentCache) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L76">CheckClusterCache</a></h3>
-<pre><code class="language-go">func (cache *DeploymentCache) CheckClusterCache(config string, baseDir string, logger zerolog.Logger) bool
+<h3 id="func-deploymentcache-checkclustercache">func (*DeploymentCache) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L77">CheckClusterCache</a></h3>
+<pre><code class="language-go">func (cache *DeploymentCache) CheckClusterCache(config string, logger zerolog.Logger) bool
 </code></pre>
 <p><a name="DeploymentCache.CheckClusterComponentCache"></a></p>
-<h3 id="func-deploymentcache-checkclustercomponentcache">func (*DeploymentCache) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L85-L92">CheckClusterComponentCache</a></h3>
-<pre><code class="language-go">func (cache *DeploymentCache) CheckClusterComponentCache(config string, componentName string, componentPath string, baseDir string, files []string, logger zerolog.Logger) (bool, *ComponentCache, error)
+<h3 id="func-deploymentcache-checkclustercomponentcache">func (*DeploymentCache) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L86-L92">CheckClusterComponentCache</a></h3>
+<pre><code class="language-go">func (cache *DeploymentCache) CheckClusterComponentCache(config string, componentName string, componentPath string, files []string, logger zerolog.Logger) (bool, *ComponentCache, error)
 </code></pre>
 <p><a name="DeploymentCache.WriteCache"></a></p>
-<h3 id="func-deploymentcache-writecache">func (*DeploymentCache) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L61">WriteCache</a></h3>
+<h3 id="func-deploymentcache-writecache">func (*DeploymentCache) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L62">WriteCache</a></h3>
 <pre><code class="language-go">func (cache *DeploymentCache) WriteCache(outFile string, compress bool) error
 </code></pre>
 <p><a name="LibraryCache"></a></p>
-<h2 id="type-librarycache">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L121-L124">LibraryCache</a></h2>
+<h2 id="type-librarycache">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L114-L117">LibraryCache</a></h2>
 <pre><code class="language-go">type LibraryCache struct {
     Directory string            `json:&quot;directory&quot;`
     Entries   map[string]string `json:&quot;entries&quot;`
 }
 </code></pre>
 <p><a name="CreateLibraryCache"></a></p>
-<h3 id="func-createlibrarycache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L143">CreateLibraryCache</a></h3>
+<h3 id="func-createlibrarycache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L136">CreateLibraryCache</a></h3>
 <pre><code class="language-go">func CreateLibraryCache(baseDir string) *LibraryCache
 </code></pre>
               

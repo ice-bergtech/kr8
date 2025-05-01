@@ -97,14 +97,6 @@ tasks:
       - task: 02_build
       - ./kr8 generate -B examples {{.CLI_ARGS}}
 
-  04_cache-generate:
-    desc: "Generate example clusters and components with cache"
-    aliases:
-      - genc
-    cmds:
-      - task: 02_build
-      - ./kr8 generate -B examples --cache {{.CLI_ARGS}}
-
   04_profile-generate:
     desc: Capture profiling data from a kr8 generate of the examples.
     aliases:
