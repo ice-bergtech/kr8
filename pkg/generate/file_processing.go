@@ -124,7 +124,7 @@ func ProcessFile(
 }
 
 // Processes an input string through the jsonnet VM and hsnled extracting the output.
-// [snippetFilename] is used for error messages.
+// snippetFilename is used for error messages.
 func processJsonnet(jvm *jsonnet.VM, input string, snippetFilename string) (string, error) {
 	// Load data into VM and execute
 	jvm.ExtCode("input", input)
