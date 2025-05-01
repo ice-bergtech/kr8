@@ -208,6 +208,7 @@ func WriteGzip(input []byte, file string) error {
 	gzipWriter := gzip.NewWriter(outFile)
 	_, err = gzipWriter.Write(input)
 	_ = gzipWriter.Close()
+
 	return err
 }
 
