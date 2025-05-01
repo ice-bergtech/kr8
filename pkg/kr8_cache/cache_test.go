@@ -282,7 +282,6 @@ func TestDeploymentCache_CheckClusterCache(t *testing.T) {
 		name string // description of this test case
 		// Named input parameters for receiver constructor.
 		cacheFile string
-		baseDir   string
 		// Named input parameters for target function.
 		config string
 		logger zerolog.Logger
@@ -296,7 +295,7 @@ func TestDeploymentCache_CheckClusterCache(t *testing.T) {
 			if err != nil {
 				t.Fatalf("could not construct receiver type: %v", err)
 			}
-			got := cache.CheckClusterCache(testCase.config, testCase.baseDir, testCase.logger)
+			got := cache.CheckClusterCache(testCase.config, testCase.logger)
 			if got != testCase.want {
 				t.Errorf("CheckClusterCache() = %v, want %v", got, testCase.want)
 			}
@@ -313,7 +312,6 @@ func TestDeploymentCache_CheckClusterComponentCache(t *testing.T) {
 		config        string
 		componentName string
 		componentPath string
-		baseDir       string
 		files         []string
 		logger        zerolog.Logger
 		want          bool
@@ -332,7 +330,6 @@ func TestDeploymentCache_CheckClusterComponentCache(t *testing.T) {
 				testCase.config,
 				testCase.componentName,
 				testCase.componentPath,
-				testCase.baseDir,
 				testCase.files,
 				testCase.logger,
 			)
@@ -379,7 +376,6 @@ func TestClusterCache_CheckClusterCache(t *testing.T) {
 		name string // description of this test case
 		// Named input parameters for receiver constructor.
 		cconfig string
-		baseDir string
 		// Named input parameters for target function.
 		config string
 		logger zerolog.Logger
@@ -390,7 +386,7 @@ func TestClusterCache_CheckClusterCache(t *testing.T) {
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
 			cache := kr8_cache.CreateClusterCache(testCase.cconfig)
-			got := cache.CheckClusterCache(testCase.config, testCase.baseDir, testCase.logger)
+			got := cache.CheckClusterCache(testCase.config, testCase.logger)
 			// TODO: update the condition below to compare got with tt.want.
 			if true {
 				t.Errorf("CheckClusterCache() = %v, want %v", got, testCase.want)
@@ -403,17 +399,16 @@ func TestCreateComponentCache(t *testing.T) {
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
-		config        string
-		componentPath string
-		listFiles     []string
-		want          *kr8_cache.ComponentCache
-		wantErr       bool
+		config    string
+		listFiles []string
+		want      *kr8_cache.ComponentCache
+		wantErr   bool
 	}{
 		// TODO: Add test cases.
 	}
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
-			got, gotErr := kr8_cache.CreateComponentCache(testCase.config, testCase.componentPath, testCase.listFiles)
+			got, gotErr := kr8_cache.CreateComponentCache(testCase.config, testCase.listFiles)
 			if gotErr != nil {
 				if !testCase.wantErr {
 					t.Errorf("CreateComponentCache() failed: %v", gotErr)
@@ -436,9 +431,8 @@ func TestComponentCache_CheckComponentCache(t *testing.T) {
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for receiver constructor.
-		cconfig        string
-		ccomponentPath string
-		clistFiles     []string
+		cconfig    string
+		clistFiles []string
 		// Named input parameters for target function.
 		config        string
 		componentName string
@@ -453,14 +447,13 @@ func TestComponentCache_CheckComponentCache(t *testing.T) {
 	}
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
-			cache, err := kr8_cache.CreateComponentCache(testCase.cconfig, testCase.ccomponentPath, testCase.clistFiles)
+			cache, err := kr8_cache.CreateComponentCache(testCase.cconfig, testCase.clistFiles)
 			if err != nil {
 				t.Fatalf("could not construct receiver type: %v", err)
 			}
 			got, got2 := cache.CheckComponentCache(
 				testCase.config,
 				testCase.componentName,
-				testCase.componentPath,
 				testCase.baseDir,
 				testCase.files,
 				testCase.logger,
