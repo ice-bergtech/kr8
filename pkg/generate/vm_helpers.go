@@ -78,28 +78,29 @@ func loadJPathsIntoVM(
 	})
 }
 
-func loadExtFilesIntoVars(
+// Load external files referenced by a component spec into jvm extVars.
+func loadExtFilesIntoVM(
 	compSpec kr8_types.Kr8ComponentSpec,
 	compPath string,
-	kr8Spec kr8_types.Kr8ClusterSpec,
 	kr8Opts types.Kr8Opts,
-	componentName string,
 	jvm *jsonnet.VM,
 	logger zerolog.Logger,
 ) error {
-	logger.Debug().Str("component path", compPath).Msgf("Loading extFiles")
+	logger.Debug().Str("component path", compPath).Msgf("loadExtFilesIntoVars Loading extFiles")
+
 	for key, val := range compSpec.ExtFiles {
 		filePath := filepath.Join(kr8Opts.BaseDir, compPath, val)
-		logger.Debug().Str("cluster", kr8Spec.Name).
-			Str("component", componentName).
-			Msg("Extfile: " + key + "=" + val + "\n Path: " + filePath)
+
+		logger.Debug().Str("component path", compPath).
+			Msg("loadExtFilesIntoVars ExtFileVar: " + key + "=" + val + "\n Path: " + filePath)
+
 		if kr8Opts.BaseDir != "./" && !strings.HasPrefix(filePath, kr8Opts.BaseDir) {
 			if err := util.ErrorIfCheck("Invalid file path: "+filePath, os.ErrNotExist); err != nil {
 				return err
 			}
 		}
 		extFile, err := os.ReadFile(filepath.Clean(filePath))
-		if err := util.ErrorIfCheck("Error importing extfiles item", err); err != nil {
+		if err := util.ErrorIfCheck("Error importing ExtFileVar", err); err != nil {
 			return err
 		}
 		jvm.ExtVar(key, string(extFile))
