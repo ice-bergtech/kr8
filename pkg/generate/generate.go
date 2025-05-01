@@ -286,9 +286,9 @@ func SetupComponentVM(
 	// Load files referenced by the component
 	compPath := GetComponentPath(config, componentName)
 	// jPathResults always includes base lib. Add jpaths from spec if set
-	loadJPathsIntoVM(compSpec, compPath, kr8Opts.BaseDir, jvm, logger)
+	loadLibPathsIntoVM(compSpec, compPath, kr8Opts.BaseDir, jvm, logger)
 	// file imports
-	if err := loadExtFilesIntoVars(compSpec, compPath, kr8Spec, kr8Opts, componentName, jvm, logger); err != nil {
+	if err := loadExtFilesIntoVM(compSpec, compPath, kr8Opts, jvm, logger); err != nil {
 		return nil, "", util.LogErrorIfCheck("error loading ext files into vars", err, logger)
 	}
 
