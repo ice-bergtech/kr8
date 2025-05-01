@@ -74,10 +74,10 @@ func (cache *DeploymentCache) WriteCache(outFile string, compress bool) error {
 	return util.WriteFile(text, outFile)
 }
 
-func (cache *DeploymentCache) CheckClusterCache(config string, baseDir string, logger zerolog.Logger) bool {
+func (cache *DeploymentCache) CheckClusterCache(config string, logger zerolog.Logger) bool {
 	// confirm cluster-level configuration matches the cache
 	if cache.ClusterConfig != nil {
-		return cache.ClusterConfig.CheckClusterCache(config, baseDir, logger)
+		return cache.ClusterConfig.CheckClusterCache(config, logger)
 	}
 
 	return false
@@ -158,7 +158,7 @@ func CreateLibraryCache(baseDir string) *LibraryCache {
 
 // Compares current cluster config represented as a json string to the cache.
 // Returns true if cache is valid.
-func (cache *ClusterCache) CheckClusterCache(config string, libDir string, logger zerolog.Logger) bool {
+func (cache *ClusterCache) CheckClusterCache(config string, logger zerolog.Logger) bool {
 	currentState := CreateClusterCache(config)
 	// compare cluster (non-component) configuration to cached cluster
 	if cache.Kr8_Spec != currentState.Kr8_Spec {
@@ -183,13 +183,13 @@ type ComponentCache struct {
 	ComponentFiles map[string]string `json:"component_files"`
 }
 
-func CreateComponentCache(config string, componentPath string, listFiles []string) (*ComponentCache, error) {
+func CreateComponentCache(config string, listFiles []string) (*ComponentCache, error) {
 	cacheResult := ComponentCache{
 		ComponentConfig: base64.RawStdEncoding.EncodeToString([]byte(config)),
 		ComponentFiles:  map[string]string{},
 	}
 	for _, file := range listFiles {
-		currentHash, err := util.HashFile(filepath.Join(componentPath, file))
+		currentHash, err := util.HashFile(file)
 		if err != nil {
 			return nil, err
 		}
@@ -203,11 +203,10 @@ func (cache *ComponentCache) CheckComponentCache(
 	config string,
 	componentName string,
 	componentPath string,
-	baseDir string,
 	files []string,
 	logger zerolog.Logger,
 ) (bool, *ComponentCache) {
-	currentState, err := CreateComponentCache(config, baseDir, files)
+	currentState, err := CreateComponentCache(config, files)
 	if err != nil {
 		return false, nil
 	}
