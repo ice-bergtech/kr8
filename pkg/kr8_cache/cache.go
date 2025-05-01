@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"path/filepath"
+	"reflect"
 
 	"github.com/ice-bergtech/kr8/pkg/types"
 	"github.com/ice-bergtech/kr8/pkg/util"
@@ -86,19 +87,17 @@ func (cache *DeploymentCache) CheckClusterComponentCache(
 	config string,
 	componentName string,
 	componentPath string,
-	baseDir string,
 	files []string,
 	logger zerolog.Logger,
 ) (bool, *ComponentCache, error) {
-	currentState, err := CreateComponentCache(config, baseDir, files)
+	currentState, err := CreateComponentCache(config, files)
 	if err != nil {
 		return false, currentState, err
 	}
 
 	// first confirm cluster-level configuration matches the cache
-	result := cache.CheckClusterCache(config, baseDir, logger)
-	if !result {
-		return result, currentState, nil
+	if !cache.CheckClusterCache(config, logger) {
+		return false, currentState, nil
 	}
 
 	componentCache, ok := cache.ComponentConfigs[componentName]
@@ -106,16 +105,10 @@ func (cache *DeploymentCache) CheckClusterComponentCache(
 		return false, currentState, nil
 	}
 
-	cacheValid, currentComponentCache := componentCache.CheckComponentCache(
-		config,
-		componentName,
-		componentPath,
-		baseDir,
-		files,
-		logger,
-	)
+	result := currentState.ComponentConfig == componentCache.ComponentConfig &&
+		reflect.DeepEqual(currentState.ComponentFiles, componentCache.ComponentFiles)
 
-	return result && cacheValid, currentComponentCache, nil
+	return result, currentState, nil
 }
 
 type LibraryCache struct {
