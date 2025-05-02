@@ -5,14 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Iceberg Tech" />
       <link rel="shortcut icon" href="../../img/favicon.ico" />
-    <title>kr8 init - kr8+ Docs</title>
+    <title>kr8+ init - kr8+ Docs</title>
     <link rel="stylesheet" href="../../css/theme.css" />
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "kr8 init";
+        var mkdocs_page_name = "kr8+ init";
         var mkdocs_page_input_path = "godoc/kr8-init.md";
         var mkdocs_page_url = null;
       </script>
@@ -121,15 +121,17 @@
               </ul>
               <p class="caption"><span class="caption-text">Godocs</span></p>
               <ul class="current">
-                  <li class="toctree-l1"><a class="reference internal" href="../kr8-cmd/">kr8</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-cmd/">kr8+</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../kr8-types/">kr8 types</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-types/">kr8+ types</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../kr8-generate/">kr8 generate</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-generate/">kr8+ generate</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../kr8-cache/">kr8 generate caching</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-cache/">kr8+ generate caching</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">kr8 init</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-native-functions/">kr8+ Jsonnet Native Functions</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">kr8+ init</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#index">Index</a>
     </li>
@@ -157,9 +159,9 @@
     </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../kr8-jsonnet/">kr8 jsonnet</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-jsonnet/">kr8+ jsonnet</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../kr8-util/">kr8 util</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-util/">kr8+ util</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../types/">types</a>
                   </li>
@@ -179,7 +181,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
           <li class="breadcrumb-item">Godocs</li>
-      <li class="breadcrumb-item active">kr8 init</li>
+      <li class="breadcrumb-item active">kr8+ init</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/ice-bergtech/kr8/blob/main/docs/godoc/kr8-init.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -208,12 +210,12 @@
 <li><a href="#Kr8InitOptions">type Kr8InitOptions</a></li>
 </ul>
 <p><a name="GenerateChartJsonnet"></a></p>
-<h2 id="func-generatechartjsonnet">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L136-L140">GenerateChartJsonnet</a></h2>
+<h2 id="func-generatechartjsonnet">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L135-L139">GenerateChartJsonnet</a></h2>
 <pre><code class="language-go">func GenerateChartJsonnet(compJson kr8_types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error
 </code></pre>
 <p>Generates a jsonnet files that references a local helm chart.</p>
 <p><a name="GenerateChartTaskfile"></a></p>
-<h2 id="func-generatecharttaskfile">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L166-L170">GenerateChartTaskfile</a></h2>
+<h2 id="func-generatecharttaskfile">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L165-L169">GenerateChartTaskfile</a></h2>
 <pre><code class="language-go">func GenerateChartTaskfile(comp kr8_types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error
 </code></pre>
 <p>Generates a go-task taskfile that's setup to download a helm chart into a local `vendor` directory.</p>
@@ -241,22 +243,22 @@
 </code></pre>
 <p>Generates a starter readme for the repo, and writes it to the destination directory.</p>
 <p><a name="InitComponentChart"></a></p>
-<h2 id="func-initcomponentchart">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L53">InitComponentChart</a></h2>
+<h2 id="func-initcomponentchart">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L52">InitComponentChart</a></h2>
 <pre><code class="language-go">func InitComponentChart(dstDir string, componentOptions Kr8InitOptions, compJson kr8_types.Kr8ComponentJsonnet) error
 </code></pre>
 <p>Initializes the basic parts of a helm chart component.</p>
 <p><a name="InitComponentJsonnet"></a></p>
-<h2 id="func-initcomponentjsonnet">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L115-L119">InitComponentJsonnet</a></h2>
+<h2 id="func-initcomponentjsonnet">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L114-L118">InitComponentJsonnet</a></h2>
 <pre><code class="language-go">func InitComponentJsonnet(compJson kr8_types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error
 </code></pre>
 <p>Initializes the basic parts of a jsonnet-based component.</p>
 <p><a name="InitComponentTemplate"></a></p>
-<h2 id="func-initcomponenttemplate">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L79-L83">InitComponentTemplate</a></h2>
+<h2 id="func-initcomponenttemplate">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L78-L82">InitComponentTemplate</a></h2>
 <pre><code class="language-go">func InitComponentTemplate(compJson kr8_types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error
 </code></pre>
 <p>Initializes the based parts of a template-based component.</p>
 <p><a name="InitComponentYaml"></a></p>
-<h2 id="func-initcomponentyaml">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L99">InitComponentYaml</a></h2>
+<h2 id="func-initcomponentyaml">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L98">InitComponentYaml</a></h2>
 <pre><code class="language-go">func InitComponentYaml(compJson kr8_types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error
 </code></pre>
 <p>Initializes the basic parts of a yaml-based component.</p>
@@ -282,8 +284,8 @@
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../kr8-cache/" class="btn btn-neutral float-left" title="kr8 generate caching"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../kr8-jsonnet/" class="btn btn-neutral float-right" title="kr8 jsonnet">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../kr8-native-functions/" class="btn btn-neutral float-left" title="kr8+ Jsonnet Native Functions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../kr8-jsonnet/" class="btn btn-neutral float-right" title="kr8+ jsonnet">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -310,7 +312,7 @@
         </span>
     
     
-      <span><a href="../kr8-cache/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../kr8-native-functions/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
       <span><a href="../kr8-jsonnet/" style="color: #fcfcfc">Next &raquo;</a></span>
