@@ -11,6 +11,7 @@ import (
 )
 
 // Removes all files not present in outputFileMap from componentOutputDir.
+// checks if each file in the directory is present in the map, ignoring the bool value.
 func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error {
 	// clean component dir
 	dir, err := os.Open(filepath.Clean(componentOutputDir))
@@ -34,7 +35,8 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) er
 			if err := util.ErrorIfCheck("", err); err != nil {
 				return err
 			}
-			log.Debug().Msg("Deleted unmanaged file: " + delFile)
+
+			log.Debug().Str("file", delFile).Msg("CleanOutputDir deleted unmanaged file")
 		}
 	}
 
