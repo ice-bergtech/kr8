@@ -1,9 +1,12 @@
 // Package generate implements the logic for generating output files based on input data.
 //
-// Combines a directory of cluster configurations
-// with a directory of components
-// (along with some Jsonnet libs)
+// Combines:
+//   - a directory of cluster configurations
+//   - a directory of components
+//   - a optional directory of Jsonnet library files
+//
 // to generate output files.
+// Output files can be structured yaml, or files generated from go templates.
 //
 // The package prepares a Jsonnet VM and loads the necessary libraries and extVars.
 // A new VM is created for each component.
