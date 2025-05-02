@@ -167,19 +167,21 @@
               </ul>
               <p class="caption"><span class="caption-text">Godocs</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-cmd/">kr8</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-cmd/">kr8+</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-types/">kr8 types</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-types/">kr8+ types</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-generate/">kr8 generate</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-generate/">kr8+ generate</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-cache/">kr8 generate caching</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-cache/">kr8+ generate caching</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-init/">kr8 init</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-native-functions/">kr8+ Jsonnet Native Functions</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-jsonnet/">kr8 jsonnet</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-init/">kr8+ init</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-util/">kr8 util</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-jsonnet/">kr8+ jsonnet</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../godoc/kr8-util/">kr8+ util</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../godoc/types/">types</a>
                   </li>
@@ -515,7 +517,7 @@ The values can be stored in a field, usually named <code>helm_values</code>.</p>
 }
 </code></pre>
 <p>The chart is be referenced and processed through the <code>helmTemplate</code> native function.
-The documentation for this native function can be found <a href="../../godoc/kr8-jsonnet/#NativeHelmTemplate">here</a></p>
+The documentation for this native function can be found <a href="../../godoc/kr8-native-functions/#NativeHelmTemplate">here</a></p>
 <pre><code class="language-go">local config = std.extVar(&quot;kr8&quot;);
 
 local helm_template = std.native(&quot;helmTemplate&quot;)(config.release_name, &quot;./vendor/&quot;+&quot;external-dns-&quot;+config.chart_version, {
