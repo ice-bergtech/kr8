@@ -97,13 +97,13 @@ type KomposeConvertOptions struct {
 	ImagePushRegistry string
 }
 
-// Initialie Kompose options with sensible defaults.
-func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *KomposeConvertOptions {
-	return &KomposeConvertOptions{
+// Initialize Kompose options with sensible defaults.
+func CreateKomposeOpts(inputFiles []string, namespace string) (*KomposeConvertOptions, error) {
+	kOpts := KomposeConvertOptions{
 		CreateChart: false,
 		Controller:  "deployment",
 		Replicas:    1,
-		Namespace:   cmp.Namespace,
+		Namespace:   namespace,
 
 		ImagePush:    false,
 		GenerateJSON: false,
@@ -118,9 +118,9 @@ func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *Kompos
 		Provider:           "kubernetes",
 		Build:              "local",
 		InputFiles:         inputFiles,
-		OutFile:            outDir,
+		OutFile:            "",
 		GenerateYAMLIndent: 2,
-		GenerateToStdout:   false,
+		GenerateToStdout:   true,
 
 		Profiles:              []string{},
 		WithKomposeAnnotation: false,
@@ -140,6 +140,7 @@ func Create(inputFiles []string, outDir string, cmp Kr8ComponentJsonnet) *Kompos
 		ImagePushCommand:         "",
 		ImagePushRegistry:        "",
 	}
+	return &kOpts, kOpts.Validate()
 }
 
 // Generates a ConvertOptions struct that kompose expects from our commented KomposeConvertOptions
@@ -220,9 +221,6 @@ func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions {
 
 // Validates a set of options for converting a Kubernetes manifest to a Docker Compose file.
 func (k KomposeConvertOptions) Validate() error {
-	if k.OutFile == "" {
-		return types.Kr8Error{Message: "OutFile must be set", Value: ""}
-	}
 	if len(k.InputFiles) == 0 {
 		return types.Kr8Error{Message: "InputFiles must be set", Value: 0}
 	}

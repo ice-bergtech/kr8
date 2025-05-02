@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"path/filepath"
 	"strings"
 	"text/template"
 
@@ -12,9 +11,7 @@ import (
 	jsonnet "github.com/google/go-jsonnet"
 	jsonnetAst "github.com/google/go-jsonnet/ast"
 	"github.com/grafana/tanka/pkg/helm"
-	kompose_logger "github.com/sirupsen/logrus"
-
-	"github.com/ice-bergtech/kr8/pkg/kr8_types"
+	types "github.com/ice-bergtech/kr8/pkg/types"
 )
 
 // Registers additional native functions in the jsonnet VM.
@@ -115,9 +112,9 @@ func NativeSprigTemplate() *jsonnet.NativeFunction {
 			// templateStr is a string that contains the sprig template.
 			input, argOk := args[1].(string)
 			if !argOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "second argument 'templateStr' must be of 'string' type, got " + fmt.Sprintf("%T", args[1]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "second argument 'templateStr' must be of 'string' type, got " + fmt.Sprintf("%T", args[1]),
+					Value:   nil,
 				}
 			}
 
@@ -131,81 +128,4 @@ func NativeSprigTemplate() *jsonnet.NativeFunction {
 
 			return buff.String(), err
 		}}
-}
-
-// Allows converting a docker-compose file string into kubernetes resources using kompose.
-// Files in the directory must be in the format `[docker-]compose.y[a]ml`.
-//
-// Source: https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
-//
-// Inputs: `inFile`, `outPath`, `opts`.
-func NativeKompose() *jsonnet.NativeFunction {
-	return &jsonnet.NativeFunction{
-		Name:   "komposeFile",
-		Params: jsonnetAst.Identifiers{"inFile", "outPath", "opts"},
-		Func: func(args []interface{}) (interface{}, error) {
-			inFile, argOk := args[0].(string)
-			if !argOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'inFile' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
-				}
-			}
-
-			outPath, argOk := args[1].(string)
-			if !argOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "second argument 'outPath' must be of 'string' type, got " + fmt.Sprintf("%T", args[1]),
-					StackTrace: nil,
-				}
-			}
-
-			opts, err := parseOpts(args[2])
-			if err != nil {
-				return "", err
-			}
-
-			root := filepath.Dir(opts.CalledFrom)
-
-			// ensure that the logger that kopmose uses is set to warn and above
-			kompose_logger.SetLevel(kompose_logger.WarnLevel)
-			// TODO: add logrus hook to capture and convert events to zerolog
-
-			options := kr8_types.Create([]string{filepath.Join(root, inFile)}, root+"/"+outPath, *opts)
-			if err := options.Validate(); err != nil {
-				return "", err
-			}
-
-			return options.Convert()
-		},
-	}
-}
-
-func parseOpts(data interface{}) (*kr8_types.Kr8ComponentJsonnet, error) {
-	component, err := json.Marshal(data)
-	if err != nil {
-		return nil, err
-	}
-
-	//nolint:exhaustruct
-	opts := kr8_types.Kr8ComponentJsonnet{}
-	if err := json.Unmarshal(component, &opts); err != nil {
-		return nil, err
-	}
-
-	// Charts are only allowed at relative paths. Use conf.CalledFrom to find the callers directory.
-	if opts.Namespace == "" {
-		return nil, jsonnet.RuntimeError{
-			Msg:        "kompose: 'opts.namespace' is unset or empty.",
-			StackTrace: nil,
-		}
-	}
-	if opts.CalledFrom == "" {
-		return nil, jsonnet.RuntimeError{
-			Msg:        "kompose: 'opts.called_from' is unset or empty.",
-			StackTrace: nil,
-		}
-	}
-
-	return &opts, nil
 }
