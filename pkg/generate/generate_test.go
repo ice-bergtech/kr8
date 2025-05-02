@@ -326,7 +326,7 @@ func TestGetClusterComponentParamsThreadsafe(t *testing.T) {
 	}
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
-			gotErr := generate.GetClusterComponentParamsThreadsafe(
+			gotErr := generate.GetClusterComponentParamsThreadSafe(
 				testCase.allConfig,
 				testCase.config,
 				testCase.vmConfig,

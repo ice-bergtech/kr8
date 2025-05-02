@@ -98,18 +98,18 @@ func ProcessFile(
 		// file is processed as an ExtCode input, so that we can postprocess it
 		// in the snippet
 		input = "( import '" + inputFile + "')"
-		outStr, err = processJsonnet(jvm, input, incInfo.File)
+		outStr, err = ProcessJsonnetToYaml(jvm, input, incInfo.File)
 	case ".yml":
 	case ".yaml":
 		input = "std.native('parseYaml')(importstr '" + inputFile + "')"
-		outStr, err = processJsonnet(jvm, input, incInfo.File)
+		outStr, err = ProcessJsonnetToYaml(jvm, input, incInfo.File)
 	case ".tmpl":
 	case ".tpl":
 		// Pass component config as data for the template
 		if len(incInfo.Config) > 0 {
-			outStr, err = processTemplate(inputFile, gjson.Parse(incInfo.Config))
+			outStr, err = ProcessTemplate(inputFile, gjson.Parse(incInfo.Config))
 		} else {
-			outStr, err = processTemplate(inputFile, gjson.Get(config, componentName))
+			outStr, err = ProcessTemplate(inputFile, gjson.Get(config, componentName))
 		}
 	default:
 		outStr, err = "", os.ErrInvalid
@@ -123,9 +123,9 @@ func ProcessFile(
 	return outStr, err
 }
 
-// Processes an input string through the jsonnet VM and hsnled extracting the output.
+// Processes an input string through the jsonnet VM and handles extracting the output into a yaml string.
 // snippetFilename is used for error messages.
-func processJsonnet(jvm *jsonnet.VM, input string, snippetFilename string) (string, error) {
+func ProcessJsonnetToYaml(jvm *jsonnet.VM, input string, snippetFilename string) (string, error) {
 	// Load data into VM and execute
 	jvm.ExtCode("input", input)
 	jsonStr, err := jvm.EvaluateAnonymousSnippet(snippetFilename, "std.extVar('process')(std.extVar('input'))")
@@ -158,7 +158,7 @@ func processJsonnet(jvm *jsonnet.VM, input string, snippetFilename string) (stri
 
 // Processes a template file with the given data.
 // Loads file, parses template, then executes template.
-func processTemplate(filename string, data gjson.Result) (string, error) {
+func ProcessTemplate(filename string, data gjson.Result) (string, error) {
 	var tInput []byte
 	var tmpl *template.Template
 	var buffer bytes.Buffer

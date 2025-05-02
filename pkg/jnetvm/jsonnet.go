@@ -72,6 +72,7 @@ func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error) {
 
 // Takes a list of jsonnet files and imports each one.
 // Formats the string for jsonnet using "+".
+// source is only used for error messages.
 func JsonnetRenderFiles(
 	vmConfig types.VMConfig,
 	files []string,
