@@ -11,34 +11,35 @@ import (
 	"github.com/c-robinson/iplib/v2"
 	jsonnet "github.com/google/go-jsonnet"
 	jsonnetAst "github.com/google/go-jsonnet/ast"
+	types "github.com/ice-bergtech/kr8/pkg/types"
 	"lukechampine.com/uint128"
 )
 
 // Contains the url information.
 type NativeFuncURL struct {
-	Scheme string
+	Scheme string `json:"scheme"`
 	// encoded opaque data
-	Opaque string
+	Opaque string `json:"opaque"`
 	// username information
-	Username string
+	Username string `json:"username"`
 	// Whether the password field is set
-	PasswordSet bool
+	PasswordSet bool `json:"passwordSet"`
 	// password information
-	Password string
+	Password string `json:"password"`
 	// host or host:port (see Hostname and Port methods)
-	Host string
+	Host string `json:"host"`
 	// path (relative paths may omit leading slash)
-	Path string
+	Path string `json:"path"`
 	// encoded path hint (see EscapedPath method)
-	RawPath string
+	RawPath string `json:"pathRaw"`
 	// query values
-	Query map[string]interface{}
+	Query map[string]interface{} `json:"query"`
 	// encoded query values, without '?'
-	RawQuery string
+	RawQuery string `json:"queryRaw"`
 	// fragment for references, without '#'
-	Fragment string
+	Fragment string `json:"fragment"`
 	// encoded fragment hint (see EscapedFragment method)
-	RawFragment string
+	RawFragment string `json:"fragmentRaw"`
 }
 
 // Decode URL information from a string.
@@ -52,9 +53,9 @@ func NativeNetUrl() *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			rawURL, ok := args[0].(string)
 			if !ok {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'rawURL' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "first argument 'rawURL' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
@@ -93,6 +94,7 @@ func NativeNetUrl() *jsonnet.NativeFunction {
 	}
 }
 
+// An IPv4 address or subnet range
 type IPV4 struct {
 	IP           string
 	Mask         int
@@ -103,6 +105,7 @@ type IPV4 struct {
 	Broadcast    string
 }
 
+// An IPv6 address or subnet range
 type IPV6 struct {
 	IP           string
 	NetMask      string
@@ -113,6 +116,7 @@ type IPV6 struct {
 	LastAddress  string
 }
 
+// Parses an IPv6 object from a string.
 func IPV6Info(rawIP string) (*IPV6, error) {
 	ipa := net.ParseIP(rawIP)
 	mask := 128
@@ -138,6 +142,7 @@ func IPV6Info(rawIP string) (*IPV6, error) {
 	}, nil
 }
 
+// Parses an IPv4 object from a string.
 func IPV4Info(rawIP string) (*IPV4, error) {
 	ipa := net.ParseIP(rawIP)
 	mask := 32
@@ -174,9 +179,9 @@ func NativeNetIPInfo() *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			rawIP, ok := args[0].(string)
 			if !ok {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
@@ -200,16 +205,16 @@ func NativeNetAddressCompare() *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			rawIP, pOk := args[0].(string)
 			if !pOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 			otherIP, pOk := args[1].(string)
 			if !pOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "second argument 'otherIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "second argument 'otherIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
@@ -232,16 +237,16 @@ func NativeNetAddressDelta() *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			rawIP, pOk := args[0].(string)
 			if !pOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 			otherIP, pOk := args[1].(string)
 			if !pOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "second argument 'otherIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "second argument 'otherIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
@@ -263,9 +268,9 @@ func NativeNetAddressSort() *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			listIPs, ok := args[0].([]string)
 			if !ok {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'listIPs' must be of '[]string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "first argument 'listIPs' must be of '[]string' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
@@ -300,9 +305,9 @@ func NativeNetAddressInc() *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			rawIP, ok := args[0].(string)
 			if !ok {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
@@ -322,17 +327,17 @@ func NativeNetAddressIncBy() *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			rawIP, pOk := args[0].(string)
 			if !pOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
 			count, pOk := args[1].(uint32)
 			if !pOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "second argument 'count' must be of 'uint32' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "second argument 'count' must be of 'uint32' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
@@ -352,9 +357,9 @@ func NativeNetAddressDec() *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			rawIP, ok := args[0].(string)
 			if !ok {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
@@ -374,17 +379,17 @@ func NativeNetAddressDecBy() *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			rawIP, varOk := args[0].(string)
 			if !varOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
 			count, varOk := args[1].(uint32)
 			if !varOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "second argument 'count' must be of 'uint32' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "second argument 'count' must be of 'uint32' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
@@ -403,9 +408,9 @@ func NativeNetAddressARPA() *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			rawIP, varOk := args[0].(string)
 			if !varOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
@@ -425,9 +430,9 @@ func NativeNetAddressHex() *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			rawIP, ok := args[0].(string)
 			if !ok {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
@@ -447,9 +452,9 @@ func NativeNetAddressBinary() *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			rawIP, ok := args[0].(string)
 			if !ok {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "first argument 'rawIP' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
@@ -469,17 +474,17 @@ func NativeNetAddressNetsBetween() *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			rawIP, varOk := args[0].(string)
 			if !varOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'ipNet' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "first argument 'ipNet' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
 			otherIP, varOk := args[1].(string)
 			if !varOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "second argument 'otherIPNet' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "second argument 'otherIPNet' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
@@ -514,17 +519,17 @@ func NativeNetAddressCalcSubnetsV4() *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			rawIP, varOk := args[0].(string)
 			if !varOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'ip4Net' must be of 'string' in CIDR notation type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "first argument 'ip4Net' must be of 'string' in CIDR notation type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
 			maskResult, varOk := args[1].(int)
 			if !varOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "second argument 'maskLen' must be of 'int' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "second argument 'maskLen' must be of 'int' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
@@ -547,25 +552,25 @@ func NativeNetAddressCalcSubnetsV6() *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			rawIP, varOk := args[0].(string)
 			if !varOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "first argument 'ip6Net' must be of 'string' in CIDR notation type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "first argument 'ip6Net' must be of 'string' in CIDR notation type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
 			netMask, varOk := args[1].(int)
 			if !varOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "second argument 'netMaskLen' must be of 'int' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "second argument 'netMaskLen' must be of 'int' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
 			hostMask, varOk := args[2].(int)
 			if !varOk {
-				return nil, jsonnet.RuntimeError{
-					Msg:        "third argument 'hostMaskLen' must be of 'int' type, got " + fmt.Sprintf("%T", args[0]),
-					StackTrace: nil,
+				return nil, types.Kr8Error{
+					Message: "third argument 'hostMaskLen' must be of 'int' type, got " + fmt.Sprintf("%T", args[0]),
+					Value:   nil,
 				}
 			}
 
