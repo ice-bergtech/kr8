@@ -388,7 +388,7 @@
 </code></pre>
 <p><a name="Kr8ClusterJsonnet"></a></p>
 <h2 id="type-kr8clusterjsonnet">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L24-L31">Kr8ClusterJsonnet</a></h2>
-<p>The specification for a clusters.jsonnet file. This describes configuration for a cluster that kr8 should process. TODO: jsonschema</p>
+<p>The specification for a clusters.jsonnet file. This describes configuration for a cluster that kr8 should process. TODO: jsonschema.</p>
 <pre><code class="language-go">type Kr8ClusterJsonnet struct {
     // kr8+ configuration for how to process the cluster
     ClusterSpec Kr8ClusterSpec `json:&quot;_kr8_spec&quot;`
@@ -428,7 +428,7 @@
 <p>This function creates a Kr8ClusterSpec from passed params. If genDirOverride is empty, the value of generate_dir from the spec is used.</p>
 <p><a name="Kr8ComponentJsonnet"></a></p>
 <h2 id="type-kr8componentjsonnet">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L106-L115">Kr8ComponentJsonnet</a></h2>
-<p>The specification for component's params.jsonnet file. It contains all the configuration and variables used to generate component resources. This configuration is often modified from the cluster config to add cluster-specific configuration. TODO: jsonschema</p>
+<p>The specification for component's params.jsonnet file. It contains all the configuration and variables used to generate component resources. This configuration is often modified from the cluster config to add cluster-specific configuration. TODO: jsonschema.</p>
 <pre><code class="language-go">type Kr8ComponentJsonnet struct {
     // Component-specific configuration for how kr8 should process the component (required)
     Kr8Spec Kr8ComponentSpec `json:&quot;kr8_spec&quot;`

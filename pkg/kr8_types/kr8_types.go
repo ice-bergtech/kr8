@@ -20,7 +20,7 @@ type Kr8Cluster struct {
 
 // The specification for a clusters.jsonnet file.
 // This describes configuration for a cluster that kr8 should process.
-// TODO: jsonschema
+// TODO: jsonschema.
 type Kr8ClusterJsonnet struct {
 	// kr8+ configuration for how to process the cluster
 	ClusterSpec Kr8ClusterSpec `json:"_kr8_spec"`
@@ -102,7 +102,7 @@ func CreateClusterSpec(
 // The specification for component's params.jsonnet file.
 // It contains all the configuration and variables used to generate component resources.
 // This configuration is often modified from the cluster config to add cluster-specific configuration.
-// TODO: jsonschema
+// TODO: jsonschema.
 type Kr8ComponentJsonnet struct {
 	// Component-specific configuration for how kr8 should process the component (required)
 	Kr8Spec Kr8ComponentSpec `json:"kr8_spec"`
