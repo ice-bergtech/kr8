@@ -26,19 +26,19 @@ linters:
     - errname
     - errorlint
     - exhaustive
-    #- exhaustruct
-    #- exptostd
+    - exhaustruct
+    - exptostd
     - fatcontext
     - funlen
     - gocheckcompilerdirectives
-    #- gochecknoglobals
-    #- gochecknoinits
+    - gochecknoglobals
+    - gochecknoinits
     - gochecksumtype
     - gocognit
     - goconst
     - gocritic
     - godot
-    #- godox
+    #- godox #flags todos
     - goheader
     - goprintffuncname
     - gosec
@@ -48,7 +48,7 @@ linters:
     - inamedparam
     - interfacebloat
     - intrange
-    #- ireturn
+    - ireturn
     - lll
     - loggercheck
     - maintidx
@@ -78,7 +78,7 @@ linters:
     - varnamelen
     - wastedassign
     - whitespace
-    #- wrapcheck
+    #- wrapcheck # checks if returned errors are wrapped
     - zerologlint
   settings:
     mnd:

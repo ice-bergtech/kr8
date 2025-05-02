@@ -1,0 +1,1 @@
+{"cluster_config":{"kr8_spec":"","cluster":""},"component_config":{"component1":{"component_config":"config1","component_files":{"file1.txt":"hash1"}},"component2":{"component_config":"config2","component_files":{"file2.txt":"hash2"}}},"library_cache":{"directory":"","entries":{}}}

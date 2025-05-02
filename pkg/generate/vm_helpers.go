@@ -31,7 +31,7 @@ func SetupJvmForComponent(
 }
 
 // This function sets up the JVM for a given component.
-// It registers native functions, sets up post-processing, and prunes parameters as required.
+// It sets up post-processing, and prunes parameters as required.
 // It's faster to create this VM for each component, rather than re-use.
 // Default postprocessor just copies input to output.
 func SetupBaseComponentJvm(
@@ -43,7 +43,6 @@ func SetupBaseComponentJvm(
 	if err != nil {
 		return nil, err
 	}
-	jnetvm.RegisterNativeFuncs(jvm)
 	jvm.ExtCode("kr8_cluster", "std.prune("+config+"._cluster)")
 
 	if kr8Spec.PostProcessor != "" {
@@ -56,50 +55,54 @@ func SetupBaseComponentJvm(
 	return jvm, nil
 }
 
-// jPathResults always includes base lib.
-// Adds jpaths from spec if set.
-func loadJPathsIntoVM(
+// Loads Jsonnet Library paths from component spec.
+// jPathResults always includes base lib folder, `filepath.Join(baseDir, "lib")`.
+func loadLibPathsIntoVM(
 	compSpec kr8_types.Kr8ComponentSpec,
 	compPath string,
 	baseDir string,
 	jvm *jsonnet.VM,
 	logger zerolog.Logger,
 ) {
-	logger.Debug().
-		Str("component path", compPath).
-		Msg("Loading JPaths into VM for component")
+	logger.Debug().Str("component", compPath).
+		Msg("loadLibPathsIntoVM Loading JPaths into VM for component")
+
 	jPathResults := []string{filepath.Join(baseDir, "lib")}
 	for _, jPath := range compSpec.JPaths {
 		jPathResults = append(jPathResults, filepath.Join(baseDir, compPath, jPath))
 	}
-	logger.Debug().Str("component path", compPath).Msgf("JPaths: %v", jPathResults)
+
+	logger.Debug().Str("component", compPath).
+		Msgf("loadLibPathsIntoVM JPaths: %v", jPathResults)
+
 	jvm.Importer(&jsonnet.FileImporter{
 		JPaths: jPathResults,
 	})
 }
 
-func loadExtFilesIntoVars(
+// Load external files referenced by a component spec into jvm extVars.
+func loadExtFilesIntoVM(
 	compSpec kr8_types.Kr8ComponentSpec,
 	compPath string,
-	kr8Spec kr8_types.Kr8ClusterSpec,
 	kr8Opts types.Kr8Opts,
-	componentName string,
 	jvm *jsonnet.VM,
 	logger zerolog.Logger,
 ) error {
-	logger.Debug().Str("component path", compPath).Msgf("Loading extFiles")
+	logger.Debug().Str("component path", compPath).Msgf("loadExtFilesIntoVars Loading extFiles")
+
 	for key, val := range compSpec.ExtFiles {
 		filePath := filepath.Join(kr8Opts.BaseDir, compPath, val)
-		logger.Debug().Str("cluster", kr8Spec.Name).
-			Str("component", componentName).
-			Msg("Extfile: " + key + "=" + val + "\n Path: " + filePath)
+
+		logger.Debug().Str("component path", compPath).
+			Msg("loadExtFilesIntoVars ExtFileVar: " + key + "=" + val + "\n Path: " + filePath)
+
 		if kr8Opts.BaseDir != "./" && !strings.HasPrefix(filePath, kr8Opts.BaseDir) {
 			if err := util.ErrorIfCheck("Invalid file path: "+filePath, os.ErrNotExist); err != nil {
 				return err
 			}
 		}
 		extFile, err := os.ReadFile(filepath.Clean(filePath))
-		if err := util.ErrorIfCheck("Error importing extfiles item", err); err != nil {
+		if err := util.ErrorIfCheck("Error importing ExtFileVar", err); err != nil {
 			return err
 		}
 		jvm.ExtVar(key, string(extFile))

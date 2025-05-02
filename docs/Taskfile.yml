@@ -95,14 +95,16 @@ tasks:
       - gen
     cmds:
       - task: 02_build
-      - ./kr8 generate -B examples
+      - ./kr8 generate -B examples {{.CLI_ARGS}}
 
-  05_profile-generate:
+  04_profile-generate:
     desc: Capture profiling data from a kr8 generate of the examples.
+    aliases:
+      - profile
     cmds:
       - mkdir -p ./profiling
-      - ./kr8 generate -B examples --profiledir ./profiling
+      - ./kr8 generate -B examples --profiledir ./profiling {{.CLI_ARGS}}
       - go tool pprof -png -output ./profiling/kr8-cpu.png ./kr8 ./profiling/profile_cpu.pb.gz
-      - go tool pprof -png -output ./profiling/kr8-mem.png ./kr8 ./profiling/profile_mem.pb.gz
+      - go tool pprof -png -output ./profiling/kr8-heap.png ./kr8 ./profiling/profile_heap.pb.gz
       #- go tool pprof -http=0.0.0.0:8654 ./kr8 ./profiling/profile_cpu.pb.gz
-      #- go tool pprof -http=0.0.0.0:8654 ./kr8 ./profiling/profile_mem.pb.gz
+      #- go tool pprof -http=0.0.0.0:8654 ./kr8 ./profiling/profile_heap.pb.gz

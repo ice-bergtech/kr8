@@ -338,7 +338,7 @@ Here's an example:
 ```
 
 The chart is be referenced and processed through the `helmTemplate` native function.
-The documentation for this native function can be found [here](../godoc/kr8-jsonnet.md#NativeHelmTemplate)
+The documentation for this native function can be found [here](../godoc/kr8-native-functions.md#NativeHelmTemplate)
 
 ```go
 local config = std.extVar("kr8");

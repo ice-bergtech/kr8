@@ -7,7 +7,11 @@
 package util
 
 import (
+	"crypto/sha256"
+	"encoding/base64"
+	"io"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -32,6 +36,7 @@ func Filter(vs []string, f func(string) bool) []string {
 }
 
 func SetupLogger(enableColor bool) zerolog.Logger {
+	//nolint:exhaustruct
 	consoleWriter := zerolog.ConsoleWriter{
 		Out:     os.Stderr,
 		NoColor: !enableColor,
@@ -43,6 +48,11 @@ func SetupLogger(enableColor bool) zerolog.Logger {
 
 			return Colorize(Colorize(s, colorBold, !enableColor), colorRed, !enableColor)
 		},
+		// Other fields:
+		// TimeFormat, TimeLocation, PartsOrder, PartsExclude,
+		// FieldsOrder, FieldsExclude, FormatTimestamp, FormatLevel,
+		// FormatCaller, FormatMessage, FormatFieldName, FormatFieldValue,
+		// FormatErrFieldName, FormatExtra, FormatPrepare
 	}
 
 	return log.Output(consoleWriter)
@@ -173,4 +183,19 @@ func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilte
 	}
 
 	return FilterItems(input, filters)
+}
+
+func HashFile(path string) (string, error) {
+	file, err := os.Open(filepath.Clean(path))
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	hashBox := sha256.New()
+	if _, err := io.Copy(hashBox, file); err != nil {
+		return "", err
+	}
+
+	return base64.RawStdEncoding.EncodeToString(hashBox.Sum(nil)), nil
 }

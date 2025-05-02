@@ -22,7 +22,7 @@ Package kr8\_init contains logic for initializing a kr8\+ starter repo. It is ab
 
 
 <a name="GenerateChartJsonnet"></a>
-## func [GenerateChartJsonnet](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L126-L130>)
+## func [GenerateChartJsonnet](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L135-L139>)
 
 ```go
 func GenerateChartJsonnet(compJson kr8_types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error
@@ -31,7 +31,7 @@ func GenerateChartJsonnet(compJson kr8_types.Kr8ComponentJsonnet, componentOptio
 Generates a jsonnet files that references a local helm chart.
 
 <a name="GenerateChartTaskfile"></a>
-## func [GenerateChartTaskfile](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L156-L160>)
+## func [GenerateChartTaskfile](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L165-L169>)
 
 ```go
 func GenerateChartTaskfile(comp kr8_types.Kr8ComponentJsonnet, componentOptions Kr8InitOptions, folderDir string) error
@@ -91,7 +91,7 @@ func InitComponentChart(dstDir string, componentOptions Kr8InitOptions, compJson
 Initializes the basic parts of a helm chart component.
 
 <a name="InitComponentJsonnet"></a>
-## func [InitComponentJsonnet](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L111-L115>)
+## func [InitComponentJsonnet](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L114-L118>)
 
 ```go
 func InitComponentJsonnet(compJson kr8_types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error
@@ -100,7 +100,7 @@ func InitComponentJsonnet(compJson kr8_types.Kr8ComponentJsonnet, dstDir string,
 Initializes the basic parts of a jsonnet\-based component.
 
 <a name="InitComponentTemplate"></a>
-## func [InitComponentTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L77-L81>)
+## func [InitComponentTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L78-L82>)
 
 ```go
 func InitComponentTemplate(compJson kr8_types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error
@@ -109,7 +109,7 @@ func InitComponentTemplate(compJson kr8_types.Kr8ComponentJsonnet, dstDir string
 Initializes the based parts of a template\-based component.
 
 <a name="InitComponentYaml"></a>
-## func [InitComponentYaml](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L96>)
+## func [InitComponentYaml](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/component.go#L98>)
 
 ```go
 func InitComponentYaml(compJson kr8_types.Kr8ComponentJsonnet, dstDir string, componentOptions Kr8InitOptions) error

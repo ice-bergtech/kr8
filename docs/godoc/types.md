@@ -17,9 +17,9 @@ Package types contains shared types used across kr8\+ packages.
 
 
 <a name="CmdJsonnetOptions"></a>
-## type [CmdJsonnetOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L24-L31>)
+## type [CmdJsonnetOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L25-L32>)
 
-Options for running the jsonnet command.
+Options for running the jsonnet command. Used by a few packages and commands.
 
 ```go
 type CmdJsonnetOptions struct {
@@ -45,7 +45,7 @@ type Kr8Cluster struct {
 ```
 
 <a name="Kr8Error"></a>
-## type [Kr8Error](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L43-L46>)
+## type [Kr8Error](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L44-L47>)
 
 
 
@@ -57,7 +57,7 @@ type Kr8Error struct {
 ```
 
 <a name="Kr8Error.Error"></a>
-### func \(Kr8Error\) [Error](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L49>)
+### func \(Kr8Error\) [Error](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L50>)
 
 ```go
 func (e Kr8Error) Error() string
@@ -82,7 +82,7 @@ type Kr8Opts struct {
 ```
 
 <a name="VMConfig"></a>
-## type [VMConfig](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L34-L41>)
+## type [VMConfig](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L35-L42>)
 
 VMConfig describes configuration to initialize the Jsonnet VM with.
 

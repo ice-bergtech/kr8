@@ -75,13 +75,15 @@ func GoMarkDoc() error {
 	}
 
 	docFiles := map[string]string{
-		"../cmd":           "kr8-cmd.md",
-		"../pkg/jnetvm":    "kr8-jsonnet.md",
-		"../pkg/types":     "types.md",
-		"../pkg/kr8_types": "kr8-types.md",
-		"../pkg/util":      "kr8-util.md",
-		"../pkg/kr8_init":  "kr8-init.md",
-		"../pkg/generate":  "kr8-generate.md",
+		"../cmd":                  "kr8-cmd.md",
+		"../pkg/jnetvm":           "kr8-jsonnet.md",
+		"../pkg/kr8_cache":        "kr8-cache.md",
+		"../pkg/kr8_types":        "kr8-types.md",
+		"../pkg/types":            "types.md",
+		"../pkg/util":             "kr8-util.md",
+		"../pkg/kr8_init":         "kr8-init.md",
+		"../pkg/generate":         "kr8-generate.md",
+		"../pkg/kr8_native_funcs": "kr8-native-functions.md",
 	}
 
 	for pkgPath, pkgDoc := range docFiles {

@@ -19,7 +19,7 @@ Copyright 2018 ksonnet
 
 */
 
-package jnetvm
+package kr8_native_funcs
 
 import (
 	"regexp"
@@ -34,7 +34,7 @@ import (
 func NativeRegexEscape() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "regexEscapeString",
-		Params: []jsonnetAst.Identifier{"str"},
+		Params: []jsonnetAst.Identifier{"str: string to escape"},
 		Func: func(args []interface{}) (interface{}, error) {
 			return regexp.QuoteMeta(args[0].(string)), nil
 		}}
@@ -46,7 +46,7 @@ func NativeRegexEscape() *jsonnet.NativeFunction {
 func NativeRegexMatch() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "regexMatch",
-		Params: []jsonnetAst.Identifier{"regex", "string"},
+		Params: []jsonnetAst.Identifier{"regex: string", "string: applied to regex"},
 		Func: func(args []interface{}) (interface{}, error) {
 			return regexp.MatchString(args[0].(string), args[1].(string))
 		}}
@@ -57,8 +57,12 @@ func NativeRegexMatch() *jsonnet.NativeFunction {
 // Inputs: "regex", "src", "repl".
 func NativeRegexSubst() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
-		Name:   "regexSubst",
-		Params: []jsonnetAst.Identifier{"regex", "src", "repl"},
+		Name: "regexSubst",
+		Params: []jsonnetAst.Identifier{
+			"regex: string, replaces strings that match",
+			"src: source string",
+			"repl: replacement string",
+		},
 		Func: func(args []interface{}) (interface{}, error) {
 			regex := args[0].(string)
 			src := args[1].(string)

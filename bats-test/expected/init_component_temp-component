@@ -3,6 +3,7 @@
     enable_kr8_allparams: false,
     enable_kr8_allclusters: false,
     disable_output_clean: false,
+    disable_cache: false,
     extfiles: {},
     jpaths: [],
     includes: [
@@ -16,5 +17,4 @@
   namespace: "default",
   release_name: "temp-component",
   version: "1.0.0",
-  called_from: "std.thisFile",
 }

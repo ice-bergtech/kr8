@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Iceberg Tech" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>kr8+ generate caching - kr8+ Docs</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "kr8+ generate caching";
+        var mkdocs_page_input_path = "godoc/kr8-cache.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> kr8+ Docs
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../README-repo/">Repo Readme</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/ice-bergtech/kr8-examples">Examples 🔗</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Concepts</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/clusters/">Clusters</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/components/">Components</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/nativefuncs/">Native Funcs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Cmd Docs</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8/">kr8</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8_version/">kr8 version</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8_generate/">kr8 generate</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8_format/">kr8 format</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >kr8 get</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_get/">kr8 get</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_get_clusters/">kr8 get clusters</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_get_components/">kr8 get components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_get_params/">kr8 get params</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >kr8 init</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_init/">kr8 init</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_init_cluster/">kr8 init cluster</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_init_component/">kr8 init component</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_init_repo/">kr8 init repo</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >kr8 jsonnet</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_jsonnet/">kr8 jsonnet</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_jsonnet_render/">kr8 jsonnet render</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >kr8 render</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_render/">kr8 render</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_render_helm/">kr8 render helm</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_render_jsonnet/">kr8 render jsonnet</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Godocs</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-cmd/">kr8+</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-types/">kr8+ types</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-generate/">kr8+ generate</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">kr8+ generate caching</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#index">Index</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#type-clustercache">type ClusterCache</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#func-createclustercache">func CreateClusterCache</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#func-clustercache-checkclustercache">func (*ClusterCache) CheckClusterCache</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#type-componentcache">type ComponentCache</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#func-createcomponentcache">func CreateComponentCache</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#func-componentcache-checkcomponentcache">func (*ComponentCache) CheckComponentCache</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#type-deploymentcache">type DeploymentCache</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#func-initdeploymentcache">func InitDeploymentCache</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#func-loadclustercache">func LoadClusterCache</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#func-deploymentcache-checkclustercache">func (*DeploymentCache) CheckClusterCache</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#func-deploymentcache-checkclustercomponentcache">func (*DeploymentCache) CheckClusterComponentCache</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#func-deploymentcache-writecache">func (*DeploymentCache) WriteCache</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#type-librarycache">type LibraryCache</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#func-createlibrarycache">func CreateLibraryCache</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-native-functions/">kr8+ Jsonnet Native Functions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-init/">kr8+ init</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-jsonnet/">kr8+ jsonnet</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-util/">kr8+ util</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../types/">types</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">kr8+ Docs</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Godocs</li>
+      <li class="breadcrumb-item active">kr8+ generate caching</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/ice-bergtech/kr8/blob/main/docs/godoc/kr8-cache.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="kr8_cache">kr8_cache</h1>
+<pre><code class="language-go">import &quot;github.com/ice-bergtech/kr8/pkg/kr8_cache&quot;
+</code></pre>
+<p>Package kr8_cache defines the structure for kr8+ cluster-component resource caching. Cache is based on cluster-level config, component config, and component file reference hashes.</p>
+<h2 id="index">Index</h2>
+<ul>
+<li><a href="#ClusterCache">type ClusterCache</a></li>
+<li><a href="#CreateClusterCache">func CreateClusterCache(config string) *ClusterCache</a></li>
+<li><a href="#ClusterCache.CheckClusterCache">func (cache *ClusterCache) CheckClusterCache(config string, logger zerolog.Logger) bool</a></li>
+<li><a href="#ComponentCache">type ComponentCache</a></li>
+<li><a href="#CreateComponentCache">func CreateComponentCache(config string, listFiles []string) (*ComponentCache, error)</a></li>
+<li><a href="#ComponentCache.CheckComponentCache">func (cache *ComponentCache) CheckComponentCache(config string, componentName string, componentPath string, files []string, logger zerolog.Logger) (bool, *ComponentCache)</a></li>
+<li><a href="#DeploymentCache">type DeploymentCache</a></li>
+<li><a href="#InitDeploymentCache">func InitDeploymentCache(config string, baseDir string, cacheResults map[string]ComponentCache) *DeploymentCache</a></li>
+<li><a href="#LoadClusterCache">func LoadClusterCache(cacheFile string) (*DeploymentCache, error)</a></li>
+<li><a href="#DeploymentCache.CheckClusterCache">func (cache *DeploymentCache) CheckClusterCache(config string, logger zerolog.Logger) bool</a></li>
+<li><a href="#DeploymentCache.CheckClusterComponentCache">func (cache *DeploymentCache) CheckClusterComponentCache(config string, componentName string, componentPath string, files []string, logger zerolog.Logger) (bool, *ComponentCache, error)</a></li>
+<li><a href="#DeploymentCache.WriteCache">func (cache *DeploymentCache) WriteCache(outFile string, compress bool) error</a></li>
+<li><a href="#LibraryCache">type LibraryCache</a></li>
+<li><a href="#CreateLibraryCache">func CreateLibraryCache(baseDir string) *LibraryCache</a></li>
+</ul>
+<p><a name="ClusterCache"></a></p>
+<h2 id="type-clustercache">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L121-L126">ClusterCache</a></h2>
+<p>This is cluster-level cache that applies to all components. If it is deemed invalid, the component cache is also invalid.</p>
+<pre><code class="language-go">type ClusterCache struct {
+    // Raw cluster _kr8_spec object
+    Kr8_Spec string `json:&quot;kr8_spec&quot;`
+    // Raw cluster _cluster object
+    Cluster string `json:&quot;cluster&quot;`
+}
+</code></pre>
+<p><a name="CreateClusterCache"></a></p>
+<h3 id="func-createclustercache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L129">CreateClusterCache</a></h3>
+<pre><code class="language-go">func CreateClusterCache(config string) *ClusterCache
+</code></pre>
+<p>Stores the cluster kr8_spec and cluster config as cluster-level cache.</p>
+<p><a name="ClusterCache.CheckClusterCache"></a></p>
+<h3 id="func-clustercache-checkclustercache">func (*ClusterCache) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L161">CheckClusterCache</a></h3>
+<pre><code class="language-go">func (cache *ClusterCache) CheckClusterCache(config string, logger zerolog.Logger) bool
+</code></pre>
+<p>Compares current cluster config represented as a json string to the cache. Returns true if cache is valid.</p>
+<p><a name="ComponentCache"></a></p>
+<h2 id="type-componentcache">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L179-L184">ComponentCache</a></h2>
+<pre><code class="language-go">type ComponentCache struct {
+    // Raw component config string
+    ComponentConfig string `json:&quot;component_config&quot;`
+    // Map of filenames to file hashes
+    ComponentFiles map[string]string `json:&quot;component_files&quot;`
+}
+</code></pre>
+<p><a name="CreateComponentCache"></a></p>
+<h3 id="func-createcomponentcache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L186">CreateComponentCache</a></h3>
+<pre><code class="language-go">func CreateComponentCache(config string, listFiles []string) (*ComponentCache, error)
+</code></pre>
+<p><a name="ComponentCache.CheckComponentCache"></a></p>
+<h3 id="func-componentcache-checkcomponentcache">func (*ComponentCache) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L202-L208">CheckComponentCache</a></h3>
+<pre><code class="language-go">func (cache *ComponentCache) CheckComponentCache(config string, componentName string, componentPath string, files []string, logger zerolog.Logger) (bool, *ComponentCache)
+</code></pre>
+<p><a name="DeploymentCache"></a></p>
+<h2 id="type-deploymentcache">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L43-L50">DeploymentCache</a></h2>
+<p>Object that contains the cache for a single cluster.</p>
+<pre><code class="language-go">type DeploymentCache struct {
+    // A struct containing cluster-level cache values
+    ClusterConfig *ClusterCache `json:&quot;cluster_config&quot;`
+    // Map of cache entries for cluster components.
+    // Depends on ClusterConfig cache being valid to be considered valid.
+    ComponentConfigs map[string]ComponentCache `json:&quot;component_config&quot;`
+    LibraryCache     *LibraryCache             `json:&quot;library_cache&quot;`
+}
+</code></pre>
+<p><a name="InitDeploymentCache"></a></p>
+<h3 id="func-initdeploymentcache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L52">InitDeploymentCache</a></h3>
+<pre><code class="language-go">func InitDeploymentCache(config string, baseDir string, cacheResults map[string]ComponentCache) *DeploymentCache
+</code></pre>
+<p><a name="LoadClusterCache"></a></p>
+<h3 id="func-loadclustercache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L19">LoadClusterCache</a></h3>
+<pre><code class="language-go">func LoadClusterCache(cacheFile string) (*DeploymentCache, error)
+</code></pre>
+<p>Load cluster cache from a specified cache file. Assumes cache is gzipped, but falls back to plaintext if there's an error.</p>
+<p><a name="DeploymentCache.CheckClusterCache"></a></p>
+<h3 id="func-deploymentcache-checkclustercache">func (*DeploymentCache) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L77">CheckClusterCache</a></h3>
+<pre><code class="language-go">func (cache *DeploymentCache) CheckClusterCache(config string, logger zerolog.Logger) bool
+</code></pre>
+<p><a name="DeploymentCache.CheckClusterComponentCache"></a></p>
+<h3 id="func-deploymentcache-checkclustercomponentcache">func (*DeploymentCache) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L86-L92">CheckClusterComponentCache</a></h3>
+<pre><code class="language-go">func (cache *DeploymentCache) CheckClusterComponentCache(config string, componentName string, componentPath string, files []string, logger zerolog.Logger) (bool, *ComponentCache, error)
+</code></pre>
+<p><a name="DeploymentCache.WriteCache"></a></p>
+<h3 id="func-deploymentcache-writecache">func (*DeploymentCache) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L62">WriteCache</a></h3>
+<pre><code class="language-go">func (cache *DeploymentCache) WriteCache(outFile string, compress bool) error
+</code></pre>
+<p><a name="LibraryCache"></a></p>
+<h2 id="type-librarycache">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L114-L117">LibraryCache</a></h2>
+<pre><code class="language-go">type LibraryCache struct {
+    Directory string            `json:&quot;directory&quot;`
+    Entries   map[string]string `json:&quot;entries&quot;`
+}
+</code></pre>
+<p><a name="CreateLibraryCache"></a></p>
+<h3 id="func-createlibrarycache">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_cache/cache.go#L136">CreateLibraryCache</a></h3>
+<pre><code class="language-go">func CreateLibraryCache(baseDir string) *LibraryCache
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../kr8-generate/" class="btn btn-neutral float-left" title="kr8+ generate"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../kr8-native-functions/" class="btn btn-neutral float-right" title="kr8+ Jsonnet Native Functions">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/ice-bergtech/kr8/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../kr8-generate/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../kr8-native-functions/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

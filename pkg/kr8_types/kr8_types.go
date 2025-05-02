@@ -21,7 +21,7 @@ type Kr8Cluster struct {
 // The specification for a clusters.jsonnet file.
 // This describes configuration for a cluster that kr8 should process.
 type Kr8ClusterJsonnet struct {
-	// kr8 configuration for how to process the cluster
+	// kr8+ configuration for how to process the cluster
 	ClusterSpec Kr8ClusterSpec `json:"_kr8_spec"`
 	// Cluster Level configuration that components can reference
 	Cluster Kr8Cluster `json:"_cluster"`
@@ -45,12 +45,16 @@ type Kr8ClusterSpec struct {
 	PostProcessor string `json:"postprocessor"`
 	// The name of the root generate directory. Default `generated`
 	GenerateDir string `json:"generate_dir"`
-	// if this is true, we don't use the full file path to generate output file names
+	// If true, we don't use the full file path to generate output file names
 	GenerateShortNames bool `json:"generate_short_names"`
-	// if this is true, we prune component parameters
+	// If true, we prune component parameters
 	PruneParams bool `json:"prune_params"`
-	// Additional information used to process the cluster that is not stored with it.
+	// If true, kr8 will store and reference a cache file for the cluster.
+	EnableCache bool `json:"cache_enable"`
+	// If true, kr8 will compress the cache in a gzip file instead of raw json.
+	CompressCache bool `json:"cache_compress"`
 	// Cluster output directory
+	// Not read from config.
 	ClusterOutputDir string `json:"-"`
 }
 
@@ -87,6 +91,8 @@ func CreateClusterSpec(
 		GenerateDir:        clGenerateDir,
 		GenerateShortNames: spec.Get("generate_short_names").Bool(),
 		PruneParams:        spec.Get("prune_params").Bool(),
+		EnableCache:        spec.Get("cache_enable").Bool(),
+		CompressCache:      spec.Get("cache_compress").Bool(),
 		ClusterOutputDir:   clGenerateDir + "/" + clusterName,
 		Name:               clusterName,
 	}, nil
@@ -104,9 +110,6 @@ type Kr8ComponentJsonnet struct {
 	ReleaseName string `json:"release_name"`
 	// Component version string (optional)
 	Version string `json:"version"`
-	// Relative directory where the component's resources are located (required).
-	// Usually std.thisFile.
-	CalledFrom string `json:"called_from"`
 }
 
 // The kr8_spec object in a cluster config file.
@@ -118,6 +121,8 @@ type Kr8ComponentSpec struct {
 	Kr8_allClusters bool `json:"enable_kr8_allclusters"`
 	// If false, all non-generated files present in the output directory are removed
 	DisableOutputDirClean bool `json:"disable_output_clean"`
+	// If true, component will not be cached if cluster caching is enabled.
+	DisableCache bool `json:"disable_cache"`
 	// A list of filenames to include as jsonnet vm external vars
 	ExtFiles ExtFileVar `json:"extfiles"`
 	// Additional jsonnet libs to the jsonnet vm, component-path scoped
@@ -188,6 +193,7 @@ func CreateComponentSpec(spec gjson.Result, logger zerolog.Logger) (Kr8Component
 		ExtFiles:              ExtractExtFiles(spec),
 		JPaths:                ExtractJpaths(spec),
 		Includes:              includes,
+		DisableCache:          false,
 	}
 
 	return componentSpec, nil
@@ -234,6 +240,8 @@ func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error {
 			File:     file,
 			DestExt:  "yaml",
 			DestName: fileName,
+			DestDir:  "",
+			Config:   "",
 		})
 
 		return nil
@@ -258,6 +266,8 @@ func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error {
 				File:     file,
 				DestExt:  "yaml",
 				DestName: fileName,
+				DestDir:  "",
+				Config:   "",
 			})
 		} else { // Otherwise, it's an object
 			var include Kr8ComponentSpecIncludeObject

@@ -10,6 +10,8 @@ import (
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
+// Removes all files not present in outputFileMap from componentOutputDir.
+// checks if each file in the directory is present in the map, ignoring the bool value.
 func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error {
 	// clean component dir
 	dir, err := os.Open(filepath.Clean(componentOutputDir))
@@ -33,7 +35,8 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) er
 			if err := util.ErrorIfCheck("", err); err != nil {
 				return err
 			}
-			log.Debug().Msg("Deleted unmanaged file: " + delFile)
+
+			log.Debug().Str("file", delFile).Msg("CleanOutputDir deleted unmanaged file")
 		}
 	}
 
@@ -67,7 +70,7 @@ func CreateClusterGenerateDirs(kr8Spec kr8_types.Kr8ClusterSpec) ([]string, erro
 	return generatedCompList, nil
 }
 
-// Check if a file needs updating based on its current contents and the new contents.
+// Check if a file needs updating based on its current contents and potential new contents.
 func CheckIfUpdateNeeded(outFile string, outStr string) (bool, error) {
 	outFile = filepath.Clean(outFile)
 	if _, err := os.Stat(outFile); os.IsNotExist(err) {

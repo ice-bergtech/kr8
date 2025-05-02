@@ -5,14 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Iceberg Tech" />
       <link rel="shortcut icon" href="../../img/favicon.ico" />
-    <title>kr8 - kr8+ Docs</title>
+    <title>kr8+ - kr8+ Docs</title>
     <link rel="stylesheet" href="../../css/theme.css" />
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "kr8";
+        var mkdocs_page_name = "kr8+";
         var mkdocs_page_input_path = "godoc/kr8-cmd.md";
         var mkdocs_page_url = null;
       </script>
@@ -121,7 +121,7 @@
               </ul>
               <p class="caption"><span class="caption-text">Godocs</span></p>
               <ul class="current">
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">kr8</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">kr8+</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#index">Index</a>
     </li>
@@ -151,15 +151,19 @@
     </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../kr8-types/">kr8 types</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-types/">kr8+ types</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../kr8-generate/">kr8 generate</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-generate/">kr8+ generate</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../kr8-init/">kr8 init</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-cache/">kr8+ generate caching</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../kr8-jsonnet/">kr8 jsonnet</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-native-functions/">kr8+ Jsonnet Native Functions</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../kr8-util/">kr8 util</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-init/">kr8+ init</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-jsonnet/">kr8+ jsonnet</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kr8-util/">kr8+ util</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../types/">types</a>
                   </li>
@@ -179,7 +183,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
           <li class="breadcrumb-item">Godocs</li>
-      <li class="breadcrumb-item active">kr8</li>
+      <li class="breadcrumb-item active">kr8+</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/ice-bergtech/kr8/blob/main/docs/godoc/kr8-cmd.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -192,6 +196,11 @@
                 <h1 id="cmd">cmd</h1>
 <pre><code class="language-go">import &quot;github.com/ice-bergtech/kr8/cmd&quot;
 </code></pre>
+<p>Copyright © 2019 kubecfg Authors</p>
+<p>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at</p>
+<pre><code>http://www.apache.org/licenses/LICENSE-2.0
+</code></pre>
+<p>Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.</p>
 <p>Defines the cli-interface commands available to the user.</p>
 <h2 id="index">Index</h2>
 <ul>
@@ -445,9 +454,12 @@
             GenerateShortNames: false,
             PruneParams:        false,
             ClusterOutputDir:   RootConfig.ClusterDir,
+            EnableCache:        true,
+            CompressCache:      true,
         }
 
         if cmdInitFlags.Interactive {
+
             prompt := &amp;survey.Input{
                 Message: &quot;Set the cluster configuration directory&quot;,
                 Default: RootConfig.ClusterDir,
@@ -502,6 +514,7 @@ components`,
     Run: func(cmd *cobra.Command, args []string) {
 
         if cmdInitFlags.Interactive {
+
             prompt := &amp;survey.Input{
                 Message: &quot;Enter component directory&quot;,
                 Default: RootConfig.ComponentDir,
@@ -591,6 +604,8 @@ and initialize a git repo so you can get started`,
             GenerateShortNames: false,
             PruneParams:        false,
             ClusterOutputDir:   &quot;generated&quot; + &quot;/&quot; + cmdInitFlags.ClusterName,
+            EnableCache:        true,
+            CompressCache:      true,
         }
 
         util.FatalErrorCheck(
@@ -740,36 +755,36 @@ and initialize a git repo so you can get started`,
 }
 </code></pre>
 <p><a name="ConfigureLogger"></a></p>
-<h2 id="func-configurelogger">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L107">ConfigureLogger</a></h2>
+<h2 id="func-configurelogger">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L109">ConfigureLogger</a></h2>
 <pre><code class="language-go">func ConfigureLogger(debug bool)
 </code></pre>
 <p><a name="Execute"></a></p>
-<h2 id="func-execute">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L33">Execute</a></h2>
+<h2 id="func-execute">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L35">Execute</a></h2>
 <pre><code class="language-go">func Execute(ver string)
 </code></pre>
 <p>Execute adds all child commands to the root command sets flags appropriately. This is called by main.main(). It only needs to happen once to the rootCmd.</p>
 <p><a name="GenerateCommand"></a></p>
-<h2 id="func-generatecommand">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L65">GenerateCommand</a></h2>
+<h2 id="func-generatecommand">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L69">GenerateCommand</a></h2>
 <pre><code class="language-go">func GenerateCommand(cmd *cobra.Command, args []string)
 </code></pre>
 <p>This function generates the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.</p>
 <p><a name="InitConfig"></a></p>
-<h2 id="func-initconfig">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L133">InitConfig</a></h2>
+<h2 id="func-initconfig">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L135">InitConfig</a></h2>
 <pre><code class="language-go">func InitConfig()
 </code></pre>
 <p>InitConfig reads in config file and ENV variables if set.</p>
 <p><a name="ProfilingFinalizer"></a></p>
-<h2 id="func-profilingfinalizer">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L172">ProfilingFinalizer</a></h2>
+<h2 id="func-profilingfinalizer">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L174">ProfilingFinalizer</a></h2>
 <pre><code class="language-go">func ProfilingFinalizer()
 </code></pre>
 <p>Stop profiling and write cpu and memory profiling files if configured.</p>
 <p><a name="ProfilingInitializer"></a></p>
-<h2 id="func-profilinginitializer">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L197">ProfilingInitializer</a></h2>
+<h2 id="func-profilinginitializer">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L199">ProfilingInitializer</a></h2>
 <pre><code class="language-go">func ProfilingInitializer()
 </code></pre>
 <p>Sets up program profiling.</p>
 <p><a name="CmdGenerateOptions"></a></p>
-<h2 id="type-cmdgenerateoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L18-L25">CmdGenerateOptions</a></h2>
+<h2 id="type-cmdgenerateoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L21-L28">CmdGenerateOptions</a></h2>
 <p>Stores the options for the 'generate' command.</p>
 <pre><code class="language-go">type CmdGenerateOptions struct {
     // Stores the path to the cluster params file
@@ -781,7 +796,7 @@ and initialize a git repo so you can get started`,
 }
 </code></pre>
 <p><a name="CmdGetOptions"></a></p>
-<h2 id="type-cmdgetoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/cmd/get.go#L38-L52">CmdGetOptions</a></h2>
+<h2 id="type-cmdgetoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/cmd/get.go#L39-L53">CmdGetOptions</a></h2>
 <p>Holds the options for the get command.</p>
 <pre><code class="language-go">type CmdGetOptions struct {
     // ClusterParams provides a way to provide cluster params as a single file.
@@ -800,7 +815,7 @@ and initialize a git repo so you can get started`,
 }
 </code></pre>
 <p><a name="CmdRenderOptions"></a></p>
-<h2 id="type-cmdrenderoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/cmd/render.go#L24-L35">CmdRenderOptions</a></h2>
+<h2 id="type-cmdrenderoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/cmd/render.go#L25-L36">CmdRenderOptions</a></h2>
 <p>Contains parameters for the kr8 render command.</p>
 <pre><code class="language-go">type CmdRenderOptions struct {
     // Prune null and empty objects from rendered json
@@ -816,14 +831,14 @@ and initialize a git repo so you can get started`,
 }
 </code></pre>
 <p><a name="CmdRootOptions"></a></p>
-<h2 id="type-cmdrootoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L42-L65">CmdRootOptions</a></h2>
+<h2 id="type-cmdrootoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L44-L67">CmdRootOptions</a></h2>
 <p>Default options that are available to all commands.</p>
 <pre><code class="language-go">type CmdRootOptions struct {
-    // kr8 config base directory
+    // kr8+ config base directory
     BaseDir string
-    // kr8 cluster directory
+    // kr8+ cluster directory
     ClusterDir string
-    // kr8 component directory
+    // kr8+ component directory
     ComponentDir string
     // A config file with kr8 configuration
     ConfigFile string
@@ -847,7 +862,7 @@ and initialize a git repo so you can get started`,
 <pre><code class="language-go">var RootConfig CmdRootOptions
 </code></pre>
 <p><a name="Stamp"></a></p>
-<h2 id="type-stamp">type <a href="https://github.com:icebergtech/kr8/blob/main/cmd/version.go#L13-L20">Stamp</a></h2>
+<h2 id="type-stamp">type <a href="https://github.com:icebergtech/kr8/blob/main/cmd/version.go#L14-L21">Stamp</a></h2>
 <pre><code class="language-go">type Stamp struct {
     InfoGoVersion  string
     InfoGoCompiler string
@@ -862,7 +877,7 @@ and initialize a git repo so you can get started`,
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../../cmd/kr8_render_jsonnet/" class="btn btn-neutral float-left" title="kr8 render jsonnet"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../kr8-types/" class="btn btn-neutral float-right" title="kr8 types">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../kr8-types/" class="btn btn-neutral float-right" title="kr8+ types">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>

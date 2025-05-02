@@ -4,6 +4,16 @@
 import "github.com/ice-bergtech/kr8/cmd"
 ```
 
+Copyright © 2019 kubecfg Authors
+
+Licensed under the Apache License, Version 2.0 \(the "License"\); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+```
+http://www.apache.org/licenses/LICENSE-2.0
+```
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
 Defines the cli\-interface commands available to the user.
 
 ## Index
@@ -280,9 +290,12 @@ var InitClusterCmd = &cobra.Command{
             GenerateShortNames: false,
             PruneParams:        false,
             ClusterOutputDir:   RootConfig.ClusterDir,
+            EnableCache:        true,
+            CompressCache:      true,
         }
 
         if cmdInitFlags.Interactive {
+
             prompt := &survey.Input{
                 Message: "Set the cluster configuration directory",
                 Default: RootConfig.ClusterDir,
@@ -343,6 +356,7 @@ var InitComponentCmd = &cobra.Command{
     Run: func(cmd *cobra.Command, args []string) {
 
         if cmdInitFlags.Interactive {
+
             prompt := &survey.Input{
                 Message: "Enter component directory",
                 Default: RootConfig.ComponentDir,
@@ -435,6 +449,8 @@ and initialize a git repo so you can get started`,
             GenerateShortNames: false,
             PruneParams:        false,
             ClusterOutputDir:   "generated" + "/" + cmdInitFlags.ClusterName,
+            EnableCache:        true,
+            CompressCache:      true,
         }
 
         util.FatalErrorCheck(
@@ -606,7 +622,7 @@ var VersionCmd = &cobra.Command{
 ```
 
 <a name="ConfigureLogger"></a>
-## func [ConfigureLogger](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L107>)
+## func [ConfigureLogger](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L109>)
 
 ```go
 func ConfigureLogger(debug bool)
@@ -615,7 +631,7 @@ func ConfigureLogger(debug bool)
 
 
 <a name="Execute"></a>
-## func [Execute](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L33>)
+## func [Execute](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L35>)
 
 ```go
 func Execute(ver string)
@@ -624,7 +640,7 @@ func Execute(ver string)
 Execute adds all child commands to the root command sets flags appropriately. This is called by main.main\(\). It only needs to happen once to the rootCmd.
 
 <a name="GenerateCommand"></a>
-## func [GenerateCommand](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L65>)
+## func [GenerateCommand](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L69>)
 
 ```go
 func GenerateCommand(cmd *cobra.Command, args []string)
@@ -633,7 +649,7 @@ func GenerateCommand(cmd *cobra.Command, args []string)
 This function generates the components for each cluster in parallel. It uses a wait group to ensure that all clusters have been processed before exiting.
 
 <a name="InitConfig"></a>
-## func [InitConfig](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L133>)
+## func [InitConfig](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L135>)
 
 ```go
 func InitConfig()
@@ -642,7 +658,7 @@ func InitConfig()
 InitConfig reads in config file and ENV variables if set.
 
 <a name="ProfilingFinalizer"></a>
-## func [ProfilingFinalizer](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L172>)
+## func [ProfilingFinalizer](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L174>)
 
 ```go
 func ProfilingFinalizer()
@@ -651,7 +667,7 @@ func ProfilingFinalizer()
 Stop profiling and write cpu and memory profiling files if configured.
 
 <a name="ProfilingInitializer"></a>
-## func [ProfilingInitializer](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L197>)
+## func [ProfilingInitializer](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L199>)
 
 ```go
 func ProfilingInitializer()
@@ -660,7 +676,7 @@ func ProfilingInitializer()
 Sets up program profiling.
 
 <a name="CmdGenerateOptions"></a>
-## type [CmdGenerateOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L18-L25>)
+## type [CmdGenerateOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L21-L28>)
 
 Stores the options for the 'generate' command.
 
@@ -676,7 +692,7 @@ type CmdGenerateOptions struct {
 ```
 
 <a name="CmdGetOptions"></a>
-## type [CmdGetOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/get.go#L38-L52>)
+## type [CmdGetOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/get.go#L39-L53>)
 
 Holds the options for the get command.
 
@@ -699,7 +715,7 @@ type CmdGetOptions struct {
 ```
 
 <a name="CmdRenderOptions"></a>
-## type [CmdRenderOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/render.go#L24-L35>)
+## type [CmdRenderOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/render.go#L25-L36>)
 
 Contains parameters for the kr8 render command.
 
@@ -719,17 +735,17 @@ type CmdRenderOptions struct {
 ```
 
 <a name="CmdRootOptions"></a>
-## type [CmdRootOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L42-L65>)
+## type [CmdRootOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/root.go#L44-L67>)
 
 Default options that are available to all commands.
 
 ```go
 type CmdRootOptions struct {
-    // kr8 config base directory
+    // kr8+ config base directory
     BaseDir string
-    // kr8 cluster directory
+    // kr8+ cluster directory
     ClusterDir string
-    // kr8 component directory
+    // kr8+ component directory
     ComponentDir string
     // A config file with kr8 configuration
     ConfigFile string
@@ -757,7 +773,7 @@ var RootConfig CmdRootOptions
 ```
 
 <a name="Stamp"></a>
-## type [Stamp](<https://github.com:icebergtech/kr8/blob/main/cmd/version.go#L13-L20>)
+## type [Stamp](<https://github.com:icebergtech/kr8/blob/main/cmd/version.go#L14-L21>)
 
 
 

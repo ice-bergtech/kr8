@@ -27,21 +27,28 @@ import (
 	"path/filepath"
 	"strings"
 
+	//nolint:exptostd
 	"golang.org/x/exp/maps"
 
 	jsonnet "github.com/google/go-jsonnet"
 	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
 
+	"github.com/ice-bergtech/kr8/pkg/kr8_native_funcs"
 	"github.com/ice-bergtech/kr8/pkg/kr8_types"
 	types "github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
 // Create a Jsonnet VM to run commands in.
+// It:
+//   - creates a jsonnet VM
+//   - registers kr8 native functions
+//   - Add jsonnet library directories
+//   - loads external files into extVars
 func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error) {
 	jvm := jsonnet.MakeVM()
-	RegisterNativeFuncs(jvm)
+	kr8_native_funcs.RegisterNativeFuncs(jvm)
 
 	// always add lib directory in base directory to path
 	jpath := []string{filepath.Join(vmconfig.BaseDir, "lib")}
@@ -71,6 +78,7 @@ func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error) {
 
 // Takes a list of jsonnet files and imports each one.
 // Formats the string for jsonnet using "+".
+// source is only used for error messages.
 func JsonnetRenderFiles(
 	vmConfig types.VMConfig,
 	files []string,
@@ -250,6 +258,7 @@ func MergeComponentDefaults(
 ) (string, error) {
 	componentDefaultsMerged := "{"
 
+	//nolint:exptostd
 	listComponentKeys := maps.Keys(componentMap)
 	if len(componentNames) > 0 {
 		listComponentKeys = componentNames
