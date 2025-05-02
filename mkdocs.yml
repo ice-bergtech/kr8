@@ -25,6 +25,9 @@ nav:
     - Clusters: concepts/clusters.md
     - Components: concepts/components.md
     - Native Funcs: concepts/nativefuncs.md
+  - Json Schemas:
+    - Cluster: schemas/kr8-plus-cluster-schema.json
+    - Component: schemas/kr8-plus-component-schema.json
   - Cmd Docs:
     - kr8: cmd/kr8.md
     - kr8 version: cmd/kr8_version.md  
