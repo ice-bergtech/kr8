@@ -14,13 +14,15 @@ import (
 
 // An object that stores variables that can be referenced by components.
 type Kr8Cluster struct {
+	// The name of the cluster.
 	Name string `json:"name"`
+	// Path to the cluster folder.
+	// Not read from config.
 	Path string `json:"-"`
 }
 
 // The specification for a clusters.jsonnet file.
 // This describes configuration for a cluster that kr8 should process.
-// TODO: jsonschema.
 type Kr8ClusterJsonnet struct {
 	// kr8+ configuration for how to process the cluster
 	ClusterSpec Kr8ClusterSpec `json:"_kr8_spec"`
@@ -40,20 +42,21 @@ type Kr8ClusterComponentRef struct {
 // The specification for how to process a cluster.
 // This is used in the cluster jsonnet file to configure how kr8 should process the cluster.
 type Kr8ClusterSpec struct {
-	// The name of the cluster
-	Name string `json:"-"`
 	// A jsonnet function that each output entry is processed through. Default `function(input) input`
-	PostProcessor string `json:"postprocessor"`
+	PostProcessor string `json:"postprocessor,omitempty"`
 	// The name of the root generate directory. Default `generated`
-	GenerateDir string `json:"generate_dir"`
+	GenerateDir string `json:"generate_dir,omitempty"`
 	// If true, we don't use the full file path to generate output file names
-	GenerateShortNames bool `json:"generate_short_names"`
+	GenerateShortNames bool `json:"generate_short_names,omitempty"`
 	// If true, we prune component parameters
-	PruneParams bool `json:"prune_params"`
+	PruneParams bool `json:"prune_params,omitempty"`
 	// If true, kr8 will store and reference a cache file for the cluster.
-	EnableCache bool `json:"cache_enable"`
+	EnableCache bool `json:"cache_enable,omitempty"`
 	// If true, kr8 will compress the cache in a gzip file instead of raw json.
-	CompressCache bool `json:"cache_compress"`
+	CompressCache bool `json:"cache_compress,omitempty"`
+	// The name of the cluster
+	// Not read from config.
+	Name string `json:"-"`
 	// Cluster output directory
 	// Not read from config.
 	ClusterOutputDir string `json:"-"`
@@ -102,7 +105,6 @@ func CreateClusterSpec(
 // The specification for component's params.jsonnet file.
 // It contains all the configuration and variables used to generate component resources.
 // This configuration is often modified from the cluster config to add cluster-specific configuration.
-// TODO: jsonschema.
 type Kr8ComponentJsonnet struct {
 	// Component-specific configuration for how kr8 should process the component (required)
 	Kr8Spec Kr8ComponentSpec `json:"kr8_spec"`
@@ -111,24 +113,24 @@ type Kr8ComponentJsonnet struct {
 	// A unique name for the component
 	ReleaseName string `json:"release_name"`
 	// Component version string (optional)
-	Version string `json:"version"`
+	Version string `json:"version,omitempty"`
 }
 
 // The kr8_spec object in a cluster config file.
 // This configures how kr8 processes the component.
 type Kr8ComponentSpec struct {
 	// If true, includes the parameters of the current cluster when generating this component
-	Kr8_allParams bool `json:"enable_kr8_allparams"`
+	Kr8_allParams bool `json:"enable_kr8_allparams,omitempty"`
 	// If true, includes the parameters of all other clusters when generating this component
-	Kr8_allClusters bool `json:"enable_kr8_allclusters"`
+	Kr8_allClusters bool `json:"enable_kr8_allclusters,omitempty"`
 	// If false, all non-generated files present in the output directory are removed
-	DisableOutputDirClean bool `json:"disable_output_clean"`
+	DisableOutputDirClean bool `json:"disable_output_clean,omitempty"`
 	// If true, component will not be cached if cluster caching is enabled.
-	DisableCache bool `json:"disable_cache"`
+	DisableCache bool `json:"disable_cache,omitempty"`
 	// A list of filenames to include as jsonnet vm external vars
-	ExtFiles ExtFileVar `json:"extfiles"`
+	ExtFiles ExtFileVar `json:"extfiles,omitempty"`
 	// Additional jsonnet libs to the jsonnet vm, component-path scoped
-	JPaths []string `json:"jpaths"`
+	JPaths []string `json:"jpaths,omitempty"`
 	// A list of filenames to include and output as files
 	Includes Kr8ComponentSpecIncludes `json:"includes"`
 }
