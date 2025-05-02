@@ -31,7 +31,6 @@ func GenerateComponentJsonnet(componentOptions Kr8InitOptions, dstDir string) er
 		ReleaseName: strings.ReplaceAll(componentOptions.ComponentName, "_", "-"),
 		Namespace:   "default",
 		Version:     "1.0.0",
-		CalledFrom:  "std.thisFile",
 	}
 	switch componentOptions.ComponentType {
 	case "jsonnet":

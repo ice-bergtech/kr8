@@ -21,7 +21,7 @@ type Kr8Cluster struct {
 // The specification for a clusters.jsonnet file.
 // This describes configuration for a cluster that kr8 should process.
 type Kr8ClusterJsonnet struct {
-	// kr8 configuration for how to process the cluster
+	// kr8+ configuration for how to process the cluster
 	ClusterSpec Kr8ClusterSpec `json:"_kr8_spec"`
 	// Cluster Level configuration that components can reference
 	Cluster Kr8Cluster `json:"_cluster"`
@@ -110,9 +110,6 @@ type Kr8ComponentJsonnet struct {
 	ReleaseName string `json:"release_name"`
 	// Component version string (optional)
 	Version string `json:"version"`
-	// Relative directory where the component's resources are located (required).
-	// Usually std.thisFile.
-	CalledFrom string `json:"called_from"`
 }
 
 // The kr8_spec object in a cluster config file.
