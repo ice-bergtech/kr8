@@ -34,15 +34,21 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
 
+	"github.com/ice-bergtech/kr8/pkg/kr8_native_funcs"
 	"github.com/ice-bergtech/kr8/pkg/kr8_types"
 	types "github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
 // Create a Jsonnet VM to run commands in.
+// It:
+//   - creates a jsonnet VM
+//   - registers kr8 native functions
+//   - Add jsonnet library directories
+//   - loads external files into extVars
 func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error) {
 	jvm := jsonnet.MakeVM()
-	RegisterNativeFuncs(jvm)
+	kr8_native_funcs.RegisterNativeFuncs(jvm)
 
 	// always add lib directory in base directory to path
 	jpath := []string{filepath.Join(vmconfig.BaseDir, "lib")}

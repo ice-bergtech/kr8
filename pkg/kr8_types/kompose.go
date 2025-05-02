@@ -140,6 +140,7 @@ func CreateKomposeOpts(inputFiles []string, namespace string) (*KomposeConvertOp
 		ImagePushCommand:         "",
 		ImagePushRegistry:        "",
 	}
+
 	return &kOpts, kOpts.Validate()
 }
 

@@ -1,4 +1,7 @@
-package jnetvm
+// Package kr8_native_funcs provides native functions that jsonnet code can reference.
+// Functions include processing docker-compose files,
+// helm charts, templating, URL and IP address parsing.
+package kr8_native_funcs
 
 import (
 	"bytes"
@@ -66,7 +69,7 @@ func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction {
 				[]string{
 					"Print out kr8 native funcion names and parameters.",
 					"Functions are called in the format:",
-					"`std.native('<function>')(<param1>, <param2>)`",
+					"`std.native('<function>')(<param1>, <param2>, ...)`",
 				},
 				"\n",
 			) + "\n"
@@ -79,7 +82,7 @@ func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction {
 					// Convert Identifier to string
 					params = append(params, fmt.Sprint(id))
 				}
-				result += val.Name + ": ['" + strings.Join(params, "', '") + "']\n"
+				result += val.Name + ": [\n  '" + strings.Join(params, "'\n  '") + "']\n"
 			}
 
 			return result, nil
@@ -100,8 +103,11 @@ func NativeHelmTemplate() *jsonnet.NativeFunction {
 // Inputs: "config" "templateStr".
 func NativeSprigTemplate() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
-		Name:   "template",
-		Params: []jsonnetAst.Identifier{"config", "templateStr"},
+		Name: "template",
+		Params: []jsonnetAst.Identifier{
+			"config: string, a json configuration object for the template to reference",
+			"templateStr: the template string",
+		},
 		Func: func(args []interface{}) (interface{}, error) {
 			var config any
 			err := json.Unmarshal([]byte(args[0].(string)), config)

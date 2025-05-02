@@ -1,4 +1,4 @@
-package jnetvm
+package kr8_native_funcs
 
 import (
 	"fmt"
@@ -49,7 +49,7 @@ type NativeFuncURL struct {
 func NativeNetUrl() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "url",
-		Params: []jsonnetAst.Identifier{"rawURL"},
+		Params: []jsonnetAst.Identifier{"rawURL: a URL string"},
 		Func: func(args []interface{}) (interface{}, error) {
 			rawURL, ok := args[0].(string)
 			if !ok {
@@ -94,7 +94,7 @@ func NativeNetUrl() *jsonnet.NativeFunction {
 	}
 }
 
-// An IPv4 address or subnet range
+// An IPv4 address or subnet range.
 type IPV4 struct {
 	IP           string
 	Mask         int
@@ -105,7 +105,7 @@ type IPV4 struct {
 	Broadcast    string
 }
 
-// An IPv6 address or subnet range
+// An IPv6 address or subnet range.
 type IPV6 struct {
 	IP           string
 	NetMask      string

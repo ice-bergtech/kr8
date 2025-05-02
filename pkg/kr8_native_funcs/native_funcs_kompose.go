@@ -1,4 +1,4 @@
-package jnetvm
+package kr8_native_funcs
 
 import (
 	"fmt"
@@ -26,40 +26,65 @@ func (params *KomposeParams) ExtractParameters() {}
 
 // Allows converting a docker-compose string into kubernetes resources using kompose.
 // Files in the directory must be in the format `[docker-]compose.y[a]ml`.
+// RootDir is usually `std.thisFile()`.
 //
 // Source: https://github.com/kubernetes/kompose/blob/main/cmd/convert.go
 //
 // Inputs: `rootDir`, `listFiles`, `namespace`.
 func NativeKompose() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
-		Name:   "komposeFile",
-		Params: jsonnetAst.Identifiers{"rootDir", "listFiles", "namespace"},
+		Name: "komposeFile",
+		Params: jsonnetAst.Identifiers{
+			"rootDir: usually `std.thisFile`.  Filename is removed to determine directory.",
+			"listFiles: list of compose files to process",
+			"namespace: namespace to assign to resources",
+		},
 		Func: func(args []interface{}) (interface{}, error) {
 			var argOk bool
-			kParams := KomposeParams{}
 
-			kParams.RootDir, argOk = args[0].(string)
+			rootDir, argOk := args[0].(string)
 			if !argOk {
 				return nil, types.Kr8Error{
 					Message: "first argument 'rootDir' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
 					Value:   args[0],
 				}
 			}
+			if filepath.Ext(rootDir) != "" {
+				rootDir = filepath.Dir(rootDir)
+			}
 
-			kParams.ComposeFiles, argOk = args[1].([]string)
+			var composeFileStrings []string
+			composeFiles, argOk := args[1].([]interface{})
 			if !argOk {
 				return nil, types.Kr8Error{
-					Message: "second argument 'listFiles' must be of '[]string' type, got " + fmt.Sprintf("%T", args[0]),
+					Message: "second argument 'listFiles' must be of '[]string' type, got " + fmt.Sprintf("%T", args[1]),
 					Value:   args[1],
 				}
 			}
+			for _, fileString := range composeFiles {
+				val, argOk := fileString.(string)
+				if argOk {
+					composeFileStrings = append(composeFileStrings, val)
+				} else {
+					return nil, types.Kr8Error{
+						Message: "second argument 'listFiles' must be of '[]string' type, got []" + fmt.Sprintf("%T", fileString),
+						Value:   args[1],
+					}
+				}
+			}
 
-			kParams.Namespace, argOk = args[2].(string)
+			namespace, argOk := args[2].(string)
 			if !argOk {
 				return nil, types.Kr8Error{
-					Message: "third argument 'namespace' must be of 'string' type, got " + fmt.Sprintf("%T", args[0]),
+					Message: "third argument 'namespace' must be of 'string' type, got " + fmt.Sprintf("%T", args[2]),
 					Value:   args[2],
 				}
+			}
+
+			kParams := KomposeParams{
+				RootDir:      rootDir,
+				ComposeFiles: composeFileStrings,
+				Namespace:    namespace,
 			}
 
 			inFiles := make([]string, len(kParams.ComposeFiles))
@@ -93,5 +118,6 @@ func (*KomposeHook) Levels() []kLogger.Level {
 
 func (*KomposeHook) Fire(entry *kLogger.Entry) error {
 	log.Warn().Str("nativeFunc", "kompose").Msg(entry.Message)
+
 	return nil
 }
