@@ -31,7 +31,7 @@ func SetupJvmForComponent(
 }
 
 // This function sets up the JVM for a given component.
-// It registers native functions, sets up post-processing, and prunes parameters as required.
+// It sets up post-processing, and prunes parameters as required.
 // It's faster to create this VM for each component, rather than re-use.
 // Default postprocessor just copies input to output.
 func SetupBaseComponentJvm(
@@ -43,7 +43,6 @@ func SetupBaseComponentJvm(
 	if err != nil {
 		return nil, err
 	}
-	jnetvm.RegisterNativeFuncs(jvm)
 	jvm.ExtCode("kr8_cluster", "std.prune("+config+"._cluster)")
 
 	if kr8Spec.PostProcessor != "" {

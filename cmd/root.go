@@ -42,11 +42,11 @@ func Execute(ver string) {
 
 // Default options that are available to all commands.
 type CmdRootOptions struct {
-	// kr8 config base directory
+	// kr8+ config base directory
 	BaseDir string
-	// kr8 cluster directory
+	// kr8+ cluster directory
 	ClusterDir string
-	// kr8 component directory
+	// kr8+ component directory
 	ComponentDir string
 	// A config file with kr8 configuration
 	ConfigFile string
