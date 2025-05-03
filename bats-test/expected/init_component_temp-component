@@ -1,11 +1,5 @@
 {
   kr8_spec: {
-    enable_kr8_allparams: false,
-    enable_kr8_allclusters: false,
-    disable_output_clean: false,
-    disable_cache: false,
-    extfiles: {},
-    jpaths: [],
     includes: [
       {
         file: "component.jsonnet",

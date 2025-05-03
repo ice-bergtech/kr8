@@ -2,13 +2,9 @@
   _kr8_spec: {
     postprocessor: "function(input) input",
     generate_dir: "generated",
-    generate_short_names: false,
-    prune_params: false,
     cache_enable: true,
     cache_compress: true,
   },
-  _cluster: {
-    name: "temp-cluster",
-  },
+  _cluster: {},
   _components: {},
 }
