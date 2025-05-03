@@ -55,7 +55,7 @@ type Kr8ClusterSpec struct {
 	// If true, kr8 will store and reference a cache file for the cluster.
 	EnableCache bool `json:"cache_enable,omitempty" jsonschema:"default=false"`
 	// If true, kr8 will compress the cache in a gzip file instead of raw json.
-	CompressCache bool `json:"cache_compress,omitempty"`
+	CompressCache bool `json:"cache_compress,omitempty"  jsonschema:"default=true"`
 	// The name of the cluster
 	// Not read from config.
 	Name string `json:"-"`
@@ -92,13 +92,20 @@ func CreateClusterSpec(
 	clusterDir := filepath.Join(clGenerateDir, clusterName)
 	logger.Debug().Str("cluster", clusterName).Msg("output directory: " + clusterDir)
 
+	// Default to compressing the cache
+	compress := true
+	compressVar := spec.Get("cache_compress")
+	if compressVar.Exists() {
+		compress = compressVar.Bool()
+	}
+
 	return Kr8ClusterSpec{
 		PostProcessor:      spec.Get("postprocessor").String(),
 		GenerateDir:        clGenerateDir,
 		GenerateShortNames: spec.Get("generate_short_names").Bool(),
 		PruneParams:        spec.Get("prune_params").Bool(),
 		EnableCache:        spec.Get("cache_enable").Bool(),
-		CompressCache:      spec.Get("cache_compress").Bool(),
+		CompressCache:      compress,
 		ClusterOutputDir:   clGenerateDir + "/" + clusterName,
 		Name:               clusterName,
 	}, nil
