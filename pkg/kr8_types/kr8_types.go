@@ -12,10 +12,12 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-// An object that stores variables that can be referenced by components.
+// An object that stores cluster-level variables that can be referenced by components.
 type Kr8Cluster struct {
 	// The name of the cluster.
-	Name string `json:"name"`
+	// Derived from folder containing the cluster.jsonnet.
+	// Not read from config.
+	Name string `json:"-"`
 	// Path to the cluster folder.
 	// Not read from config.
 	Path string `json:"-"`
@@ -36,22 +38,22 @@ type Kr8ClusterJsonnet struct {
 // This is used in the cluster jsonnet file to reference components.
 type Kr8ClusterComponentRef struct {
 	// The path to a component folder that contains a params.jsonnet file
-	Path string `json:"path"`
+	Path string `json:"path"  jsonschema:"example=components/service"`
 }
 
 // The specification for how to process a cluster.
 // This is used in the cluster jsonnet file to configure how kr8 should process the cluster.
 type Kr8ClusterSpec struct {
 	// A jsonnet function that each output entry is processed through. Default `function(input) input`
-	PostProcessor string `json:"postprocessor,omitempty"`
+	PostProcessor string `json:"postprocessor,omitempty" jsonschema:"default=function(input) input"`
 	// The name of the root generate directory. Default `generated`
-	GenerateDir string `json:"generate_dir,omitempty"`
+	GenerateDir string `json:"generate_dir,omitempty" jsonschema:"default=generated"`
 	// If true, we don't use the full file path to generate output file names
-	GenerateShortNames bool `json:"generate_short_names,omitempty"`
+	GenerateShortNames bool `json:"generate_short_names,omitempty" jsonschema:"default=false"`
 	// If true, we prune component parameters
-	PruneParams bool `json:"prune_params,omitempty"`
+	PruneParams bool `json:"prune_params,omitempty" jsonschema:"default=false"`
 	// If true, kr8 will store and reference a cache file for the cluster.
-	EnableCache bool `json:"cache_enable,omitempty"`
+	EnableCache bool `json:"cache_enable,omitempty" jsonschema:"default=false"`
 	// If true, kr8 will compress the cache in a gzip file instead of raw json.
 	CompressCache bool `json:"cache_compress,omitempty"`
 	// The name of the cluster
