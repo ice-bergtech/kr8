@@ -221,16 +221,20 @@ type ExtFileVar map[string]string
 // It allows configuring the included file's destination directory and file name.
 // The input files are processed differently depending on the filetype.
 type Kr8ComponentSpecIncludeObject struct {
-	// an input file to process
-	// accepted filetypes: .jsonnet .yml .yaml .tmpl .tpl
-	File string `json:"file"`
-	// handle alternate output directory for file
+	// An input file to process.
+	// Accepted filetypes: .jsonnet .yml .yaml .tmpl .tpl
+	File string `json:"file" jsonschema:"example=file.jsonnet,example=.yml,example=template.tpl"`
+	// Handle alternate output directory for file.
+	// Relative from component output dir.
 	DestDir string `json:"dest_dir,omitempty"`
-	// override destination file name
-	DestName string `json:"dest_name,omitempty"`
-	// override destination file extension
-	DestExt string `json:"dest_ext,omitempty"`
-	// Override config passed to the includes template processing
+	// Override destination file name
+	DestName string `json:"dest_name,omitempty" jsonschema:"default=File field"`
+	// Override destination file extension
+	// Useful for setting template file extension.
+	DestExt string `json:"dest_ext,omitempty" jsonschema:"example=md,example=txt,default=yml"`
+	// Override config passed to the includes template file processing.
+	// Useful for generating a list of includes in a loop:
+	// `[{File: f, Config: data[f]} for f in list]`
 	Config string `json:"config,omitempty"`
 }
 
