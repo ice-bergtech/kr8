@@ -35,6 +35,7 @@ func Filter(vs []string, f func(string) bool) []string {
 	return vsf
 }
 
+// Configure zerolog with some defaults and cleanup error formatting.
 func SetupLogger(enableColor bool) zerolog.Logger {
 	//nolint:exhaustruct
 	consoleWriter := zerolog.ConsoleWriter{
@@ -140,13 +141,13 @@ func FilterItems(input map[string]string, pFilter PathFilterOptions) []string {
 }
 
 // Logs an error and exits the program if the error is not nil.
-// Saves 3 lines per use and centralizes fatal errors for rewriting.
 func FatalErrorCheck(message string, err error, logger zerolog.Logger) {
 	if err != nil {
 		logger.Fatal().Err(err).Msg(message)
 	}
 }
 
+// If err != nil, wraps it in a Kr8Error with the message.
 func ErrorIfCheck(message string, err error) error {
 	if err != nil {
 		return types.Kr8Error{Message: message, Value: err}
@@ -155,6 +156,7 @@ func ErrorIfCheck(message string, err error) error {
 	return nil
 }
 
+// If the error is not nil, log an error and wrap the error in a Kr8Error.
 func LogErrorIfCheck(message string, err error, logger zerolog.Logger) error {
 	if err != nil {
 		logger.Error().Err(err).Msg(message)
@@ -185,6 +187,7 @@ func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilte
 	return FilterItems(input, filters)
 }
 
+// Calculate the sha256 hash and returns the base64 encoded result.
 func HashFile(path string) (string, error) {
 	file, err := os.Open(filepath.Clean(path))
 	if err != nil {

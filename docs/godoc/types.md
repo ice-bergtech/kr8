@@ -17,7 +17,7 @@ Package types contains shared types used across kr8\+ packages.
 
 
 <a name="CmdJsonnetOptions"></a>
-## type [CmdJsonnetOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L25-L32>)
+## type [CmdJsonnetOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L26-L33>)
 
 Options for running the jsonnet command. Used by a few packages and commands.
 
@@ -45,19 +45,21 @@ type Kr8Cluster struct {
 ```
 
 <a name="Kr8Error"></a>
-## type [Kr8Error](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L44-L47>)
+## type [Kr8Error](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L46-L51>)
 
-
+Shared kr8\+ error struct.
 
 ```go
 type Kr8Error struct {
+    // Message to show the user.
     Message string
-    Value   interface{}
+    // Value to include with message
+    Value interface{}
 }
 ```
 
 <a name="Kr8Error.Error"></a>
-### func \(Kr8Error\) [Error](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L50>)
+### func \(Kr8Error\) [Error](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L54>)
 
 ```go
 func (e Kr8Error) Error() string
@@ -66,13 +68,13 @@ func (e Kr8Error) Error() string
 Error implements error.
 
 <a name="Kr8Opts"></a>
-## type [Kr8Opts](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L14-L21>)
+## type [Kr8Opts](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L15-L22>)
 
-
+Options that configure where kr8\+ looks for files.
 
 ```go
 type Kr8Opts struct {
-    // Base directory of kr8 configuration
+    // Base directory of kr8+ configuration
     BaseDir string
     // Directory where component definitions are stored
     ComponentDir string
@@ -82,7 +84,7 @@ type Kr8Opts struct {
 ```
 
 <a name="VMConfig"></a>
-## type [VMConfig](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L35-L42>)
+## type [VMConfig](<https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L36-L43>)
 
 VMConfig describes configuration to initialize the Jsonnet VM with.
 

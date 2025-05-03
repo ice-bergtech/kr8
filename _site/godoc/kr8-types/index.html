@@ -388,7 +388,7 @@
 <p>A reference to a component folder that contains a params.jsonnet file. This is used in the cluster jsonnet file to reference components.</p>
 <pre><code class="language-go">type Kr8ClusterComponentRef struct {
     // The path to a component folder that contains a params.jsonnet file
-    Path string `json:&quot;path&quot;  jsonschema:&quot;example=components/service&quot;`
+    Path string `json:&quot;path&quot; jsonschema:&quot;example=components/service&quot;`
 }
 </code></pre>
 <p><a name="Kr8ClusterJsonnet"></a></p>
@@ -418,7 +418,7 @@
     // If true, kr8 will store and reference a cache file for the cluster.
     EnableCache bool `json:&quot;cache_enable,omitempty&quot; jsonschema:&quot;default=false&quot;`
     // If true, kr8 will compress the cache in a gzip file instead of raw json.
-    CompressCache bool `json:&quot;cache_compress,omitempty&quot;  jsonschema:&quot;default=true&quot;`
+    CompressCache bool `json:&quot;cache_compress,omitempty&quot; jsonschema:&quot;default=true&quot;`
     // The name of the cluster
     // Not read from config.
     Name string `json:&quot;-&quot;`

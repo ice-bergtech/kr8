@@ -204,7 +204,7 @@
 <li><a href="#VMConfig">type VMConfig</a></li>
 </ul>
 <p><a name="CmdJsonnetOptions"></a></p>
-<h2 id="type-cmdjsonnetoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L25-L32">CmdJsonnetOptions</a></h2>
+<h2 id="type-cmdjsonnetoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L26-L33">CmdJsonnetOptions</a></h2>
 <p>Options for running the jsonnet command. Used by a few packages and commands.</p>
 <pre><code class="language-go">type CmdJsonnetOptions struct {
     Prune         bool
@@ -224,21 +224,25 @@
 }
 </code></pre>
 <p><a name="Kr8Error"></a></p>
-<h2 id="type-kr8error">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L44-L47">Kr8Error</a></h2>
+<h2 id="type-kr8error">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L46-L51">Kr8Error</a></h2>
+<p>Shared kr8+ error struct.</p>
 <pre><code class="language-go">type Kr8Error struct {
+    // Message to show the user.
     Message string
-    Value   interface{}
+    // Value to include with message
+    Value interface{}
 }
 </code></pre>
 <p><a name="Kr8Error.Error"></a></p>
-<h3 id="func-kr8error-error">func (Kr8Error) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L50">Error</a></h3>
+<h3 id="func-kr8error-error">func (Kr8Error) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L54">Error</a></h3>
 <pre><code class="language-go">func (e Kr8Error) Error() string
 </code></pre>
 <p>Error implements error.</p>
 <p><a name="Kr8Opts"></a></p>
-<h2 id="type-kr8opts">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L14-L21">Kr8Opts</a></h2>
+<h2 id="type-kr8opts">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L15-L22">Kr8Opts</a></h2>
+<p>Options that configure where kr8+ looks for files.</p>
 <pre><code class="language-go">type Kr8Opts struct {
-    // Base directory of kr8 configuration
+    // Base directory of kr8+ configuration
     BaseDir string
     // Directory where component definitions are stored
     ComponentDir string
@@ -247,7 +251,7 @@
 }
 </code></pre>
 <p><a name="VMConfig"></a></p>
-<h2 id="type-vmconfig">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L35-L42">VMConfig</a></h2>
+<h2 id="type-vmconfig">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L36-L43">VMConfig</a></h2>
 <p>VMConfig describes configuration to initialize the Jsonnet VM with.</p>
 <pre><code class="language-go">type VMConfig struct {
     // Jpaths is a list of paths to search for Jsonnet libraries (libsonnet files)

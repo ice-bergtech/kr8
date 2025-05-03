@@ -8,17 +8,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/google/go-jsonnet"
 	"github.com/rs/zerolog/log"
 
 	types "github.com/ice-bergtech/kr8/pkg/types"
 )
-
-type ClusterTreeNode struct {
-	DirName string
-	VM      *jsonnet.VM
-	Parent  *ClusterTreeNode
-}
 
 // Get a list of cluster from within a directory.
 // Walks the directory tree, creating a types.Kr8Cluster for each cluster.jsonnet file found.
@@ -147,6 +140,7 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) er
 	return nil
 }
 
+// Walk a directory to build a list of all files in the tree.
 func BuildDirFileList(directory string) ([]string, error) {
 	clusterPaths := []string{}
 
