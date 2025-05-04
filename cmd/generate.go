@@ -27,7 +27,7 @@ type CmdGenerateOptions struct {
 	Filters util.PathFilterOptions
 }
 
-var cmdGenerateFlags generate.GenerateProcessRootConfig
+var cmdGenerateFlags CmdGenerateOptions
 
 func init() {
 	RootCmd.AddCommand(GenerateCmd)
@@ -72,16 +72,16 @@ func GenerateCommand(cmd *cobra.Command, args []string) {
 
 	clusterList := GenerateCmdClusterListBuilder(allClusterParams)
 
-	cmdGenerateFlags.Kr8Opts = types.Kr8Opts{
-		BaseDir:      RootConfig.BaseDir,
-		ComponentDir: RootConfig.ComponentDir,
-		ClusterDir:   RootConfig.ClusterDir,
-	}
-
 	// Setup the threading pools, one for clusters and one for clusters
 	var waitGroup sync.WaitGroup
 	ants_cp, _ := ants.NewPool(RootConfig.Parallel)
 	ants_cl, _ := ants.NewPool(RootConfig.Parallel)
+
+	kr8Opts := types.Kr8Opts{
+		BaseDir:      RootConfig.BaseDir,
+		ComponentDir: RootConfig.ComponentDir,
+		ClusterDir:   RootConfig.ClusterDir,
+	}
 
 	// Generate config for each cluster in parallel
 	for _, clusterName := range clusterList {
@@ -89,8 +89,21 @@ func GenerateCommand(cmd *cobra.Command, args []string) {
 		_ = ants_cl.Submit(func() {
 			defer waitGroup.Done()
 			subLogger := log.With().Str("cluster", clusterName).Logger()
-			err := generate.GenProcessCluster(
-				cmdGenerateFlags,
+
+			genFlags := generate.GenerateProcessRootConfig{
+				ClusterName:       clusterName,
+				ClusterDir:        RootConfig.ClusterDir,
+				BaseDir:           RootConfig.BaseDir,
+				GenerateDir:       cmdGenerateFlags.GenerateDir,
+				Kr8Opts:           kr8Opts,
+				ClusterParamsFile: cmdGenerateFlags.ClusterParamsFile,
+				Filters:           cmdGenerateFlags.Filters,
+				VmConfig:          RootConfig.VMConfig,
+				Noop:              false,
+			}
+
+			err = generate.GenProcessCluster(
+				&genFlags,
 				ants_cp,
 				subLogger)
 			if err != nil {

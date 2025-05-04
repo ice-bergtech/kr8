@@ -412,7 +412,7 @@ func TestGenProcessCluster(t *testing.T) {
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
 			gotErr := generate.GenProcessCluster(
-				testCase.input,
+				&testCase.input,
 				testCase.pool,
 				testCase.logger,
 			)

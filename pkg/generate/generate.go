@@ -427,7 +427,7 @@ type GenerateProcessRootConfig struct {
 // Prepares and builds the cluster config.
 // Build and processes the list of components.
 func GenProcessCluster(
-	clusterConfig GenerateProcessRootConfig,
+	clusterConfig *GenerateProcessRootConfig,
 	pool *ants.Pool,
 	logger zerolog.Logger,
 ) error {
