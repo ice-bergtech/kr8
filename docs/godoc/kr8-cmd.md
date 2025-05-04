@@ -89,7 +89,7 @@ var GenerateCmd = &cobra.Command{
 var GetClustersCmd = &cobra.Command{
     Use:   "clusters [flags]",
     Short: "Get all clusters",
-    Long:  "Get all clusters defined in kr8 config hierarchy",
+    Long:  "Get all clusters defined in kr8+ config hierarchy",
     Run: func(cmd *cobra.Command, args []string) {
 
         clusters, err := util.GetClusterFilenames(RootConfig.ClusterDir)
@@ -124,8 +124,8 @@ var GetClustersCmd = &cobra.Command{
 ```go
 var GetCmd = &cobra.Command{
     Use:   "get",
-    Short: "Display one or many kr8 resources",
-    Long:  `Displays information about kr8 resources such as clusters and components`,
+    Short: "Display one or many kr8+ resources",
+    Long:  `Displays information about kr8+ resources such as clusters and components`,
 }
 ```
 
@@ -135,7 +135,7 @@ var GetCmd = &cobra.Command{
 var GetComponentsCmd = &cobra.Command{
     Use:   "components [flags]",
     Short: "Get all components",
-    Long:  "Get all available components defined in the kr8 config hierarchy",
+    Long:  "Get all available components defined in the kr8+ config hierarchy",
     Run: func(cmd *cobra.Command, args []string) {
 
         if cmdGetFlags.Cluster == "" && cmdGetFlags.ClusterParams == "" {
@@ -178,7 +178,7 @@ var GetComponentsCmd = &cobra.Command{
 var GetParamsCmd = &cobra.Command{
     Use:   "params [flags]",
     Short: "Get parameter for components and clusters",
-    Long:  "Get parameters assigned to clusters and components in the kr8 config hierarchy",
+    Long:  "Get parameters assigned to clusters and components in the kr8+ config hierarchy",
     Run: func(cmd *cobra.Command, args []string) {
         if cmdGetFlags.Cluster == "" {
             log.Fatal().Msg("Please specify a --cluster")
@@ -289,8 +289,8 @@ var InitClusterCmd = &cobra.Command{
 ```go
 var InitCmd = &cobra.Command{
     Use:   "init",
-    Short: "Initialize kr8 config repos, components and clusters",
-    Long: `kr8 requires specific directories and exists for its config to work.
+    Short: "Initialize kr8+ config repos, components and clusters",
+    Long: `kr8+ requires specific directories and exists for its config to work.
 This init command helps in creating directory structure for repos, clusters and 
 components`,
 }
@@ -352,7 +352,7 @@ var InitComponentCmd = &cobra.Command{
 }
 ```
 
-<a name="InitRepoCmd"></a>Initializes a new kr8 configuration repository
+<a name="InitRepoCmd"></a>Initializes a new kr8\+ configuration repository
 
 Directory tree:
 
@@ -365,15 +365,15 @@ Directory tree:
 var InitRepoCmd = &cobra.Command{
     Use:   "repo [flags] dir",
     Args:  cobra.MinimumNArgs(1),
-    Short: "Initialize a new kr8 config repo",
-    Long: `Initialize a new kr8 config repo by downloading the kr8 config skeleton repo
+    Short: "Initialize a new kr8+ config repo",
+    Long: `Initialize a new kr8+ config repo by downloading the kr8+ config skeleton repo
 and initialize a git repo so you can get started`,
     Run: func(cmd *cobra.Command, args []string) {
         if len(args) == 0 {
             log.Fatal().Msg("Error: no directory specified")
         }
         outDir := args[len(args)-1]
-        log.Debug().Msg("Initializing kr8 config repo in " + outDir)
+        log.Debug().Msg("Initializing kr8+ config repo in " + outDir)
         if cmdInitFlags.InitUrl != "" {
             util.FatalErrorCheck(
                 "Issue fetching repo",
@@ -390,7 +390,7 @@ and initialize a git repo so you can get started`,
             ComponentName: "example-component",
             ComponentType: "jsonnet",
             Interactive:   false,
-            Fetch:         false,
+            Fetch:         cmdInitFlags.Fetch,
         }
         clusterOptions := kr8_types.Kr8ClusterSpec{
             Name:               cmdInitFlags.ClusterName,
@@ -415,7 +415,7 @@ and initialize a git repo so you can get started`,
         )
         util.FatalErrorCheck(
             "Issue creating lib folder",
-            kr8init.GenerateLib(cmdInitFlags.Fetch, outDir+"/lib"),
+            kr8init.GenerateLib(cmdInitOptions.Fetch, outDir+"/lib"),
             log.Logger,
         )
         util.FatalErrorCheck(
@@ -551,7 +551,7 @@ var RootCmd = &cobra.Command{
 var VersionCmd = &cobra.Command{
     Use:   "version",
     Short: "Return the current version of kr8+",
-    Long:  `return the current version of kr8+`,
+    Long:  `Return the current version of kr8+`,
     Run: func(cmd *cobra.Command, args []string) {
         fmt.Println(RootCmd.Use + "+ Version: " + version)
         info, ok := debug.ReadBuildInfo()
@@ -705,7 +705,7 @@ type CmdGetOptions struct {
 <a name="CmdRenderOptions"></a>
 ## type [CmdRenderOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/render.go#L25-L36>)
 
-Contains parameters for the kr8 render command.
+Contains parameters for the kr8\+ render command.
 
 ```go
 type CmdRenderOptions struct {
@@ -735,11 +735,11 @@ type CmdRootOptions struct {
     ClusterDir string
     // kr8+ component directory
     ComponentDir string
-    // A config file with kr8 configuration
+    // A config file with kr8+ configuration
     ConfigFile string
     // parallelism - defaults to runtime.GOMAXPROCS(0)
     Parallel int
-    // log more information about what kr8 is doing. Overrides --loglevel
+    // log more information about what kr8+ is doing. Overrides --loglevel
     Debug bool
     // set log level
     LogLevel string

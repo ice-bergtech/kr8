@@ -296,13 +296,13 @@
 <li><a href="#NativeFuncURL">type NativeFuncURL</a></li>
 </ul>
 <p><a name="NativeHelmTemplate"></a></p>
-<h2 id="func-nativehelmtemplate">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L96">NativeHelmTemplate</a></h2>
+<h2 id="func-nativehelmtemplate">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L97">NativeHelmTemplate</a></h2>
 <pre><code class="language-go">func NativeHelmTemplate() *jsonnet.NativeFunction
 </code></pre>
-<p>Allows executing helm template to process a helm chart and make available to kr8 configuration.</p>
+<p>Allows executing helm template to process a helm chart and make available to kr8+ configuration.</p>
 <p>Source: https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L23</p>
 <p><a name="NativeHelp"></a></p>
-<h2 id="func-nativehelp">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L63">NativeHelp</a></h2>
+<h2 id="func-nativehelp">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L64">NativeHelp</a></h2>
 <pre><code class="language-go">func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction
 </code></pre>
 <p><a name="NativeKompose"></a></p>
@@ -421,16 +421,16 @@
 <p>Substitutes a regex pattern in a string with another string.</p>
 <p>Inputs: "regex", "src", "repl".</p>
 <p><a name="NativeSprigTemplate"></a></p>
-<h2 id="func-nativesprigtemplate">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L104">NativeSprigTemplate</a></h2>
+<h2 id="func-nativesprigtemplate">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L105">NativeSprigTemplate</a></h2>
 <pre><code class="language-go">func NativeSprigTemplate() *jsonnet.NativeFunction
 </code></pre>
 <p>Uses sprig to process passed in config data and template. Sprig template guide: https://masterminds.github.io/sprig/ .</p>
 <p>Inputs: "config" "templateStr".</p>
 <p><a name="RegisterNativeFuncs"></a></p>
-<h2 id="func-registernativefuncs">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L23">RegisterNativeFuncs</a></h2>
+<h2 id="func-registernativefuncs">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L24">RegisterNativeFuncs</a></h2>
 <pre><code class="language-go">func RegisterNativeFuncs(jvm *jsonnet.VM)
 </code></pre>
-<p>Registers additional native functions in the jsonnet VM. These functions are used to extend the functionality of jsonnet. Adds on to functions part of the jsonnet stdlib: https://jsonnet.org/ref/stdlib.html</p>
+<p>Registers additional native functions in the jsonnet VM. These functions are used to extend the functionality of jsonnet. Adds on to functions part of the jsonnet standard lib: https://jsonnet.org/ref/stdlib.html</p>
 <p><a name="IPV4"></a></p>
 <h2 id="type-ipv4">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs_net.go#L98-L106">IPV4</a></h2>
 <p>An IPv4 address or subnet range.</p>

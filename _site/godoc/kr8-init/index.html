@@ -245,7 +245,7 @@
 <h2 id="func-generatelib">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/libs.go#L14">GenerateLib</a></h2>
 <pre><code class="language-go">func GenerateLib(fetch bool, dstDir string) error
 </code></pre>
-<p>Downloads a starter kr8 jsonnet lib from github. If fetch is true, downloads the repo in the /lib directory. If false, prints the git commands to run. Repo: https://github.com/ice-bergtech/kr8-libsonnet . return util.FetchRepoUrl("https://github.com/ice-bergtech/kr8-libsonnet", dstDir+"/kr8-lib", !fetch).</p>
+<p>Downloads a starter kr8+ jsonnet lib from github. If fetch is true, downloads the repo in the /lib directory. If false, prints the git commands to run. Repo: https://github.com/ice-bergtech/kr8-libsonnet . return util.FetchRepoUrl("https://github.com/ice-bergtech/kr8-libsonnet", dstDir+"/kr8-lib", !fetch).</p>
 <p><a name="GenerateReadme"></a></p>
 <h2 id="func-generatereadme">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/repo.go#L11">GenerateReadme</a></h2>
 <pre><code class="language-go">func GenerateReadme(dstDir string, cmdOptions Kr8InitOptions, clusterSpec kr8_types.Kr8ClusterSpec) error

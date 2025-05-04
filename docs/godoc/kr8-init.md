@@ -70,7 +70,7 @@ chart: generate a simple taskfile that handles vendoring the chart data
 func GenerateLib(fetch bool, dstDir string) error
 ```
 
-Downloads a starter kr8 jsonnet lib from github. If fetch is true, downloads the repo in the /lib directory. If false, prints the git commands to run. Repo: https://github.com/ice-bergtech/kr8-libsonnet . return util.FetchRepoUrl\("https://github.com/ice-bergtech/kr8-libsonnet", dstDir\+"/kr8\-lib", \!fetch\).
+Downloads a starter kr8\+ jsonnet lib from github. If fetch is true, downloads the repo in the /lib directory. If false, prints the git commands to run. Repo: https://github.com/ice-bergtech/kr8-libsonnet . return util.FetchRepoUrl\("https://github.com/ice-bergtech/kr8-libsonnet", dstDir\+"/kr8\-lib", \!fetch\).
 
 <a name="GenerateReadme"></a>
 ## func [GenerateReadme](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_init/repo.go#L11>)
