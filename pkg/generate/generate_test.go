@@ -52,16 +52,15 @@ func TestCalculateClusterComponentList(t *testing.T) {
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
-		clusterComponents         map[string]gjson.Result
-		filters                   util.PathFilterOptions
-		existingClusterComponents []string
-		want                      []string
+		clusterComponents map[string]gjson.Result
+		filters           util.PathFilterOptions
+		want              []string
 	}{
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := generate.CalculateClusterComponentList(tt.clusterComponents, tt.filters, tt.existingClusterComponents)
+			got := generate.CalculateClusterComponentList(tt.clusterComponents, tt.filters)
 			// TODO: update the condition below to compare got with tt.want.
 			if true {
 				t.Errorf("CalculateClusterComponentList() = %v, want %v", got, tt.want)
@@ -403,31 +402,17 @@ func TestGenProcessCluster(t *testing.T) {
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
-		clusterName         string
-		clusterdir          string
-		baseDir             string
-		generateDirOverride string
-		kr8Opts             types.Kr8Opts
-		clusterParamsFile   string
-		filters             util.PathFilterOptions
-		vmConfig            types.VMConfig
-		pool                *ants.Pool
-		logger              zerolog.Logger
-		wantErr             bool
+		input   generate.GenerateProcessRootconfig
+		pool    *ants.Pool
+		logger  zerolog.Logger
+		wantErr bool
 	}{
 		// TODO: Add test cases.
 	}
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
 			gotErr := generate.GenProcessCluster(
-				testCase.clusterName,
-				testCase.clusterdir,
-				testCase.baseDir,
-				testCase.generateDirOverride,
-				testCase.kr8Opts,
-				testCase.clusterParamsFile,
-				testCase.filters,
-				testCase.vmConfig,
+				testCase.input,
 				testCase.pool,
 				testCase.logger,
 			)
@@ -474,6 +459,7 @@ func TestGatherClusterConfig(t *testing.T) {
 				testCase.generateDirOverride,
 				testCase.filters,
 				testCase.clusterParamsFile,
+				false,
 				testCase.logger,
 			)
 			if gotErr != nil {
