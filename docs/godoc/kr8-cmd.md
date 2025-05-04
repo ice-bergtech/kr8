@@ -608,7 +608,7 @@ func FormatFile(filename string) error
 Read, format, and write back a file. github.com/google/go\-jsonnet/formatter is used to format files.
 
 <a name="GenerateCmdClusterListBuilder"></a>
-## func [GenerateCmdClusterListBuilder](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L104>)
+## func [GenerateCmdClusterListBuilder](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L117>)
 
 ```go
 func GenerateCmdClusterListBuilder(allClusterParams map[string]string) []string

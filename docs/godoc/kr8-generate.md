@@ -26,7 +26,7 @@ The package prepares a Jsonnet VM and loads the necessary libraries and extVars.
 - [func CompileClusterConfiguration\(clusterName, clusterDir string, kr8Opts types.Kr8Opts, vmConfig types.VMConfig, generateDirOverride string, logger zerolog.Logger\) \(\*kr8\_types.Kr8ClusterSpec, map\[string\]gjson.Result, error\)](<#CompileClusterConfiguration>)
 - [func CreateClusterGenerateDirs\(kr8Spec kr8\_types.Kr8ClusterSpec\) \(\[\]string, error\)](<#CreateClusterGenerateDirs>)
 - [func GatherClusterConfig\(clusterName, clusterDir string, kr8Opts types.Kr8Opts, vmConfig types.VMConfig, generateDirOverride string, filters util.PathFilterOptions, clusterParamsFile string, noop bool, logger zerolog.Logger\) \(\*kr8\_types.Kr8ClusterSpec, \[\]string, string, error\)](<#GatherClusterConfig>)
-- [func GenProcessCluster\(clusterConfig GenerateProcessRootConfig, pool \*ants.Pool, logger zerolog.Logger\) error](<#GenProcessCluster>)
+- [func GenProcessCluster\(clusterConfig \*GenerateProcessRootConfig, pool \*ants.Pool, logger zerolog.Logger\) error](<#GenProcessCluster>)
 - [func GenProcessComponent\(vmConfig types.VMConfig, componentName string, kr8Spec kr8\_types.Kr8ClusterSpec, kr8Opts types.Kr8Opts, config string, allConfig \*SafeString, filters util.PathFilterOptions, paramsFile string, cache \*kr8\_cache.DeploymentCache, logger zerolog.Logger\) \(bool, \*kr8\_cache.ComponentCache, error\)](<#GenProcessComponent>)
 - [func GenerateIncludesFiles\(includesFiles \[\]kr8\_types.Kr8ComponentSpecIncludeObject, kr8Spec kr8\_types.Kr8ClusterSpec, kr8Opts types.Kr8Opts, config string, componentName string, compPath string, componentOutputDir string, jvm \*jsonnet.VM, logger zerolog.Logger\) \(map\[string\]bool, error\)](<#GenerateIncludesFiles>)
 - [func GetAllClusterParams\(clusterDir string, vmConfig types.VMConfig, jvm \*jsonnet.VM, logger zerolog.Logger\) error](<#GetAllClusterParams>)
@@ -124,7 +124,7 @@ Compiles configuration for each cluster. Creates and cleans output directories f
 ## func [GenProcessCluster](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L429-L433>)
 
 ```go
-func GenProcessCluster(clusterConfig GenerateProcessRootConfig, pool *ants.Pool, logger zerolog.Logger) error
+func GenProcessCluster(clusterConfig *GenerateProcessRootConfig, pool *ants.Pool, logger zerolog.Logger) error
 ```
 
 The root function for generating a cluster. Prepares and builds the cluster config. Build and processes the list of components.

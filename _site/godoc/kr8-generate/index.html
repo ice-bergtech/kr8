@@ -256,7 +256,7 @@
 <li><a href="#CompileClusterConfiguration">func CompileClusterConfiguration(clusterName, clusterDir string, kr8Opts types.Kr8Opts, vmConfig types.VMConfig, generateDirOverride string, logger zerolog.Logger) (*kr8_types.Kr8ClusterSpec, map[string]gjson.Result, error)</a></li>
 <li><a href="#CreateClusterGenerateDirs">func CreateClusterGenerateDirs(kr8Spec kr8_types.Kr8ClusterSpec) ([]string, error)</a></li>
 <li><a href="#GatherClusterConfig">func GatherClusterConfig(clusterName, clusterDir string, kr8Opts types.Kr8Opts, vmConfig types.VMConfig, generateDirOverride string, filters util.PathFilterOptions, clusterParamsFile string, noop bool, logger zerolog.Logger) (*kr8_types.Kr8ClusterSpec, []string, string, error)</a></li>
-<li><a href="#GenProcessCluster">func GenProcessCluster(clusterConfig GenerateProcessRootConfig, pool *ants.Pool, logger zerolog.Logger) error</a></li>
+<li><a href="#GenProcessCluster">func GenProcessCluster(clusterConfig *GenerateProcessRootConfig, pool *ants.Pool, logger zerolog.Logger) error</a></li>
 <li><a href="#GenProcessComponent">func GenProcessComponent(vmConfig types.VMConfig, componentName string, kr8Spec kr8_types.Kr8ClusterSpec, kr8Opts types.Kr8Opts, config string, allConfig *SafeString, filters util.PathFilterOptions, paramsFile string, cache *kr8_cache.DeploymentCache, logger zerolog.Logger) (bool, *kr8_cache.ComponentCache, error)</a></li>
 <li><a href="#GenerateIncludesFiles">func GenerateIncludesFiles(includesFiles []kr8_types.Kr8ComponentSpecIncludeObject, kr8Spec kr8_types.Kr8ClusterSpec, kr8Opts types.Kr8Opts, config string, componentName string, compPath string, componentOutputDir string, jvm *jsonnet.VM, logger zerolog.Logger) (map[string]bool, error)</a></li>
 <li><a href="#GetAllClusterParams">func GetAllClusterParams(clusterDir string, vmConfig types.VMConfig, jvm *jsonnet.VM, logger zerolog.Logger) error</a></li>
@@ -319,7 +319,7 @@
 <p>Compiles configuration for each cluster. Creates and cleans output directories for generated cluster components. Uses the filter to determine which components to process. Renders the cluster-level configuration for each component.</p>
 <p><a name="GenProcessCluster"></a></p>
 <h2 id="func-genprocesscluster">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/generate.go#L429-L433">GenProcessCluster</a></h2>
-<pre><code class="language-go">func GenProcessCluster(clusterConfig GenerateProcessRootConfig, pool *ants.Pool, logger zerolog.Logger) error
+<pre><code class="language-go">func GenProcessCluster(clusterConfig *GenerateProcessRootConfig, pool *ants.Pool, logger zerolog.Logger) error
 </code></pre>
 <p>The root function for generating a cluster. Prepares and builds the cluster config. Build and processes the list of components.</p>
 <p><a name="GenProcessComponent"></a></p>
