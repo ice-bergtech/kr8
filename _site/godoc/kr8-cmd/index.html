@@ -138,6 +138,10 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#func-execute">func Execute</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-formatfile">func FormatFile</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#func-generatecmdclusterlistbuilder">func GenerateCmdClusterListBuilder</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#func-generatecommand">func GenerateCommand</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#func-initconfig">func InitConfig</a>
@@ -214,6 +218,8 @@
 <li><a href="#variables">Variables</a></li>
 <li><a href="#ConfigureLogger">func ConfigureLogger(debug bool)</a></li>
 <li><a href="#Execute">func Execute(ver string)</a></li>
+<li><a href="#FormatFile">func FormatFile(filename string) error</a></li>
+<li><a href="#GenerateCmdClusterListBuilder">func GenerateCmdClusterListBuilder(allClusterParams map[string]string) []string</a></li>
 <li><a href="#GenerateCommand">func GenerateCommand(cmd *cobra.Command, args []string)</a></li>
 <li><a href="#InitConfig">func InitConfig()</a></li>
 <li><a href="#ProfilingFinalizer">func ProfilingFinalizer()</a></li>
@@ -233,75 +239,78 @@
 
     Args: cobra.MinimumNArgs(0),
     Run: func(cmd *cobra.Command, args []string) {
-        // First get a list of all files in the base directory and subdirectories. Ignore .git directories.
-        var fileList []string
-        err := filepath.Walk(RootConfig.BaseDir, func(path string, info fs.FileInfo, err error) error {
-            if info.IsDir() {
-                if info.Name() == &quot;.git&quot; {
-                    return filepath.SkipDir
-                }
-
-                return nil
-            }
-            fileList = append(fileList, path)
-
-            return nil
-        })
-        util.FatalErrorCheck(&quot;Error walking the path &quot;+RootConfig.BaseDir, err, log.Logger)
-
-        fileList = util.Filter(fileList, func(s string) bool {
-            var result bool
-            for _, f := range strings.Split(cmdFormatFlags.Includes, &quot;,&quot;) {
-                t, _ := filepath.Match(f, s)
-                if t {
-                    return t
-                }
-                result = result || t
-            }
-
-            return result
-        })
-
-        fileList = util.Filter(fileList, func(s string) bool {
-            var result bool
-            for _, f := range strings.Split(cmdFormatFlags.Excludes, &quot;,&quot;) {
-                t, _ := filepath.Match(f, s)
-                if t {
-                    return !t
-                }
-                result = result || t
-            }
-
-            return !result
-        })
-        log.Debug().Msg(&quot;Filtered file list: &quot; + fmt.Sprintf(&quot;%v&quot;, fileList))
         log.Debug().Msg(&quot;Formatting files...&quot;)
 
-        var waitGroup sync.WaitGroup
+        clusterPaths := formatClusterFiles()
+
+        kr8Opts := types.Kr8Opts{
+            BaseDir:      RootConfig.BaseDir,
+            ComponentDir: RootConfig.ComponentDir,
+            ClusterDir:   RootConfig.ClusterDir,
+        }
+
         parallel, err := cmd.Flags().GetInt(&quot;parallel&quot;)
         util.FatalErrorCheck(&quot;Error getting parallel flag&quot;, err, log.Logger)
-        log.Debug().Msg(&quot;Parallel set to &quot; + strconv.Itoa(parallel))
-        ants_file, _ := ants.NewPool(parallel)
-        for _, filename := range fileList {
-            waitGroup.Add(1)
-            _ = ants_file.Submit(func() {
-                defer waitGroup.Done()
-                var bytes []byte
-                bytes, err = os.ReadFile(filepath.Clean(filename))
-                output, err := formatter.Format(filename, string(bytes), util.GetDefaultFormatOptions())
-                if err != nil {
-                    fmt.Fprintln(os.Stderr, err.Error())
-
-                    return
-                }
-                err = os.WriteFile(filepath.Clean(filename), []byte(output), 0600)
-                if err != nil {
-                    fmt.Fprintln(os.Stderr, err.Error())
-
-                    return
-                }
-            })
+        if parallel == -1 {
+            parallel = runtime.GOMAXPROCS(0)
         }
+        log.Debug().Msg(&quot;Parallel set to &quot; + strconv.Itoa(parallel))
+
+        var waitGroup sync.WaitGroup
+        ants_file, _ := ants.NewPool(parallel)
+
+        for clusterName, clusterDir := range clusterPaths {
+            logger := log.With().Str(&quot;cluster&quot;, clusterName).Logger()
+
+            _, clusterComponents, err := generate.CompileClusterConfiguration(
+                clusterName,
+                clusterDir,
+                kr8Opts,
+                RootConfig.VMConfig,
+                &quot;&quot;,
+                logger,
+            )
+            util.FatalErrorCheck(&quot;issue building cluster config&quot;, err, logger)
+
+            compList := generate.CalculateClusterComponentList(clusterComponents, cmdFormatFlags)
+
+            for _, component := range compList {
+                subLogger := logger.With().Str(&quot;component&quot;, component).Logger()
+                waitGroup.Add(1)
+                _ = ants_file.Submit(func() {
+                    defer waitGroup.Done()
+                    path, ok := clusterComponents[component].Map()[&quot;Path&quot;]
+                    if !ok || !path.Exists() {
+                        subLogger.Error().Msg(&quot;issue getting component path&quot;)
+                    }
+                    err := FormatFile(path.String())
+                    if util.LogErrorIfCheck(&quot;issue formatting file&quot;, err, subLogger) != nil {
+                        return
+                    }
+
+                    compSpec, err := kr8_types.CreateComponentSpec(gjson.Get(
+                        clusterComponents[component].Raw,
+                        component+&quot;.kr8_spec&quot;,
+                    ), logger)
+                    if util.LogErrorIfCheck(&quot;Error creating component spec&quot;, err, logger) != nil {
+                        return
+                    }
+
+                    for _, includes := range compSpec.Includes {
+                        ext := filepath.Ext(includes.File)
+                        if ext == &quot;.jsonnet&quot; || ext == &quot;.libsonnet&quot; {
+                            err = FormatFile(includes.File)
+                            if err != nil {
+                                logger.Error().Msg(&quot;issue formatting file&quot;)
+                            } else {
+                                logger.Info().Str(&quot;file&quot;, includes.File).Msg(&quot;formatted&quot;)
+                            }
+                        }
+                    }
+                })
+            }
+        }
+
         waitGroup.Wait()
     },
 }
@@ -770,6 +779,14 @@ and initialize a git repo so you can get started`,
 <pre><code class="language-go">func Execute(ver string)
 </code></pre>
 <p>Execute adds all child commands to the root command sets flags appropriately. This is called by main.main(). It only needs to happen once to the rootCmd.</p>
+<p><a name="FormatFile"></a></p>
+<h2 id="func-formatfile">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/format.go#L40">FormatFile</a></h2>
+<pre><code class="language-go">func FormatFile(filename string) error
+</code></pre>
+<p><a name="GenerateCmdClusterListBuilder"></a></p>
+<h2 id="func-generatecmdclusterlistbuilder">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L105">GenerateCmdClusterListBuilder</a></h2>
+<pre><code class="language-go">func GenerateCmdClusterListBuilder(allClusterParams map[string]string) []string
+</code></pre>
 <p><a name="GenerateCommand"></a></p>
 <h2 id="func-generatecommand">func <a href="https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L69">GenerateCommand</a></h2>
 <pre><code class="language-go">func GenerateCommand(cmd *cobra.Command, args []string)
