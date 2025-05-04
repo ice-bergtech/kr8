@@ -51,6 +51,29 @@ func FormatFile(filename string) error {
 	return os.WriteFile(filepath.Clean(filename), []byte(output), 0600)
 }
 
+// Based on command parameters, builds a list of cluster files that are formatted.
+func formatClusterFiles() map[string]string {
+	// First get a list of all files in the base directory and subdirectories. Ignore .git directories.
+	log.Debug().Msg("Formatting cluster configuration files...")
+
+	allClusterFiles, err := util.GetClusterFilenames(RootConfig.BaseDir)
+	util.FatalErrorCheck("issue finding cluster files", err, log.Logger)
+
+	clusterPaths := make(map[string]string, len(allClusterFiles))
+
+	for _, cluster := range allClusterFiles {
+		err := FormatFile(filepath.Join(cluster.Path, "cluster.jsonnet"))
+		if err != nil {
+			log.Error().Str(cluster.Name, cluster.Path).Msg("issue formatting file")
+		} else {
+			log.Info().Str(cluster.Name, cluster.Path).Msg("formatted")
+			clusterPaths[cluster.Name] = cluster.Path
+		}
+	}
+
+	return clusterPaths
+}
+
 var FormatCmd = &cobra.Command{
 	Use:   "format [flags]",
 	Short: "Format jsonnet files",
