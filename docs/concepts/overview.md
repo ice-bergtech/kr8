@@ -9,7 +9,7 @@ A deployment consists of 2 parts:
   - [clusters](./clusters.md) - a deployment environment, organized as a tree of configuration
 
 The relationship between components and clusters are simple: components are installed on clusters.
-A complete deployment with mutliplte clusters has:
+A complete deployment with multiple clusters has:
 
 * components that are installed on all clusters (auth, cert management, secrets, monitoring)
 * components that are only installed on _some_ clusters (services, hardware dependent workloads)

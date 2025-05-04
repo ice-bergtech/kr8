@@ -80,7 +80,7 @@ func retrieveDepends(info *debug.BuildInfo) []string {
 var VersionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Return the current version of kr8+",
-	Long:  `return the current version of kr8+`,
+	Long:  `Return the current version of kr8+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(RootCmd.Use + "+ Version: " + version)
 		info, ok := debug.ReadBuildInfo()

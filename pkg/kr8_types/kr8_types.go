@@ -24,7 +24,7 @@ type Kr8Cluster struct {
 }
 
 // The specification for a clusters.jsonnet file.
-// This describes configuration for a cluster that kr8 should process.
+// This describes configuration for a cluster that kr8+ should process.
 type Kr8ClusterJsonnet struct {
 	// kr8+ configuration for how to process the cluster
 	ClusterSpec Kr8ClusterSpec `json:"_kr8_spec"`
@@ -42,7 +42,7 @@ type Kr8ClusterComponentRef struct {
 }
 
 // The specification for how to process a cluster.
-// This is used in the cluster jsonnet file to configure how kr8 should process the cluster.
+// This is used in the cluster jsonnet file to configure how kr8+ should process the cluster.
 type Kr8ClusterSpec struct {
 	// A jsonnet function that each output entry is processed through. Default `function(input) input`
 	PostProcessor string `json:"postprocessor,omitempty" jsonschema:"default=function(input) input"`
@@ -52,9 +52,9 @@ type Kr8ClusterSpec struct {
 	GenerateShortNames bool `json:"generate_short_names,omitempty" jsonschema:"default=false"`
 	// If true, we prune component parameters
 	PruneParams bool `json:"prune_params,omitempty" jsonschema:"default=false"`
-	// If true, kr8 will store and reference a cache file for the cluster.
+	// If true, kr8+ will store and reference a cache file for the cluster.
 	EnableCache bool `json:"cache_enable,omitempty" jsonschema:"default=false"`
-	// If true, kr8 will compress the cache in a gzip file instead of raw json.
+	// If true, kr8+ will compress the cache in a gzip file instead of raw json.
 	CompressCache bool `json:"cache_compress,omitempty" jsonschema:"default=true"`
 	// The name of the cluster
 	// Not read from config.
@@ -115,7 +115,7 @@ func CreateClusterSpec(
 // It contains all the configuration and variables used to generate component resources.
 // This configuration is often modified from the cluster config to add cluster-specific configuration.
 type Kr8ComponentJsonnet struct {
-	// Component-specific configuration for how kr8 should process the component (required)
+	// Component-specific configuration for how kr8+ should process the component (required)
 	Kr8Spec Kr8ComponentSpec `json:"kr8_spec"`
 	// The default namespace to deploy the component to
 	Namespace string `json:"namespace"`
@@ -126,7 +126,7 @@ type Kr8ComponentJsonnet struct {
 }
 
 // The kr8_spec object in a cluster config file.
-// This configures how kr8 processes the component.
+// This configures how kr8+ processes the component.
 type Kr8ComponentSpec struct {
 	// If true, includes the parameters of the current cluster when generating this component
 	Kr8_allParams bool `json:"enable_kr8_allparams,omitempty"`
@@ -214,10 +214,10 @@ func CreateComponentSpec(spec gjson.Result, logger zerolog.Logger) (Kr8Component
 
 // Map of external files to load into jsonnet vm as external variables.
 // Keys are the variable names, values are the paths to the files to load as strings into the jsonnet vm.
-// To reference the variable in jsonnet code, use std.extvar("variable_name").
+// To reference the variable in jsonnet code, use std.extVar("variable_name").
 type ExtFileVar map[string]string
 
-// An includes object which configures how kr8 includes an object.
+// An includes object which configures how kr8+ includes an object.
 // It allows configuring the included file's destination directory and file name.
 // The input files are processed differently depending on the filetype.
 type Kr8ComponentSpecIncludeObject struct {

@@ -16,39 +16,39 @@ func init() {
 	RootCmd.AddCommand(InitCmd)
 	InitCmd.PersistentFlags().BoolVarP(&cmdInitFlags.Interactive,
 		"interactive", "i", false,
-		"Initialize a resource interactivly")
+		"initialize a resource interactively")
 
 	InitCmd.AddCommand(InitRepoCmd)
 	InitRepoCmd.PersistentFlags().StringVar(&cmdInitFlags.InitUrl,
 		"url", "",
-		"Source of skeleton directory to create repo from")
+		"source of skeleton directory to create repo from")
 	InitRepoCmd.Flags().StringVarP(&cmdInitFlags.ClusterName,
 		"name", "o", "cluster-tpl",
-		"Cluster name")
+		"cluster name")
 	InitRepoCmd.PersistentFlags().BoolVarP(&cmdInitFlags.Fetch,
 		"fetch", "f", false,
-		"Fetch remote resources")
+		"fetch remote resources")
 
 	InitCmd.AddCommand(InitClusterCmd)
 	InitClusterCmd.Flags().StringVarP(&cmdInitFlags.ClusterName,
 		"name", "o", "cluster-tpl",
-		"Cluster name")
+		"cluster name")
 
 	InitCmd.AddCommand(InitComponentCmd)
 	InitComponentCmd.Flags().StringVarP(&cmdInitFlags.ComponentName,
 		"name", "o", "component-tpl",
-		"Component name")
+		"component name")
 	InitComponentCmd.Flags().StringVarP(&cmdInitFlags.ComponentType,
 		"type", "t", "jsonnet",
-		"Component type, one of: [`jsonnet`, `yml`, `chart`]")
+		"component type, one of: [`jsonnet`, `yml`, `chart`]")
 }
 
 // InitCmd represents the command.
 // Various subcommands are available to initialize different components of kr8.
 var InitCmd = &cobra.Command{
 	Use:   "init",
-	Short: "Initialize kr8 config repos, components and clusters",
-	Long: `kr8 requires specific directories and exists for its config to work.
+	Short: "Initialize kr8+ config repos, components and clusters",
+	Long: `kr8+ requires specific directories and exists for its config to work.
 This init command helps in creating directory structure for repos, clusters and 
 components`,
 }
@@ -112,7 +112,7 @@ var InitClusterCmd = &cobra.Command{
 	},
 }
 
-// Initializes a new kr8 configuration repository
+// Initializes a new kr8+ configuration repository
 //
 // Directory tree:
 //   - components/
@@ -122,15 +122,15 @@ var InitClusterCmd = &cobra.Command{
 var InitRepoCmd = &cobra.Command{
 	Use:   "repo [flags] dir",
 	Args:  cobra.MinimumNArgs(1),
-	Short: "Initialize a new kr8 config repo",
-	Long: `Initialize a new kr8 config repo by downloading the kr8 config skeleton repo
+	Short: "Initialize a new kr8+ config repo",
+	Long: `Initialize a new kr8+ config repo by downloading the kr8+ config skeleton repo
 and initialize a git repo so you can get started`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			log.Fatal().Msg("Error: no directory specified")
 		}
 		outDir := args[len(args)-1]
-		log.Debug().Msg("Initializing kr8 config repo in " + outDir)
+		log.Debug().Msg("Initializing kr8+ config repo in " + outDir)
 		if cmdInitFlags.InitUrl != "" {
 			util.FatalErrorCheck(
 				"Issue fetching repo",
@@ -147,7 +147,7 @@ and initialize a git repo so you can get started`,
 			ComponentName: "example-component",
 			ComponentType: "jsonnet",
 			Interactive:   false,
-			Fetch:         false,
+			Fetch:         cmdInitFlags.Fetch,
 		}
 		clusterOptions := kr8_types.Kr8ClusterSpec{
 			Name:               cmdInitFlags.ClusterName,
@@ -172,7 +172,7 @@ and initialize a git repo so you can get started`,
 		)
 		util.FatalErrorCheck(
 			"Issue creating lib folder",
-			kr8init.GenerateLib(cmdInitFlags.Fetch, outDir+"/lib"),
+			kr8init.GenerateLib(cmdInitOptions.Fetch, outDir+"/lib"),
 			log.Logger,
 		)
 		util.FatalErrorCheck(

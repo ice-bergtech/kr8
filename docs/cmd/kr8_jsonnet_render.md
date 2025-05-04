@@ -16,25 +16,25 @@ kr8 jsonnet render [flags] file [file ...]
   -C, --cluster string         cluster to render params for
   -p, --clusterparams string   provide cluster params as single file - can be combined with --cluster to override cluster
   -c, --component string       component to render params for
-  -F, --format string          Output format: json, yaml, stream (default "json")
+  -F, --format string          output format: json, yaml, stream (default "json")
   -h, --help                   help for render
-      --prune                  Prune removes null and empty objects from ingested jsonnet files (default true)
+      --prune                  removes null and empty objects from ingested jsonnet files (default true)
 ```
 
 ### Options inherited from parent commands
 
 ```
-  -B, --base string            kr8 config base directory (default "./")
-  -D, --clusterdir string      kr8 cluster directory
-      --color                  enable colorized output. Set to false to disable (default true)
-  -d, --componentdir string    kr8 component directory
-      --config string          A config file with kr8 configuration
-      --debug                  log more information about what kr8 is doing. Overrides --loglevel
-      --ext-str-file strings   Set jsonnet extvar from file contents
-  -J, --jpath stringArray      Directories to add to jsonnet include path. Repeat arg for multiple directories
-  -L, --loglevel string        set log level (default "info")
-      --parallel int           parallelism - defaults to runtime.GOMAXPROCS(0) (default -1)
-      --profiledir string      Directory to write pprof profile data to
+  -B, --base string             kr8+ root configuration directory (default "./")
+  -D, --clusterdir string       kr8+ cluster directory
+      --color                   enable colorized output (default true)
+  -d, --componentdir string     kr8+ component directory
+      --config string           a single config file with kr8+ configuration
+      --debug                   log additional information about what kr8+ is doing. Overrides --loglevel
+      --ext-str-file key=file   set comma-separated jsonnet extVars from file contents in the format key=file
+  -J, --jpath stringArray       additional jsonnet library directories
+  -L, --loglevel string         set zerolog log level (default "info")
+      --parallel int            parallelism - defaults to runtime.GOMAXPROCS(0) (default -1)
+      --profiledir string       directory to write pprof profile data to
 ```
 
 ### SEE ALSO

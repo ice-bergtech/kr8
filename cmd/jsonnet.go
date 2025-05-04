@@ -39,7 +39,7 @@ func init() {
 	JsonnetCmd.AddCommand(JsonnetRenderCmd)
 	JsonnetRenderCmd.PersistentFlags().BoolVarP(&cmdFlagsJsonnet.Prune,
 		"prune", "", true,
-		"Prune removes null and empty objects from ingested jsonnet files")
+		"removes null and empty objects from ingested jsonnet files")
 	JsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.ClusterParams,
 		"clusterparams", "p", "",
 		"provide cluster params as single file - can be combined with --cluster to override cluster")
@@ -48,7 +48,7 @@ func init() {
 		"component to render params for")
 	JsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.Format,
 		"format", "F", "json",
-		"Output format: json, yaml, stream")
+		"output format: json, yaml, stream")
 	JsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.Cluster,
 		"cluster", "C", "",
 		"cluster to render params for")

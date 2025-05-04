@@ -99,27 +99,28 @@ Usage:
 
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
-  format      Format jsonnet files
+  format      Format jsonnet files in a directory.  Defaults to `./`
   generate    Generate components
-  get         Display one or many kr8 resources
+  get         Display one or many kr8+ resources
   help        Help about any command
-  init        Initialize kr8 config repos, components and clusters
+  init        Initialize kr8+ config repos, components and clusters
   jsonnet     Jsonnet utilities
   render      Render files
   version     Return the current version of kr8+
 
 Flags:
-  -B, --base string            kr8 config base directory (default "./")
-  -D, --clusterdir string      kr8 cluster directory
-      --color                  enable colorized output. Set to false to disable (default true)
-  -d, --componentdir string    kr8 component directory
-      --config string          A config file with kr8 configuration
-      --debug                  log more information about what kr8 is doing. Overrides --loglevel
-      --ext-str-file strings   Set jsonnet extvar from file contents
-  -h, --help                   help for kr8
-  -J, --jpath stringArray      Directories to add to jsonnet include path. Repeat arg for multiple directories
-  -L, --loglevel string        set log level (default "info")
-      --parallel int           parallelism - defaults to runtime.GOMAXPROCS(0) (default -1)
+  -B, --base string             kr8+ root configuration directory (default "./")
+  -D, --clusterdir string       kr8+ cluster directory (default "clusters")
+      --color                   enable colorized output (default true)
+  -d, --componentdir string     kr8+ component directory (default "components")
+      --config string           a single config file with kr8+ configuration
+      --debug                   log additional information about what kr8+ is doing. Overrides --loglevel
+      --ext-str-file key=file   set jsonnet extVars from file contents in the format key=file
+  -h, --help                    help for kr8
+  -J, --jpath stringArray       additional jsonnet library directories. Repeatable.
+  -L, --loglevel string         set zerolog log level (default "info")
+      --parallel int            parallelism - defaults to runtime.GOMAXPROCS(0) (default -1)
+      --profiledir string       directory to write pprof profile data to
 
 Use "kr8 [command] --help" for more information about a command.
 ```

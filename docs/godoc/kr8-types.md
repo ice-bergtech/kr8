@@ -51,7 +51,7 @@ Extract jsonnet lib paths from spec.
 <a name="ExtFileVar"></a>
 ## type [ExtFileVar](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L218>)
 
-Map of external files to load into jsonnet vm as external variables. Keys are the variable names, values are the paths to the files to load as strings into the jsonnet vm. To reference the variable in jsonnet code, use std.extvar\("variable\_name"\).
+Map of external files to load into jsonnet vm as external variables. Keys are the variable names, values are the paths to the files to load as strings into the jsonnet vm. To reference the variable in jsonnet code, use std.extVar\("variable\_name"\).
 
 ```go
 type ExtFileVar map[string]string
@@ -217,7 +217,7 @@ type Kr8ClusterComponentRef struct {
 <a name="Kr8ClusterJsonnet"></a>
 ## type [Kr8ClusterJsonnet](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L28-L35>)
 
-The specification for a clusters.jsonnet file. This describes configuration for a cluster that kr8 should process.
+The specification for a clusters.jsonnet file. This describes configuration for a cluster that kr8\+ should process.
 
 ```go
 type Kr8ClusterJsonnet struct {
@@ -233,7 +233,7 @@ type Kr8ClusterJsonnet struct {
 <a name="Kr8ClusterSpec"></a>
 ## type [Kr8ClusterSpec](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L46-L65>)
 
-The specification for how to process a cluster. This is used in the cluster jsonnet file to configure how kr8 should process the cluster.
+The specification for how to process a cluster. This is used in the cluster jsonnet file to configure how kr8\+ should process the cluster.
 
 ```go
 type Kr8ClusterSpec struct {
@@ -245,9 +245,9 @@ type Kr8ClusterSpec struct {
     GenerateShortNames bool `json:"generate_short_names,omitempty" jsonschema:"default=false"`
     // If true, we prune component parameters
     PruneParams bool `json:"prune_params,omitempty" jsonschema:"default=false"`
-    // If true, kr8 will store and reference a cache file for the cluster.
+    // If true, kr8+ will store and reference a cache file for the cluster.
     EnableCache bool `json:"cache_enable,omitempty" jsonschema:"default=false"`
-    // If true, kr8 will compress the cache in a gzip file instead of raw json.
+    // If true, kr8+ will compress the cache in a gzip file instead of raw json.
     CompressCache bool `json:"cache_compress,omitempty" jsonschema:"default=true"`
     // The name of the cluster
     // Not read from config.
@@ -274,7 +274,7 @@ The specification for component's params.jsonnet file. It contains all the confi
 
 ```go
 type Kr8ComponentJsonnet struct {
-    // Component-specific configuration for how kr8 should process the component (required)
+    // Component-specific configuration for how kr8+ should process the component (required)
     Kr8Spec Kr8ComponentSpec `json:"kr8_spec"`
     // The default namespace to deploy the component to
     Namespace string `json:"namespace"`
@@ -288,7 +288,7 @@ type Kr8ComponentJsonnet struct {
 <a name="Kr8ComponentSpec"></a>
 ## type [Kr8ComponentSpec](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L130-L145>)
 
-The kr8\_spec object in a cluster config file. This configures how kr8 processes the component.
+The kr8\_spec object in a cluster config file. This configures how kr8\+ processes the component.
 
 ```go
 type Kr8ComponentSpec struct {
@@ -321,7 +321,7 @@ Extracts a component spec from a jsonnet object.
 <a name="Kr8ComponentSpecIncludeObject"></a>
 ## type [Kr8ComponentSpecIncludeObject](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L223-L239>)
 
-An includes object which configures how kr8 includes an object. It allows configuring the included file's destination directory and file name. The input files are processed differently depending on the filetype.
+An includes object which configures how kr8\+ includes an object. It allows configuring the included file's destination directory and file name. The input files are processed differently depending on the filetype.
 
 ```go
 type Kr8ComponentSpecIncludeObject struct {

@@ -34,8 +34,8 @@ type CmdJsonnetOptions struct {
 
 // VMConfig describes configuration to initialize the Jsonnet VM with.
 type VMConfig struct {
-	// Jpaths is a list of paths to search for Jsonnet libraries (libsonnet files)
-	Jpaths []string `json:"jpath" yaml:"jpath"`
+	// JPaths is a list of paths to search for Jsonnet libraries (libsonnet files)
+	JPaths []string `json:"jpath" yaml:"jpath"`
 	// ExtVars is a list of external variables to pass to Jsonnet VM
 	ExtVars []string `json:"ext_str_file" yaml:"ext_str_files"`
 	// base directory for the project

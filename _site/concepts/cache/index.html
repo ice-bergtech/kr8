@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Iceberg Tech" />
       <link rel="shortcut icon" href="../../img/favicon.ico" />
-    <title>kr8 jsonnet render - kr8+ Docs</title>
+    <title>kr8+ Generate Caching - kr8+ Docs</title>
     <link rel="stylesheet" href="../../css/theme.css" />
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "kr8 jsonnet render";
-        var mkdocs_page_input_path = "cmd/kr8_jsonnet_render.md";
+        var mkdocs_page_name = "kr8+ Generate Caching";
+        var mkdocs_page_input_path = "concepts/cache.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -56,16 +56,30 @@
                 </li>
               </ul>
               <p class="caption"><span class="caption-text">Concepts</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/overview/">Overview</a>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/clusters/">Clusters</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../clusters/">Clusters</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/components/">Components</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../components/">Components</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/nativefuncs/">Native Funcs</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../nativefuncs/">Native Funcs</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/cache/">kr8+ Generate Caching</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">kr8+ Generate Caching</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#operation">Operation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-library-folders">1 Library Folders</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-cluster-config">2 Cluster Config</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-cluster-component-config-and-component-files">3 Cluster-Component Config and Component Files</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Json Schemas</span></p>
@@ -76,68 +90,54 @@
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Cmd Docs</span></p>
-              <ul class="current">
-                  <li class="toctree-l1"><a class="reference internal" href="../kr8/">kr8</a>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8/">kr8</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../kr8_version/">kr8 version</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8_version/">kr8 version</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../kr8_generate/">kr8 generate</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8_generate/">kr8 generate</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../kr8_format/">kr8 format</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8_format/">kr8 format</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" >kr8 get</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../kr8_get/">kr8 get</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_get/">kr8 get</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../kr8_get_clusters/">kr8 get clusters</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_get_clusters/">kr8 get clusters</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../kr8_get_components/">kr8 get components</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_get_components/">kr8 get components</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../kr8_get_params/">kr8 get params</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_get_params/">kr8 get params</a>
                 </li>
     </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" >kr8 init</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../kr8_init/">kr8 init</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_init/">kr8 init</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../kr8_init_cluster/">kr8 init cluster</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_init_cluster/">kr8 init cluster</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../kr8_init_component/">kr8 init component</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_init_component/">kr8 init component</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../kr8_init_repo/">kr8 init repo</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_init_repo/">kr8 init repo</a>
                 </li>
     </ul>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" >kr8 jsonnet</a>
-    <ul class="current">
-                <li class="toctree-l2"><a class="reference internal" href="../kr8_jsonnet/">kr8 jsonnet</a>
+                  <li class="toctree-l1"><a class="reference internal" >kr8 jsonnet</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_jsonnet/">kr8 jsonnet</a>
                 </li>
-                <li class="toctree-l2 current"><a class="reference internal current" href="#">kr8 jsonnet render</a>
-    <ul class="current">
-    <li class="toctree-l3"><a class="reference internal" href="#synopsis">Synopsis</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#options">Options</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#options-inherited-from-parent-commands">Options inherited from parent commands</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#see-also">SEE ALSO</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#auto-generated-by-spf13cobra-on-4-may-2025">Auto generated by spf13/cobra on 4-May-2025</a>
-    </li>
-        </ul>
-    </li>
-    </ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_jsonnet_render/">kr8 jsonnet render</a>
                 </li>
     </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" >kr8 render</a>
     <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../kr8_render/">kr8 render</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_render/">kr8 render</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../kr8_render_helm/">kr8 render helm</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_render_helm/">kr8 render helm</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../kr8_render_jsonnet/">kr8 render jsonnet</a>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd/kr8_render_jsonnet/">kr8 render jsonnet</a>
                 </li>
     </ul>
                   </li>
@@ -177,11 +177,10 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Cmd Docs</li>
-          <li class="breadcrumb-item">kr8 jsonnet</li>
-      <li class="breadcrumb-item active">kr8 jsonnet render</li>
+          <li class="breadcrumb-item">Concepts</li>
+      <li class="breadcrumb-item active">kr8+ Generate Caching</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/ice-bergtech/kr8/blob/main/docs/cmd/kr8_jsonnet_render.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/ice-bergtech/kr8/blob/main/docs/concepts/cache.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -189,44 +188,46 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h2 id="kr8-jsonnet-render">kr8 jsonnet render</h2>
-<p>Render a jsonnet file</p>
-<h3 id="synopsis">Synopsis</h3>
-<p>Render a jsonnet file to JSON or YAML</p>
-<pre><code>kr8 jsonnet render [flags] file [file ...]
+                <h1 id="kr8-generate-caching">kr8+ Generate Caching</h1>
+<h2 id="configuration">Configuration</h2>
+<p>Caching is configured at the cluster <code>_kr8_spec</code> level:</p>
+<pre><code class="language-yaml">_kr8_spec+: {
+    cache_enable: true, # default false
+    cache_compress: true, # default true
+}
 </code></pre>
-<h3 id="options">Options</h3>
-<pre><code>  -C, --cluster string         cluster to render params for
-  -p, --clusterparams string   provide cluster params as single file - can be combined with --cluster to override cluster
-  -c, --component string       component to render params for
-  -F, --format string          output format: json, yaml, stream (default &quot;json&quot;)
-  -h, --help                   help for render
-      --prune                  removes null and empty objects from ingested jsonnet files (default true)
-</code></pre>
-<h3 id="options-inherited-from-parent-commands">Options inherited from parent commands</h3>
-<pre><code>  -B, --base string             kr8+ root configuration directory (default &quot;./&quot;)
-  -D, --clusterdir string       kr8+ cluster directory
-      --color                   enable colorized output (default true)
-  -d, --componentdir string     kr8+ component directory
-      --config string           a single config file with kr8+ configuration
-      --debug                   log additional information about what kr8+ is doing. Overrides --loglevel
-      --ext-str-file key=file   set comma-separated jsonnet extVars from file contents in the format key=file
-  -J, --jpath stringArray       additional jsonnet library directories
-  -L, --loglevel string         set zerolog log level (default &quot;info&quot;)
-      --parallel int            parallelism - defaults to runtime.GOMAXPROCS(0) (default -1)
-      --profiledir string       directory to write pprof profile data to
-</code></pre>
-<h3 id="see-also">SEE ALSO</h3>
+<p>If <code>cache_enable</code> is true, the cache file <code>.kr8_cache</code> will be generated and stored within the cluster's <code>generated</code> folder.
+The cache is a json file containing base64-encoded information about the cluster.
+When <code>cache_compress</code> is enabled, it is stored gzip'd, <strong>greatly</strong> reducing size.</p>
+<p>The data structures for the caching functionality are described in <a href="../../godoc/kr8-cache/">godoc/kr8-cache.md</a>.</p>
+<h2 id="operation">Operation</h2>
+<p>Cache is created by storing kr8+ configuration in a json file on a per-cluster bases.</p>
+<p>The cache contains information about the cluster, components, and jsonnet library folders.
+Components and clusters will no be generated if their current configuration matches what is stored in the cache file.</p>
+<h3 id="1-library-folders">1 Library Folders</h3>
+<p>If list of jsonnet library folders or files change, all clusters will be generated.</p>
+<h3 id="2-cluster-config">2 Cluster Config</h3>
+<p>Next cluster-level configuration is checked.
+This includes:</p>
 <ul>
-<li><a href="../kr8_jsonnet/">kr8 jsonnet</a>  - Jsonnet utilities</li>
+<li>Cluster <code>_kr8_spec</code> object</li>
+<li>Cluster <code>_cluster</code> object</li>
 </ul>
-<h6 id="auto-generated-by-spf13cobra-on-4-may-2025">Auto generated by spf13/cobra on 4-May-2025</h6>
+<p>If either of these differ from the cache, all components for that cluster will be generated.</p>
+<h3 id="3-cluster-component-config-and-component-files">3 Cluster-Component Config and Component Files</h3>
+<p>Component-level caching is performed by:</p>
+<ul>
+<li>comparing the cluster-level component config for the component</li>
+<li>hashing all files in the component directory</li>
+</ul>
+<p>If the configuration of the component hasn't changed and the files within the component's direcrory haven't changed, then it is skipped.</p>
+<p>It does not account for files that a component references that are outside the component's root directory.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../kr8_jsonnet/" class="btn btn-neutral float-left" title="kr8 jsonnet"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../kr8_render/" class="btn btn-neutral float-right" title="kr8 render">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../nativefuncs/" class="btn btn-neutral float-left" title="Native Funcs"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../schemas/kr8-plus-cluster-schema.json" class="btn btn-neutral float-right" title="Cluster">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -253,10 +254,10 @@
         </span>
     
     
-      <span><a href="../kr8_jsonnet/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../nativefuncs/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../kr8_render/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../../schemas/kr8-plus-cluster-schema.json" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

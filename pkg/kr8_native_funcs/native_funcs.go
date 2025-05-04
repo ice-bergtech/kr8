@@ -19,7 +19,8 @@ import (
 
 // Registers additional native functions in the jsonnet VM.
 // These functions are used to extend the functionality of jsonnet.
-// Adds on to functions part of the jsonnet stdlib: https://jsonnet.org/ref/stdlib.html
+// Adds on to functions part of the jsonnet standard lib:
+// https://jsonnet.org/ref/stdlib.html
 func RegisterNativeFuncs(jvm *jsonnet.VM) {
 	listFuncs := []*jsonnet.NativeFunction{
 		// Process a helm template directory
@@ -67,12 +68,12 @@ func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction {
 		Func: func(args []interface{}) (interface{}, error) {
 			result := "help: " + strings.Join(
 				[]string{
-					"Print out kr8 native funcion names and parameters.",
+					"kr8+ Native Functions\n",
 					"Functions are called in the format:",
-					"`std.native('<function>')(<param1>, <param2>, ...)`",
+					"`std.native('<function>')(<param1>, <param2>, ...)`\n",
 				},
 				"\n",
-			) + "\n"
+			)
 			result += "\n" + "Available functions:\n"
 			result += "\n" + "------------------------\n"
 
@@ -90,7 +91,7 @@ func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction {
 	}
 }
 
-// Allows executing helm template to process a helm chart and make available to kr8 configuration.
+// Allows executing helm template to process a helm chart and make available to kr8+ configuration.
 //
 // Source: https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L23
 func NativeHelmTemplate() *jsonnet.NativeFunction {

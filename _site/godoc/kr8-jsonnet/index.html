@@ -65,6 +65,8 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../concepts/nativefuncs/">Native Funcs</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/cache/">kr8+ Generate Caching</a>
+                  </li>
               </ul>
               <p class="caption"><span class="caption-text">Json Schemas</span></p>
               <ul>
@@ -195,11 +197,11 @@
 <h2 id="index">Index</h2>
 <ul>
 <li><a href="#JsonnetRender">func JsonnetRender(cmdFlagsJsonnet types.CmdJsonnetOptions, filename string, vmConfig types.VMConfig, logger zerolog.Logger) error</a></li>
-<li><a href="#JsonnetRenderClusterParams">func JsonnetRenderClusterParams(vmconfig types.VMConfig, clusterName string, componentNames []string, clusterParams string, prune bool) (string, error)</a></li>
-<li><a href="#JsonnetRenderClusterParamsOnly">func JsonnetRenderClusterParamsOnly(vmconfig types.VMConfig, clusterName string, clusterParams string, prune bool) (string, error)</a></li>
+<li><a href="#JsonnetRenderClusterParams">func JsonnetRenderClusterParams(vmConfig types.VMConfig, clusterName string, componentNames []string, clusterParams string, prune bool) (string, error)</a></li>
+<li><a href="#JsonnetRenderClusterParamsOnly">func JsonnetRenderClusterParamsOnly(vmConfig types.VMConfig, clusterName string, clusterParams string, prune bool) (string, error)</a></li>
 <li><a href="#JsonnetRenderFiles">func JsonnetRenderFiles(vmConfig types.VMConfig, files []string, param string, prune bool, prepend string, source string) (string, error)</a></li>
-<li><a href="#JsonnetVM">func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error)</a></li>
-<li><a href="#MergeComponentDefaults">func MergeComponentDefaults(componentMap map[string]kr8_types.Kr8ClusterComponentRef, componentNames []string, vmconfig types.VMConfig) (string, error)</a></li>
+<li><a href="#JsonnetVM">func JsonnetVM(vmConfig types.VMConfig) (*jsonnet.VM, error)</a></li>
+<li><a href="#MergeComponentDefaults">func MergeComponentDefaults(componentMap map[string]kr8_types.Kr8ClusterComponentRef, componentNames []string, vmConfig types.VMConfig) (string, error)</a></li>
 </ul>
 <p><a name="JsonnetRender"></a></p>
 <h2 id="func-jsonnetrender">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L131-L136">JsonnetRender</a></h2>
@@ -208,12 +210,12 @@
 <p>Renders a jsonnet file with the specified options.</p>
 <p><a name="JsonnetRenderClusterParams"></a></p>
 <h2 id="func-jsonnetrenderclusterparams">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L209-L215">JsonnetRenderClusterParams</a></h2>
-<pre><code class="language-go">func JsonnetRenderClusterParams(vmconfig types.VMConfig, clusterName string, componentNames []string, clusterParams string, prune bool) (string, error)
+<pre><code class="language-go">func JsonnetRenderClusterParams(vmConfig types.VMConfig, clusterName string, componentNames []string, clusterParams string, prune bool) (string, error)
 </code></pre>
 <p>Render cluster params, merged with one or more component's parameters. Empty componentName list renders all component parameters.</p>
 <p><a name="JsonnetRenderClusterParamsOnly"></a></p>
 <h2 id="func-jsonnetrenderclusterparamsonly">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L186-L191">JsonnetRenderClusterParamsOnly</a></h2>
-<pre><code class="language-go">func JsonnetRenderClusterParamsOnly(vmconfig types.VMConfig, clusterName string, clusterParams string, prune bool) (string, error)
+<pre><code class="language-go">func JsonnetRenderClusterParamsOnly(vmConfig types.VMConfig, clusterName string, clusterParams string, prune bool) (string, error)
 </code></pre>
 <p>Only render cluster params (_cluster), without components.</p>
 <p><a name="JsonnetRenderFiles"></a></p>
@@ -223,18 +225,18 @@
 <p>Takes a list of jsonnet files and imports each one. Formats the string for jsonnet using "+". source is only used for error messages.</p>
 <p><a name="JsonnetVM"></a></p>
 <h2 id="func-jsonnetvm">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L49">JsonnetVM</a></h2>
-<pre><code class="language-go">func JsonnetVM(vmconfig types.VMConfig) (*jsonnet.VM, error)
+<pre><code class="language-go">func JsonnetVM(vmConfig types.VMConfig) (*jsonnet.VM, error)
 </code></pre>
 <p>Create a Jsonnet VM to run commands in. It:</p>
 <ul>
 <li>creates a jsonnet VM</li>
-<li>registers kr8 native functions</li>
+<li>registers kr8+ native functions</li>
 <li>Add jsonnet library directories</li>
 <li>loads external files into extVars</li>
 </ul>
 <p><a name="MergeComponentDefaults"></a></p>
 <h2 id="func-mergecomponentdefaults">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/jnetvm/jsonnet.go#L254-L258">MergeComponentDefaults</a></h2>
-<pre><code class="language-go">func MergeComponentDefaults(componentMap map[string]kr8_types.Kr8ClusterComponentRef, componentNames []string, vmconfig types.VMConfig) (string, error)
+<pre><code class="language-go">func MergeComponentDefaults(componentMap map[string]kr8_types.Kr8ClusterComponentRef, componentNames []string, vmConfig types.VMConfig) (string, error)
 </code></pre>
               
             </div>

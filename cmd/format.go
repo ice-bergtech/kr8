@@ -24,7 +24,7 @@ var cmdFormatOptions CmdFormatOptions
 func init() {
 	RootCmd.AddCommand(FormatCmd)
 	FormatCmd.Flags().BoolVarP(&cmdFormatOptions.Recursive, "recursive", "r", false,
-		"If true, will explore directories, formatting files.",
+		"recursively explore the parameter directories",
 	)
 }
 

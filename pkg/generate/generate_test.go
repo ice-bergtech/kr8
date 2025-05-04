@@ -402,7 +402,7 @@ func TestGenProcessCluster(t *testing.T) {
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
-		input   generate.GenerateProcessRootconfig
+		input   generate.GenerateProcessRootConfig
 		pool    *ants.Pool
 		logger  zerolog.Logger
 		wantErr bool
@@ -412,7 +412,7 @@ func TestGenProcessCluster(t *testing.T) {
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
 			gotErr := generate.GenProcessCluster(
-				testCase.input,
+				&testCase.input,
 				testCase.pool,
 				testCase.logger,
 			)

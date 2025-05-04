@@ -45,18 +45,18 @@ Package kr8\_native\_funcs provides native functions that jsonnet code can refer
 
 
 <a name="NativeHelmTemplate"></a>
-## func [NativeHelmTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L96>)
+## func [NativeHelmTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L97>)
 
 ```go
 func NativeHelmTemplate() *jsonnet.NativeFunction
 ```
 
-Allows executing helm template to process a helm chart and make available to kr8 configuration.
+Allows executing helm template to process a helm chart and make available to kr8\+ configuration.
 
 Source: https://github.com/grafana/tanka/blob/v0.27.1/pkg/helm/template.go#L23
 
 <a name="NativeHelp"></a>
-## func [NativeHelp](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L63>)
+## func [NativeHelp](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L64>)
 
 ```go
 func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction
@@ -276,7 +276,7 @@ Substitutes a regex pattern in a string with another string.
 Inputs: "regex", "src", "repl".
 
 <a name="NativeSprigTemplate"></a>
-## func [NativeSprigTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L104>)
+## func [NativeSprigTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L105>)
 
 ```go
 func NativeSprigTemplate() *jsonnet.NativeFunction
@@ -287,13 +287,13 @@ Uses sprig to process passed in config data and template. Sprig template guide: 
 Inputs: "config" "templateStr".
 
 <a name="RegisterNativeFuncs"></a>
-## func [RegisterNativeFuncs](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L23>)
+## func [RegisterNativeFuncs](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L24>)
 
 ```go
 func RegisterNativeFuncs(jvm *jsonnet.VM)
 ```
 
-Registers additional native functions in the jsonnet VM. These functions are used to extend the functionality of jsonnet. Adds on to functions part of the jsonnet stdlib: https://jsonnet.org/ref/stdlib.html
+Registers additional native functions in the jsonnet VM. These functions are used to extend the functionality of jsonnet. Adds on to functions part of the jsonnet standard lib: https://jsonnet.org/ref/stdlib.html
 
 <a name="IPV4"></a>
 ## type [IPV4](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs_net.go#L98-L106>)

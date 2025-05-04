@@ -65,6 +65,8 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../concepts/nativefuncs/">Native Funcs</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../concepts/cache/">kr8+ Generate Caching</a>
+                  </li>
               </ul>
               <p class="caption"><span class="caption-text">Json Schemas</span></p>
               <ul>
@@ -254,8 +256,8 @@
 <h2 id="type-vmconfig">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/types/types.go#L36-L43">VMConfig</a></h2>
 <p>VMConfig describes configuration to initialize the Jsonnet VM with.</p>
 <pre><code class="language-go">type VMConfig struct {
-    // Jpaths is a list of paths to search for Jsonnet libraries (libsonnet files)
-    Jpaths []string `json:&quot;jpath&quot; yaml:&quot;jpath&quot;`
+    // JPaths is a list of paths to search for Jsonnet libraries (libsonnet files)
+    JPaths []string `json:&quot;jpath&quot; yaml:&quot;jpath&quot;`
     // ExtVars is a list of external variables to pass to Jsonnet VM
     ExtVars []string `json:&quot;ext_str_file&quot; yaml:&quot;ext_str_files&quot;`
     // base directory for the project

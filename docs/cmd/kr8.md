@@ -9,26 +9,26 @@ An opinionated configuration management tool for Kubernetes Clusters powered by 
 ### Options
 
 ```
-  -B, --base string            kr8 config base directory (default "./")
-  -D, --clusterdir string      kr8 cluster directory
-      --color                  enable colorized output. Set to false to disable (default true)
-  -d, --componentdir string    kr8 component directory
-      --config string          A config file with kr8 configuration
-      --debug                  log more information about what kr8 is doing. Overrides --loglevel
-      --ext-str-file strings   Set jsonnet extvar from file contents
-  -h, --help                   help for kr8
-  -J, --jpath stringArray      Directories to add to jsonnet include path. Repeat arg for multiple directories
-  -L, --loglevel string        set log level (default "info")
-      --parallel int           parallelism - defaults to runtime.GOMAXPROCS(0) (default -1)
-      --profiledir string      Directory to write pprof profile data to
+  -B, --base string             kr8+ root configuration directory (default "./")
+  -D, --clusterdir string       kr8+ cluster directory
+      --color                   enable colorized output (default true)
+  -d, --componentdir string     kr8+ component directory
+      --config string           a single config file with kr8+ configuration
+      --debug                   log additional information about what kr8+ is doing. Overrides --loglevel
+      --ext-str-file key=file   set comma-separated jsonnet extVars from file contents in the format key=file
+  -h, --help                    help for kr8
+  -J, --jpath stringArray       additional jsonnet library directories
+  -L, --loglevel string         set zerolog log level (default "info")
+      --parallel int            parallelism - defaults to runtime.GOMAXPROCS(0) (default -1)
+      --profiledir string       directory to write pprof profile data to
 ```
 
 ### SEE ALSO
 
 * [kr8 format](kr8_format.md)	 - Format jsonnet files in a directory.  Defaults to `./`
 * [kr8 generate](kr8_generate.md)	 - Generate components
-* [kr8 get](kr8_get.md)	 - Display one or many kr8 resources
-* [kr8 init](kr8_init.md)	 - Initialize kr8 config repos, components and clusters
+* [kr8 get](kr8_get.md)	 - Display one or many kr8+ resources
+* [kr8 init](kr8_init.md)	 - Initialize kr8+ config repos, components and clusters
 * [kr8 jsonnet](kr8_jsonnet.md)	 - Jsonnet utilities
 * [kr8 render](kr8_render.md)	 - Render files
 * [kr8 version](kr8_version.md)	 - Return the current version of kr8+

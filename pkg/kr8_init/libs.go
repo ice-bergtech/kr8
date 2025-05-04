@@ -6,7 +6,7 @@ import (
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
-// Downloads a starter kr8 jsonnet lib from github.
+// Downloads a starter kr8+ jsonnet lib from github.
 // If fetch is true, downloads the repo in the /lib directory.
 // If false, prints the git commands to run.
 // Repo: https://github.com/ice-bergtech/kr8-libsonnet .
