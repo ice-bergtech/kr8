@@ -2,6 +2,7 @@
 package cmd
 
 import (
+	"io/fs"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -21,19 +22,21 @@ import (
 )
 
 // Contains the paths to include and exclude for a format command.
-var cmdFormatFlags util.PathFilterOptions
+type CmdFormatOptions struct {
+	Paths     []string
+	Recursive bool
+}
+
+var cmdFormatOptions CmdFormatOptions
 
 func init() {
 	RootCmd.AddCommand(FormatCmd)
-	FormatCmd.Flags().StringVarP(&cmdFormatFlags.Includes,
-		"clincludes", "i", "",
-		"filter included cluster by including clusters with matching cluster parameters -"+
-			" comma separate list of key/value conditions separated by = or ~ (for regex match)",
+	FormatCmd.Flags().StringSliceVarP(&cmdFormatOptions.Paths, "paths", "i", []string{"./"},
+		"A list of files and/or directories. Defaults to current directory."+
+			"If path is a directory, scans directories for files with matching extensions",
 	)
-	FormatCmd.Flags().StringVarP(&cmdFormatFlags.Excludes,
-		"clexcludes", "x", "",
-		"filter included cluster by excluding clusters with matching cluster parameters -"+
-			" comma separate list of key/value conditions separated by = or ~ (for regex match)",
+	FormatCmd.Flags().BoolVarP(&cmdFormatOptions.Recursive, "recursive", "r", false,
+		"If true, will explore directories, formatting files.",
 	)
 }
 
@@ -73,10 +76,25 @@ func formatClusterFiles() map[string]string {
 	return clusterPaths
 }
 
+func FormatDir(directory string, recursive bool) error {
+	err := filepath.WalkDir(RootConfig.BaseDir, func(path string, info fs.DirEntry, err error) error {
+		if info.IsDir() {
+			if recursive {
+				return FormatDir(path, recursive)
+			}
+		} else {
+
+			fileList = append(fileList, path)
+		}
+
+		return nil
+	})
+}
+
 var FormatCmd = &cobra.Command{
 	Use:   "format [flags]",
 	Short: "Format jsonnet files",
-	Long:  `Format jsonnet configuration files`,
+	Long:  `Format jsonnet and libsonnet configuration files`,
 
 	Args: cobra.MinimumNArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
