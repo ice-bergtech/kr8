@@ -96,6 +96,15 @@ tasks:
     cmds:
       - task: 02_build
       - ./kr8 generate -B examples {{.CLI_ARGS}}
+  
+  04_format-examples:
+    desc: Generate example clusters and components with kr8+
+    aliases:
+      - fmt
+      - format
+    cmds:
+      - task: 02_build
+      - ./kr8 format -B examples {{.CLI_ARGS}}
 
   04_profile-generate:
     desc: Capture profiling data from a kr8 generate of the examples.
