@@ -4,7 +4,7 @@ package main
 
 import "github.com/ice-bergtech/kr8/cmd"
 
-var version = "v0.1.1"
+var version = "v0.2.0"
 
 func main() {
 	cmd.Execute(version)
