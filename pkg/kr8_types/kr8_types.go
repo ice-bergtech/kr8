@@ -12,9 +12,14 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-// An object that stores variables that can be referenced by components.
+// An object that stores cluster-level variables that can be referenced by components.
 type Kr8Cluster struct {
-	Name string `json:"name"`
+	// The name of the cluster.
+	// Derived from folder containing the cluster.jsonnet.
+	// Not read from config.
+	Name string `json:"-"`
+	// Path to the cluster folder.
+	// Not read from config.
 	Path string `json:"-"`
 }
 
@@ -33,26 +38,27 @@ type Kr8ClusterJsonnet struct {
 // This is used in the cluster jsonnet file to reference components.
 type Kr8ClusterComponentRef struct {
 	// The path to a component folder that contains a params.jsonnet file
-	Path string `json:"path"`
+	Path string `json:"path" jsonschema:"example=components/service"`
 }
 
 // The specification for how to process a cluster.
 // This is used in the cluster jsonnet file to configure how kr8 should process the cluster.
 type Kr8ClusterSpec struct {
-	// The name of the cluster
-	Name string `json:"-"`
 	// A jsonnet function that each output entry is processed through. Default `function(input) input`
-	PostProcessor string `json:"postprocessor"`
+	PostProcessor string `json:"postprocessor,omitempty" jsonschema:"default=function(input) input"`
 	// The name of the root generate directory. Default `generated`
-	GenerateDir string `json:"generate_dir"`
+	GenerateDir string `json:"generate_dir,omitempty" jsonschema:"default=generated"`
 	// If true, we don't use the full file path to generate output file names
-	GenerateShortNames bool `json:"generate_short_names"`
+	GenerateShortNames bool `json:"generate_short_names,omitempty" jsonschema:"default=false"`
 	// If true, we prune component parameters
-	PruneParams bool `json:"prune_params"`
+	PruneParams bool `json:"prune_params,omitempty" jsonschema:"default=false"`
 	// If true, kr8 will store and reference a cache file for the cluster.
-	EnableCache bool `json:"cache_enable"`
+	EnableCache bool `json:"cache_enable,omitempty" jsonschema:"default=false"`
 	// If true, kr8 will compress the cache in a gzip file instead of raw json.
-	CompressCache bool `json:"cache_compress"`
+	CompressCache bool `json:"cache_compress,omitempty" jsonschema:"default=true"`
+	// The name of the cluster
+	// Not read from config.
+	Name string `json:"-"`
 	// Cluster output directory
 	// Not read from config.
 	ClusterOutputDir string `json:"-"`
@@ -86,13 +92,20 @@ func CreateClusterSpec(
 	clusterDir := filepath.Join(clGenerateDir, clusterName)
 	logger.Debug().Str("cluster", clusterName).Msg("output directory: " + clusterDir)
 
+	// Default to compressing the cache
+	compress := true
+	compressVar := spec.Get("cache_compress")
+	if compressVar.Exists() {
+		compress = compressVar.Bool()
+	}
+
 	return Kr8ClusterSpec{
 		PostProcessor:      spec.Get("postprocessor").String(),
 		GenerateDir:        clGenerateDir,
 		GenerateShortNames: spec.Get("generate_short_names").Bool(),
 		PruneParams:        spec.Get("prune_params").Bool(),
 		EnableCache:        spec.Get("cache_enable").Bool(),
-		CompressCache:      spec.Get("cache_compress").Bool(),
+		CompressCache:      compress,
 		ClusterOutputDir:   clGenerateDir + "/" + clusterName,
 		Name:               clusterName,
 	}, nil
@@ -109,24 +122,24 @@ type Kr8ComponentJsonnet struct {
 	// A unique name for the component
 	ReleaseName string `json:"release_name"`
 	// Component version string (optional)
-	Version string `json:"version"`
+	Version string `json:"version,omitempty"`
 }
 
 // The kr8_spec object in a cluster config file.
 // This configures how kr8 processes the component.
 type Kr8ComponentSpec struct {
 	// If true, includes the parameters of the current cluster when generating this component
-	Kr8_allParams bool `json:"enable_kr8_allparams"`
+	Kr8_allParams bool `json:"enable_kr8_allparams,omitempty"`
 	// If true, includes the parameters of all other clusters when generating this component
-	Kr8_allClusters bool `json:"enable_kr8_allclusters"`
+	Kr8_allClusters bool `json:"enable_kr8_allclusters,omitempty"`
 	// If false, all non-generated files present in the output directory are removed
-	DisableOutputDirClean bool `json:"disable_output_clean"`
+	DisableOutputDirClean bool `json:"disable_output_clean,omitempty"`
 	// If true, component will not be cached if cluster caching is enabled.
-	DisableCache bool `json:"disable_cache"`
+	DisableCache bool `json:"disable_cache,omitempty"`
 	// A list of filenames to include as jsonnet vm external vars
-	ExtFiles ExtFileVar `json:"extfiles"`
+	ExtFiles ExtFileVar `json:"extfiles,omitempty"`
 	// Additional jsonnet libs to the jsonnet vm, component-path scoped
-	JPaths []string `json:"jpaths"`
+	JPaths []string `json:"jpaths,omitempty"`
 	// A list of filenames to include and output as files
 	Includes Kr8ComponentSpecIncludes `json:"includes"`
 }
@@ -208,16 +221,20 @@ type ExtFileVar map[string]string
 // It allows configuring the included file's destination directory and file name.
 // The input files are processed differently depending on the filetype.
 type Kr8ComponentSpecIncludeObject struct {
-	// an input file to process
-	// accepted filetypes: .jsonnet .yml .yaml .tmpl .tpl
-	File string `json:"file"`
-	// handle alternate output directory for file
+	// An input file to process.
+	// Accepted filetypes: .jsonnet .yml .yaml .tmpl .tpl
+	File string `json:"file" jsonschema:"example=file.jsonnet,example=.yml,example=template.tpl"`
+	// Handle alternate output directory for file.
+	// Relative from component output dir.
 	DestDir string `json:"dest_dir,omitempty"`
-	// override destination file name
-	DestName string `json:"dest_name,omitempty"`
-	// override destination file extension
-	DestExt string `json:"dest_ext,omitempty"`
-	// Override config passed to the includes template processing
+	// Override destination file name
+	DestName string `json:"dest_name,omitempty" jsonschema:"default=File field"`
+	// Override destination file extension
+	// Useful for setting template file extension.
+	DestExt string `json:"dest_ext,omitempty" jsonschema:"example=md,example=txt,default=yml"`
+	// Override config passed to the includes template file processing.
+	// Useful for generating a list of includes in a loop:
+	// `[{File: f, Config: data[f]} for f in list]`
 	Config string `json:"config,omitempty"`
 }
 

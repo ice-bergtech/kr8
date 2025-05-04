@@ -6,18 +6,20 @@ package main
 import (
 	"errors"
 	"go/build"
-	"log"
 	"os"
 	"strings"
 
 	cmd "github.com/ice-bergtech/kr8/cmd"
+	"github.com/ice-bergtech/kr8/pkg/kr8_types"
+	"github.com/invopop/jsonschema"
 	"github.com/princjef/gomarkdoc"
 	"github.com/princjef/gomarkdoc/lang"
 	"github.com/princjef/gomarkdoc/logger"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra/doc"
 )
 
-func CobraDocs() error {
+func GenerateCobraDocs() error {
 	err := os.Mkdir("cmd", 0750)
 	if err != nil && !errors.Is(err, os.ErrExist) {
 		return err
@@ -30,7 +32,55 @@ func CobraDocs() error {
 	return nil
 }
 
-func CopyReadme() error {
+func GenerateReflector(pkg string, path string) (*jsonschema.Reflector, error) {
+	reflector := new(jsonschema.Reflector)
+	err := reflector.AddGoComments(pkg, path)
+
+	return reflector, err
+}
+
+func WriteSchema(filename string, schema *jsonschema.Schema) error {
+	outFile, err := schema.MarshalJSON()
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(filename, outFile, 0600)
+}
+
+// Generates jsonschema files for kr8+ resources.
+//
+//nolint:exhaustruct
+func GenerateKr8Schemas() error {
+	err := os.Mkdir("schemas", 0750)
+	if err != nil && !errors.Is(err, os.ErrExist) {
+		return err
+	}
+
+	reflector, err := GenerateReflector(
+		"github.com/ice-bergtech/kr8/pkg/kr8_types",
+		"../pkg/kr8_types",
+	)
+	if err != nil {
+		return err
+	}
+
+	reflector.AllowAdditionalProperties = true
+	schema := reflector.Reflect(&kr8_types.Kr8ClusterJsonnet{})
+
+	if err := WriteSchema("./schemas/kr8-plus-cluster-schema.json", schema); err != nil {
+		return err
+	}
+
+	schema = reflector.Reflect(&kr8_types.Kr8ComponentJsonnet{})
+
+	return WriteSchema("./schemas/kr8-plus-component-schema.json", schema)
+}
+
+// Copies various repo files into documentation directory.
+// Copies Readme, patching link paths.
+// Copies taskfile, for reference.
+func CopyRepoFiles() error {
 	destinationFile := "./README-repo.md"
 	iFile, err := os.ReadFile("../README.md")
 	if err != nil {
@@ -111,13 +161,16 @@ func GoMarkDoc() error {
 }
 
 func main() {
-	if err := CobraDocs(); err != nil {
-		log.Fatal(err)
+	if err := GenerateCobraDocs(); err != nil {
+		log.Fatal().Err(err).Send()
 	}
 	if err := GoMarkDoc(); err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Send()
 	}
-	if err := CopyReadme(); err != nil {
-		log.Fatal(err)
+	if err := CopyRepoFiles(); err != nil {
+		log.Fatal().Err(err).Send()
+	}
+	if err := GenerateKr8Schemas(); err != nil {
+		log.Fatal().Err(err).Send()
 	}
 }

@@ -66,6 +66,13 @@
                   <li class="toctree-l1"><a class="reference internal" href="../../concepts/nativefuncs/">Native Funcs</a>
                   </li>
               </ul>
+              <p class="caption"><span class="caption-text">Json Schemas</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../schemas/kr8-plus-cluster-schema.json">Cluster</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../schemas/kr8-plus-component-schema.json">Component</a>
+                  </li>
+              </ul>
               <p class="caption"><span class="caption-text">Cmd Docs</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../cmd/kr8/">kr8</a>
@@ -245,17 +252,17 @@
 <li><a href="#Kr8ComponentSpecIncludes.UnmarshalJSON">func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error</a></li>
 </ul>
 <p><a name="ExtractExtFiles"></a></p>
-<h2 id="func-extractextfiles">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L135">ExtractExtFiles</a></h2>
+<h2 id="func-extractextfiles">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L148">ExtractExtFiles</a></h2>
 <pre><code class="language-go">func ExtractExtFiles(spec gjson.Result) map[string]string
 </code></pre>
 <p>Extract jsonnet extVar definitions from spec.</p>
 <p><a name="ExtractJpaths"></a></p>
-<h2 id="func-extractjpaths">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L147">ExtractJpaths</a></h2>
+<h2 id="func-extractjpaths">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L160">ExtractJpaths</a></h2>
 <pre><code class="language-go">func ExtractJpaths(spec gjson.Result) []string
 </code></pre>
 <p>Extract jsonnet lib paths from spec.</p>
 <p><a name="ExtFileVar"></a></p>
-<h2 id="type-extfilevar">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L205">ExtFileVar</a></h2>
+<h2 id="type-extfilevar">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L218">ExtFileVar</a></h2>
 <p>Map of external files to load into jsonnet vm as external variables. Keys are the variable names, values are the paths to the files to load as strings into the jsonnet vm. To reference the variable in jsonnet code, use std.extvar("variable_name").</p>
 <pre><code class="language-go">type ExtFileVar map[string]string
 </code></pre>
@@ -364,23 +371,28 @@
 </code></pre>
 <p>Validates a set of options for converting a Kubernetes manifest to a Docker Compose file.</p>
 <p><a name="Kr8Cluster"></a></p>
-<h2 id="type-kr8cluster">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L16-L19">Kr8Cluster</a></h2>
-<p>An object that stores variables that can be referenced by components.</p>
+<h2 id="type-kr8cluster">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L16-L24">Kr8Cluster</a></h2>
+<p>An object that stores cluster-level variables that can be referenced by components.</p>
 <pre><code class="language-go">type Kr8Cluster struct {
-    Name string `json:&quot;name&quot;`
+    // The name of the cluster.
+    // Derived from folder containing the cluster.jsonnet.
+    // Not read from config.
+    Name string `json:&quot;-&quot;`
+    // Path to the cluster folder.
+    // Not read from config.
     Path string `json:&quot;-&quot;`
 }
 </code></pre>
 <p><a name="Kr8ClusterComponentRef"></a></p>
-<h2 id="type-kr8clustercomponentref">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L34-L37">Kr8ClusterComponentRef</a></h2>
+<h2 id="type-kr8clustercomponentref">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L39-L42">Kr8ClusterComponentRef</a></h2>
 <p>A reference to a component folder that contains a params.jsonnet file. This is used in the cluster jsonnet file to reference components.</p>
 <pre><code class="language-go">type Kr8ClusterComponentRef struct {
     // The path to a component folder that contains a params.jsonnet file
-    Path string `json:&quot;path&quot;`
+    Path string `json:&quot;path&quot; jsonschema:&quot;example=components/service&quot;`
 }
 </code></pre>
 <p><a name="Kr8ClusterJsonnet"></a></p>
-<h2 id="type-kr8clusterjsonnet">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L23-L30">Kr8ClusterJsonnet</a></h2>
+<h2 id="type-kr8clusterjsonnet">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L28-L35">Kr8ClusterJsonnet</a></h2>
 <p>The specification for a clusters.jsonnet file. This describes configuration for a cluster that kr8 should process.</p>
 <pre><code class="language-go">type Kr8ClusterJsonnet struct {
     // kr8+ configuration for how to process the cluster
@@ -392,35 +404,36 @@
 }
 </code></pre>
 <p><a name="Kr8ClusterSpec"></a></p>
-<h2 id="type-kr8clusterspec">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L41-L59">Kr8ClusterSpec</a></h2>
+<h2 id="type-kr8clusterspec">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L46-L65">Kr8ClusterSpec</a></h2>
 <p>The specification for how to process a cluster. This is used in the cluster jsonnet file to configure how kr8 should process the cluster.</p>
 <pre><code class="language-go">type Kr8ClusterSpec struct {
-    // The name of the cluster
-    Name string `json:&quot;-&quot;`
     // A jsonnet function that each output entry is processed through. Default `function(input) input`
-    PostProcessor string `json:&quot;postprocessor&quot;`
+    PostProcessor string `json:&quot;postprocessor,omitempty&quot; jsonschema:&quot;default=function(input) input&quot;`
     // The name of the root generate directory. Default `generated`
-    GenerateDir string `json:&quot;generate_dir&quot;`
+    GenerateDir string `json:&quot;generate_dir,omitempty&quot; jsonschema:&quot;default=generated&quot;`
     // If true, we don't use the full file path to generate output file names
-    GenerateShortNames bool `json:&quot;generate_short_names&quot;`
+    GenerateShortNames bool `json:&quot;generate_short_names,omitempty&quot; jsonschema:&quot;default=false&quot;`
     // If true, we prune component parameters
-    PruneParams bool `json:&quot;prune_params&quot;`
+    PruneParams bool `json:&quot;prune_params,omitempty&quot; jsonschema:&quot;default=false&quot;`
     // If true, kr8 will store and reference a cache file for the cluster.
-    EnableCache bool `json:&quot;cache_enable&quot;`
+    EnableCache bool `json:&quot;cache_enable,omitempty&quot; jsonschema:&quot;default=false&quot;`
     // If true, kr8 will compress the cache in a gzip file instead of raw json.
-    CompressCache bool `json:&quot;cache_compress&quot;`
+    CompressCache bool `json:&quot;cache_compress,omitempty&quot; jsonschema:&quot;default=true&quot;`
+    // The name of the cluster
+    // Not read from config.
+    Name string `json:&quot;-&quot;`
     // Cluster output directory
     // Not read from config.
     ClusterOutputDir string `json:&quot;-&quot;`
 }
 </code></pre>
 <p><a name="CreateClusterSpec"></a></p>
-<h3 id="func-createclusterspec">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L63-L69">CreateClusterSpec</a></h3>
+<h3 id="func-createclusterspec">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L69-L75">CreateClusterSpec</a></h3>
 <pre><code class="language-go">func CreateClusterSpec(clusterName string, spec gjson.Result, kr8Opts types.Kr8Opts, genDirOverride string, logger zerolog.Logger) (Kr8ClusterSpec, error)
 </code></pre>
 <p>This function creates a Kr8ClusterSpec from passed params. If genDirOverride is empty, the value of generate_dir from the spec is used.</p>
 <p><a name="Kr8ComponentJsonnet"></a></p>
-<h2 id="type-kr8componentjsonnet">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L104-L113">Kr8ComponentJsonnet</a></h2>
+<h2 id="type-kr8componentjsonnet">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L117-L126">Kr8ComponentJsonnet</a></h2>
 <p>The specification for component's params.jsonnet file. It contains all the configuration and variables used to generate component resources. This configuration is often modified from the cluster config to add cluster-specific configuration.</p>
 <pre><code class="language-go">type Kr8ComponentJsonnet struct {
     // Component-specific configuration for how kr8 should process the component (required)
@@ -430,63 +443,67 @@
     // A unique name for the component
     ReleaseName string `json:&quot;release_name&quot;`
     // Component version string (optional)
-    Version string `json:&quot;version&quot;`
+    Version string `json:&quot;version,omitempty&quot;`
 }
 </code></pre>
 <p><a name="Kr8ComponentSpec"></a></p>
-<h2 id="type-kr8componentspec">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L117-L132">Kr8ComponentSpec</a></h2>
+<h2 id="type-kr8componentspec">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L130-L145">Kr8ComponentSpec</a></h2>
 <p>The kr8_spec object in a cluster config file. This configures how kr8 processes the component.</p>
 <pre><code class="language-go">type Kr8ComponentSpec struct {
     // If true, includes the parameters of the current cluster when generating this component
-    Kr8_allParams bool `json:&quot;enable_kr8_allparams&quot;`
+    Kr8_allParams bool `json:&quot;enable_kr8_allparams,omitempty&quot;`
     // If true, includes the parameters of all other clusters when generating this component
-    Kr8_allClusters bool `json:&quot;enable_kr8_allclusters&quot;`
+    Kr8_allClusters bool `json:&quot;enable_kr8_allclusters,omitempty&quot;`
     // If false, all non-generated files present in the output directory are removed
-    DisableOutputDirClean bool `json:&quot;disable_output_clean&quot;`
+    DisableOutputDirClean bool `json:&quot;disable_output_clean,omitempty&quot;`
     // If true, component will not be cached if cluster caching is enabled.
-    DisableCache bool `json:&quot;disable_cache&quot;`
+    DisableCache bool `json:&quot;disable_cache,omitempty&quot;`
     // A list of filenames to include as jsonnet vm external vars
-    ExtFiles ExtFileVar `json:&quot;extfiles&quot;`
+    ExtFiles ExtFileVar `json:&quot;extfiles,omitempty&quot;`
     // Additional jsonnet libs to the jsonnet vm, component-path scoped
-    JPaths []string `json:&quot;jpaths&quot;`
+    JPaths []string `json:&quot;jpaths,omitempty&quot;`
     // A list of filenames to include and output as files
     Includes Kr8ComponentSpecIncludes `json:&quot;includes&quot;`
 }
 </code></pre>
 <p><a name="CreateComponentSpec"></a></p>
-<h3 id="func-createcomponentspec">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L171">CreateComponentSpec</a></h3>
+<h3 id="func-createcomponentspec">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L184">CreateComponentSpec</a></h3>
 <pre><code class="language-go">func CreateComponentSpec(spec gjson.Result, logger zerolog.Logger) (Kr8ComponentSpec, error)
 </code></pre>
 <p>Extracts a component spec from a jsonnet object.</p>
 <p><a name="Kr8ComponentSpecIncludeObject"></a></p>
-<h2 id="type-kr8componentspecincludeobject">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L210-L222">Kr8ComponentSpecIncludeObject</a></h2>
+<h2 id="type-kr8componentspecincludeobject">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L223-L239">Kr8ComponentSpecIncludeObject</a></h2>
 <p>An includes object which configures how kr8 includes an object. It allows configuring the included file's destination directory and file name. The input files are processed differently depending on the filetype.</p>
 <pre><code class="language-go">type Kr8ComponentSpecIncludeObject struct {
-    // an input file to process
-    // accepted filetypes: .jsonnet .yml .yaml .tmpl .tpl
-    File string `json:&quot;file&quot;`
-    // handle alternate output directory for file
+    // An input file to process.
+    // Accepted filetypes: .jsonnet .yml .yaml .tmpl .tpl
+    File string `json:&quot;file&quot; jsonschema:&quot;example=file.jsonnet,example=.yml,example=template.tpl&quot;`
+    // Handle alternate output directory for file.
+    // Relative from component output dir.
     DestDir string `json:&quot;dest_dir,omitempty&quot;`
-    // override destination file name
-    DestName string `json:&quot;dest_name,omitempty&quot;`
-    // override destination file extension
-    DestExt string `json:&quot;dest_ext,omitempty&quot;`
-    // Override config passed to the includes template processing
+    // Override destination file name
+    DestName string `json:&quot;dest_name,omitempty&quot; jsonschema:&quot;default=File field&quot;`
+    // Override destination file extension
+    // Useful for setting template file extension.
+    DestExt string `json:&quot;dest_ext,omitempty&quot; jsonschema:&quot;example=md,example=txt,default=yml&quot;`
+    // Override config passed to the includes template file processing.
+    // Useful for generating a list of includes in a loop:
+    // `[{File: f, Config: data[f]} for f in list]`
     Config string `json:&quot;config,omitempty&quot;`
 }
 </code></pre>
 <p><a name="Kr8ComponentSpecIncludes"></a></p>
-<h2 id="type-kr8componentspecincludes">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L225">Kr8ComponentSpecIncludes</a></h2>
+<h2 id="type-kr8componentspecincludes">type <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L242">Kr8ComponentSpecIncludes</a></h2>
 <p>Define Kr8ComponentSpecIncludes to handle dynamic decoding.</p>
 <pre><code class="language-go">type Kr8ComponentSpecIncludes []Kr8ComponentSpecIncludeObject
 </code></pre>
 <p><a name="ExtractIncludes"></a></p>
-<h3 id="func-extractincludes">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L158">ExtractIncludes</a></h3>
+<h3 id="func-extractincludes">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L171">ExtractIncludes</a></h3>
 <pre><code class="language-go">func ExtractIncludes(spec gjson.Result) (Kr8ComponentSpecIncludes, error)
 </code></pre>
 <p>Extract jsonnet includes filenames or objects from spec.</p>
 <p><a name="Kr8ComponentSpecIncludes.UnmarshalJSON"></a></p>
-<h3 id="func-kr8componentspecincludes-unmarshaljson">func (*Kr8ComponentSpecIncludes) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L228">UnmarshalJSON</a></h3>
+<h3 id="func-kr8componentspecincludes-unmarshaljson">func (*Kr8ComponentSpecIncludes) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kr8_types.go#L245">UnmarshalJSON</a></h3>
 <pre><code class="language-go">func (k *Kr8ComponentSpecIncludes) UnmarshalJSON(data []byte) error
 </code></pre>
 <p>Implement custom unmarshaling for dynamic decoding.</p>
