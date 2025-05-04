@@ -25,6 +25,7 @@ nav:
     - Clusters: concepts/clusters.md
     - Components: concepts/components.md
     - Native Funcs: concepts/nativefuncs.md
+    - kr8+ Generate Caching: concepts/cache.md
   - Json Schemas:
     - Cluster: schemas/kr8-plus-cluster-schema.json
     - Component: schemas/kr8-plus-component-schema.json
