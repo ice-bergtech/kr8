@@ -3,18 +3,21 @@ package cmd
 
 import (
 	"fmt"
-	"io/fs"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
-	"strings"
 	"sync"
 
 	formatter "github.com/google/go-jsonnet/formatter"
 	"github.com/panjf2000/ants/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
 
+	"github.com/ice-bergtech/kr8/pkg/generate"
+	"github.com/ice-bergtech/kr8/pkg/kr8_types"
+	"github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
@@ -33,6 +36,19 @@ func init() {
 		"filter included cluster by excluding clusters with matching cluster parameters -"+
 			" comma separate list of key/value conditions separated by = or ~ (for regex match)",
 	)
+}
+
+func FormatFile(filename string) error {
+	bytes, err := os.ReadFile(filepath.Clean(filename))
+	if err != nil {
+		return err
+	}
+	output, err := formatter.Format(filename, string(bytes), util.GetDefaultFormatOptions())
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(filepath.Clean(filename), []byte(output), 0600)
 }
 
 var FormatCmd = &cobra.Command{
