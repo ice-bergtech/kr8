@@ -91,8 +91,8 @@ func GetDefaultFormatOptions() formatter.Options {
 	return formatter.Options{
 		Indent:              2,
 		MaxBlankLines:       2,
-		StringStyle:         formatter.StringStyleLeave,
-		CommentStyle:        formatter.CommentStyleLeave,
+		StringStyle:         formatter.StringStyleDouble,
+		CommentStyle:        formatter.CommentStyleSlash,
 		UseImplicitPlus:     false,
 		PrettyFieldNames:    true,
 		PadArrays:           false,

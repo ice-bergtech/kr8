@@ -2,16 +2,12 @@
 package cmd
 
 import (
-	"fmt"
-	"io/fs"
+	"encoding/json"
 	"os"
 	"path/filepath"
-	"strconv"
-	"strings"
-	"sync"
 
 	formatter "github.com/google/go-jsonnet/formatter"
-	"github.com/panjf2000/ants/v2"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
@@ -19,98 +15,129 @@ import (
 )
 
 // Contains the paths to include and exclude for a format command.
-var cmdFormatFlags util.PathFilterOptions
+type CmdFormatOptions struct {
+	Recursive bool
+}
+
+var cmdFormatOptions CmdFormatOptions
 
 func init() {
 	RootCmd.AddCommand(FormatCmd)
-	FormatCmd.Flags().StringVarP(&cmdFormatFlags.Includes,
-		"clincludes", "i", "",
-		"filter included cluster by including clusters with matching cluster parameters -"+
-			" comma separate list of key/value conditions separated by = or ~ (for regex match)",
-	)
-	FormatCmd.Flags().StringVarP(&cmdFormatFlags.Excludes,
-		"clexcludes", "x", "",
-		"filter included cluster by excluding clusters with matching cluster parameters -"+
-			" comma separate list of key/value conditions separated by = or ~ (for regex match)",
+	FormatCmd.Flags().BoolVarP(&cmdFormatOptions.Recursive, "recursive", "r", false,
+		"If true, will explore directories, formatting files.",
 	)
 }
 
-var FormatCmd = &cobra.Command{
-	Use:   "format [flags]",
-	Short: "Format jsonnet files",
-	Long:  `Format jsonnet configuration files`,
+// Read, format, and write back a file.
+// github.com/google/go-jsonnet/formatter is used to format files.
+func FormatFile(filename string) error {
+	bytes, err := os.ReadFile(filepath.Clean(filename))
+	if err != nil {
+		return err
+	}
+	output, err := formatter.Format(filename, string(bytes), util.GetDefaultFormatOptions())
+	if err != nil {
+		return err
+	}
 
+	return os.WriteFile(filepath.Clean(filename), []byte(output), 0600)
+}
+
+// Lists each file in a directory and formats all .jsonnet and .libsonnet files.
+// If recursive flag is enabled, will explore the directory tree.
+func FormatDir(inputPath string, recursive bool, logger zerolog.Logger) error {
+	fileInfo, err := os.Stat(inputPath)
+	if err != nil {
+		return err
+	}
+
+	filePaths := []string{inputPath}
+
+	if fileInfo.IsDir() {
+		filePaths, err = dirFileListAndFormat(inputPath, recursive, logger)
+		if err != nil {
+			return err
+		}
+	}
+
+	log.Debug().Any("files", filePaths).Msg("collected files")
+
+	for _, file := range filePaths {
+		ext := filepath.Ext(file)
+		if ext == ".jsonnet" || ext == ".libsonnet" {
+			err := FormatFile(file)
+			if err != nil {
+				logger.Error().Err(err).Msg("issue formatting " + file)
+			} else {
+				logger.Info().Msg("formatted " + file)
+			}
+		}
+	}
+
+	return nil
+}
+
+// Returns a list of files in the inputPath.
+// If a directory is encountered and recursive is true, will format the directory.
+func dirFileListAndFormat(inputPath string, recursive bool, logger zerolog.Logger) ([]string, error) {
+	filePaths := []string{}
+	dirEntries, err := os.ReadDir(inputPath)
+	if err != nil {
+		return nil, err
+	}
+	for _, entry := range dirEntries {
+		if entry.IsDir() {
+			if recursive {
+				err := FormatDir(entry.Name(), recursive, logger)
+				if err != nil {
+					return nil, err
+				}
+			}
+
+			continue
+		}
+		filePaths = append(filePaths, entry.Name())
+	}
+
+	return filePaths, nil
+}
+
+// Take the formatting options and format them for help output.
+func prettyPrintFormattingOpts() string {
+	str, err := json.MarshalIndent(util.GetDefaultFormatOptions(), "", "  ")
+	if err != nil {
+		return err.Error()
+	}
+	output, err := util.FormatJsonnetString(string(str))
+	if err != nil {
+		return err.Error()
+	}
+
+	return output
+}
+
+var FormatCmd = &cobra.Command{
+	Use:     "format [flags] [files or directories]",
+	Aliases: []string{"fmt"},
+	Short:   "Format jsonnet files in a directory.  Defaults to `./`",
+	Long: `Formats jsonnet and libsonnet files.
+A list of files and/or directories. Defaults to current directory (./).
+If path is a directory, scans directories for files with matching extensions.
+Formats files with the following options: ` + prettyPrintFormattingOpts(),
 	Args: cobra.MinimumNArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		// First get a list of all files in the base directory and subdirectories. Ignore .git directories.
-		var fileList []string
-		err := filepath.Walk(RootConfig.BaseDir, func(path string, info fs.FileInfo, err error) error {
-			if info.IsDir() {
-				if info.Name() == ".git" {
-					return filepath.SkipDir
-				}
-
-				return nil
-			}
-			fileList = append(fileList, path)
-
-			return nil
-		})
-		util.FatalErrorCheck("Error walking the path "+RootConfig.BaseDir, err, log.Logger)
-
-		fileList = util.Filter(fileList, func(s string) bool {
-			var result bool
-			for _, f := range strings.Split(cmdFormatFlags.Includes, ",") {
-				t, _ := filepath.Match(f, s)
-				if t {
-					return t
-				}
-				result = result || t
-			}
-
-			return result
-		})
-
-		fileList = util.Filter(fileList, func(s string) bool {
-			var result bool
-			for _, f := range strings.Split(cmdFormatFlags.Excludes, ",") {
-				t, _ := filepath.Match(f, s)
-				if t {
-					return !t
-				}
-				result = result || t
-			}
-
-			return !result
-		})
-		log.Debug().Msg("Filtered file list: " + fmt.Sprintf("%v", fileList))
-		log.Debug().Msg("Formatting files...")
-
-		var waitGroup sync.WaitGroup
-		parallel, err := cmd.Flags().GetInt("parallel")
-		util.FatalErrorCheck("Error getting parallel flag", err, log.Logger)
-		log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
-		ants_file, _ := ants.NewPool(parallel)
-		for _, filename := range fileList {
-			waitGroup.Add(1)
-			_ = ants_file.Submit(func() {
-				defer waitGroup.Done()
-				var bytes []byte
-				bytes, err = os.ReadFile(filepath.Clean(filename))
-				output, err := formatter.Format(filename, string(bytes), util.GetDefaultFormatOptions())
-				if err != nil {
-					fmt.Fprintln(os.Stderr, err.Error())
-
-					return
-				}
-				err = os.WriteFile(filepath.Clean(filename), []byte(output), 0600)
-				if err != nil {
-					fmt.Fprintln(os.Stderr, err.Error())
-
-					return
-				}
-			})
+		log.Debug().Any("options", cmdFormatOptions).Msg("Formatting files...")
+		paths := args
+		if len(paths) == 0 {
+			paths = []string{"./"}
 		}
-		waitGroup.Wait()
+
+		for _, path := range paths {
+			logger := log.With().Str("param", path).Logger()
+			err := FormatDir(path, cmdFormatOptions.Recursive, logger)
+			if err != nil {
+				logger.Error().Err(err).Msg("issue formatting path")
+			}
+		}
 	},
 }

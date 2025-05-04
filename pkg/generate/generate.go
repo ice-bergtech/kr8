@@ -75,7 +75,6 @@ func GetClusterParams(clusterDir string, vmConfig types.VMConfig, logger zerolog
 func CalculateClusterComponentList(
 	clusterComponents map[string]gjson.Result,
 	filters util.PathFilterOptions,
-	existingClusterComponents []string,
 ) []string {
 	var compList []string
 
@@ -114,7 +113,7 @@ func GenProcessComponent(
 ) (bool, *kr8_cache.ComponentCache, error) {
 	logger.Info().Msg("Processing component")
 
-	// get kr8_spec from component's params
+	// get kr8_spec from cluster's component params
 	compSpec, err := kr8_types.CreateComponentSpec(gjson.Get(config, componentName+".kr8_spec"), logger)
 	if err := util.LogErrorIfCheck("Error creating component spec", err, logger); err != nil {
 		return false, nil, err
@@ -412,32 +411,38 @@ func GenerateIncludesFiles(
 	return outputFileMap, nil
 }
 
+type GenerateProcessRootconfig struct {
+	ClusterName       string
+	ClusterDir        string
+	BaseDir           string
+	GenerateDir       string
+	Kr8Opts           types.Kr8Opts
+	ClusterParamsFile string
+	Filters           util.PathFilterOptions
+	VmConfig          types.VMConfig
+	Noop              bool
+}
+
 // The root function for generating a cluster.
 // Prepares and builds the cluster config.
 // Build and processes the list of components.
 func GenProcessCluster(
-	clusterName string,
-	clusterDir string,
-	baseDir string,
-	generateDirOverride string,
-	kr8Opts types.Kr8Opts,
-	clusterParamsFile string,
-	filters util.PathFilterOptions,
-	vmConfig types.VMConfig,
+	clusterConfig GenerateProcessRootconfig,
 	pool *ants.Pool,
 	logger zerolog.Logger,
 ) error {
-	logger.Debug().Str("cluster", clusterName).Msg("Processing cluster")
+	logger.Debug().Str("cluster", clusterConfig.ClusterName).Msg("Processing cluster")
 
 	// Start by compiling the cluster-level configuration
 	kr8Spec, compList, config, err := GatherClusterConfig(
-		clusterName,
-		clusterDir,
-		kr8Opts,
-		vmConfig,
-		generateDirOverride,
-		filters,
-		clusterParamsFile,
+		clusterConfig.ClusterName,
+		clusterConfig.ClusterDir,
+		clusterConfig.Kr8Opts,
+		clusterConfig.VmConfig,
+		clusterConfig.GenerateDir,
+		clusterConfig.Filters,
+		clusterConfig.ClusterParamsFile,
+		clusterConfig.Noop,
 		logger,
 	)
 	if err != nil {
@@ -455,14 +460,14 @@ func GenProcessCluster(
 	// render full params for cluster for all selected components
 	componentCacheResult, err := RenderComponents(
 		config,
-		vmConfig,
+		clusterConfig.VmConfig,
 		*kr8Spec,
 		cacheCur,
 		compList,
-		clusterParamsFile,
+		clusterConfig.ClusterParamsFile,
 		pool,
-		kr8Opts,
-		filters,
+		clusterConfig.Kr8Opts,
+		clusterConfig.Filters,
 		logger,
 	)
 	if err != nil {
@@ -473,7 +478,7 @@ func GenProcessCluster(
 	if kr8Spec.EnableCache {
 		return kr8_cache.InitDeploymentCache(
 			config,
-			baseDir,
+			clusterConfig.BaseDir,
 			componentCacheResult,
 		).WriteCache(cacheFile, kr8Spec.CompressCache)
 	}
@@ -492,6 +497,7 @@ func GatherClusterConfig(
 	generateDirOverride string,
 	filters util.PathFilterOptions,
 	clusterParamsFile string,
+	noop bool,
 	logger zerolog.Logger,
 ) (*kr8_types.Kr8ClusterSpec, []string, string, error) {
 	kr8Spec, clusterComponents, err := CompileClusterConfiguration(
@@ -506,6 +512,13 @@ func GatherClusterConfig(
 		return nil, nil, "", err
 	}
 
+	// Determine list of components to process
+	compList := CalculateClusterComponentList(clusterComponents, filters)
+
+	if noop {
+		return kr8Spec, compList, "", nil
+	}
+
 	// Setup output dirs and remove component output dirs that are no longer referenced
 	existingComponents, err := CreateClusterGenerateDirs(*kr8Spec)
 	if err := util.LogErrorIfCheck("error creating generate dirs", err, logger); err != nil {
@@ -513,9 +526,6 @@ func GatherClusterConfig(
 	}
 
 	CleanupOldComponentDirs(existingComponents, clusterComponents, kr8Spec, logger)
-
-	// Determine list of components to process
-	compList := CalculateClusterComponentList(clusterComponents, filters, existingComponents)
 
 	// Use Jsonnet to render cluster-level configurations for components
 	config, err := jnetvm.JsonnetRenderClusterParams(

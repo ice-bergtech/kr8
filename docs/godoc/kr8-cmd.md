@@ -21,10 +21,14 @@ Defines the cli\-interface commands available to the user.
 - [Variables](<#variables>)
 - [func ConfigureLogger\(debug bool\)](<#ConfigureLogger>)
 - [func Execute\(ver string\)](<#Execute>)
+- [func FormatDir\(inputPath string, recursive bool, logger zerolog.Logger\) error](<#FormatDir>)
+- [func FormatFile\(filename string\) error](<#FormatFile>)
+- [func GenerateCmdClusterListBuilder\(allClusterParams map\[string\]string\) \[\]string](<#GenerateCmdClusterListBuilder>)
 - [func GenerateCommand\(cmd \*cobra.Command, args \[\]string\)](<#GenerateCommand>)
 - [func InitConfig\(\)](<#InitConfig>)
 - [func ProfilingFinalizer\(\)](<#ProfilingFinalizer>)
 - [func ProfilingInitializer\(\)](<#ProfilingInitializer>)
+- [type CmdFormatOptions](<#CmdFormatOptions>)
 - [type CmdGenerateOptions](<#CmdGenerateOptions>)
 - [type CmdGetOptions](<#CmdGetOptions>)
 - [type CmdRenderOptions](<#CmdRenderOptions>)
@@ -38,82 +42,28 @@ Defines the cli\-interface commands available to the user.
 
 ```go
 var FormatCmd = &cobra.Command{
-    Use:   "format [flags]",
-    Short: "Format jsonnet files",
-    Long:  `Format jsonnet configuration files`,
-
+    Use:     "format [flags] [files or directories]",
+    Aliases: []string{"fmt"},
+    Short:   "Format jsonnet files in a directory.  Defaults to `./`",
+    Long: `Formats jsonnet and libsonnet files.
+A list of files and/or directories. Defaults to current directory (./).
+If path is a directory, scans directories for files with matching extensions.
+Formats files with the following options: ` + prettyPrintFormattingOpts(),
     Args: cobra.MinimumNArgs(0),
     Run: func(cmd *cobra.Command, args []string) {
-        // First get a list of all files in the base directory and subdirectories. Ignore .git directories.
-        var fileList []string
-        err := filepath.Walk(RootConfig.BaseDir, func(path string, info fs.FileInfo, err error) error {
-            if info.IsDir() {
-                if info.Name() == ".git" {
-                    return filepath.SkipDir
-                }
-
-                return nil
-            }
-            fileList = append(fileList, path)
-
-            return nil
-        })
-        util.FatalErrorCheck("Error walking the path "+RootConfig.BaseDir, err, log.Logger)
-
-        fileList = util.Filter(fileList, func(s string) bool {
-            var result bool
-            for _, f := range strings.Split(cmdFormatFlags.Includes, ",") {
-                t, _ := filepath.Match(f, s)
-                if t {
-                    return t
-                }
-                result = result || t
-            }
-
-            return result
-        })
-
-        fileList = util.Filter(fileList, func(s string) bool {
-            var result bool
-            for _, f := range strings.Split(cmdFormatFlags.Excludes, ",") {
-                t, _ := filepath.Match(f, s)
-                if t {
-                    return !t
-                }
-                result = result || t
-            }
-
-            return !result
-        })
-        log.Debug().Msg("Filtered file list: " + fmt.Sprintf("%v", fileList))
-        log.Debug().Msg("Formatting files...")
-
-        var waitGroup sync.WaitGroup
-        parallel, err := cmd.Flags().GetInt("parallel")
-        util.FatalErrorCheck("Error getting parallel flag", err, log.Logger)
-        log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
-        ants_file, _ := ants.NewPool(parallel)
-        for _, filename := range fileList {
-            waitGroup.Add(1)
-            _ = ants_file.Submit(func() {
-                defer waitGroup.Done()
-                var bytes []byte
-                bytes, err = os.ReadFile(filepath.Clean(filename))
-                output, err := formatter.Format(filename, string(bytes), util.GetDefaultFormatOptions())
-                if err != nil {
-                    fmt.Fprintln(os.Stderr, err.Error())
-
-                    return
-                }
-                err = os.WriteFile(filepath.Clean(filename), []byte(output), 0600)
-                if err != nil {
-                    fmt.Fprintln(os.Stderr, err.Error())
-
-                    return
-                }
-            })
+        log.Debug().Any("options", cmdFormatOptions).Msg("Formatting files...")
+        paths := args
+        if len(paths) == 0 {
+            paths = []string{"./"}
         }
-        waitGroup.Wait()
+
+        for _, path := range paths {
+            logger := log.With().Str("param", path).Logger()
+            err := FormatDir(path, cmdFormatOptions.Recursive, logger)
+            if err != nil {
+                logger.Error().Err(err).Msg("issue formatting path")
+            }
+        }
     },
 }
 ```
@@ -639,8 +589,35 @@ func Execute(ver string)
 
 Execute adds all child commands to the root command sets flags appropriately. This is called by main.main\(\). It only needs to happen once to the rootCmd.
 
+<a name="FormatDir"></a>
+## func [FormatDir](<https://github.com:icebergtech/kr8/blob/main/cmd/format.go#L48>)
+
+```go
+func FormatDir(inputPath string, recursive bool, logger zerolog.Logger) error
+```
+
+Lists each file in a directory and formats all .jsonnet and .libsonnet files. If recursive flag is enabled, will explore the directory tree.
+
+<a name="FormatFile"></a>
+## func [FormatFile](<https://github.com:icebergtech/kr8/blob/main/cmd/format.go#L33>)
+
+```go
+func FormatFile(filename string) error
+```
+
+Read, format, and write back a file. github.com/google/go\-jsonnet/formatter is used to format files.
+
+<a name="GenerateCmdClusterListBuilder"></a>
+## func [GenerateCmdClusterListBuilder](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L104>)
+
+```go
+func GenerateCmdClusterListBuilder(allClusterParams map[string]string) []string
+```
+
+
+
 <a name="GenerateCommand"></a>
-## func [GenerateCommand](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L69>)
+## func [GenerateCommand](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L68>)
 
 ```go
 func GenerateCommand(cmd *cobra.Command, args []string)
@@ -674,6 +651,17 @@ func ProfilingInitializer()
 ```
 
 Sets up program profiling.
+
+<a name="CmdFormatOptions"></a>
+## type [CmdFormatOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/format.go#L18-L20>)
+
+Contains the paths to include and exclude for a format command.
+
+```go
+type CmdFormatOptions struct {
+    Recursive bool
+}
+```
 
 <a name="CmdGenerateOptions"></a>
 ## type [CmdGenerateOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L21-L28>)

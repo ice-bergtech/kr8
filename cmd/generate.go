@@ -12,7 +12,7 @@ import (
 	//nolint:exptostd
 	"golang.org/x/exp/maps"
 
-	gen "github.com/ice-bergtech/kr8/pkg/generate"
+	"github.com/ice-bergtech/kr8/pkg/generate"
 	"github.com/ice-bergtech/kr8/pkg/types"
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
@@ -27,9 +27,8 @@ type CmdGenerateOptions struct {
 	Filters util.PathFilterOptions
 }
 
-var cmdGenerateFlags CmdGenerateOptions
+var cmdGenerateFlags generate.GenerateProcessRootconfig
 
-//nolint:gochecknoinits
 func init() {
 	RootCmd.AddCommand(GenerateCmd)
 	GenerateCmd.Flags().StringVarP(&cmdGenerateFlags.ClusterParamsFile,
@@ -68,20 +67,12 @@ var GenerateCmd = &cobra.Command{
 // It uses a wait group to ensure that all clusters have been processed before exiting.
 func GenerateCommand(cmd *cobra.Command, args []string) {
 	// get list of all clusters, render cluster level params for all of them
-	allClusterParams, err := gen.GetClusterParams(RootConfig.ClusterDir, RootConfig.VMConfig, log.Logger)
+	allClusterParams, err := generate.GetClusterParams(RootConfig.ClusterDir, RootConfig.VMConfig, log.Logger)
 	util.FatalErrorCheck("error getting cluster params from "+RootConfig.ClusterDir, err, log.Logger)
 
-	var clusterList []string
-	// Filter out and cluster or components we don't want to generate
-	if cmdGenerateFlags.Filters.Includes != "" || cmdGenerateFlags.Filters.Excludes != "" {
-		clusterList = util.CalculateClusterIncludesExcludes(allClusterParams, cmdGenerateFlags.Filters)
-		log.Debug().Msg("Have " + strconv.Itoa(len(clusterList)) + " after filtering")
-	} else {
-		//nolint:exptostd
-		clusterList = maps.Keys(allClusterParams)
-	}
+	clusterList := GenerateCmdClusterListBuilder(allClusterParams)
 
-	kr8Opts := types.Kr8Opts{
+	cmdGenerateFlags.Kr8Opts = types.Kr8Opts{
 		BaseDir:      RootConfig.BaseDir,
 		ComponentDir: RootConfig.ComponentDir,
 		ClusterDir:   RootConfig.ClusterDir,
@@ -98,15 +89,8 @@ func GenerateCommand(cmd *cobra.Command, args []string) {
 		_ = ants_cl.Submit(func() {
 			defer waitGroup.Done()
 			sublogger := log.With().Str("cluster", clusterName).Logger()
-			err := gen.GenProcessCluster(
-				clusterName,
-				RootConfig.ClusterDir,
-				RootConfig.BaseDir,
-				cmdGenerateFlags.GenerateDir,
-				kr8Opts,
-				cmdGenerateFlags.ClusterParamsFile,
-				cmdGenerateFlags.Filters,
-				RootConfig.VMConfig,
+			err := generate.GenProcessCluster(
+				cmdGenerateFlags,
 				ants_cp,
 				sublogger)
 			if err != nil {
@@ -115,4 +99,18 @@ func GenerateCommand(cmd *cobra.Command, args []string) {
 		})
 	}
 	waitGroup.Wait()
+}
+
+func GenerateCmdClusterListBuilder(allClusterParams map[string]string) []string {
+	var clusterList []string
+	// Filter out and cluster or components we don't want to generate
+	if cmdGenerateFlags.Filters.Includes != "" || cmdGenerateFlags.Filters.Excludes != "" {
+		clusterList = util.CalculateClusterIncludesExcludes(allClusterParams, cmdGenerateFlags.Filters)
+		log.Debug().Msg("Have " + strconv.Itoa(len(clusterList)) + " after filtering")
+	} else {
+		//nolint:exptostd
+		clusterList = maps.Keys(allClusterParams)
+	}
+
+	return clusterList
 }

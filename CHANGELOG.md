@@ -5,6 +5,7 @@
 * Add program pprof exports for perf monitoring
 * Add ability cache cluster-component config
 * Add jsonschema for checking cluster resource jsonnet files
+* Setup format command to easily format jsonnet and libsonnet files
 
 ## 0.1.1
 
