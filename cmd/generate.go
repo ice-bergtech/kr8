@@ -29,7 +29,6 @@ type CmdGenerateOptions struct {
 
 var cmdGenerateFlags generate.GenerateProcessRootconfig
 
-//nolint:gochecknoinits
 func init() {
 	RootCmd.AddCommand(GenerateCmd)
 	GenerateCmd.Flags().StringVarP(&cmdGenerateFlags.ClusterParamsFile,
