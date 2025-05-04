@@ -2,7 +2,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -81,75 +80,85 @@ var FormatCmd = &cobra.Command{
 
 	Args: cobra.MinimumNArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		// First get a list of all files in the base directory and subdirectories. Ignore .git directories.
-		var fileList []string
-		err := filepath.Walk(RootConfig.BaseDir, func(path string, info fs.FileInfo, err error) error {
-			if info.IsDir() {
-				if info.Name() == ".git" {
-					return filepath.SkipDir
-				}
-
-				return nil
-			}
-			fileList = append(fileList, path)
-
-			return nil
-		})
-		util.FatalErrorCheck("Error walking the path "+RootConfig.BaseDir, err, log.Logger)
-
-		fileList = util.Filter(fileList, func(s string) bool {
-			var result bool
-			for _, f := range strings.Split(cmdFormatFlags.Includes, ",") {
-				t, _ := filepath.Match(f, s)
-				if t {
-					return t
-				}
-				result = result || t
-			}
-
-			return result
-		})
-
-		fileList = util.Filter(fileList, func(s string) bool {
-			var result bool
-			for _, f := range strings.Split(cmdFormatFlags.Excludes, ",") {
-				t, _ := filepath.Match(f, s)
-				if t {
-					return !t
-				}
-				result = result || t
-			}
-
-			return !result
-		})
-		log.Debug().Msg("Filtered file list: " + fmt.Sprintf("%v", fileList))
 		log.Debug().Msg("Formatting files...")
 
-		var waitGroup sync.WaitGroup
+		// First format cluster paths and get cluster list
+		clusterPaths := formatClusterFiles()
+
+		kr8Opts := types.Kr8Opts{
+			BaseDir:      RootConfig.BaseDir,
+			ComponentDir: RootConfig.ComponentDir,
+			ClusterDir:   RootConfig.ClusterDir,
+		}
+
+		// Setup pooling options
 		parallel, err := cmd.Flags().GetInt("parallel")
 		util.FatalErrorCheck("Error getting parallel flag", err, log.Logger)
-		log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
-		ants_file, _ := ants.NewPool(parallel)
-		for _, filename := range fileList {
-			waitGroup.Add(1)
-			_ = ants_file.Submit(func() {
-				defer waitGroup.Done()
-				var bytes []byte
-				bytes, err = os.ReadFile(filepath.Clean(filename))
-				output, err := formatter.Format(filename, string(bytes), util.GetDefaultFormatOptions())
-				if err != nil {
-					fmt.Fprintln(os.Stderr, err.Error())
-
-					return
-				}
-				err = os.WriteFile(filepath.Clean(filename), []byte(output), 0600)
-				if err != nil {
-					fmt.Fprintln(os.Stderr, err.Error())
-
-					return
-				}
-			})
+		if parallel == -1 {
+			parallel = runtime.GOMAXPROCS(0)
 		}
+		log.Debug().Msg("Parallel set to " + strconv.Itoa(parallel))
+
+		var waitGroup sync.WaitGroup
+		ants_file, _ := ants.NewPool(parallel)
+
+		// Go through each cluster and format component files.
+		for clusterName, clusterDir := range clusterPaths {
+			logger := log.With().Str("cluster", clusterName).Logger()
+
+			// Build the cluster-level component parameters for reference.
+			_, clusterComponents, err := generate.CompileClusterConfiguration(
+				clusterName,
+				clusterDir,
+				kr8Opts,
+				RootConfig.VMConfig,
+				"",
+				logger,
+			)
+			util.FatalErrorCheck("issue building cluster config", err, logger)
+
+			// Filter list of components to process
+			compList := generate.CalculateClusterComponentList(clusterComponents, cmdFormatFlags)
+
+			// Process each component in a waitgroup function.
+			for _, component := range compList {
+				subLogger := logger.With().Str("component", component).Logger()
+				waitGroup.Add(1)
+				_ = ants_file.Submit(func() {
+					defer waitGroup.Done()
+					path, ok := clusterComponents[component].Map()["Path"]
+					if !ok || !path.Exists() {
+						subLogger.Error().Msg("issue getting component path")
+					}
+					err := FormatFile(path.String())
+					if util.LogErrorIfCheck("issue formatting file", err, subLogger) != nil {
+						return
+					}
+
+					// get kr8_spec from cluster's component params
+					compSpec, err := kr8_types.CreateComponentSpec(gjson.Get(
+						clusterComponents[component].Raw,
+						component+".kr8_spec",
+					), logger)
+					if util.LogErrorIfCheck("Error creating component spec", err, logger) != nil {
+						return
+					}
+
+					for _, includes := range compSpec.Includes {
+						ext := filepath.Ext(includes.File)
+						if ext == ".jsonnet" || ext == ".libsonnet" {
+							err = FormatFile(includes.File)
+							if err != nil {
+								logger.Error().Msg("issue formatting file")
+							} else {
+								logger.Info().Str("file", includes.File).Msg("formatted")
+							}
+						}
+					}
+				})
+			}
+		}
+
 		waitGroup.Wait()
 	},
 }
