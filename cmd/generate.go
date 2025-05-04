@@ -27,7 +27,7 @@ type CmdGenerateOptions struct {
 	Filters util.PathFilterOptions
 }
 
-var cmdGenerateFlags generate.GenerateProcessRootconfig
+var cmdGenerateFlags generate.GenerateProcessRootConfig
 
 func init() {
 	RootCmd.AddCommand(GenerateCmd)
@@ -88,13 +88,13 @@ func GenerateCommand(cmd *cobra.Command, args []string) {
 		waitGroup.Add(1)
 		_ = ants_cl.Submit(func() {
 			defer waitGroup.Done()
-			sublogger := log.With().Str("cluster", clusterName).Logger()
+			subLogger := log.With().Str("cluster", clusterName).Logger()
 			err := generate.GenProcessCluster(
 				cmdGenerateFlags,
 				ants_cp,
-				sublogger)
+				subLogger)
 			if err != nil {
-				sublogger.Fatal().Err(err).Msg("error processing cluster")
+				subLogger.Fatal().Err(err).Msg("error processing cluster")
 			}
 		})
 	}

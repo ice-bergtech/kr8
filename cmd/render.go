@@ -21,7 +21,7 @@ import (
 	util "github.com/ice-bergtech/kr8/pkg/util"
 )
 
-// Contains parameters for the kr8 render command.
+// Contains parameters for the kr8+ render command.
 type CmdRenderOptions struct {
 	// Prune null and empty objects from rendered json
 	Prune bool
@@ -44,7 +44,7 @@ func init() {
 	RenderCmd.AddCommand(RenderJsonnetCmd)
 	RenderJsonnetCmd.PersistentFlags().BoolVarP(&cmdRenderFlags.Prune,
 		"prune", "", true,
-		"Prune null and empty objects from rendered json")
+		"prune null and empty objects from rendered json")
 	RenderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.ClusterParams,
 		"clusterparams", "p", "",
 		"provide cluster params as single file - can be combined with --cluster to override cluster")
@@ -56,7 +56,7 @@ func init() {
 		"cluster to render params for")
 	RenderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.Format,
 		"format", "F", "json",
-		"Output format: json, yaml, stream")
+		"output format: json, yaml, stream")
 
 	RenderCmd.AddCommand(RenderHelmCmd)
 }

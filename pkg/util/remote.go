@@ -27,7 +27,7 @@ func FetchRepoUrl(url string, destination string, noop bool) error {
 		return err
 	}
 
-	// Download the skeletion directory
+	// Download the skeleton directory
 	log.Debug().Msg("Downloading skeleton repo from git::" + url)
 	//nolint:exhaustruct
 	client := &getter.Client{

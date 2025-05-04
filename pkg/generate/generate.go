@@ -97,7 +97,7 @@ func CalculateClusterComponentList(
 	return compList
 }
 
-// Root function for processing a kr8 component.
+// Root function for processing a kr8+ component.
 // Processes a component through a jsonnet VM to generate output files.
 func GenProcessComponent(
 	vmConfig types.VMConfig,
@@ -246,7 +246,7 @@ func GetComponentFiles(compSpec kr8_types.Kr8ComponentSpec) []string {
 	return listFiles
 }
 
-// Setup and configures a jsonnet VM for processing kr8 resources.
+// Setup and configures a jsonnet VM for processing kr8+ resources.
 // Creates a new VM and does the following:
 //   - loads cluster and component config
 //   - loads jsonnet library files
@@ -411,7 +411,7 @@ func GenerateIncludesFiles(
 	return outputFileMap, nil
 }
 
-type GenerateProcessRootconfig struct {
+type GenerateProcessRootConfig struct {
 	ClusterName       string
 	ClusterDir        string
 	BaseDir           string
@@ -427,7 +427,7 @@ type GenerateProcessRootconfig struct {
 // Prepares and builds the cluster config.
 // Build and processes the list of components.
 func GenProcessCluster(
-	clusterConfig GenerateProcessRootconfig,
+	clusterConfig GenerateProcessRootConfig,
 	pool *ants.Pool,
 	logger zerolog.Logger,
 ) error {
@@ -605,12 +605,12 @@ func CompileClusterConfiguration(
 	// Gather list of configurations that apply to the cluster
 	params := util.GetClusterParamsFilenames(clusterDir, clusterPath)
 
-	// Compile the cluster kr8 configuration
+	// Compile the cluster kr8+ configuration
 	renderedKr8Spec, err := jnetvm.JsonnetRenderFiles(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")
 	if err := util.LogErrorIfCheck("error rendering cluster `_kr8_spec`", err, logger); err != nil {
 		return nil, nil, err
 	}
-	// Package the cluster kr8 spec into struct
+	// Package the cluster kr8+ spec into struct
 	kr8Spec, err := kr8_types.CreateClusterSpec(
 		clusterName,
 		gjson.Parse(renderedKr8Spec),

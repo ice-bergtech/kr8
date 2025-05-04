@@ -4,7 +4,7 @@
 
 However, there are always things to improve:
 
-* Refinement/documentation of kr8 configuration
+* Refinement/documentation of kr8+ configuration
 * Improve performance of rendering components
 * Improve user input error handling and sharing
 * Refine documentation for better understanding and usage, especially around cluster `kr8_spec` and component `kr8_component_spec`

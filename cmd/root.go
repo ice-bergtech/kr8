@@ -48,11 +48,11 @@ type CmdRootOptions struct {
 	ClusterDir string
 	// kr8+ component directory
 	ComponentDir string
-	// A config file with kr8 configuration
+	// A config file with kr8+ configuration
 	ConfigFile string
 	// parallelism - defaults to runtime.GOMAXPROCS(0)
 	Parallel int
-	// log more information about what kr8 is doing. Overrides --loglevel
+	// log more information about what kr8+ is doing. Overrides --loglevel
 	Debug bool
 	// set log level
 	LogLevel string
@@ -75,35 +75,35 @@ func init() {
 
 	RootCmd.PersistentFlags().BoolVar(&RootConfig.Debug,
 		"debug", false,
-		"log more information about what kr8 is doing. Overrides --loglevel")
+		"log additional information about what kr8+ is doing. Overrides --loglevel")
 	RootCmd.PersistentFlags().StringVarP(&RootConfig.LogLevel,
 		"loglevel", "L", "info",
-		"set log level")
-	RootCmd.PersistentFlags().StringVarP(&RootConfig.BaseDir, "base", "B", "./", "kr8 config base directory")
+		"set zerolog log level")
+	RootCmd.PersistentFlags().StringVarP(&RootConfig.BaseDir, "base", "B", "./", "kr8+ root configuration directory")
 	RootCmd.PersistentFlags().StringVarP(&RootConfig.ClusterDir,
 		"clusterdir", "D", "",
-		"kr8 cluster directory")
+		"kr8+ cluster directory")
 	RootCmd.PersistentFlags().StringVarP(&RootConfig.ComponentDir,
 		"componentdir", "d", "",
-		"kr8 component directory")
+		"kr8+ component directory")
 	RootCmd.PersistentFlags().BoolVar(&RootConfig.Color,
 		"color", true,
-		"enable colorized output. Set to false to disable")
-	RootCmd.PersistentFlags().StringArrayVarP(&RootConfig.VMConfig.Jpaths,
+		"enable colorized output")
+	RootCmd.PersistentFlags().StringArrayVarP(&RootConfig.VMConfig.JPaths,
 		"jpath", "J", nil,
-		"Directories to add to jsonnet include path. Repeat arg for multiple directories")
+		"additional jsonnet library directories")
 	RootCmd.PersistentFlags().StringSliceVar(&RootConfig.VMConfig.ExtVars,
 		"ext-str-file", nil,
-		"Set jsonnet extvar from file contents")
+		"set comma-separated jsonnet extVars from file contents in the format `key=file`")
 	RootCmd.PersistentFlags().IntVarP(&RootConfig.Parallel,
 		"parallel", "", -1,
 		"parallelism - defaults to runtime.GOMAXPROCS(0)")
 	RootCmd.PersistentFlags().StringVarP(&RootConfig.ConfigFile,
 		"config", "", "",
-		"A config file with kr8 configuration")
+		"a single config file with kr8+ configuration")
 	RootCmd.PersistentFlags().StringVarP(&RootConfig.ProfilingDir,
 		"profiledir", "", "",
-		"Directory to write pprof profile data to")
+		"directory to write pprof profile data to")
 }
 
 func ConfigureLogger(debug bool) {
