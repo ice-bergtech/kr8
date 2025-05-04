@@ -1,3 +1,4 @@
 [submodule "examples"]
 	path = examples
 	url = git@github.com:ice-bergtech/kr8-examples.git
+	branch = main
