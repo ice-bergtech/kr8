@@ -421,6 +421,7 @@ type GenerateProcessRootConfig struct {
 	Filters           util.PathFilterOptions
 	VmConfig          types.VMConfig
 	Noop              bool
+	Lint              bool
 }
 
 // The root function for generating a cluster.
@@ -443,6 +444,7 @@ func GenProcessCluster(
 		clusterConfig.Filters,
 		clusterConfig.ClusterParamsFile,
 		clusterConfig.Noop,
+		clusterConfig.Lint,
 		logger,
 	)
 	if err != nil {
@@ -498,6 +500,7 @@ func GatherClusterConfig(
 	filters util.PathFilterOptions,
 	clusterParamsFile string,
 	noop bool,
+	lint bool,
 	logger zerolog.Logger,
 ) (*kr8_types.Kr8ClusterSpec, []string, string, error) {
 	kr8Spec, clusterComponents, err := CompileClusterConfiguration(
@@ -506,6 +509,7 @@ func GatherClusterConfig(
 		kr8Opts,
 		vmConfig,
 		generateDirOverride,
+		lint,
 		logger,
 	)
 	if err != nil {
@@ -595,6 +599,7 @@ func CompileClusterConfiguration(
 	kr8Opts types.Kr8Opts,
 	vmConfig types.VMConfig,
 	generateDirOverride string,
+	lint bool,
 	logger zerolog.Logger,
 ) (*kr8_types.Kr8ClusterSpec, map[string]gjson.Result, error) {
 	// First determine the path to the cluster.jsonnet file.
@@ -606,7 +611,7 @@ func CompileClusterConfiguration(
 	params := util.GetClusterParamsFilenames(clusterDir, clusterPath)
 
 	// Compile the cluster kr8+ configuration
-	renderedKr8Spec, err := jnetvm.JsonnetRenderFiles(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")
+	renderedKr8Spec, err := jnetvm.JsonnetRenderFiles(vmConfig, params, "._kr8_spec", false, "", "kr8_spec", lint)
 	if err := util.LogErrorIfCheck("error rendering cluster `_kr8_spec`", err, logger); err != nil {
 		return nil, nil, err
 	}
@@ -627,6 +632,7 @@ func CompileClusterConfiguration(
 		vmConfig, params,
 		"._components", true,
 		"", clusterName+": ._components",
+		lint,
 	)
 	if err := util.LogErrorIfCheck("error rendering cluster components list", err, logger); err != nil {
 		return nil, nil, err

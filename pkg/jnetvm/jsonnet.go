@@ -21,6 +21,7 @@ limitations under the License.
 package jnetvm
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -31,6 +32,7 @@ import (
 	"golang.org/x/exp/maps"
 
 	jsonnet "github.com/google/go-jsonnet"
+	"github.com/google/go-jsonnet/linter"
 	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
 
@@ -86,6 +88,7 @@ func JsonnetRenderFiles(
 	prune bool,
 	prepend string,
 	source string,
+	lint bool,
 ) (string, error) {
 	// copy the slice so that we don't unintentionally modify the original
 	jsonnetPaths := make([]string, len(files))
@@ -116,6 +119,14 @@ func JsonnetRenderFiles(
 	if prune {
 		// wrap in std.prune, to remove nulls, empty arrays and hashes
 		jsonnetImport = "std.prune(" + jsonnetImport + ")"
+	}
+
+	if lint {
+		snippets := []linter.Snippet{linter.Snippet{FileName: source, Code: string(jsonnetImport)}}
+		var buffer bytes.Buffer
+		if linter.LintSnippet(jvm, &buffer, snippets) {
+			return "", types.Kr8Error{Message: "linting issue", Value: buffer}
+		}
 	}
 
 	// render the jsonnet

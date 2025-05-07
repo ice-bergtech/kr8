@@ -64,7 +64,7 @@ func prettyPrintFormattingOpts() string {
 
 var FormatCmd = &cobra.Command{
 	Use:     "format [flags] [files or directories]",
-	Aliases: []string{"fmt"},
+	Aliases: []string{"fmt", "f"},
 	Short:   "Format jsonnet files in a directory.  Defaults to `./`",
 	Long: `Formats jsonnet and libsonnet files.
 A list of files and/or directories. Defaults to current directory (./).
