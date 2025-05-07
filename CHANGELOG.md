@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+* Add linting to various commands to lint jsonnet before processing to catch errors early.
+
 ## 0.2.0
 
 * Add program pprof exports for perf monitoring
