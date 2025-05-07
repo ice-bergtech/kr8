@@ -125,7 +125,7 @@ func JsonnetRenderFiles(
 		snippets := []linter.Snippet{{FileName: source, Code: jsonnetImport}}
 		var buffer bytes.Buffer
 		if linter.LintSnippet(jvm, &buffer, snippets) {
-			return "", types.Kr8Error{Message: "linting issue", Value: buffer}
+			return "", types.Kr8Error{Message: "linting issue", Value: buffer.String()}
 		}
 	}
 
