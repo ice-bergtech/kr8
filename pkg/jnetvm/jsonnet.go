@@ -122,7 +122,7 @@ func JsonnetRenderFiles(
 	}
 
 	if lint {
-		snippets := []linter.Snippet{linter.Snippet{FileName: source, Code: string(jsonnetImport)}}
+		snippets := []linter.Snippet{{FileName: source, Code: jsonnetImport}}
 		var buffer bytes.Buffer
 		if linter.LintSnippet(jvm, &buffer, snippets) {
 			return "", types.Kr8Error{Message: "linting issue", Value: buffer}
@@ -157,6 +157,7 @@ func JsonnetRender(
 		[]string{cmdFlagsJsonnet.Component},
 		cmdFlagsJsonnet.ClusterParams,
 		false,
+		cmdFlagsJsonnet.Lint,
 	)
 	if err := util.ErrorIfCheck("error rendering cluster params", err); err != nil {
 		return err
@@ -199,6 +200,7 @@ func JsonnetRenderClusterParamsOnly(
 	clusterName string,
 	clusterParams string,
 	prune bool,
+	lint bool,
 ) (string, error) {
 	var params []string
 	if clusterName != "" {
@@ -212,7 +214,7 @@ func JsonnetRenderClusterParamsOnly(
 		params = append(params, clusterParams)
 	}
 
-	return JsonnetRenderFiles(vmConfig, params, "._cluster", prune, "", "clusterparams")
+	return JsonnetRenderFiles(vmConfig, params, "._cluster", prune, "", "clusterparams", lint)
 }
 
 // Render cluster params, merged with one or more component's parameters.
@@ -223,6 +225,7 @@ func JsonnetRenderClusterParams(
 	componentNames []string,
 	clusterParams string,
 	prune bool,
+	lint bool,
 ) (string, error) {
 	if clusterName == "" && clusterParams == "" {
 		return "", types.Kr8Error{Message: "Please specify a --cluster name and/or --clusterparams", Value: ""}
@@ -242,7 +245,7 @@ func JsonnetRenderClusterParams(
 		params = append(params, clusterParams)
 	}
 
-	compParams, err := JsonnetRenderFiles(vmConfig, params, "", true, "", "clusterparams")
+	compParams, err := JsonnetRenderFiles(vmConfig, params, "", true, "", "clusterparams", lint)
 	if err := util.ErrorIfCheck("failed to render cluster params", err); err != nil {
 		return "", err
 	}
@@ -259,7 +262,7 @@ func JsonnetRenderClusterParams(
 		return "", util.ErrorIfCheck("failed to merge component defaults", err)
 	}
 
-	return JsonnetRenderFiles(vmConfig, params, "", prune, componentDefaultsMerged, "component params")
+	return JsonnetRenderFiles(vmConfig, params, "", prune, componentDefaultsMerged, "component params", lint)
 }
 
 func MergeComponentDefaults(

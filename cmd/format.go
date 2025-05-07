@@ -34,6 +34,7 @@ func FormatFile(filename string, logger zerolog.Logger) error {
 	ext := filepath.Ext(filename)
 	if ext != ".jsonnet" && ext != ".libsonnet" {
 		logger.Debug().Msg("skipping: not .jsonnet or .libsonnet")
+
 		return nil
 	}
 	bytes, err := os.ReadFile(filepath.Clean(filename))

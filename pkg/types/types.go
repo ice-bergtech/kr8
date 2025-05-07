@@ -30,6 +30,7 @@ type CmdJsonnetOptions struct {
 	Component     string
 	Format        string
 	Color         bool
+	Lint          bool
 }
 
 // VMConfig describes configuration to initialize the Jsonnet VM with.
