@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
 	types "github.com/ice-bergtech/kr8/pkg/types"
@@ -222,4 +223,60 @@ func ReadGzip(filename string) ([]byte, error) {
 	}
 
 	return data, nil
+}
+
+// Lists each file in a directory and formats all .jsonnet and .libsonnet files.
+// If recursive flag is enabled, will explore the directory tree.
+func FileFuncInDir(inputPath string, recursive bool, fileFunc func(string, zerolog.Logger) error, logger zerolog.Logger) error {
+	fileInfo, err := os.Stat(inputPath)
+	if err != nil {
+		return err
+	}
+
+	filePaths := []string{inputPath}
+
+	if fileInfo.IsDir() {
+		filePaths, err = dirFilesApplyFunc(inputPath, recursive, fileFunc, logger)
+		if err != nil {
+			return err
+		}
+	}
+
+	log.Debug().Any("files", filePaths).Msg("collected files")
+
+	for _, file := range filePaths {
+		err := fileFunc(file, logger.With().Str("file", file).Logger())
+		if err != nil {
+			logger.Error().Err(err).Msg("issue processing file")
+		} else {
+			logger.Info().Msg(file)
+		}
+	}
+
+	return nil
+}
+
+// Returns a list of files in the inputPath.
+// If a directory is encountered and recursive is true, will format the directory.
+func dirFilesApplyFunc(inputPath string, recursive bool, fileFunc func(string, zerolog.Logger) error, logger zerolog.Logger) ([]string, error) {
+	filePaths := []string{}
+	dirEntries, err := os.ReadDir(inputPath)
+	if err != nil {
+		return nil, err
+	}
+	for _, entry := range dirEntries {
+		if entry.IsDir() {
+			if recursive {
+				err := FileFuncInDir(entry.Name(), recursive, fileFunc, logger)
+				if err != nil {
+					return nil, err
+				}
+			}
+
+			continue
+		}
+		filePaths = append(filePaths, entry.Name())
+	}
+
+	return filePaths, nil
 }

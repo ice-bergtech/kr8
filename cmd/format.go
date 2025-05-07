@@ -30,7 +30,12 @@ func init() {
 
 // Read, format, and write back a file.
 // github.com/google/go-jsonnet/formatter is used to format files.
-func FormatFile(filename string) error {
+func FormatFile(filename string, logger zerolog.Logger) error {
+	ext := filepath.Ext(filename)
+	if ext != ".jsonnet" && ext != ".libsonnet" {
+		logger.Debug().Msg("skipping: not .jsonnet or .libsonnet")
+		return nil
+	}
 	bytes, err := os.ReadFile(filepath.Clean(filename))
 	if err != nil {
 		return err
@@ -41,65 +46,6 @@ func FormatFile(filename string) error {
 	}
 
 	return os.WriteFile(filepath.Clean(filename), []byte(output), 0600)
-}
-
-// Lists each file in a directory and formats all .jsonnet and .libsonnet files.
-// If recursive flag is enabled, will explore the directory tree.
-func FormatDir(inputPath string, recursive bool, logger zerolog.Logger) error {
-	fileInfo, err := os.Stat(inputPath)
-	if err != nil {
-		return err
-	}
-
-	filePaths := []string{inputPath}
-
-	if fileInfo.IsDir() {
-		filePaths, err = dirFileListAndFormat(inputPath, recursive, logger)
-		if err != nil {
-			return err
-		}
-	}
-
-	log.Debug().Any("files", filePaths).Msg("collected files")
-
-	for _, file := range filePaths {
-		ext := filepath.Ext(file)
-		if ext == ".jsonnet" || ext == ".libsonnet" {
-			err := FormatFile(file)
-			if err != nil {
-				logger.Error().Err(err).Msg("issue formatting " + file)
-			} else {
-				logger.Info().Msg("formatted " + file)
-			}
-		}
-	}
-
-	return nil
-}
-
-// Returns a list of files in the inputPath.
-// If a directory is encountered and recursive is true, will format the directory.
-func dirFileListAndFormat(inputPath string, recursive bool, logger zerolog.Logger) ([]string, error) {
-	filePaths := []string{}
-	dirEntries, err := os.ReadDir(inputPath)
-	if err != nil {
-		return nil, err
-	}
-	for _, entry := range dirEntries {
-		if entry.IsDir() {
-			if recursive {
-				err := FormatDir(entry.Name(), recursive, logger)
-				if err != nil {
-					return nil, err
-				}
-			}
-
-			continue
-		}
-		filePaths = append(filePaths, entry.Name())
-	}
-
-	return filePaths, nil
 }
 
 // Take the formatting options and format them for help output.
@@ -134,7 +80,7 @@ Formats files with the following options: ` + prettyPrintFormattingOpts(),
 
 		for _, path := range paths {
 			logger := log.With().Str("param", path).Logger()
-			err := FormatDir(path, cmdFormatOptions.Recursive, logger)
+			err := util.FileFuncInDir(path, cmdFormatOptions.Recursive, FormatFile, logger)
 			if err != nil {
 				logger.Error().Err(err).Msg("issue formatting path")
 			}
