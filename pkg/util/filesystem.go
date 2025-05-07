@@ -227,7 +227,12 @@ func ReadGzip(filename string) ([]byte, error) {
 
 // Lists each file in a directory and formats all .jsonnet and .libsonnet files.
 // If recursive flag is enabled, will explore the directory tree.
-func FileFuncInDir(inputPath string, recursive bool, fileFunc func(string, zerolog.Logger) error, logger zerolog.Logger) error {
+func FileFuncInDir(
+	inputPath string,
+	recursive bool,
+	fileFunc func(string, zerolog.Logger) error,
+	logger zerolog.Logger,
+) error {
 	fileInfo, err := os.Stat(inputPath)
 	if err != nil {
 		return err
@@ -258,7 +263,12 @@ func FileFuncInDir(inputPath string, recursive bool, fileFunc func(string, zerol
 
 // Returns a list of files in the inputPath.
 // If a directory is encountered and recursive is true, will format the directory.
-func dirFilesApplyFunc(inputPath string, recursive bool, fileFunc func(string, zerolog.Logger) error, logger zerolog.Logger) ([]string, error) {
+func dirFilesApplyFunc(
+	inputPath string,
+	recursive bool,
+	fileFunc func(string, zerolog.Logger) error,
+	logger zerolog.Logger,
+) ([]string, error) {
 	filePaths := []string{}
 	dirEntries, err := os.ReadDir(inputPath)
 	if err != nil {
