@@ -136,7 +136,7 @@ var GetComponentsCmd = &cobra.Command{
 			params = append(params, cmdGetFlags.ClusterParams)
 		}
 
-		jvm, err := jnetvm.JsonnetRenderFiles(RootConfig.VMConfig, params, "._components", true, "", "components")
+		jvm, err := jnetvm.JsonnetRenderFiles(RootConfig.VMConfig, params, "._components", true, "", "components", false)
 		util.FatalErrorCheck("error rendering jsonnet files", err, log.Logger)
 		if cmdGetFlags.ParamField != "" {
 			value := gjson.Get(jvm, cmdGetFlags.ParamField)
@@ -175,6 +175,7 @@ var GetParamsCmd = &cobra.Command{
 			cList,
 			cmdGetFlags.ClusterParams,
 			true,
+			false,
 		)
 		util.FatalErrorCheck("error rendering cluster params", err, log.Logger)
 

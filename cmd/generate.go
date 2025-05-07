@@ -25,6 +25,8 @@ type CmdGenerateOptions struct {
 	GenerateDir string
 	// Stores the filters to apply to clusters and components when generating files
 	Filters util.PathFilterOptions
+	// Lint Files with jsonnet linter before generating output
+	Lint bool
 }
 
 var cmdGenerateFlags CmdGenerateOptions
@@ -50,11 +52,13 @@ func init() {
 		"clexcludes", "x", "",
 		"filter included cluster by excluding clusters with matching cluster parameters - "+
 			"comma separate list of key/value conditions separated by = or ~ (for regex match)")
+	GenerateCmd.Flags().BoolVarP(&cmdGenerateFlags.Lint, "lint", "l", true,
+		"lint Files with jsonnet linter before generating output")
 }
 
 var GenerateCmd = &cobra.Command{
 	Use:     "generate [flags]",
-	Aliases: []string{"gen"},
+	Aliases: []string{"gen", "g"},
 	Short:   "Generate components",
 	Long:    `Generate components in clusters`,
 	Example: "kr8 generate",
@@ -67,7 +71,12 @@ var GenerateCmd = &cobra.Command{
 // It uses a wait group to ensure that all clusters have been processed before exiting.
 func GenerateCommand(cmd *cobra.Command, args []string) {
 	// get list of all clusters, render cluster level params for all of them
-	allClusterParams, err := generate.GetClusterParams(RootConfig.ClusterDir, RootConfig.VMConfig, log.Logger)
+	allClusterParams, err := generate.GetClusterParams(
+		RootConfig.ClusterDir,
+		RootConfig.VMConfig,
+		cmdGenerateFlags.Lint,
+		log.Logger,
+	)
 	util.FatalErrorCheck("error getting cluster params from "+RootConfig.ClusterDir, err, log.Logger)
 
 	clusterList := GenerateCmdClusterListBuilder(allClusterParams)
@@ -100,6 +109,7 @@ func GenerateCommand(cmd *cobra.Command, args []string) {
 				Filters:           cmdGenerateFlags.Filters,
 				VmConfig:          RootConfig.VMConfig,
 				Noop:              false,
+				Lint:              cmdGenerateFlags.Lint,
 			}
 
 			err = generate.GenProcessCluster(
