@@ -32,13 +32,13 @@ func SetupLogger(enableColor bool) zerolog.Logger {
 			colorBold := 1
 
 			// Replace escaped tabs/newlines with spaces/pipes for easier splitting
-			s := strings.ReplaceAll(
+			pipedErrString := strings.ReplaceAll(
 				strings.ReplaceAll(
 					strings.ReplaceAll(err.(string), "\\t", " "), "\\n", " | ",
 				), "|  |", "|")
 
 			// Split the stack trace into frames to format and flatten anonymous frames
-			frames := strings.Split(s, "|")
+			frames := strings.Split(pipedErrString, "|")
 			var resultFrames []string
 			var anonFrameCount int
 			anonFrameCount = 0
@@ -51,6 +51,7 @@ func SetupLogger(enableColor bool) zerolog.Logger {
 				// Flatten consecutive or duplicate <anonymous> function frames
 				if strings.Contains(frame, "<function <anonymous>>") {
 					anonFrameCount++
+
 					continue
 				} else {
 					if anonFrameCount > 0 {
