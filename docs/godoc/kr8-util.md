@@ -86,7 +86,7 @@ func Colorize(input interface{}, colorNum int, disabled bool) string
 Colorize function from zerolog console.go file to replicate their coloring functionality. Source: https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389 Replicated here because it's a private function.
 
 <a name="ErrorIfCheck"></a>
-## func [ErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/logging.go#L54>)
+## func [ErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/logging.go#L91>)
 
 ```go
 func ErrorIfCheck(message string, err error) error
@@ -95,7 +95,7 @@ func ErrorIfCheck(message string, err error) error
 If err \!= nil, wraps it in a Kr8Error with the message.
 
 <a name="FatalErrorCheck"></a>
-## func [FatalErrorCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/logging.go#L47>)
+## func [FatalErrorCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/logging.go#L84>)
 
 ```go
 func FatalErrorCheck(message string, err error, logger zerolog.Logger)
@@ -212,7 +212,7 @@ func JsonnetPrint(output string, format string, color bool) error
 Print the jsonnet in the specified format. Acceptable formats are: yaml, stream, json.
 
 <a name="LogErrorIfCheck"></a>
-## func [LogErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/logging.go#L63>)
+## func [LogErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/logging.go#L100>)
 
 ```go
 func LogErrorIfCheck(message string, err error, logger zerolog.Logger) error
@@ -248,13 +248,17 @@ func ReadGzip(filename string) ([]byte, error)
 Read bytes from a gzip file \(path included\).
 
 <a name="SetupLogger"></a>
-## func [SetupLogger](<https://github.com:icebergtech/kr8/blob/main/pkg/util/logging.go#L20>)
+## func [SetupLogger](<https://github.com:icebergtech/kr8/blob/main/pkg/util/logging.go#L24>)
 
 ```go
 func SetupLogger(enableColor bool) zerolog.Logger
 ```
 
-Configure zerolog with some defaults and cleanup error formatting.
+Configure zerolog with:
+
+- Sensible defaults
+- Cleanup error formatting
+- Flatten \<anonymous\> frames.
 
 <a name="WriteFile"></a>
 ## func [WriteFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L165>)
