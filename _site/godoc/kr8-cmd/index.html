@@ -699,9 +699,10 @@ and initialize a git repo so you can get started`,
 </code></pre>
 <p><a name="VersionCmd"></a>Print out versions of packages in use. Chore() - Updated manually.</p>
 <pre><code class="language-go">var VersionCmd = &amp;cobra.Command{
-    Use:   &quot;version&quot;,
-    Short: &quot;Return the current version of kr8+&quot;,
-    Long:  `Return the current version of kr8+`,
+    Use:     &quot;version&quot;,
+    Aliases: []string{&quot;ver&quot;, &quot;v&quot;},
+    Short:   &quot;Return the current version of kr8+&quot;,
+    Long:    `Return the current version of kr8+`,
     Run: func(cmd *cobra.Command, args []string) {
         fmt.Println(RootCmd.Use + &quot;+ Version: &quot; + version)
         info, ok := debug.ReadBuildInfo()
