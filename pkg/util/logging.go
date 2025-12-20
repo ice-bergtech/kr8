@@ -8,6 +8,7 @@ package util
 
 import (
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/rs/zerolog"
@@ -16,7 +17,10 @@ import (
 	types "github.com/ice-bergtech/kr8/pkg/types"
 )
 
-// Configure zerolog with some defaults and cleanup error formatting.
+// Configure zerolog with:
+//   - Sensible defaults
+//   - Cleanup error formatting
+//   - Flatten <anonymous> frames.
 func SetupLogger(enableColor bool) zerolog.Logger {
 	//nolint:exhaustruct
 	consoleWriter := zerolog.ConsoleWriter{
@@ -26,12 +30,45 @@ func SetupLogger(enableColor bool) zerolog.Logger {
 			// https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L21
 			colorRed := 31
 			colorBold := 1
+
+			// Replace escaped tabs/newlines with spaces/pipes for easier splitting
 			s := strings.ReplaceAll(
 				strings.ReplaceAll(
 					strings.ReplaceAll(err.(string), "\\t", " "), "\\n", " | ",
 				), "|  |", "|")
 
-			return Colorize(Colorize(s, colorBold, !enableColor), colorRed, !enableColor)
+			// Split the stack trace into frames to format and flatten anonymous frames
+			frames := strings.Split(s, "|")
+			var resultFrames []string
+			var anonFrameCount int
+			anonFrameCount = 0
+
+			for _, frame := range frames {
+				frame = strings.TrimSpace(frame)
+				if frame == "" {
+					continue
+				}
+				// Flatten consecutive or duplicate <anonymous> function frames
+				if strings.Contains(frame, "<function <anonymous>>") {
+					anonFrameCount++
+					continue
+				} else {
+					if anonFrameCount > 0 {
+						resultFrames = append(resultFrames, "[anonymous func x"+strconv.Itoa(anonFrameCount)+"]")
+					}
+					anonFrameCount = 0
+				}
+				resultFrames = append(resultFrames, frame)
+			}
+			// Log if last frame is an anonymous one
+			if anonFrameCount > 0 {
+				resultFrames = append(resultFrames, "[anonymous func x"+strconv.Itoa(anonFrameCount)+"]")
+			}
+			// Join frames with newlines and indentation
+			formatted := strings.Join(resultFrames, "\n  ")
+
+			// Colorize as before
+			return Colorize(Colorize(formatted, colorBold, !enableColor), colorRed, !enableColor)
 		},
 		// Other fields:
 		// TimeFormat, TimeLocation, PartsOrder, PartsExclude,
