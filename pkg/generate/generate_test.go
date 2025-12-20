@@ -29,7 +29,7 @@ func TestGetClusterParams(t *testing.T) {
 	}
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
-			got, gotErr := generate.GetClusterParams(testCase.clusterDir, testCase.vmConfig, testCase.logger)
+			got, gotErr := generate.GetClusterParams(testCase.clusterDir, testCase.vmConfig, false, testCase.logger)
 			if gotErr != nil {
 				if !testCase.wantErr {
 					t.Errorf("GetClusterParams() failed: %v", gotErr)
@@ -101,6 +101,7 @@ func TestGenProcessComponent(t *testing.T) {
 				testCase.filters,
 				testCase.paramsFile,
 				testCase.cache,
+				false,
 				testCase.logger,
 			)
 			if gotErr != nil {
@@ -255,6 +256,7 @@ func TestSetupComponentVM(t *testing.T) {
 				testCase.filters,
 				testCase.paramsFile,
 				testCase.kr8Opts,
+				false,
 				testCase.logger,
 			)
 			if gotErr != nil {
@@ -292,7 +294,7 @@ func TestGetAllClusterParams(t *testing.T) {
 	}
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
-			gotErr := generate.GetAllClusterParams(testCase.clusterDir, testCase.vmConfig, testCase.jvm, testCase.logger)
+			gotErr := generate.GetAllClusterParams(testCase.clusterDir, testCase.vmConfig, testCase.jvm, false, testCase.logger)
 			if gotErr != nil {
 				if !testCase.wantErr {
 					t.Errorf("GetAllClusterParams() failed: %v", gotErr)
@@ -460,6 +462,7 @@ func TestGatherClusterConfig(t *testing.T) {
 				testCase.filters,
 				testCase.clusterParamsFile,
 				false,
+				false,
 				testCase.logger,
 			)
 			if gotErr != nil {
@@ -559,6 +562,7 @@ func TestCompileClusterConfiguration(t *testing.T) {
 				testCase.kr8Opts,
 				testCase.vmConfig,
 				testCase.generateDirOverride,
+				false,
 				testCase.logger,
 			)
 			if gotErr != nil {
@@ -613,6 +617,7 @@ func TestRenderComponents(t *testing.T) {
 				testCase.pool,
 				testCase.kr8Opts,
 				testCase.filters,
+				false,
 				testCase.logger,
 			)
 			if gotErr != nil {

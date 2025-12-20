@@ -46,7 +46,12 @@ type SafeString struct {
 
 // Given a base directory, generates cluster-level configuration for each cluster found.
 // Gets list of clusters from `util.GetClusterFilenames(clusterDir)`.
-func GetClusterParams(clusterDir string, vmConfig types.VMConfig, logger zerolog.Logger) (map[string]string, error) {
+func GetClusterParams(
+	clusterDir string,
+	vmConfig types.VMConfig,
+	lint bool,
+	logger zerolog.Logger,
+) (map[string]string, error) {
 	// get list of all clusters, render cluster level params for all of them
 	allClusterParams := make(map[string]string)
 	allClusters, err := util.GetClusterFilenames(clusterDir)
@@ -57,7 +62,7 @@ func GetClusterParams(clusterDir string, vmConfig types.VMConfig, logger zerolog
 	logger.Debug().Msg("GetClusterParams Found " + strconv.Itoa(len(allClusters)) + " clusters")
 
 	for _, c := range allClusters {
-		allClusterParams[c.Name], err = jnetvm.JsonnetRenderClusterParamsOnly(vmConfig, c.Name, "", false)
+		allClusterParams[c.Name], err = jnetvm.JsonnetRenderClusterParamsOnly(vmConfig, c.Name, "", false, lint)
 		if err != nil {
 			return nil, err
 		}
@@ -109,6 +114,7 @@ func GenProcessComponent(
 	filters util.PathFilterOptions,
 	paramsFile string,
 	cache *kr8_cache.DeploymentCache,
+	lint bool,
 	logger zerolog.Logger,
 ) (bool, *kr8_cache.ComponentCache, error) {
 	logger.Info().Msg("Processing component")
@@ -140,7 +146,7 @@ func GenProcessComponent(
 	// Slowed down by numerous memory allocs.
 	jvm, compPath, err := SetupComponentVM(
 		vmConfig, config, kr8Spec, componentName, compSpec,
-		allConfig, filters, paramsFile, kr8Opts, logger,
+		allConfig, filters, paramsFile, kr8Opts, lint, logger,
 	)
 	if err := util.LogErrorIfCheck("Error setting up JVM for component", err, logger); err != nil {
 		return false, nil, err
@@ -261,6 +267,7 @@ func SetupComponentVM(
 	filters util.PathFilterOptions,
 	paramsFile string,
 	kr8Opts types.Kr8Opts,
+	lint bool,
 	logger zerolog.Logger,
 ) (*jsonnet.VM, string, error) {
 	// Initialize a default jsonnet VM for components to build on top of
@@ -292,7 +299,7 @@ func SetupComponentVM(
 	// check if a full render of ALL cluster params should be included
 	if compSpec.Kr8_allClusters {
 		// add kr8_allclusters extCode with every cluster's cluster level params
-		if err := GetAllClusterParams(kr8Opts.ClusterDir, vmConfig, jvm, logger); err != nil {
+		if err := GetAllClusterParams(kr8Opts.ClusterDir, vmConfig, jvm, lint, logger); err != nil {
 			return nil, "", util.LogErrorIfCheck("error getting all cluster params", err, logger)
 		}
 	}
@@ -315,9 +322,15 @@ func GetComponentPath(config string, componentName string) string {
 }
 
 // Combine all the cluster params into a single object indexed by cluster name.
-func GetAllClusterParams(clusterDir string, vmConfig types.VMConfig, jvm *jsonnet.VM, logger zerolog.Logger) error {
+func GetAllClusterParams(
+	clusterDir string,
+	vmConfig types.VMConfig,
+	jvm *jsonnet.VM,
+	lint bool,
+	logger zerolog.Logger,
+) error {
 	allClusterParamsObject := "{ "
-	params, err := GetClusterParams(clusterDir, vmConfig, logger)
+	params, err := GetClusterParams(clusterDir, vmConfig, lint, logger)
 	if err != nil {
 		return err
 	}
@@ -353,6 +366,7 @@ func GetClusterComponentParamsThreadSafe(
 				kr8Spec.Name,
 				[]string{},
 				paramsFile,
+				false,
 				false,
 			)
 			if err != nil {
@@ -421,6 +435,7 @@ type GenerateProcessRootConfig struct {
 	Filters           util.PathFilterOptions
 	VmConfig          types.VMConfig
 	Noop              bool
+	Lint              bool
 }
 
 // The root function for generating a cluster.
@@ -443,6 +458,7 @@ func GenProcessCluster(
 		clusterConfig.Filters,
 		clusterConfig.ClusterParamsFile,
 		clusterConfig.Noop,
+		clusterConfig.Lint,
 		logger,
 	)
 	if err != nil {
@@ -468,6 +484,7 @@ func GenProcessCluster(
 		pool,
 		clusterConfig.Kr8Opts,
 		clusterConfig.Filters,
+		clusterConfig.Lint,
 		logger,
 	)
 	if err != nil {
@@ -498,6 +515,7 @@ func GatherClusterConfig(
 	filters util.PathFilterOptions,
 	clusterParamsFile string,
 	noop bool,
+	lint bool,
 	logger zerolog.Logger,
 ) (*kr8_types.Kr8ClusterSpec, []string, string, error) {
 	kr8Spec, clusterComponents, err := CompileClusterConfiguration(
@@ -506,6 +524,7 @@ func GatherClusterConfig(
 		kr8Opts,
 		vmConfig,
 		generateDirOverride,
+		lint,
 		logger,
 	)
 	if err != nil {
@@ -534,6 +553,7 @@ func GatherClusterConfig(
 		compList,
 		clusterParamsFile,
 		false,
+		lint,
 	)
 	if err := util.LogErrorIfCheck("error rendering cluster params", err, logger); err != nil {
 		return nil, nil, "", err
@@ -595,6 +615,7 @@ func CompileClusterConfiguration(
 	kr8Opts types.Kr8Opts,
 	vmConfig types.VMConfig,
 	generateDirOverride string,
+	lint bool,
 	logger zerolog.Logger,
 ) (*kr8_types.Kr8ClusterSpec, map[string]gjson.Result, error) {
 	// First determine the path to the cluster.jsonnet file.
@@ -606,7 +627,7 @@ func CompileClusterConfiguration(
 	params := util.GetClusterParamsFilenames(clusterDir, clusterPath)
 
 	// Compile the cluster kr8+ configuration
-	renderedKr8Spec, err := jnetvm.JsonnetRenderFiles(vmConfig, params, "._kr8_spec", false, "", "kr8_spec")
+	renderedKr8Spec, err := jnetvm.JsonnetRenderFiles(vmConfig, params, "._kr8_spec", false, "", "kr8_spec", lint)
 	if err := util.LogErrorIfCheck("error rendering cluster `_kr8_spec`", err, logger); err != nil {
 		return nil, nil, err
 	}
@@ -627,6 +648,7 @@ func CompileClusterConfiguration(
 		vmConfig, params,
 		"._components", true,
 		"", clusterName+": ._components",
+		lint,
 	)
 	if err := util.LogErrorIfCheck("error rendering cluster components list", err, logger); err != nil {
 		return nil, nil, err
@@ -650,6 +672,7 @@ func RenderComponents(
 	pool *ants.Pool,
 	kr8Opts types.Kr8Opts,
 	filters util.PathFilterOptions,
+	lint bool,
 	logger zerolog.Logger,
 ) (map[string]kr8_cache.ComponentCache, error) {
 	// Get a cache object for components to reference.
@@ -672,7 +695,7 @@ func RenderComponents(
 				kr8Spec, kr8Opts,
 				config, &allConfig,
 				filters, clusterParamsFile,
-				cacheObj, subLogger,
+				cacheObj, lint, subLogger,
 			)
 			if err != nil {
 				subLogger.Error().

@@ -15,11 +15,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"github.com/tidwall/gjson"
-
-	types "github.com/ice-bergtech/kr8/pkg/types"
 )
 
 // Filter returns a new slice containing only the elements that satisfy the predicate function.
@@ -33,30 +29,6 @@ func Filter(vs []string, f func(string) bool) []string {
 	}
 
 	return vsf
-}
-
-// Configure zerolog with some defaults and cleanup error formatting.
-func SetupLogger(enableColor bool) zerolog.Logger {
-	//nolint:exhaustruct
-	consoleWriter := zerolog.ConsoleWriter{
-		Out:     os.Stderr,
-		NoColor: !enableColor,
-		FormatErrFieldValue: func(err interface{}) string {
-			// https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L21
-			colorRed := 31
-			colorBold := 1
-			s := strings.ReplaceAll(strings.ReplaceAll(strings.TrimRight(err.(string), "\\n"), "\\t", " "), "\\n", " |")
-
-			return Colorize(Colorize(s, colorBold, !enableColor), colorRed, !enableColor)
-		},
-		// Other fields:
-		// TimeFormat, TimeLocation, PartsOrder, PartsExclude,
-		// FieldsOrder, FieldsExclude, FormatTimestamp, FormatLevel,
-		// FormatCaller, FormatMessage, FormatFieldName, FormatFieldValue,
-		// FormatErrFieldName, FormatExtra, FormatPrepare
-	}
-
-	return log.Output(consoleWriter)
 }
 
 // Fill with string to include and exclude, using kr8's special parsing.
@@ -138,33 +110,6 @@ func FilterItems(input map[string]string, pFilter PathFilterOptions) []string {
 	}
 
 	return clusterList
-}
-
-// Logs an error and exits the program if the error is not nil.
-func FatalErrorCheck(message string, err error, logger zerolog.Logger) {
-	if err != nil {
-		logger.Fatal().Err(err).Msg(message)
-	}
-}
-
-// If err != nil, wraps it in a Kr8Error with the message.
-func ErrorIfCheck(message string, err error) error {
-	if err != nil {
-		return types.Kr8Error{Message: message, Value: err}
-	}
-
-	return nil
-}
-
-// If the error is not nil, log an error and wrap the error in a Kr8Error.
-func LogErrorIfCheck(message string, err error, logger zerolog.Logger) error {
-	if err != nil {
-		logger.Error().Err(err).Msg(message)
-
-		return types.Kr8Error{Message: message, Value: err}
-	}
-
-	return nil
 }
 
 // Using the allClusterParams variable and command flags to create a list of clusters to generate.

@@ -52,4 +52,6 @@ func init() {
 	JsonnetRenderCmd.PersistentFlags().StringVarP(&cmdFlagsJsonnet.Cluster,
 		"cluster", "C", "",
 		"cluster to render params for")
+	JsonnetRenderCmd.Flags().BoolVarP(&cmdFlagsJsonnet.Lint, "lint", "l", true,
+		"lint Files with jsonnet linter before generating output")
 }

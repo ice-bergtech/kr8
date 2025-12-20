@@ -6,6 +6,8 @@ import "github.com/ice-bergtech/kr8/pkg/util"
 
 Package util contains various utility functions for directories and files. It includes functions for formatting JSON, writing to files, directory management, and go control\-flow helpers
 
+Package util contains various utility functions for directories and files. It includes functions for formatting JSON, writing to files, directory management, and go control\-flow helpers
+
 ## Index
 
 - [func BuildDirFileList\(directory string\) \(\[\]string, error\)](<#BuildDirFileList>)
@@ -16,6 +18,7 @@ Package util contains various utility functions for directories and files. It in
 - [func ErrorIfCheck\(message string, err error\) error](<#ErrorIfCheck>)
 - [func FatalErrorCheck\(message string, err error, logger zerolog.Logger\)](<#FatalErrorCheck>)
 - [func FetchRepoUrl\(url string, destination string, noop bool\) error](<#FetchRepoUrl>)
+- [func FileFuncInDir\(inputPath string, recursive bool, fileFunc func\(string, zerolog.Logger\) error, logger zerolog.Logger\) error](<#FileFuncInDir>)
 - [func Filter\(vs \[\]string, f func\(string\) bool\) \[\]string](<#Filter>)
 - [func FilterItems\(input map\[string\]string, pFilter PathFilterOptions\) \[\]string](<#FilterItems>)
 - [func FormatJsonnetString\(input string\) \(string, error\)](<#FormatJsonnetString>)
@@ -38,7 +41,7 @@ Package util contains various utility functions for directories and files. It in
 
 
 <a name="BuildDirFileList"></a>
-## func [BuildDirFileList](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L144>)
+## func [BuildDirFileList](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L145>)
 
 ```go
 func BuildDirFileList(directory string) ([]string, error)
@@ -47,7 +50,7 @@ func BuildDirFileList(directory string) ([]string, error)
 Walk a directory to build a list of all files in the tree.
 
 <a name="CalculateClusterIncludesExcludes"></a>
-## func [CalculateClusterIncludesExcludes](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L172>)
+## func [CalculateClusterIncludesExcludes](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L117>)
 
 ```go
 func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string
@@ -56,7 +59,7 @@ func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilte
 Using the allClusterParams variable and command flags to create a list of clusters to generate. Clusters can be filtered with "=" for equality or "\~" for regex match.
 
 <a name="CheckObjectMatch"></a>
-## func [CheckObjectMatch](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L91>)
+## func [CheckObjectMatch](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L63>)
 
 ```go
 func CheckObjectMatch(input gjson.Result, filterString string) bool
@@ -65,7 +68,7 @@ func CheckObjectMatch(input gjson.Result, filterString string) bool
 Checks if a input object matches a filter string. The filter string can be an equality match or a regex match.
 
 <a name="CleanOutputDir"></a>
-## func [CleanOutputDir](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L113>)
+## func [CleanOutputDir](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L114>)
 
 ```go
 func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error
@@ -83,7 +86,7 @@ func Colorize(input interface{}, colorNum int, disabled bool) string
 Colorize function from zerolog console.go file to replicate their coloring functionality. Source: https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389 Replicated here because it's a private function.
 
 <a name="ErrorIfCheck"></a>
-## func [ErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L151>)
+## func [ErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/logging.go#L54>)
 
 ```go
 func ErrorIfCheck(message string, err error) error
@@ -92,7 +95,7 @@ func ErrorIfCheck(message string, err error) error
 If err \!= nil, wraps it in a Kr8Error with the message.
 
 <a name="FatalErrorCheck"></a>
-## func [FatalErrorCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L144>)
+## func [FatalErrorCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/logging.go#L47>)
 
 ```go
 func FatalErrorCheck(message string, err error, logger zerolog.Logger)
@@ -109,8 +112,17 @@ func FetchRepoUrl(url string, destination string, noop bool) error
 
 Fetch a git repo from a url and clone it to a destination directory. If the noop flag is true, it print commands to fetch manually without doing anything.
 
+<a name="FileFuncInDir"></a>
+## func [FileFuncInDir](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L230-L235>)
+
+```go
+func FileFuncInDir(inputPath string, recursive bool, fileFunc func(string, zerolog.Logger) error, logger zerolog.Logger) error
+```
+
+Lists each file in a directory and formats all .jsonnet and .libsonnet files. If recursive flag is enabled, will explore the directory tree.
+
 <a name="Filter"></a>
-## func [Filter](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L27>)
+## func [Filter](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L23>)
 
 ```go
 func Filter(vs []string, f func(string) bool) []string
@@ -119,7 +131,7 @@ func Filter(vs []string, f func(string) bool) []string
 Filter returns a new slice containing only the elements that satisfy the predicate function. From https://gobyexample.com/collection-functions
 
 <a name="FilterItems"></a>
-## func [FilterItems](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L111>)
+## func [FilterItems](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L83>)
 
 ```go
 func FilterItems(input map[string]string, pFilter PathFilterOptions) []string
@@ -146,7 +158,7 @@ func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, er
 Formats a jsonnet string using custom options.
 
 <a name="GetClusterFilenames"></a>
-## func [GetClusterFilenames](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L18>)
+## func [GetClusterFilenames](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L19>)
 
 ```go
 func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error)
@@ -155,7 +167,7 @@ func GetClusterFilenames(searchDir string) ([]types.Kr8Cluster, error)
 Get a list of cluster from within a directory. Walks the directory tree, creating a types.Kr8Cluster for each cluster.jsonnet file found.
 
 <a name="GetClusterParamsFilenames"></a>
-## func [GetClusterParamsFilenames](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L74>)
+## func [GetClusterParamsFilenames](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L75>)
 
 ```go
 func GetClusterParamsFilenames(basePath string, targetPath string) []string
@@ -164,7 +176,7 @@ func GetClusterParamsFilenames(basePath string, targetPath string) []string
 Get all cluster parameters within a directory. Walks through the directory hierarchy and returns all paths to \`params.jsonnet\` files.
 
 <a name="GetClusterPath"></a>
-## func [GetClusterPath](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L48>)
+## func [GetClusterPath](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L49>)
 
 ```go
 func GetClusterPath(searchDir string, clusterName string) (string, error)
@@ -182,7 +194,7 @@ func GetDefaultFormatOptions() formatter.Options
 Configures the default options for the jsonnet formatter.
 
 <a name="HashFile"></a>
-## func [HashFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L191>)
+## func [HashFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L136>)
 
 ```go
 func HashFile(path string) (string, error)
@@ -200,7 +212,7 @@ func JsonnetPrint(output string, format string, color bool) error
 Print the jsonnet in the specified format. Acceptable formats are: yaml, stream, json.
 
 <a name="LogErrorIfCheck"></a>
-## func [LogErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L160>)
+## func [LogErrorIfCheck](<https://github.com:icebergtech/kr8/blob/main/pkg/util/logging.go#L63>)
 
 ```go
 func LogErrorIfCheck(message string, err error, logger zerolog.Logger) error
@@ -218,7 +230,7 @@ func Pretty(inputJson string, colorOutput bool) (string, error)
 Pretty formats the input jsonnet string with indentation and optional color output. Returns an error when the input can't properly format the json string input.
 
 <a name="ReadFile"></a>
-## func [ReadFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L175>)
+## func [ReadFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L176>)
 
 ```go
 func ReadFile(file string) ([]byte, error)
@@ -227,7 +239,7 @@ func ReadFile(file string) ([]byte, error)
 Read bytes from file \(path included\).
 
 <a name="ReadGzip"></a>
-## func [ReadGzip](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L210>)
+## func [ReadGzip](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L211>)
 
 ```go
 func ReadGzip(filename string) ([]byte, error)
@@ -236,7 +248,7 @@ func ReadGzip(filename string) ([]byte, error)
 Read bytes from a gzip file \(path included\).
 
 <a name="SetupLogger"></a>
-## func [SetupLogger](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L39>)
+## func [SetupLogger](<https://github.com:icebergtech/kr8/blob/main/pkg/util/logging.go#L20>)
 
 ```go
 func SetupLogger(enableColor bool) zerolog.Logger
@@ -245,7 +257,7 @@ func SetupLogger(enableColor bool) zerolog.Logger
 Configure zerolog with some defaults and cleanup error formatting.
 
 <a name="WriteFile"></a>
-## func [WriteFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L164>)
+## func [WriteFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L165>)
 
 ```go
 func WriteFile(input []byte, file string) error
@@ -254,7 +266,7 @@ func WriteFile(input []byte, file string) error
 Write bytes to file \(path included\).
 
 <a name="WriteGzip"></a>
-## func [WriteGzip](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L196>)
+## func [WriteGzip](<https://github.com:icebergtech/kr8/blob/main/pkg/util/filesystem.go#L197>)
 
 ```go
 func WriteGzip(input []byte, file string) error
@@ -272,7 +284,7 @@ func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (st
 Write out a struct to a specified path and file. Marshals the given interface and generates a formatted json string. All parent directories needed are created.
 
 <a name="PathFilterOptions"></a>
-## type [PathFilterOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L63-L87>)
+## type [PathFilterOptions](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L35-L59>)
 
 Fill with string to include and exclude, using kr8's special parsing.
 

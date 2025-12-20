@@ -4,7 +4,8 @@
   * Enabled easy management of multiple (10+) clusters with various different configurations
   * Configuration is flattened from cluster directory leaf to root into a single config file, enabling easy application of DRY principals
   * Able to provide all component configs to single component.  Useful for components that generate something for each cluster component, such as network policy, argo applications, or documentation.
-  * Able to provide all cluster configs to components.  Useful for cross-cluster monitoring. 
+  * Able to provide all cluster configs to components.  Useful for cross-cluster monitoring.
+  * Generate static configuration in a repeatable, idempotent manner.
 * **Opinionated Structure**: Enforces best practices for consistent and reliable cluster configurations.
   * Components are stored separately in their own folders, allowing for easy management and version control.
   * Able to define multiple versions of components with different configuration

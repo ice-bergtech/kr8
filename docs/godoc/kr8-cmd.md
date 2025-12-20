@@ -21,8 +21,7 @@ Defines the cli\-interface commands available to the user.
 - [Variables](<#variables>)
 - [func ConfigureLogger\(debug bool\)](<#ConfigureLogger>)
 - [func Execute\(ver string\)](<#Execute>)
-- [func FormatDir\(inputPath string, recursive bool, logger zerolog.Logger\) error](<#FormatDir>)
-- [func FormatFile\(filename string\) error](<#FormatFile>)
+- [func FormatFile\(filename string, logger zerolog.Logger\) error](<#FormatFile>)
 - [func GenerateCmdClusterListBuilder\(allClusterParams map\[string\]string\) \[\]string](<#GenerateCmdClusterListBuilder>)
 - [func GenerateCommand\(cmd \*cobra.Command, args \[\]string\)](<#GenerateCommand>)
 - [func InitConfig\(\)](<#InitConfig>)
@@ -43,7 +42,7 @@ Defines the cli\-interface commands available to the user.
 ```go
 var FormatCmd = &cobra.Command{
     Use:     "format [flags] [files or directories]",
-    Aliases: []string{"fmt"},
+    Aliases: []string{"fmt", "f"},
     Short:   "Format jsonnet files in a directory.  Defaults to `./`",
     Long: `Formats jsonnet and libsonnet files.
 A list of files and/or directories. Defaults to current directory (./).
@@ -59,7 +58,7 @@ Formats files with the following options: ` + prettyPrintFormattingOpts(),
 
         for _, path := range paths {
             logger := log.With().Str("param", path).Logger()
-            err := FormatDir(path, cmdFormatOptions.Recursive, logger)
+            err := util.FileFuncInDir(path, cmdFormatOptions.Recursive, FormatFile, logger)
             if err != nil {
                 logger.Error().Err(err).Msg("issue formatting path")
             }
@@ -73,7 +72,7 @@ Formats files with the following options: ` + prettyPrintFormattingOpts(),
 ```go
 var GenerateCmd = &cobra.Command{
     Use:     "generate [flags]",
-    Aliases: []string{"gen"},
+    Aliases: []string{"gen", "g"},
     Short:   "Generate components",
     Long:    `Generate components in clusters`,
     Example: "kr8 generate",
@@ -152,7 +151,7 @@ var GetComponentsCmd = &cobra.Command{
             params = append(params, cmdGetFlags.ClusterParams)
         }
 
-        jvm, err := jnetvm.JsonnetRenderFiles(RootConfig.VMConfig, params, "._components", true, "", "components")
+        jvm, err := jnetvm.JsonnetRenderFiles(RootConfig.VMConfig, params, "._components", true, "", "components", false)
         util.FatalErrorCheck("error rendering jsonnet files", err, log.Logger)
         if cmdGetFlags.ParamField != "" {
             value := gjson.Get(jvm, cmdGetFlags.ParamField)
@@ -195,6 +194,7 @@ var GetParamsCmd = &cobra.Command{
             cList,
             cmdGetFlags.ClusterParams,
             true,
+            false,
         )
         util.FatalErrorCheck("error rendering cluster params", err, log.Logger)
 
@@ -526,6 +526,7 @@ var RenderJsonnetCmd = &cobra.Command{
                     Component:     cmdRenderFlags.ComponentName,
                     Format:        cmdRenderFlags.Format,
                     Color:         false,
+                    Lint:          cmdRenderFlags.Lint,
                 }, fileName, RootConfig.VMConfig, log.Logger)
             if err != nil {
                 log.Fatal().Str("filename", fileName).Err(err).Msg("error rendering jsonnet")
@@ -589,26 +590,17 @@ func Execute(ver string)
 
 Execute adds all child commands to the root command sets flags appropriately. This is called by main.main\(\). It only needs to happen once to the rootCmd.
 
-<a name="FormatDir"></a>
-## func [FormatDir](<https://github.com:icebergtech/kr8/blob/main/cmd/format.go#L48>)
-
-```go
-func FormatDir(inputPath string, recursive bool, logger zerolog.Logger) error
-```
-
-Lists each file in a directory and formats all .jsonnet and .libsonnet files. If recursive flag is enabled, will explore the directory tree.
-
 <a name="FormatFile"></a>
 ## func [FormatFile](<https://github.com:icebergtech/kr8/blob/main/cmd/format.go#L33>)
 
 ```go
-func FormatFile(filename string) error
+func FormatFile(filename string, logger zerolog.Logger) error
 ```
 
 Read, format, and write back a file. github.com/google/go\-jsonnet/formatter is used to format files.
 
 <a name="GenerateCmdClusterListBuilder"></a>
-## func [GenerateCmdClusterListBuilder](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L117>)
+## func [GenerateCmdClusterListBuilder](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L127>)
 
 ```go
 func GenerateCmdClusterListBuilder(allClusterParams map[string]string) []string
@@ -617,7 +609,7 @@ func GenerateCmdClusterListBuilder(allClusterParams map[string]string) []string
 
 
 <a name="GenerateCommand"></a>
-## func [GenerateCommand](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L68>)
+## func [GenerateCommand](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L72>)
 
 ```go
 func GenerateCommand(cmd *cobra.Command, args []string)
@@ -664,7 +656,7 @@ type CmdFormatOptions struct {
 ```
 
 <a name="CmdGenerateOptions"></a>
-## type [CmdGenerateOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L21-L28>)
+## type [CmdGenerateOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/generate.go#L21-L30>)
 
 Stores the options for the 'generate' command.
 
@@ -676,6 +668,8 @@ type CmdGenerateOptions struct {
     GenerateDir string
     // Stores the filters to apply to clusters and components when generating files
     Filters util.PathFilterOptions
+    // Lint Files with jsonnet linter before generating output
+    Lint bool
 }
 ```
 
@@ -703,7 +697,7 @@ type CmdGetOptions struct {
 ```
 
 <a name="CmdRenderOptions"></a>
-## type [CmdRenderOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/render.go#L25-L36>)
+## type [CmdRenderOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/render.go#L25-L38>)
 
 Contains parameters for the kr8\+ render command.
 
@@ -719,6 +713,8 @@ type CmdRenderOptions struct {
     Cluster string
     // Format of the output (yaml, json or stream)
     Format string
+    // Lint Files with jsonnet linter before generating output
+    Lint bool
 }
 ```
 

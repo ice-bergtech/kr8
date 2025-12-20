@@ -33,6 +33,8 @@ type CmdRenderOptions struct {
 	Cluster string
 	// Format of the output (yaml, json or stream)
 	Format string
+	// Lint Files with jsonnet linter before generating output
+	Lint bool
 }
 
 // Stores the render command options.
@@ -57,6 +59,8 @@ func init() {
 	RenderJsonnetCmd.PersistentFlags().StringVarP(&cmdRenderFlags.Format,
 		"format", "F", "json",
 		"output format: json, yaml, stream")
+	RenderJsonnetCmd.Flags().BoolVarP(&cmdRenderFlags.Lint, "lint", "l", false,
+		"lint Files with jsonnet linter before generating output")
 
 	RenderCmd.AddCommand(RenderHelmCmd)
 }
@@ -83,6 +87,7 @@ var RenderJsonnetCmd = &cobra.Command{
 					Component:     cmdRenderFlags.ComponentName,
 					Format:        cmdRenderFlags.Format,
 					Color:         false,
+					Lint:          cmdRenderFlags.Lint,
 				}, fileName, RootConfig.VMConfig, log.Logger)
 			if err != nil {
 				log.Fatal().Str("filename", fileName).Err(err).Msg("error rendering jsonnet")
