@@ -54,7 +54,7 @@ func init() {
 
 var GenerateCmd = &cobra.Command{
 	Use:     "generate [flags]",
-	Aliases: []string{"gen"},
+	Aliases: []string{"gen", "g"},
 	Short:   "Generate components",
 	Long:    `Generate components in clusters`,
 	Example: "kr8 generate",
