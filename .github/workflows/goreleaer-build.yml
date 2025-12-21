@@ -34,7 +34,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.24.2
+          go-version: 1.24.6
       # only needed if using signing
       - uses: sigstore/cosign-installer@v3.8.1
       # for SBOM

@@ -181,7 +181,7 @@ func ProfilingFinalizer() {
 		runtime.GC() // get up-to-date statistics
 
 		// Various types of profiles that can be collected:
-		// https://cs.opensource.google/go/go/+/go1.24.2:src/runtime/pprof/pprof.go;l=178
+		// https://cs.opensource.google/go/go/+/go1.24.6:src/runtime/pprof/pprof.go;l=178
 		var err error
 		heapFile, err := os.Create(filepath.Join(RootConfig.ProfilingDir, "profile_heap.pb.gz"))
 		if err != nil {

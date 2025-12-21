@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.2
+
+* Golang `1.24.2` -> `1.24.6`
+
+* Upgrade `jsonnet` v0.20.0 -> v0.21.0
+
+* Add additional command aliases (`g`, `f`, `ver`, `v`)
+
+* Update examples repo.
+
+* Improve error output: newline for each stack frame and flatten anonymous frames.
+
 ## 0.2.1
 
 * Add linting to various commands to lint jsonnet before processing to catch errors early.

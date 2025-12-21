@@ -550,9 +550,10 @@ var RootCmd = &cobra.Command{
 
 ```go
 var VersionCmd = &cobra.Command{
-    Use:   "version",
-    Short: "Return the current version of kr8+",
-    Long:  `Return the current version of kr8+`,
+    Use:     "version",
+    Aliases: []string{"ver", "v"},
+    Short:   "Return the current version of kr8+",
+    Long:    `Return the current version of kr8+`,
     Run: func(cmd *cobra.Command, args []string) {
         fmt.Println(RootCmd.Use + "+ Version: " + version)
         info, ok := debug.ReadBuildInfo()
