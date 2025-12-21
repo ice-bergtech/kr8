@@ -27,6 +27,7 @@ To get started, check out one of the following:
 * [Concepts](concepts/overview.md)
 * [Cluster concept](concepts/clusters.md)
 * [Component Concept](concepts/components.md)
+* [Changelog](CHANGELOG.md)
 
 For documentation of the code, see the godoc directory:
 

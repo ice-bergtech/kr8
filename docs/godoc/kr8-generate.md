@@ -233,7 +233,7 @@ func ProcessJsonnetToYaml(jvm *jsonnet.VM, input string, snippetFilename string)
 Processes an input string through the jsonnet VM and handles extracting the output into a yaml string. snippetFilename is used for error messages.
 
 <a name="ProcessTemplate"></a>
-## func [ProcessTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L161>)
+## func [ProcessTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L163>)
 
 ```go
 func ProcessTemplate(filename string, data gjson.Result) (string, error)

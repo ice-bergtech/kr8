@@ -19,6 +19,7 @@ nav:
   - Home: index.md
   - Repo Readme: README-repo.md
   - Installation: installation.md
+  - Changelog: CHANGELOG.md
   - Examples 🔗: https://github.com/ice-bergtech/kr8-examples
   - Concepts:
     - Overview: concepts/overview.md

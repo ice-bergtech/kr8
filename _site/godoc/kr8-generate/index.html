@@ -52,6 +52,10 @@
                 </li>
               </ul>
               <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../CHANGELOG/">Changelog</a>
+                </li>
+              </ul>
+              <ul>
                 <li class="toctree-l1"><a class="" href="https://github.com/ice-bergtech/kr8-examples">Examples 🔗</a>
                 </li>
               </ul>
@@ -382,7 +386,7 @@
 </code></pre>
 <p>Processes an input string through the jsonnet VM and handles extracting the output into a yaml string. snippetFilename is used for error messages.</p>
 <p><a name="ProcessTemplate"></a></p>
-<h2 id="func-processtemplate">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L161">ProcessTemplate</a></h2>
+<h2 id="func-processtemplate">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L163">ProcessTemplate</a></h2>
 <pre><code class="language-go">func ProcessTemplate(filename string, data gjson.Result) (string, error)
 </code></pre>
 <p>Processes a template file with the given data. Loads file, parses template, then executes template.</p>
