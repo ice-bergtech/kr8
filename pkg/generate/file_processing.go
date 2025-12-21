@@ -143,14 +143,16 @@ func ProcessJsonnetToYaml(jvm *jsonnet.VM, input string, snippetFilename string)
 		return "", err
 	}
 	// Go through each file and marshal interface to yaml string
-	for _, jObj := range listObjOut {
+	for idx, jObj := range listObjOut {
+		if idx > 0 {
+			// Place yml new document marker at end of each object if there are more than 1 objects
+			outStr += "---\n"
+		}
 		buf, err := goyaml.Marshal(jObj)
 		if err := util.ErrorIfCheck("Error marshalling jsonnet object to yaml", err); err != nil {
 			return "", err
 		}
-		outStr += string(buf)
-		// Place yml new document marker at end of each object
-		outStr += "\n---\n"
+		outStr += string(buf) + "\n"
 	}
 
 	return outStr, nil
