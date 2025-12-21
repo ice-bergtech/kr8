@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Iceberg Tech" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Installation - kr8+ Docs</title>
+    <title>Changelog - kr8+ Docs</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Installation";
-        var mkdocs_page_input_path = "installation.md";
+        var mkdocs_page_name = "Changelog";
+        var mkdocs_page_input_path = "CHANGELOG.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -47,18 +47,34 @@
                 <li class="toctree-l1"><a class="reference internal" href="../README-repo/">Repo Readme</a>
                 </li>
               </ul>
-              <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="#">Installation</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#homebrew-tap">Homebrew Tap</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#manually-via-releases">Manually via Releases</a>
-    </li>
-    </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
                 </li>
               </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../CHANGELOG/">Changelog</a>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Changelog</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#023">0.2.3</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#022">0.2.2</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#021">0.2.1</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#020">0.2.0</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#011">0.1.1</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#010">0.1.0</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#007">0.0.7</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#006">0.0.6</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#005">0.0.5</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#000">0.0.0</a>
+    </li>
+    </ul>
                 </li>
               </ul>
               <ul>
@@ -173,9 +189,9 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-      <li class="breadcrumb-item active">Installation</li>
+      <li class="breadcrumb-item active">Changelog</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/ice-bergtech/kr8/blob/main/docs/installation.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/ice-bergtech/kr8/blob/main/docs/CHANGELOG.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -183,36 +199,71 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="installation">Installation</h1>
-<p>The <strong>kr8+</strong> binaries can be installed via two methods:</p>
+                <h1 id="changelog">Changelog</h1>
+<h2 id="023">0.2.3</h2>
 <ul>
-<li><a href="https://github.com/ice-bergtech/homebrew-icetech">ice-bergtech/icetech Homebrew tap</a></li>
-<li><a href="https://github.com/ice-bergtech/kr8/releases">Github releases page</a></li>
+<li>Remove trailing document separator from yml output files.</li>
 </ul>
-<h2 id="homebrew-tap">Homebrew Tap</h2>
-<p>This is the preferred way to install <strong>kr8+</strong> as it ensures that all dependencies are installed correctly.</p>
-<pre><code class="language-bash">brew tap &quot;ice-bergtech/icetech&quot;
-brew install &quot;kr8&quot;
-</code></pre>
-<h2 id="manually-via-releases">Manually via Releases</h2>
-<p>kr8+ is a Go binary, which means you can simply download it from the <a href="https://github.com/ice-bergtech/kr8/releases">Github releases page</a></p>
-<p>Build are produced for:</p>
+<h2 id="022">0.2.2</h2>
 <ul>
-<li><strong>Linux</strong> - amd64 deb, rpm, and apk</li>
-<li><strong>Darwin</strong> - amd64</li>
+<li>
+<p>Golang <code>1.24.2</code> -&gt; <code>1.24.6</code></p>
+</li>
+<li>
+<p>Upgrade <code>jsonnet</code> v0.20.0 -&gt; v0.21.0</p>
+</li>
+<li>
+<p>Add additional command aliases (<code>g</code>, <code>f</code>, <code>ver</code>, <code>v</code>)</p>
+</li>
+<li>
+<p>Update examples repo.</p>
+</li>
+<li>
+<p>Improve error output: newline for each stack frame and flatten anonymous frames.</p>
+</li>
 </ul>
-<pre><code class="language-sh">apk add kr8_$VERSION_linux_amd64.apk
-</code></pre>
-<pre><code class="language-sh">deb install kr8_$VERSION_linux_amd64.deb
-</code></pre>
-<pre><code class="language-sh">rpm install kr8_$VERSION_linux_amd64.rpm
-</code></pre>
+<h2 id="021">0.2.1</h2>
+<ul>
+<li>Add linting to various commands to lint jsonnet before processing to catch errors early.</li>
+</ul>
+<h2 id="020">0.2.0</h2>
+<ul>
+<li>Add program pprof exports for perf monitoring</li>
+<li>Add ability cache cluster-component config</li>
+<li>Add jsonschema for checking cluster resource jsonnet files</li>
+<li>Setup format command to easily format jsonnet and libsonnet files</li>
+</ul>
+<h2 id="011">0.1.1</h2>
+<ul>
+<li>Cleanup error handling and logging</li>
+</ul>
+<h2 id="010">0.1.0</h2>
+<ul>
+<li>Add <code>config</code> field to <code>includes</code> objects, allowing custom configuration data to be passed to the template instead of just the component config.</li>
+<li>Improve documentation and publish at https://pkg.go.dev/github.com/ice-bergtech/kr8</li>
+</ul>
+<h2 id="007">0.0.7</h2>
+<ul>
+<li>Add changelog and features doc</li>
+<li>Setup docs site</li>
+</ul>
+<h2 id="006">0.0.6</h2>
+<ul>
+<li>Add roadmap</li>
+<li>Setup docs site structure</li>
+</ul>
+<h2 id="005">0.0.5</h2>
+<ul>
+<li>Err everything else</li>
+</ul>
+<h2 id="000">0.0.0</h2>
+<p>Forked from <a href="https://github.com/apptio/kr8">apptio/kr8</a></p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../README-repo/" class="btn btn-neutral float-left" title="Repo Readme"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../CHANGELOG/" class="btn btn-neutral float-right" title="Changelog">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../installation/" class="btn btn-neutral float-left" title="Installation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../concepts/overview/" class="btn btn-neutral float-right" title="Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -239,10 +290,10 @@ brew install &quot;kr8&quot;
         </span>
     
     
-      <span><a href="../README-repo/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../installation/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../CHANGELOG/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../concepts/overview/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

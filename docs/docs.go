@@ -104,6 +104,16 @@ func CopyRepoFiles() error {
 		return err
 	}
 
+	destinationFile = "./CHANGELOG.md"
+	iFile, err = os.ReadFile("../CHANGELOG.md")
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(destinationFile, iFile, 0600)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
