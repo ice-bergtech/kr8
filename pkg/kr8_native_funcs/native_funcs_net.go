@@ -33,7 +33,7 @@ type NativeFuncURL struct {
 	// encoded path hint (see EscapedPath method)
 	RawPath string `json:"pathRaw"`
 	// query values
-	Query map[string]interface{} `json:"query"`
+	Query map[string]any `json:"query"`
 	// encoded query values, without '?'
 	RawQuery string `json:"queryRaw"`
 	// fragment for references, without '#'
@@ -50,7 +50,7 @@ func NativeNetUrl() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "url",
 		Params: []jsonnetAst.Identifier{"rawURL: a URL string"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			rawURL, ok := args[0].(string)
 			if !ok {
 				return nil, types.Kr8Error{
@@ -176,7 +176,7 @@ func NativeNetIPInfo() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPInfo",
 		Params: []jsonnetAst.Identifier{"rawIP"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			rawIP, ok := args[0].(string)
 			if !ok {
 				return nil, types.Kr8Error{
@@ -202,7 +202,7 @@ func NativeNetAddressCompare() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPCompare",
 		Params: []jsonnetAst.Identifier{"rawIP", "otherIP"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			rawIP, pOk := args[0].(string)
 			if !pOk {
 				return nil, types.Kr8Error{
@@ -234,7 +234,7 @@ func NativeNetAddressDelta() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPDelta",
 		Params: []jsonnetAst.Identifier{"rawIP", "otherIP"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			rawIP, pOk := args[0].(string)
 			if !pOk {
 				return nil, types.Kr8Error{
@@ -265,7 +265,7 @@ func NativeNetAddressSort() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPDelta",
 		Params: []jsonnetAst.Identifier{"listIPs"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			listIPs, ok := args[0].([]string)
 			if !ok {
 				return nil, types.Kr8Error{
@@ -302,7 +302,7 @@ func NativeNetAddressInc() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPInc",
 		Params: []jsonnetAst.Identifier{"rawIP"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			rawIP, ok := args[0].(string)
 			if !ok {
 				return nil, types.Kr8Error{
@@ -324,7 +324,7 @@ func NativeNetAddressIncBy() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPIncBy",
 		Params: []jsonnetAst.Identifier{"rawIP", "count"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			rawIP, pOk := args[0].(string)
 			if !pOk {
 				return nil, types.Kr8Error{
@@ -354,7 +354,7 @@ func NativeNetAddressDec() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPDec",
 		Params: []jsonnetAst.Identifier{"rawIP"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			rawIP, ok := args[0].(string)
 			if !ok {
 				return nil, types.Kr8Error{
@@ -376,7 +376,7 @@ func NativeNetAddressDecBy() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPDecBy",
 		Params: []jsonnetAst.Identifier{"rawIP", "count"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			rawIP, varOk := args[0].(string)
 			if !varOk {
 				return nil, types.Kr8Error{
@@ -405,7 +405,7 @@ func NativeNetAddressARPA() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPARPA",
 		Params: []jsonnetAst.Identifier{"rawIP"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			rawIP, varOk := args[0].(string)
 			if !varOk {
 				return nil, types.Kr8Error{
@@ -427,7 +427,7 @@ func NativeNetAddressHex() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPHex",
 		Params: []jsonnetAst.Identifier{"rawIP"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			rawIP, ok := args[0].(string)
 			if !ok {
 				return nil, types.Kr8Error{
@@ -449,7 +449,7 @@ func NativeNetAddressBinary() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPBinary",
 		Params: []jsonnetAst.Identifier{"rawIP"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			rawIP, ok := args[0].(string)
 			if !ok {
 				return nil, types.Kr8Error{
@@ -471,7 +471,7 @@ func NativeNetAddressNetsBetween() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPNetsBetween",
 		Params: []jsonnetAst.Identifier{"ipNet", "otherIPNet"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			rawIP, varOk := args[0].(string)
 			if !varOk {
 				return nil, types.Kr8Error{
@@ -516,7 +516,7 @@ func NativeNetAddressCalcSubnetsV4() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPCalcSubnetsV4",
 		Params: []jsonnetAst.Identifier{"ip4Net", "maskLen"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			rawIP, varOk := args[0].(string)
 			if !varOk {
 				return nil, types.Kr8Error{
@@ -549,7 +549,7 @@ func NativeNetAddressCalcSubnetsV6() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "netIPCalcSubnetsV6",
 		Params: []jsonnetAst.Identifier{"ip6Net", "netMaskLen", "hostMaskLen"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			rawIP, varOk := args[0].(string)
 			if !varOk {
 				return nil, types.Kr8Error{

@@ -86,7 +86,7 @@ func CalculateClusterComponentList(
 	if filters.Components == "" {
 		compList = maps.Keys(clusterComponents)
 	} else {
-		for _, filterStr := range strings.Split(filters.Components, ",") {
+		for filterStr := range strings.SplitSeq(filters.Components, ",") {
 			compList = append(
 				compList,
 				util.Filter(maps.Keys(clusterComponents), func(s string) bool {

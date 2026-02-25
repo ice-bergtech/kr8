@@ -35,7 +35,7 @@ func NativeRegexEscape() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "regexEscapeString",
 		Params: []jsonnetAst.Identifier{"str: string to escape"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			return regexp.QuoteMeta(args[0].(string)), nil
 		}}
 }
@@ -47,7 +47,7 @@ func NativeRegexMatch() *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "regexMatch",
 		Params: []jsonnetAst.Identifier{"regex: string", "string: applied to regex"},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			return regexp.MatchString(args[0].(string), args[1].(string))
 		}}
 }
@@ -63,7 +63,7 @@ func NativeRegexSubst() *jsonnet.NativeFunction {
 			"src: source string",
 			"repl: replacement string",
 		},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			regex := args[0].(string)
 			src := args[1].(string)
 			repl := args[2].(string)

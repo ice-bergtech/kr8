@@ -48,7 +48,7 @@ type Kr8Error struct {
 	// Message to show the user.
 	Message string
 	// Value to include with message
-	Value interface{}
+	Value any
 }
 
 // Error implements error.

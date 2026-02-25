@@ -230,7 +230,7 @@ func (k KomposeConvertOptions) Validate() error {
 }
 
 // Converts a Docker Compose file described by k into a set of kubernetes manifests.
-func (k KomposeConvertOptions) Convert() (interface{}, error) {
+func (k KomposeConvertOptions) Convert() (any, error) {
 	return convertComposeToK8s(*k.GenKomposePkgOpts())
 }
 
@@ -253,7 +253,7 @@ func getTransformer(opt kobject.ConvertOptions) *transformer.Transformer {
 // Convert transforms docker compose or dab file to k8s objects
 //
 // Based on https://github.com/kubernetes/kompose/blob/main/pkg/app/app.go#L209
-func convertComposeToK8s(opt kobject.ConvertOptions) ([]interface{}, error) {
+func convertComposeToK8s(opt kobject.ConvertOptions) ([]any, error) {
 	loader, err := loader.GetLoader("compose")
 	if err != nil {
 		return nil, err
@@ -282,14 +282,14 @@ func convertComposeToK8s(opt kobject.ConvertOptions) ([]interface{}, error) {
 		sjson.SerializerOptions{Yaml: false, Pretty: false, Strict: false},
 	)
 	// Convert the Kubernetes objects to a format that Jsonnet can use
-	result := make([]interface{}, len(k8sObjects))
+	result := make([]any, len(k8sObjects))
 	for idx, obj := range k8sObjects {
 		jsonObj, err := runtime.Encode(jsonSerializer, obj)
 		if err != nil {
 			return nil, err
 		}
 
-		var mapObj map[string]interface{}
+		var mapObj map[string]any
 		if err := json.Unmarshal(jsonObj, &mapObj); err != nil {
 			return nil, err
 		}

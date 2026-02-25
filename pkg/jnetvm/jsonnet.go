@@ -270,7 +270,8 @@ func MergeComponentDefaults(
 	componentNames []string,
 	vmConfig types.VMConfig,
 ) (string, error) {
-	componentDefaultsMerged := "{"
+	var componentDefaultsMerged strings.Builder
+	componentDefaultsMerged.WriteString("{")
 
 	//nolint:exptostd
 	listComponentKeys := maps.Keys(componentMap)
@@ -285,10 +286,10 @@ func MergeComponentDefaults(
 			if err := util.ErrorIfCheck("Error reading file "+path, err); err != nil {
 				return "", err
 			}
-			componentDefaultsMerged += fmt.Sprintf("'%s': %s,", key, string(fileC))
+			componentDefaultsMerged.WriteString(fmt.Sprintf("'%s': %s,", key, string(fileC)))
 		}
 	}
-	componentDefaultsMerged += "}"
+	componentDefaultsMerged.WriteString("}")
 
-	return componentDefaultsMerged, nil
+	return componentDefaultsMerged.String(), nil
 }

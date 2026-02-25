@@ -39,7 +39,7 @@ func Pretty(inputJson string, colorOutput bool) (string, error) {
 // Colorize function from zerolog console.go file to replicate their coloring functionality.
 // Source: https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389
 // Replicated here because it's a private function.
-func Colorize(input interface{}, colorNum int, disabled bool) string {
+func Colorize(input any, colorNum int, disabled bool) string {
 	e := os.Getenv("NO_COLOR")
 
 	if disabled || (e != "" || colorNum == 0) {
@@ -61,7 +61,7 @@ func JsonnetPrint(output string, format string, color bool) error {
 		}
 		fmt.Println(string(yaml))
 	case "stream": // output yaml stream
-		var o []interface{}
+		var o []any
 		if err := ErrorIfCheck("error unmarshalling output JSON", json.Unmarshal([]byte(output), &o)); err != nil {
 			return err
 		}
@@ -117,7 +117,7 @@ func FormatJsonnetStringCustom(input string, opts formatter.Options) (string, er
 // Write out a struct to a specified path and file.
 // Marshals the given interface and generates a formatted json string.
 // All parent directories needed are created.
-func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (string, error) {
+func WriteObjToJsonFile(filename string, path string, objStruct any) (string, error) {
 	jsonStr, err := json.MarshalIndent(objStruct, "", "  ")
 	if err != nil {
 		return "", ErrorIfCheck("error marshalling component resource to json", err)
