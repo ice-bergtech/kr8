@@ -68,13 +68,13 @@ func init() {
 var RenderCmd = &cobra.Command{
 	Use:   "render",
 	Short: "Render files",
-	Long:  `Render files in jsonnet or YAML`,
+	Long:  `Render files with cluster config in jsonnet or YAML`,
 }
 
 var RenderJsonnetCmd = &cobra.Command{
 	Use:   "jsonnet file [file ...]",
-	Short: "Render a jsonnet file",
-	Long:  `Render a jsonnet file to JSON or YAML`,
+	Short: "Render a jsonnet file based on cluster params",
+	Long:  `Render a jsonnet files based on a cluster individually to JSON or YAML`,
 
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
