@@ -50,7 +50,7 @@ func BuildDirFileList(directory string) ([]string, error)
 Walk a directory to build a list of all files in the tree.
 
 <a name="CalculateClusterIncludesExcludes"></a>
-## func [CalculateClusterIncludesExcludes](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L120>)
+## func [CalculateClusterIncludesExcludes](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L133>)
 
 ```go
 func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string
@@ -131,7 +131,7 @@ func Filter(vs []string, f func(string) bool) []string
 Filter returns a new slice containing only the elements that satisfy the predicate function. From https://gobyexample.com/collection-functions
 
 <a name="FilterItems"></a>
-## func [FilterItems](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L83>)
+## func [FilterItems](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L111>)
 
 ```go
 func FilterItems(input map[string]string, pFilter PathFilterOptions) []string
@@ -194,7 +194,7 @@ func GetDefaultFormatOptions() formatter.Options
 Configures the default options for the jsonnet formatter.
 
 <a name="HashFile"></a>
-## func [HashFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L146>)
+## func [HashFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L159>)
 
 ```go
 func HashFile(path string) (string, error)

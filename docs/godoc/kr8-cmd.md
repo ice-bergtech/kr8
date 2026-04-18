@@ -110,11 +110,15 @@ var GetClustersCmd = &cobra.Command{
             entry = append(entry, c.Name)
             entry = append(entry, c.Path)
             err = table.Append(entry)
-            log.Warn().Err(err).Msg("Row error")
+            if err != nil {
+                log.Warn().Err(err).Msg("Row error")
+            }
             entry = entry[:0]
         }
         err = table.Render()
-        log.Warn().Err(err).Msg("Table error")
+        if err != nil {
+            log.Warn().Err(err).Msg("Table error")
+        }
 
     },
 }

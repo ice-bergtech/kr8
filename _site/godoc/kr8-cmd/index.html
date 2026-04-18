@@ -305,11 +305,15 @@ Formats files with the following options: ` + prettyPrintFormattingOpts(),
             entry = append(entry, c.Name)
             entry = append(entry, c.Path)
             err = table.Append(entry)
-            log.Warn().Err(err).Msg(&quot;Row error&quot;)
+            if err != nil {
+                log.Warn().Err(err).Msg(&quot;Row error&quot;)
+            }
             entry = entry[:0]
         }
         err = table.Render()
-        log.Warn().Err(err).Msg(&quot;Table error&quot;)
+        if err != nil {
+            log.Warn().Err(err).Msg(&quot;Table error&quot;)
+        }
 
     },
 }
