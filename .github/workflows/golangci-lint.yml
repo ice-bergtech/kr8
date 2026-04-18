@@ -22,6 +22,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v7
         with:
-          version: v2.0
+          version: "v2.3"
+          install-mode: "binary"
           # https://github.com/golangci/golangci-lint-action/issues/618
           # args: --out-format=colored-line-number
