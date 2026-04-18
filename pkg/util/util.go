@@ -92,7 +92,7 @@ func FilterItems(input map[string]string, pFilter PathFilterOptions) []string {
 		// "=" for equality or "~" for regex match
 		include := pFilter.Includes == ""
 		if pFilter.Includes != "" {
-			for _, b := range strings.Split(pFilter.Includes, ",") {
+			for b := range strings.SplitSeq(pFilter.Includes, ",") {
 				include = include || CheckObjectMatch(gjResult, b)
 			}
 		}
@@ -123,7 +123,7 @@ func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilte
 		var clusterList []string
 		// all clusters
 		for key := range input {
-			for _, filterPattern := range strings.Split(filters.Clusters, ",") {
+			for filterPattern := range strings.SplitSeq(filters.Clusters, ",") {
 				if key == filterPattern {
 					clusterList = append(clusterList, key)
 					break

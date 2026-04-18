@@ -260,7 +260,7 @@ func convertComposeToK8s(opt kobject.ConvertOptions) ([]any, error) {
 	}
 
 	// Load the docker-compose file
-	objects, err := loader.LoadFile(opt.InputFiles, []string{})
+	objects, err := loader.LoadFile(opt.InputFiles, []string{}, true)
 	if err != nil {
 		return nil, err
 	}
