@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
@@ -135,8 +136,8 @@ func ProcessJsonnetToYaml(jvm *jsonnet.VM, input string, snippetFilename string)
 
 	// Create output file as a yaml string
 	// First extract list of output files
-	var listObjOut []interface{}
-	var outStr string
+	var listObjOut []any
+	var outStr strings.Builder
 	if err := util.ErrorIfCheck("Error unmarshalling jsonnet output to go slice",
 		json.Unmarshal([]byte(jsonStr), &listObjOut),
 	); err != nil {
@@ -146,16 +147,16 @@ func ProcessJsonnetToYaml(jvm *jsonnet.VM, input string, snippetFilename string)
 	for idx, jObj := range listObjOut {
 		if idx > 0 {
 			// Place yml new document marker at end of each object if there are more than 1 objects
-			outStr += "---\n"
+			outStr.WriteString("---\n")
 		}
 		buf, err := goyaml.Marshal(jObj)
 		if err := util.ErrorIfCheck("Error marshalling jsonnet object to yaml", err); err != nil {
 			return "", err
 		}
-		outStr += string(buf) + "\n"
+		outStr.WriteString(string(buf) + "\n")
 	}
 
-	return outStr, nil
+	return outStr.String(), nil
 }
 
 // Processes a template file with the given data.
@@ -174,7 +175,7 @@ func ProcessTemplate(filename string, data gjson.Result) (string, error) {
 	if err != nil {
 		return "Error parsing template", err
 	}
-	if err = tmpl.Execute(&buffer, data.Value().(map[string]interface{})); err != nil {
+	if err = tmpl.Execute(&buffer, data.Value().(map[string]any)); err != nil {
 		return "Error executing templating", err
 	}
 

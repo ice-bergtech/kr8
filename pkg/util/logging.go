@@ -26,7 +26,7 @@ func SetupLogger(enableColor bool) zerolog.Logger {
 	consoleWriter := zerolog.ConsoleWriter{
 		Out:     os.Stderr,
 		NoColor: !enableColor,
-		FormatErrFieldValue: func(err interface{}) string {
+		FormatErrFieldValue: func(err any) string {
 			// https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L21
 			colorRed := 31
 			colorBold := 1

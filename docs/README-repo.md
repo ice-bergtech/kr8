@@ -4,7 +4,7 @@
 <img src="./kr8_gopher.png" alt="kr8+ Gopher" width="400" align="right" >
 
 [![CI status](https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg)](https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI)
-![Go Version](https://img.shields.io/badge/go%20version-%3E=1.24-61CFDD.svg)
+![Go Version](https://img.shields.io/badge/go%20version-%3E=1.26-61CFDD.svg)
 [![Go Reference](https://pkg.go.dev/badge/github.com/ice-bergtech/kr8.svg)](https://pkg.go.dev/github.com/ice-bergtech/kr8)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
@@ -78,7 +78,7 @@ brew tap ice-bergtech/tap
 brew install kr8
 ```
 
-To install directly from the repo, clone and build using go `1.24.6`:
+To install directly from the repo, clone and build using go `1.26.0`:
 
 ```sh
 git clone git@github.com:ice-bergtech/kr8.git && cd kr8
@@ -219,13 +219,13 @@ Documentation for kr8+ documentation and other, external resources.
 ## Development
 
 **kr8+** is coded in [Golang](https://golang.org/).
-Currently, version `1.24.6` is used.
+Currently, version `1.26.0` is used.
 
 Common tasks are described in [Taskfile.yml](Taskfile.yml), and can be executed with [go-task](https://taskfile.dev/installation/).
 
 **Core Dependencies**
 
-- Golang version  `1.24` or later ([installation](https://go.dev/doc/install))
+- Golang version  `1.26` or later ([installation](https://go.dev/doc/install))
 - `git` for cloning submodules
 - [go-task](https://taskfile.dev/installation/) for task automation
 - [golangci-lint](https://golangci-lint.run/welcome/install/) for linting

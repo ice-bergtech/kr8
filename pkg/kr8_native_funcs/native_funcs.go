@@ -65,28 +65,29 @@ func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction {
 	return &jsonnet.NativeFunction{
 		Name:   "help",
 		Params: []jsonnetAst.Identifier{},
-		Func: func(args []interface{}) (interface{}, error) {
-			result := "help: " + strings.Join(
+		Func: func(args []any) (any, error) {
+			var result strings.Builder
+			result.WriteString("help: " + strings.Join(
 				[]string{
 					"kr8+ Native Functions\n",
 					"Functions are called in the format:",
 					"`std.native('<function>')(<param1>, <param2>, ...)`\n",
 				},
 				"\n",
-			)
-			result += "\n" + "Available functions:\n"
-			result += "\n" + "------------------------\n"
+			))
+			result.WriteString("\n" + "Available functions:\n")
+			result.WriteString("\n" + "------------------------\n")
 
 			for _, val := range allFuncs {
-				params := []string{}
+				params := make([]string, 0, len(val.Params))
 				for _, id := range val.Params {
 					// Convert Identifier to string
 					params = append(params, fmt.Sprint(id))
 				}
-				result += val.Name + ": [\n  '" + strings.Join(params, "'\n  '") + "']\n"
+				result.WriteString(val.Name + ": [\n  '" + strings.Join(params, "'\n  '") + "']\n")
 			}
 
-			return result, nil
+			return result.String(), nil
 		},
 	}
 }
@@ -109,7 +110,7 @@ func NativeSprigTemplate() *jsonnet.NativeFunction {
 			"config: string, a json configuration object for the template to reference",
 			"templateStr: the template string",
 		},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			var config any
 			err := json.Unmarshal([]byte(args[0].(string)), config)
 			if err != nil {

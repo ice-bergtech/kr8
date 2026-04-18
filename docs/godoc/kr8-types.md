@@ -13,7 +13,7 @@ Package kr8\_types defines the structure for kr8\+ cluster and component resourc
 - [type ExtFileVar](<#ExtFileVar>)
 - [type KomposeConvertOptions](<#KomposeConvertOptions>)
   - [func CreateKomposeOpts\(inputFiles \[\]string, namespace string\) \(\*KomposeConvertOptions, error\)](<#CreateKomposeOpts>)
-  - [func \(k KomposeConvertOptions\) Convert\(\) \(interface\{\}, error\)](<#KomposeConvertOptions.Convert>)
+  - [func \(k KomposeConvertOptions\) Convert\(\) \(any, error\)](<#KomposeConvertOptions.Convert>)
   - [func \(k KomposeConvertOptions\) GenKomposePkgOpts\(\) \*kobject.ConvertOptions](<#KomposeConvertOptions.GenKomposePkgOpts>)
   - [func \(k KomposeConvertOptions\) Validate\(\) error](<#KomposeConvertOptions.Validate>)
 - [type Kr8Cluster](<#Kr8Cluster>)
@@ -153,10 +153,10 @@ func CreateKomposeOpts(inputFiles []string, namespace string) (*KomposeConvertOp
 Initialize Kompose options with sensible defaults.
 
 <a name="KomposeConvertOptions.Convert"></a>
-### func \(KomposeConvertOptions\) [Convert](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kompose.go#L233>)
+### func \(KomposeConvertOptions\) [Convert](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kompose.go#L234>)
 
 ```go
-func (k KomposeConvertOptions) Convert() (interface{}, error)
+func (k KomposeConvertOptions) Convert() (any, error)
 ```
 
 Converts a Docker Compose file described by k into a set of kubernetes manifests.
@@ -177,7 +177,7 @@ https://pkg.go.dev/github.com/kubernetes/kompose@v1.35.0/pkg/kobject#ConvertOpti
 https://github.com/kubernetes/kompose/blob/v1.35.0/pkg/app/app.go#L166
 
 <a name="KomposeConvertOptions.Validate"></a>
-### func \(KomposeConvertOptions\) [Validate](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kompose.go#L224>)
+### func \(KomposeConvertOptions\) [Validate](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kompose.go#L225>)
 
 ```go
 func (k KomposeConvertOptions) Validate() error

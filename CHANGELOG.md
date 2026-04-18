@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.4
+
+* * Golang `1.24.6` -> `1.26.0`
+
 ## 0.2.3
 
 * Remove trailing document separator from yml output files.

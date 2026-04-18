@@ -39,7 +39,7 @@ func NativeKompose() *jsonnet.NativeFunction {
 			"listFiles: list of compose files to process",
 			"namespace: namespace to assign to resources",
 		},
-		Func: func(args []interface{}) (interface{}, error) {
+		Func: func(args []any) (any, error) {
 			kParams, err := ParseKomposeParams(args)
 			if err != nil {
 				return "", err
@@ -63,7 +63,7 @@ func NativeKompose() *jsonnet.NativeFunction {
 	}
 }
 
-func ParseKomposeParams(args []interface{}) (*KomposeParams, error) {
+func ParseKomposeParams(args []any) (*KomposeParams, error) {
 	rootDir, argOk := args[0].(string)
 	if !argOk {
 		return nil, types.Kr8Error{
@@ -76,7 +76,7 @@ func ParseKomposeParams(args []interface{}) (*KomposeParams, error) {
 	}
 
 	var composeFileStrings []string
-	composeFiles, argOk := args[1].([]interface{})
+	composeFiles, argOk := args[1].([]any)
 	if !argOk {
 		return nil, types.Kr8Error{
 			Message: "second argument 'listFiles' must be of '[]string' type, got " + fmt.Sprintf("%T", args[1]),
