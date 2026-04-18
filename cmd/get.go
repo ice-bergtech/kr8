@@ -108,10 +108,12 @@ var GetClustersCmd = &cobra.Command{
 		for _, c := range clusters {
 			entry = append(entry, c.Name)
 			entry = append(entry, c.Path)
-			table.Append(entry)
+			err = table.Append(entry)
+			log.Warn().Err(err).Msg("Row error")
 			entry = entry[:0]
 		}
-		table.Render()
+		err = table.Render()
+		log.Warn().Err(err).Msg("Table error")
 
 	},
 }
