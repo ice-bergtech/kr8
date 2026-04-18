@@ -67,7 +67,8 @@ func loadLibPathsIntoVM(
 	logger.Debug().Str("component", compPath).
 		Msg("loadLibPathsIntoVM Loading JPaths into VM for component")
 
-	jPathResults := []string{filepath.Join(baseDir, "lib")}
+	jPathResults := make([]string, 0, len(compSpec.JPaths)+1)
+	jPathResults = append(jPathResults, filepath.Join(baseDir, "lib"))
 	for _, jPath := range compSpec.JPaths {
 		jPathResults = append(jPathResults, filepath.Join(baseDir, compPath, jPath))
 	}

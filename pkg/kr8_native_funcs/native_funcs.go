@@ -79,7 +79,7 @@ func NativeHelp(allFuncs []*jsonnet.NativeFunction) *jsonnet.NativeFunction {
 			result.WriteString("\n" + "------------------------\n")
 
 			for _, val := range allFuncs {
-				params := []string{}
+				params := make([]string, 0, len(val.Params))
 				for _, id := range val.Params {
 					// Convert Identifier to string
 					params = append(params, fmt.Sprint(id))
