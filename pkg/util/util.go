@@ -88,6 +88,7 @@ func checkItemInclude(gjResult gjson.Result, includes string) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -101,6 +102,7 @@ func checkItemExclude(gjResult gjson.Result, excludes string) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
