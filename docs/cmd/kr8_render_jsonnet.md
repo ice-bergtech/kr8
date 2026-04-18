@@ -1,10 +1,10 @@
 ## kr8 render jsonnet
 
-Render a jsonnet file
+Render a jsonnet file based on cluster params
 
 ### Synopsis
 
-Render a jsonnet file to JSON or YAML
+Render a jsonnet files based on a cluster individually to JSON or YAML
 
 ```
 kr8 render jsonnet file [file ...] [flags]

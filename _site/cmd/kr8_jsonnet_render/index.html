@@ -200,13 +200,11 @@
 <pre><code>kr8 jsonnet render [flags] file [file ...]
 </code></pre>
 <h3 id="options">Options</h3>
-<pre><code>  -C, --cluster string         cluster to render params for
-  -p, --clusterparams string   provide cluster params as single file - can be combined with --cluster to override cluster
-  -c, --component string       component to render params for
-  -F, --format string          output format: json, yaml, stream (default &quot;json&quot;)
-  -h, --help                   help for render
-  -l, --lint                   lint Files with jsonnet linter before generating output (default true)
-      --prune                  removes null and empty objects from ingested jsonnet files (default true)
+<pre><code>  -F, --format string   output format: json, yaml, stream (default &quot;json&quot;)
+  -h, --help            help for render
+  -l, --lint            lint Files with jsonnet linter before generating output (default true)
+  -o, --output string   write output to file instead of stdout
+      --prune           removes null and empty objects from ingested jsonnet files (default true)
 </code></pre>
 <h3 id="options-inherited-from-parent-commands">Options inherited from parent commands</h3>
 <pre><code>  -B, --base string             kr8+ root configuration directory (default &quot;./&quot;)
