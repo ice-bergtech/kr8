@@ -127,7 +127,7 @@ func GenerateCommand(cmd *cobra.Command, args []string) {
 func GenerateCmdClusterListBuilder(allClusterParams map[string]string) []string {
 	var clusterList []string
 	// Filter out and cluster or components we don't want to generate
-	if cmdGenerateFlags.Filters.Includes != "" || cmdGenerateFlags.Filters.Excludes != "" {
+	if cmdGenerateFlags.Filters.Includes != "" || cmdGenerateFlags.Filters.Excludes != "" || cmdGenerateFlags.Filters.Clusters != "" {
 		clusterList = util.CalculateClusterIncludesExcludes(allClusterParams, cmdGenerateFlags.Filters)
 		log.Debug().Msg("Have " + strconv.Itoa(len(clusterList)) + " after filtering")
 	} else {
