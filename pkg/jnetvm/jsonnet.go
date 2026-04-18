@@ -53,7 +53,7 @@ func JsonnetVM(vmConfig types.VMConfig) (*jsonnet.VM, error) {
 	kr8_native_funcs.RegisterNativeFuncs(jvm)
 
 	// always add lib directory in base directory to path
-	jpath := make([]string, 1, 10)
+	jpath := make([]string, 1, 10) //nolint:mnd
 	jpath[0] = filepath.Join(vmConfig.BaseDir, "lib")
 
 	jpath = append(jpath, filepath.SplitList(os.Getenv("KR8_JPATH"))...)
@@ -287,7 +287,7 @@ func MergeComponentDefaults(
 			if err := util.ErrorIfCheck("Error reading file "+path, err); err != nil {
 				return "", err
 			}
-			componentDefaultsMerged.WriteString(fmt.Sprintf("'%s': %s,", key, string(fileC)))
+			fmt.Fprintf(&componentDefaultsMerged, "'%s': %s,", key, string(fileC))
 		}
 	}
 	componentDefaultsMerged.WriteString("}")

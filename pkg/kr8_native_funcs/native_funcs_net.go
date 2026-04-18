@@ -25,7 +25,7 @@ type NativeFuncURL struct {
 	// Whether the password field is set
 	PasswordSet bool `json:"passwordSet"`
 	// password information
-	Password string `json:"password"`
+	Password string `json:"password"` //nolint:gosec
 	// host or host:port (see Hostname and Port methods)
 	Host string `json:"host"`
 	// path (relative paths may omit leading slash)
