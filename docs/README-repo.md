@@ -4,7 +4,7 @@
 <img src="./kr8_gopher.png" alt="kr8+ Gopher" width="400" align="right" >
 
 [![CI status](https://github.com/ice-bergtech/kr8/workflows/CI/badge.svg)](https://github.com/ice-bergtech/kr8/actions?query=workflow%3ACI)
-![Go Version](https://img.shields.io/badge/go%20version-%3E=1.24-61CFDD.svg)
+![Go Version](https://img.shields.io/badge/go%20version-%3E=1.26-61CFDD.svg)
 [![Go Reference](https://pkg.go.dev/badge/github.com/ice-bergtech/kr8.svg)](https://pkg.go.dev/github.com/ice-bergtech/kr8)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
@@ -225,7 +225,7 @@ Common tasks are described in [Taskfile.yml](Taskfile.yml), and can be executed 
 
 **Core Dependencies**
 
-- Golang version  `1.24` or later ([installation](https://go.dev/doc/install))
+- Golang version  `1.26` or later ([installation](https://go.dev/doc/install))
 - `git` for cloning submodules
 - [go-task](https://taskfile.dev/installation/) for task automation
 - [golangci-lint](https://golangci-lint.run/welcome/install/) for linting

@@ -14,7 +14,7 @@ Package util contains various utility functions for directories and files. It in
 - [func CalculateClusterIncludesExcludes\(input map\[string\]string, filters PathFilterOptions\) \[\]string](<#CalculateClusterIncludesExcludes>)
 - [func CheckObjectMatch\(input gjson.Result, filterString string\) bool](<#CheckObjectMatch>)
 - [func CleanOutputDir\(outputFileMap map\[string\]bool, componentOutputDir string\) error](<#CleanOutputDir>)
-- [func Colorize\(input interface\{\}, colorNum int, disabled bool\) string](<#Colorize>)
+- [func Colorize\(input any, colorNum int, disabled bool\) string](<#Colorize>)
 - [func ErrorIfCheck\(message string, err error\) error](<#ErrorIfCheck>)
 - [func FatalErrorCheck\(message string, err error, logger zerolog.Logger\)](<#FatalErrorCheck>)
 - [func FetchRepoUrl\(url string, destination string, noop bool\) error](<#FetchRepoUrl>)
@@ -36,7 +36,7 @@ Package util contains various utility functions for directories and files. It in
 - [func SetupLogger\(enableColor bool\) zerolog.Logger](<#SetupLogger>)
 - [func WriteFile\(input \[\]byte, file string\) error](<#WriteFile>)
 - [func WriteGzip\(input \[\]byte, file string\) error](<#WriteGzip>)
-- [func WriteObjToJsonFile\(filename string, path string, objStruct interface\{\}\) \(string, error\)](<#WriteObjToJsonFile>)
+- [func WriteObjToJsonFile\(filename string, path string, objStruct any\) \(string, error\)](<#WriteObjToJsonFile>)
 - [type PathFilterOptions](<#PathFilterOptions>)
 
 
@@ -50,7 +50,7 @@ func BuildDirFileList(directory string) ([]string, error)
 Walk a directory to build a list of all files in the tree.
 
 <a name="CalculateClusterIncludesExcludes"></a>
-## func [CalculateClusterIncludesExcludes](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L117>)
+## func [CalculateClusterIncludesExcludes](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L120>)
 
 ```go
 func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string
@@ -80,7 +80,7 @@ Given a map of filenames, prunes all \*.yaml files that are NOT in the map from 
 ## func [Colorize](<https://github.com:icebergtech/kr8/blob/main/pkg/util/json.go#L42>)
 
 ```go
-func Colorize(input interface{}, colorNum int, disabled bool) string
+func Colorize(input any, colorNum int, disabled bool) string
 ```
 
 Colorize function from zerolog console.go file to replicate their coloring functionality. Source: https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389 Replicated here because it's a private function.
@@ -194,7 +194,7 @@ func GetDefaultFormatOptions() formatter.Options
 Configures the default options for the jsonnet formatter.
 
 <a name="HashFile"></a>
-## func [HashFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L136>)
+## func [HashFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L146>)
 
 ```go
 func HashFile(path string) (string, error)
@@ -282,7 +282,7 @@ Write bytes to gzip file \(path included\).
 ## func [WriteObjToJsonFile](<https://github.com:icebergtech/kr8/blob/main/pkg/util/json.go#L120>)
 
 ```go
-func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (string, error)
+func WriteObjToJsonFile(filename string, path string, objStruct any) (string, error)
 ```
 
 Write out a struct to a specified path and file. Marshals the given interface and generates a formatted json string. All parent directories needed are created.

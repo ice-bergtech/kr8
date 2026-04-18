@@ -1,0 +1,8 @@
+kr8/pkg/util/util.go:83:1                          cyclop       calculated cyclomatic complexity for function FilterItems is 11, max is 10
+kr8/pkg/generate/file_system.go:34:22              gosec        G703: Path traversal via taint analysis
+kr8/pkg/kr8_native_funcs/native_funcs_net.go:28:2  gosec        G117: Exported struct field "Password" (JSON key "password") matches secret pattern
+kr8/pkg/util/filesystem.go:133:22                  gosec        G703: Path traversal via taint analysis
+kr8/pkg/generate/vm_helpers.go:70:2                prealloc     Consider preallocating jPathResults
+kr8/pkg/jnetvm/jsonnet.go:56:2                     prealloc     Consider preallocating jpath
+kr8/pkg/kr8_native_funcs/native_funcs.go:82:5      prealloc     Consider preallocating params
+kr8/pkg/jnetvm/jsonnet.go:289:4                    staticcheck  QF1012: Use fmt.Fprintf(...) instead of WriteString(fmt.Sprintf(...))

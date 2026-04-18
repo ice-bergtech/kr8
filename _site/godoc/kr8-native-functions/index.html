@@ -295,12 +295,12 @@
 <li><a href="#KomposeHook.Fire">func (*KomposeHook) Fire(entry *kLogger.Entry) error</a></li>
 <li><a href="#KomposeHook.Levels">func (*KomposeHook) Levels() []kLogger.Level</a></li>
 <li><a href="#KomposeParams">type KomposeParams</a></li>
-<li><a href="#ParseKomposeParams">func ParseKomposeParams(args []interface{}) (*KomposeParams, error)</a></li>
+<li><a href="#ParseKomposeParams">func ParseKomposeParams(args []any) (*KomposeParams, error)</a></li>
 <li><a href="#KomposeParams.ExtractParameters">func (params *KomposeParams) ExtractParameters()</a></li>
 <li><a href="#NativeFuncURL">type NativeFuncURL</a></li>
 </ul>
 <p><a name="NativeHelmTemplate"></a></p>
-<h2 id="func-nativehelmtemplate">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L97">NativeHelmTemplate</a></h2>
+<h2 id="func-nativehelmtemplate">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L98">NativeHelmTemplate</a></h2>
 <pre><code class="language-go">func NativeHelmTemplate() *jsonnet.NativeFunction
 </code></pre>
 <p>Allows executing helm template to process a helm chart and make available to kr8+ configuration.</p>
@@ -425,7 +425,7 @@
 <p>Substitutes a regex pattern in a string with another string.</p>
 <p>Inputs: "regex", "src", "repl".</p>
 <p><a name="NativeSprigTemplate"></a></p>
-<h2 id="func-nativesprigtemplate">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L105">NativeSprigTemplate</a></h2>
+<h2 id="func-nativesprigtemplate">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L106">NativeSprigTemplate</a></h2>
 <pre><code class="language-go">func NativeSprigTemplate() *jsonnet.NativeFunction
 </code></pre>
 <p>Uses sprig to process passed in config data and template. Sprig template guide: https://masterminds.github.io/sprig/ .</p>
@@ -496,7 +496,7 @@
 </code></pre>
 <p><a name="ParseKomposeParams"></a></p>
 <h3 id="func-parsekomposeparams">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs_kompose.go#L66">ParseKomposeParams</a></h3>
-<pre><code class="language-go">func ParseKomposeParams(args []interface{}) (*KomposeParams, error)
+<pre><code class="language-go">func ParseKomposeParams(args []any) (*KomposeParams, error)
 </code></pre>
 <p><a name="KomposeParams.ExtractParameters"></a></p>
 <h3 id="func-komposeparams-extractparameters">func (*KomposeParams) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs_kompose.go#L25">ExtractParameters</a></h3>
@@ -522,7 +522,7 @@
     // encoded path hint (see EscapedPath method)
     RawPath string `json:&quot;pathRaw&quot;`
     // query values
-    Query map[string]interface{} `json:&quot;query&quot;`
+    Query map[string]any `json:&quot;query&quot;`
     // encoded query values, without '?'
     RawQuery string `json:&quot;queryRaw&quot;`
     // fragment for references, without '#'

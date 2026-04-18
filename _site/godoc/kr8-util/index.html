@@ -249,7 +249,7 @@
 <li><a href="#CalculateClusterIncludesExcludes">func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string</a></li>
 <li><a href="#CheckObjectMatch">func CheckObjectMatch(input gjson.Result, filterString string) bool</a></li>
 <li><a href="#CleanOutputDir">func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) error</a></li>
-<li><a href="#Colorize">func Colorize(input interface{}, colorNum int, disabled bool) string</a></li>
+<li><a href="#Colorize">func Colorize(input any, colorNum int, disabled bool) string</a></li>
 <li><a href="#ErrorIfCheck">func ErrorIfCheck(message string, err error) error</a></li>
 <li><a href="#FatalErrorCheck">func FatalErrorCheck(message string, err error, logger zerolog.Logger)</a></li>
 <li><a href="#FetchRepoUrl">func FetchRepoUrl(url string, destination string, noop bool) error</a></li>
@@ -271,7 +271,7 @@
 <li><a href="#SetupLogger">func SetupLogger(enableColor bool) zerolog.Logger</a></li>
 <li><a href="#WriteFile">func WriteFile(input []byte, file string) error</a></li>
 <li><a href="#WriteGzip">func WriteGzip(input []byte, file string) error</a></li>
-<li><a href="#WriteObjToJsonFile">func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (string, error)</a></li>
+<li><a href="#WriteObjToJsonFile">func WriteObjToJsonFile(filename string, path string, objStruct any) (string, error)</a></li>
 <li><a href="#PathFilterOptions">type PathFilterOptions</a></li>
 </ul>
 <p><a name="BuildDirFileList"></a></p>
@@ -280,7 +280,7 @@
 </code></pre>
 <p>Walk a directory to build a list of all files in the tree.</p>
 <p><a name="CalculateClusterIncludesExcludes"></a></p>
-<h2 id="func-calculateclusterincludesexcludes">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L117">CalculateClusterIncludesExcludes</a></h2>
+<h2 id="func-calculateclusterincludesexcludes">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L120">CalculateClusterIncludesExcludes</a></h2>
 <pre><code class="language-go">func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string
 </code></pre>
 <p>Using the allClusterParams variable and command flags to create a list of clusters to generate. Clusters can be filtered with "=" for equality or "\~" for regex match.</p>
@@ -296,7 +296,7 @@
 <p>Given a map of filenames, prunes all *.yaml files that are NOT in the map from the directory.</p>
 <p><a name="Colorize"></a></p>
 <h2 id="func-colorize">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/json.go#L42">Colorize</a></h2>
-<pre><code class="language-go">func Colorize(input interface{}, colorNum int, disabled bool) string
+<pre><code class="language-go">func Colorize(input any, colorNum int, disabled bool) string
 </code></pre>
 <p>Colorize function from zerolog console.go file to replicate their coloring functionality. Source: https://github.com/rs/zerolog/blob/a21d6107dcda23e36bc5cfd00ce8fdbe8f3ddc23/console.go#L389 Replicated here because it's a private function.</p>
 <p><a name="ErrorIfCheck"></a></p>
@@ -360,7 +360,7 @@
 </code></pre>
 <p>Configures the default options for the jsonnet formatter.</p>
 <p><a name="HashFile"></a></p>
-<h2 id="func-hashfile">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L136">HashFile</a></h2>
+<h2 id="func-hashfile">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L146">HashFile</a></h2>
 <pre><code class="language-go">func HashFile(path string) (string, error)
 </code></pre>
 <p>Calculate the sha256 hash and returns the base64 encoded result.</p>
@@ -411,7 +411,7 @@
 <p>Write bytes to gzip file (path included).</p>
 <p><a name="WriteObjToJsonFile"></a></p>
 <h2 id="func-writeobjtojsonfile">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/json.go#L120">WriteObjToJsonFile</a></h2>
-<pre><code class="language-go">func WriteObjToJsonFile(filename string, path string, objStruct interface{}) (string, error)
+<pre><code class="language-go">func WriteObjToJsonFile(filename string, path string, objStruct any) (string, error)
 </code></pre>
 <p>Write out a struct to a specified path and file. Marshals the given interface and generates a formatted json string. All parent directories needed are created.</p>
 <p><a name="PathFilterOptions"></a></p>

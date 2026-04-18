@@ -39,13 +39,13 @@ Package kr8\_native\_funcs provides native functions that jsonnet code can refer
   - [func \(\*KomposeHook\) Fire\(entry \*kLogger.Entry\) error](<#KomposeHook.Fire>)
   - [func \(\*KomposeHook\) Levels\(\) \[\]kLogger.Level](<#KomposeHook.Levels>)
 - [type KomposeParams](<#KomposeParams>)
-  - [func ParseKomposeParams\(args \[\]interface\{\}\) \(\*KomposeParams, error\)](<#ParseKomposeParams>)
+  - [func ParseKomposeParams\(args \[\]any\) \(\*KomposeParams, error\)](<#ParseKomposeParams>)
   - [func \(params \*KomposeParams\) ExtractParameters\(\)](<#KomposeParams.ExtractParameters>)
 - [type NativeFuncURL](<#NativeFuncURL>)
 
 
 <a name="NativeHelmTemplate"></a>
-## func [NativeHelmTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L97>)
+## func [NativeHelmTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L98>)
 
 ```go
 func NativeHelmTemplate() *jsonnet.NativeFunction
@@ -276,7 +276,7 @@ Substitutes a regex pattern in a string with another string.
 Inputs: "regex", "src", "repl".
 
 <a name="NativeSprigTemplate"></a>
-## func [NativeSprigTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L105>)
+## func [NativeSprigTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs.go#L106>)
 
 ```go
 func NativeSprigTemplate() *jsonnet.NativeFunction
@@ -394,7 +394,7 @@ type KomposeParams struct {
 ### func [ParseKomposeParams](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_native_funcs/native_funcs_kompose.go#L66>)
 
 ```go
-func ParseKomposeParams(args []interface{}) (*KomposeParams, error)
+func ParseKomposeParams(args []any) (*KomposeParams, error)
 ```
 
 
@@ -431,7 +431,7 @@ type NativeFuncURL struct {
     // encoded path hint (see EscapedPath method)
     RawPath string `json:"pathRaw"`
     // query values
-    Query map[string]interface{} `json:"query"`
+    Query map[string]any `json:"query"`
     // encoded query values, without '?'
     RawQuery string `json:"queryRaw"`
     // fragment for references, without '#'
