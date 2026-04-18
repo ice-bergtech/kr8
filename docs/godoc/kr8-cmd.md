@@ -30,6 +30,7 @@ Defines the cli\-interface commands available to the user.
 - [type CmdFormatOptions](<#CmdFormatOptions>)
 - [type CmdGenerateOptions](<#CmdGenerateOptions>)
 - [type CmdGetOptions](<#CmdGetOptions>)
+- [type CmdJsonnetRenderOptions](<#CmdJsonnetRenderOptions>)
 - [type CmdRenderOptions](<#CmdRenderOptions>)
 - [type CmdRootOptions](<#CmdRootOptions>)
 - [type Stamp](<#Stamp>)
@@ -431,9 +432,10 @@ and initialize a git repo so you can get started`,
 
 ```go
 var JsonnetCmd = &cobra.Command{
-    Use:   "jsonnet",
-    Short: "Jsonnet utilities",
-    Long:  `Utility commands to process jsonnet`,
+    Use:     "jsonnet",
+    Short:   "Jsonnet utilities",
+    Aliases: []string{"j"},
+    Long:    `Utility commands to process jsonnet`,
 }
 ```
 
@@ -441,17 +443,32 @@ var JsonnetCmd = &cobra.Command{
 
 ```go
 var JsonnetRenderCmd = &cobra.Command{
-    Use:   "render [flags] file [file ...]",
-    Short: "Render a jsonnet file",
-    Long:  `Render a jsonnet file to JSON or YAML`,
+    Use:     "render [flags] file [file ...]",
+    Aliases: []string{"r"},
+    Short:   "Render a jsonnet file",
+    Long:    `Render a jsonnet file to JSON or YAML`,
 
     Args: cobra.MinimumNArgs(1),
     Run: func(cmd *cobra.Command, args []string) {
-        for _, f := range args {
-            err := jvm.JsonnetRender(cmdFlagsJsonnet, f, RootConfig.VMConfig, log.Logger)
+        cleanedArgs := make([]string, len(args))
+        for i, arg := range args {
+            cleanedArgs[i] = filepath.Clean(arg)
+        }
+
+        vmConfig := types.VMConfig{}
+        output, err := jvm.JsonnetRenderFiles(vmConfig, cleanedArgs, "", cmdFlagsJsonnet.Prune, "", "cli", cmdFlagsJsonnet.Lint)
+        if err != nil {
+            log.Fatal().Err(err).Msg("error rendering jsonnet file")
+        }
+
+        if cmdFlagsJsonnet.Output != "" {
+            err := util.WriteFile([]byte(output), cmdFlagsJsonnet.Output)
             if err != nil {
-                log.Fatal().Str("file", f).Err(err).Msg("error rendering jsonnet file")
+                log.Fatal().Err(err).Msg("error writing output file")
             }
+            log.Info().Str("file", cmdFlagsJsonnet.Output).Msg("output written to file")
+        } else {
+            log.Info().Msg(output)
         }
     },
 }
@@ -463,7 +480,7 @@ var JsonnetRenderCmd = &cobra.Command{
 var RenderCmd = &cobra.Command{
     Use:   "render",
     Short: "Render files",
-    Long:  `Render files in jsonnet or YAML`,
+    Long:  `Render files with cluster config in jsonnet or YAML`,
 }
 ```
 
@@ -512,8 +529,8 @@ var RenderHelmCmd = &cobra.Command{
 ```go
 var RenderJsonnetCmd = &cobra.Command{
     Use:   "jsonnet file [file ...]",
-    Short: "Render a jsonnet file",
-    Long:  `Render a jsonnet file to JSON or YAML`,
+    Short: "Render a jsonnet file based on cluster params",
+    Long:  `Render a jsonnet files based on a cluster individually to JSON or YAML`,
 
     Args: cobra.MinimumNArgs(1),
     Run: func(cmd *cobra.Command, args []string) {
@@ -694,6 +711,20 @@ type CmdGetOptions struct {
     Component string
     // Param to display from the resource
     ParamField string
+}
+```
+
+<a name="CmdJsonnetRenderOptions"></a>
+## type [CmdJsonnetRenderOptions](<https://github.com:icebergtech/kr8/blob/main/cmd/jsonnet.go#L54-L59>)
+
+
+
+```go
+type CmdJsonnetRenderOptions struct {
+    Prune  bool
+    Format string
+    Lint   bool
+    Output string
 }
 ```
 

@@ -211,7 +211,7 @@ func ProcessComponentFinalizer(compSpec kr8_types.Kr8ComponentSpec, componentOut
 Final actions performed once a component is generated. Cleans extra files from output dir if not disabled in component spec.
 
 <a name="ProcessFile"></a>
-## func [ProcessFile](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L77-L86>)
+## func [ProcessFile](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L78-L87>)
 
 ```go
 func ProcessFile(inputFile string, outputFile string, kr8Spec kr8_types.Kr8ClusterSpec, componentName string, config string, incInfo kr8_types.Kr8ComponentSpecIncludeObject, jvm *jsonnet.VM, logger zerolog.Logger) (string, error)
@@ -224,7 +224,7 @@ Process an includes file. Based on the extension, the file is processed differen
 - .tpl, .tmpl: Processed using component config and Sprig templating.
 
 <a name="ProcessJsonnetToYaml"></a>
-## func [ProcessJsonnetToYaml](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L128>)
+## func [ProcessJsonnetToYaml](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L129>)
 
 ```go
 func ProcessJsonnetToYaml(jvm *jsonnet.VM, input string, snippetFilename string) (string, error)
@@ -233,7 +233,7 @@ func ProcessJsonnetToYaml(jvm *jsonnet.VM, input string, snippetFilename string)
 Processes an input string through the jsonnet VM and handles extracting the output into a yaml string. snippetFilename is used for error messages.
 
 <a name="ProcessTemplate"></a>
-## func [ProcessTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L163>)
+## func [ProcessTemplate](<https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L164>)
 
 ```go
 func ProcessTemplate(filename string, data gjson.Result) (string, error)

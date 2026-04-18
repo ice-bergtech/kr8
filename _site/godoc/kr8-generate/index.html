@@ -371,7 +371,7 @@
 </code></pre>
 <p>Final actions performed once a component is generated. Cleans extra files from output dir if not disabled in component spec.</p>
 <p><a name="ProcessFile"></a></p>
-<h2 id="func-processfile">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L77-L86">ProcessFile</a></h2>
+<h2 id="func-processfile">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L78-L87">ProcessFile</a></h2>
 <pre><code class="language-go">func ProcessFile(inputFile string, outputFile string, kr8Spec kr8_types.Kr8ClusterSpec, componentName string, config string, incInfo kr8_types.Kr8ComponentSpecIncludeObject, jvm *jsonnet.VM, logger zerolog.Logger) (string, error)
 </code></pre>
 <p>Process an includes file. Based on the extension, the file is processed differently.</p>
@@ -381,12 +381,12 @@
 <li>.tpl, .tmpl: Processed using component config and Sprig templating.</li>
 </ul>
 <p><a name="ProcessJsonnetToYaml"></a></p>
-<h2 id="func-processjsonnettoyaml">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L128">ProcessJsonnetToYaml</a></h2>
+<h2 id="func-processjsonnettoyaml">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L129">ProcessJsonnetToYaml</a></h2>
 <pre><code class="language-go">func ProcessJsonnetToYaml(jvm *jsonnet.VM, input string, snippetFilename string) (string, error)
 </code></pre>
 <p>Processes an input string through the jsonnet VM and handles extracting the output into a yaml string. snippetFilename is used for error messages.</p>
 <p><a name="ProcessTemplate"></a></p>
-<h2 id="func-processtemplate">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L163">ProcessTemplate</a></h2>
+<h2 id="func-processtemplate">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/generate/file_processing.go#L164">ProcessTemplate</a></h2>
 <pre><code class="language-go">func ProcessTemplate(filename string, data gjson.Result) (string, error)
 </code></pre>
 <p>Processes a template file with the given data. Loads file, parses template, then executes template.</p>

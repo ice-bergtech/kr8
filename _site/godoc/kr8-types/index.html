@@ -241,7 +241,7 @@
 <li><a href="#ExtFileVar">type ExtFileVar</a></li>
 <li><a href="#KomposeConvertOptions">type KomposeConvertOptions</a></li>
 <li><a href="#CreateKomposeOpts">func CreateKomposeOpts(inputFiles []string, namespace string) (*KomposeConvertOptions, error)</a></li>
-<li><a href="#KomposeConvertOptions.Convert">func (k KomposeConvertOptions) Convert() (interface{}, error)</a></li>
+<li><a href="#KomposeConvertOptions.Convert">func (k KomposeConvertOptions) Convert() (any, error)</a></li>
 <li><a href="#KomposeConvertOptions.GenKomposePkgOpts">func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions</a></li>
 <li><a href="#KomposeConvertOptions.Validate">func (k KomposeConvertOptions) Validate() error</a></li>
 <li><a href="#Kr8Cluster">type Kr8Cluster</a></li>
@@ -360,7 +360,7 @@
 <p>Initialize Kompose options with sensible defaults.</p>
 <p><a name="KomposeConvertOptions.Convert"></a></p>
 <h3 id="func-komposeconvertoptions-convert">func (KomposeConvertOptions) <a href="https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kompose.go#L233">Convert</a></h3>
-<pre><code class="language-go">func (k KomposeConvertOptions) Convert() (interface{}, error)
+<pre><code class="language-go">func (k KomposeConvertOptions) Convert() (any, error)
 </code></pre>
 <p>Converts a Docker Compose file described by k into a set of kubernetes manifests.</p>
 <p><a name="KomposeConvertOptions.GenKomposePkgOpts"></a></p>

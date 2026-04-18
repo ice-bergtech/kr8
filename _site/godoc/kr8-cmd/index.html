@@ -162,6 +162,8 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#type-cmdgetoptions">type CmdGetOptions</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#type-cmdjsonnetrenderoptions">type CmdJsonnetRenderOptions</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#type-cmdrenderoptions">type CmdRenderOptions</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#type-cmdrootoptions">type CmdRootOptions</a>
@@ -235,6 +237,7 @@
 <li><a href="#CmdFormatOptions">type CmdFormatOptions</a></li>
 <li><a href="#CmdGenerateOptions">type CmdGenerateOptions</a></li>
 <li><a href="#CmdGetOptions">type CmdGetOptions</a></li>
+<li><a href="#CmdJsonnetRenderOptions">type CmdJsonnetRenderOptions</a></li>
 <li><a href="#CmdRenderOptions">type CmdRenderOptions</a></li>
 <li><a href="#CmdRootOptions">type CmdRootOptions</a></li>
 <li><a href="#Stamp">type Stamp</a></li>
@@ -602,24 +605,40 @@ and initialize a git repo so you can get started`,
 </code></pre>
 <p><a name="JsonnetCmd"></a></p>
 <pre><code class="language-go">var JsonnetCmd = &amp;cobra.Command{
-    Use:   &quot;jsonnet&quot;,
-    Short: &quot;Jsonnet utilities&quot;,
-    Long:  `Utility commands to process jsonnet`,
+    Use:     &quot;jsonnet&quot;,
+    Short:   &quot;Jsonnet utilities&quot;,
+    Aliases: []string{&quot;j&quot;},
+    Long:    `Utility commands to process jsonnet`,
 }
 </code></pre>
 <p><a name="JsonnetRenderCmd"></a></p>
 <pre><code class="language-go">var JsonnetRenderCmd = &amp;cobra.Command{
-    Use:   &quot;render [flags] file [file ...]&quot;,
-    Short: &quot;Render a jsonnet file&quot;,
-    Long:  `Render a jsonnet file to JSON or YAML`,
+    Use:     &quot;render [flags] file [file ...]&quot;,
+    Aliases: []string{&quot;r&quot;},
+    Short:   &quot;Render a jsonnet file&quot;,
+    Long:    `Render a jsonnet file to JSON or YAML`,
 
     Args: cobra.MinimumNArgs(1),
     Run: func(cmd *cobra.Command, args []string) {
-        for _, f := range args {
-            err := jvm.JsonnetRender(cmdFlagsJsonnet, f, RootConfig.VMConfig, log.Logger)
+        cleanedArgs := make([]string, len(args))
+        for i, arg := range args {
+            cleanedArgs[i] = filepath.Clean(arg)
+        }
+
+        vmConfig := types.VMConfig{}
+        output, err := jvm.JsonnetRenderFiles(vmConfig, cleanedArgs, &quot;&quot;, cmdFlagsJsonnet.Prune, &quot;&quot;, &quot;cli&quot;, cmdFlagsJsonnet.Lint)
+        if err != nil {
+            log.Fatal().Err(err).Msg(&quot;error rendering jsonnet file&quot;)
+        }
+
+        if cmdFlagsJsonnet.Output != &quot;&quot; {
+            err := util.WriteFile([]byte(output), cmdFlagsJsonnet.Output)
             if err != nil {
-                log.Fatal().Str(&quot;file&quot;, f).Err(err).Msg(&quot;error rendering jsonnet file&quot;)
+                log.Fatal().Err(err).Msg(&quot;error writing output file&quot;)
             }
+            log.Info().Str(&quot;file&quot;, cmdFlagsJsonnet.Output).Msg(&quot;output written to file&quot;)
+        } else {
+            log.Info().Msg(output)
         }
     },
 }
@@ -628,7 +647,7 @@ and initialize a git repo so you can get started`,
 <pre><code class="language-go">var RenderCmd = &amp;cobra.Command{
     Use:   &quot;render&quot;,
     Short: &quot;Render files&quot;,
-    Long:  `Render files in jsonnet or YAML`,
+    Long:  `Render files with cluster config in jsonnet or YAML`,
 }
 </code></pre>
 <p><a name="RenderHelmCmd"></a></p>
@@ -671,8 +690,8 @@ and initialize a git repo so you can get started`,
 <p><a name="RenderJsonnetCmd"></a></p>
 <pre><code class="language-go">var RenderJsonnetCmd = &amp;cobra.Command{
     Use:   &quot;jsonnet file [file ...]&quot;,
-    Short: &quot;Render a jsonnet file&quot;,
-    Long:  `Render a jsonnet file to JSON or YAML`,
+    Short: &quot;Render a jsonnet file based on cluster params&quot;,
+    Long:  `Render a jsonnet files based on a cluster individually to JSON or YAML`,
 
     Args: cobra.MinimumNArgs(1),
     Run: func(cmd *cobra.Command, args []string) {
@@ -801,6 +820,15 @@ and initialize a git repo so you can get started`,
     Component string
     // Param to display from the resource
     ParamField string
+}
+</code></pre>
+<p><a name="CmdJsonnetRenderOptions"></a></p>
+<h2 id="type-cmdjsonnetrenderoptions">type <a href="https://github.com:icebergtech/kr8/blob/main/cmd/jsonnet.go#L54-L59">CmdJsonnetRenderOptions</a></h2>
+<pre><code class="language-go">type CmdJsonnetRenderOptions struct {
+    Prune  bool
+    Format string
+    Lint   bool
+    Output string
 }
 </code></pre>
 <p><a name="CmdRenderOptions"></a></p>
