@@ -78,6 +78,32 @@ func CheckObjectMatch(input gjson.Result, filterString string) bool {
 	return strings.Contains(input.Get("name").String(), filterString)
 }
 
+// checkItemInclude determines if an item should be included based on include filters.
+func checkItemInclude(gjResult gjson.Result, includes string) bool {
+	if includes == "" {
+		return true
+	}
+	for b := range strings.SplitSeq(includes, ",") {
+		if CheckObjectMatch(gjResult, b) {
+			return true
+		}
+	}
+	return false
+}
+
+// checkItemExclude determines if an item should be excluded based on exclude filters.
+func checkItemExclude(gjResult gjson.Result, excludes string) bool {
+	if excludes == "" {
+		return false
+	}
+	for b := range strings.SplitSeq(excludes, ",") {
+		if CheckObjectMatch(gjResult, b) {
+			return true
+		}
+	}
+	return false
+}
+
 // Given a map of string, filter them based on the provided options.
 // The map value is parsed as a gjson result and then checked against the provided options.
 func FilterItems(input map[string]string, pFilter PathFilterOptions) []string {
@@ -88,25 +114,10 @@ func FilterItems(input map[string]string, pFilter PathFilterOptions) []string {
 	var clusterList []string
 	for inputMap := range input {
 		gjResult := gjson.Parse(input[inputMap])
-		// filter on cluster parameters, passed in gjson path notation with either
-		// "=" for equality or "~" for regex match
-		include := pFilter.Includes == ""
-		if pFilter.Includes != "" {
-			for b := range strings.SplitSeq(pFilter.Includes, ",") {
-				include = include || CheckObjectMatch(gjResult, b)
-			}
-		}
-		if !include {
+		if !checkItemInclude(gjResult, pFilter.Includes) {
 			continue
 		}
-		// filter on cluster parameters, passed in gjson path notation with either
-		// "=" for equality or "~" for regex match
-		var exclude bool
-		exclude = false
-		for b := range strings.SplitSeq(pFilter.Excludes, ",") {
-			exclude = exclude || CheckObjectMatch(gjResult, b)
-		}
-		if exclude {
+		if checkItemExclude(gjResult, pFilter.Excludes) {
 			continue
 		}
 		clusterList = append(clusterList, inputMap)
