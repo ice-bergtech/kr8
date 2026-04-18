@@ -90,9 +90,11 @@ func FilterItems(input map[string]string, pFilter PathFilterOptions) []string {
 		gjResult := gjson.Parse(input[c])
 		// filter on cluster parameters, passed in gjson path notation with either
 		// "=" for equality or "~" for regex match
-		include := false
-		for b := range strings.SplitSeq(pFilter.Includes, ",") {
-			include = include || CheckObjectMatch(gjResult, b)
+		include := pFilter.Includes == ""
+		if pFilter.Includes != "" {
+			for _, b := range strings.Split(pFilter.Includes, ",") {
+				include = include || CheckObjectMatch(gjResult, b)
+			}
 		}
 		if !include {
 			continue
@@ -107,6 +109,7 @@ func FilterItems(input map[string]string, pFilter PathFilterOptions) []string {
 		if exclude {
 			continue
 		}
+		clusterList = append(clusterList, c)
 	}
 
 	return clusterList
@@ -119,10 +122,15 @@ func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilte
 	if filters.Clusters != "" {
 		var clusterList []string
 		// all clusters
-		for key := range strings.SplitSeq(filters.Clusters, ",") {
-			val, ok := input[key]
-			if ok {
-				clusterList = append(clusterList, val)
+		for key := range input {
+			for _, filterPattern := range strings.Split(filters.Clusters, ",") {
+				if key == filterPattern {
+					clusterList = append(clusterList, key)
+					break
+				} else if matched, err := regexp.MatchString(filterPattern, key); err == nil && matched {
+					clusterList = append(clusterList, key)
+					break
+				}
 			}
 		}
 
