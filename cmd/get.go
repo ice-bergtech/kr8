@@ -103,15 +103,21 @@ var GetClustersCmd = &cobra.Command{
 
 		var entry []string
 		table := tablewriter.NewWriter(os.Stdout)
-		table.SetHeader([]string{"Name", "Path"})
+		table.Header([]string{"Name", "Path"})
 
 		for _, c := range clusters {
 			entry = append(entry, c.Name)
 			entry = append(entry, c.Path)
-			table.Append(entry)
+			err = table.Append(entry)
+			if err != nil {
+				log.Warn().Err(err).Msg("Row error")
+			}
 			entry = entry[:0]
 		}
-		table.Render()
+		err = table.Render()
+		if err != nil {
+			log.Warn().Err(err).Msg("Table error")
+		}
 
 	},
 }

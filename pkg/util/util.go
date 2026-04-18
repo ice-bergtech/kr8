@@ -78,6 +78,34 @@ func CheckObjectMatch(input gjson.Result, filterString string) bool {
 	return strings.Contains(input.Get("name").String(), filterString)
 }
 
+// checkItemInclude determines if an item should be included based on include filters.
+func checkItemInclude(gjResult gjson.Result, includes string) bool {
+	if includes == "" {
+		return true
+	}
+	for b := range strings.SplitSeq(includes, ",") {
+		if CheckObjectMatch(gjResult, b) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// checkItemExclude determines if an item should be excluded based on exclude filters.
+func checkItemExclude(gjResult gjson.Result, excludes string) bool {
+	if excludes == "" {
+		return false
+	}
+	for b := range strings.SplitSeq(excludes, ",") {
+		if CheckObjectMatch(gjResult, b) {
+			return true
+		}
+	}
+
+	return false
+}
+
 // Given a map of string, filter them based on the provided options.
 // The map value is parsed as a gjson result and then checked against the provided options.
 func FilterItems(input map[string]string, pFilter PathFilterOptions) []string {
@@ -86,30 +114,15 @@ func FilterItems(input map[string]string, pFilter PathFilterOptions) []string {
 		return []string{}
 	}
 	var clusterList []string
-	for c := range input {
-		gjResult := gjson.Parse(input[c])
-		// filter on cluster parameters, passed in gjson path notation with either
-		// "=" for equality or "~" for regex match
-		include := pFilter.Includes == ""
-		if pFilter.Includes != "" {
-			for _, b := range strings.Split(pFilter.Includes, ",") {
-				include = include || CheckObjectMatch(gjResult, b)
-			}
-		}
-		if !include {
+	for inputMap := range input {
+		gjResult := gjson.Parse(input[inputMap])
+		if !checkItemInclude(gjResult, pFilter.Includes) {
 			continue
 		}
-		// filter on cluster parameters, passed in gjson path notation with either
-		// "=" for equality or "~" for regex match
-		var exclude bool
-		exclude = false
-		for b := range strings.SplitSeq(pFilter.Excludes, ",") {
-			exclude = exclude || CheckObjectMatch(gjResult, b)
-		}
-		if exclude {
+		if checkItemExclude(gjResult, pFilter.Excludes) {
 			continue
 		}
-		clusterList = append(clusterList, c)
+		clusterList = append(clusterList, inputMap)
 	}
 
 	return clusterList
@@ -123,12 +136,14 @@ func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilte
 		var clusterList []string
 		// all clusters
 		for key := range input {
-			for _, filterPattern := range strings.Split(filters.Clusters, ",") {
+			for filterPattern := range strings.SplitSeq(filters.Clusters, ",") {
 				if key == filterPattern {
 					clusterList = append(clusterList, key)
+
 					break
 				} else if matched, err := regexp.MatchString(filterPattern, key); err == nil && matched {
 					clusterList = append(clusterList, key)
+
 					break
 				}
 			}

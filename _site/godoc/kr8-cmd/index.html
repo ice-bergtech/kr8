@@ -302,15 +302,21 @@ Formats files with the following options: ` + prettyPrintFormattingOpts(),
 
         var entry []string
         table := tablewriter.NewWriter(os.Stdout)
-        table.SetHeader([]string{&quot;Name&quot;, &quot;Path&quot;})
+        table.Header([]string{&quot;Name&quot;, &quot;Path&quot;})
 
         for _, c := range clusters {
             entry = append(entry, c.Name)
             entry = append(entry, c.Path)
-            table.Append(entry)
+            err = table.Append(entry)
+            if err != nil {
+                log.Warn().Err(err).Msg(&quot;Row error&quot;)
+            }
             entry = entry[:0]
         }
-        table.Render()
+        err = table.Render()
+        if err != nil {
+            log.Warn().Err(err).Msg(&quot;Table error&quot;)
+        }
 
     },
 }

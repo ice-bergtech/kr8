@@ -280,7 +280,7 @@
 </code></pre>
 <p>Walk a directory to build a list of all files in the tree.</p>
 <p><a name="CalculateClusterIncludesExcludes"></a></p>
-<h2 id="func-calculateclusterincludesexcludes">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L117">CalculateClusterIncludesExcludes</a></h2>
+<h2 id="func-calculateclusterincludesexcludes">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L133">CalculateClusterIncludesExcludes</a></h2>
 <pre><code class="language-go">func CalculateClusterIncludesExcludes(input map[string]string, filters PathFilterOptions) []string
 </code></pre>
 <p>Using the allClusterParams variable and command flags to create a list of clusters to generate. Clusters can be filtered with "=" for equality or "\~" for regex match.</p>
@@ -325,7 +325,7 @@
 </code></pre>
 <p>Filter returns a new slice containing only the elements that satisfy the predicate function. From https://gobyexample.com/collection-functions</p>
 <p><a name="FilterItems"></a></p>
-<h2 id="func-filteritems">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L83">FilterItems</a></h2>
+<h2 id="func-filteritems">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L111">FilterItems</a></h2>
 <pre><code class="language-go">func FilterItems(input map[string]string, pFilter PathFilterOptions) []string
 </code></pre>
 <p>Given a map of string, filter them based on the provided options. The map value is parsed as a gjson result and then checked against the provided options.</p>
@@ -360,7 +360,7 @@
 </code></pre>
 <p>Configures the default options for the jsonnet formatter.</p>
 <p><a name="HashFile"></a></p>
-<h2 id="func-hashfile">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L136">HashFile</a></h2>
+<h2 id="func-hashfile">func <a href="https://github.com:icebergtech/kr8/blob/main/pkg/util/util.go#L159">HashFile</a></h2>
 <pre><code class="language-go">func HashFile(path string) (string, error)
 </code></pre>
 <p>Calculate the sha256 hash and returns the base64 encoded result.</p>

@@ -153,7 +153,7 @@ func CreateKomposeOpts(inputFiles []string, namespace string) (*KomposeConvertOp
 Initialize Kompose options with sensible defaults.
 
 <a name="KomposeConvertOptions.Convert"></a>
-### func \(KomposeConvertOptions\) [Convert](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kompose.go#L233>)
+### func \(KomposeConvertOptions\) [Convert](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kompose.go#L234>)
 
 ```go
 func (k KomposeConvertOptions) Convert() (any, error)
@@ -177,7 +177,7 @@ https://pkg.go.dev/github.com/kubernetes/kompose@v1.35.0/pkg/kobject#ConvertOpti
 https://github.com/kubernetes/kompose/blob/v1.35.0/pkg/app/app.go#L166
 
 <a name="KomposeConvertOptions.Validate"></a>
-### func \(KomposeConvertOptions\) [Validate](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kompose.go#L224>)
+### func \(KomposeConvertOptions\) [Validate](<https://github.com:icebergtech/kr8/blob/main/pkg/kr8_types/kompose.go#L225>)
 
 ```go
 func (k KomposeConvertOptions) Validate() error

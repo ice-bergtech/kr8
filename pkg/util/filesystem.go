@@ -129,8 +129,8 @@ func CleanOutputDir(outputFileMap map[string]bool, componentOutputDir string) er
 			continue
 		}
 		if filepath.Ext(name) == ".yaml" {
-			delFile := filepath.Join(componentOutputDir, name)
-			err = os.RemoveAll(delFile)
+			delFile := filepath.Join(componentOutputDir, filepath.Base(name))
+			err = os.RemoveAll(delFile) //nolint:gosec
 			if err != nil {
 				return err
 			}

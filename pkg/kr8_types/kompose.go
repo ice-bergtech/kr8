@@ -215,6 +215,7 @@ func (k KomposeConvertOptions) GenKomposePkgOpts() *kobject.ConvertOptions {
 		IsReplicaSetFlag:       false,
 		IsDeploymentConfigFlag: false,
 		IsNamespaceFlag:        false,
+		NoInterpolate:          true,
 	}
 
 	return &resultOpts
@@ -260,7 +261,7 @@ func convertComposeToK8s(opt kobject.ConvertOptions) ([]any, error) {
 	}
 
 	// Load the docker-compose file
-	objects, err := loader.LoadFile(opt.InputFiles, []string{})
+	objects, err := loader.LoadFile(opt.InputFiles, []string{}, true)
 	if err != nil {
 		return nil, err
 	}
@@ -279,7 +280,7 @@ func convertComposeToK8s(opt kobject.ConvertOptions) ([]any, error) {
 	// Create a JSON serializer
 	jsonSerializer := sjson.NewSerializerWithOptions(
 		sjson.SimpleMetaFactory{}, scheme, scheme,
-		sjson.SerializerOptions{Yaml: false, Pretty: false, Strict: false},
+		sjson.SerializerOptions{Yaml: false, Pretty: false, Strict: false, StreamingCollectionsEncoding: false},
 	)
 	// Convert the Kubernetes objects to a format that Jsonnet can use
 	result := make([]any, len(k8sObjects))
